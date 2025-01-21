@@ -244,7 +244,7 @@ button:hover::after {
         height: 150px;
     }
     .circle-container{
-        padding-top: 240px; 
+        padding-top: 450px; 
     }
 }
 p{font-weight: bold;  color: lightgrey;}
