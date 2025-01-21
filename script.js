@@ -186,3 +186,24 @@ unmuteBtn.addEventListener('click', () => {
     unmuteBtn.style.display = 'none';
     localStorage.setItem('isMuted', JSON.stringify(isMuted));
 });
+
+// Initialize counter
+let counter = localStorage.getItem('counter') ? parseInt(localStorage.getItem('counter')) : 0;
+document.getElementById('count-display').textContent = counter;
+
+// Function to update the counter
+function updateCounter() {
+    counter++;
+    document.getElementById('count-display').textContent = counter;
+    localStorage.setItem('counter', counter); // Save to local storage
+}
+
+// Attach event to the button
+document.getElementById('count-btn').addEventListener('click', updateCounter);
+
+// Optional: Reset Counter
+document.getElementById('reset-count-btn').addEventListener('click', () => {
+    counter = 0;
+    document.getElementById('count-display').textContent = counter;
+    localStorage.setItem('counter', counter); // Reset the saved value in local storage
+});
