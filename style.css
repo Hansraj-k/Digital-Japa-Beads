@@ -233,6 +233,11 @@ button:hover::after {
     width: 100px;
     height: 100px;
 }
+
+.toolbar-logo {
+    width: 90px;
+    height: 90px;
+}
 .circle-container{
     padding-top: 270px; 
 }
@@ -246,6 +251,10 @@ button:hover::after {
     .circle-container{
         padding-top: 450px; 
     }
+    .toolbar-logo {
+    width: 21px;
+    height: 21px;
+}
 }
 p{font-weight: bold;  color: lightgrey;}
 html, body {
