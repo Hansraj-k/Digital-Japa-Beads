@@ -1,21 +1,50 @@
 {
     "name": "Digital Japa Beads",
-    "short_name": "Digital Japa Beads",
-    "start_url": "./",
-    "background_color": "#000000",
+	"short_name": "Digital Japa Beads",
+	"start_url": ".",
+	"background_color": "#000000",
 	"theme_color": "#000000",
 	"display": "standalone",
-    "icons": [
-        {
-            "src": "rkhkmclogo.jpg",
-            "sizes": "192x192",
-            "type": "image/jpeg"
-        },
-        {
-            "src": "rkhkmclogo.jpg",
-            "sizes": "512x512",
-            "type": "image/jpeg"
-        }
-    ],
-
+	"icons": [
+		{
+        "src": "rkhkmclogo.jpg",
+        "type": "image/jpeg",
+        "sizes": "72x72"
+      },
+      {
+        "src": "rkhkmclogo.jpg",
+        "type": "image/jpeg",
+        "sizes": "96x96"
+      },
+      {
+        "src": "rkhkmclogo.jpg",
+        "type": "image/jpeg",
+        "sizes": "128x128"
+      },
+      {
+        "src": "rkhkmclogo.jpg",
+        "type": "image/jpeg",
+        "sizes": "144x144"
+      },
+      {
+        "src": "rkhkmclogo.jpg",
+        "type": "image/jpeg",
+        "sizes": "152x152"
+      },
+      {
+"src": "rkhkmclogo.jpg",
+        "type": "image/jpeg",
+        "sizes": "192x192"
+      },
+      {
+        "src": "rkhkmclogo.jpg",
+        "type": "image/jpeg",
+        "sizes": "384x384"
+      },
+      {
+        "src": "rkhkmclogo.jpg",
+        "type": "image/jpeg",
+        "sizes": "512x512"
+      }
+	]
 }
