@@ -255,6 +255,8 @@ button:hover::after {
     width: 30px;
     height: 30px;
 }
+    #count-btn{
+        padding-top: 0px;}
     .counter-container {
     margin-top: 30px;
 }
