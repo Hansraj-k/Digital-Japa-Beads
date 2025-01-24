@@ -311,3 +311,9 @@ html, body {
     text-align: center;
     font-family: 'Biski', sans-serif;
 }
+
+/* Remove blue highlight on images and icons when clicked on mobile */
+img, button, .fa {
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+}
