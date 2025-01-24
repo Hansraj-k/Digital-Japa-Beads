@@ -244,3 +244,25 @@ roundImage.addEventListener('touchend', function(e) {
         showImageChangeMenu(e);
     }
 });
+
+// Get references to the elements
+const imageUploadInput = document.getElementById('image-upload');
+const changeImageButton = document.getElementById('change-image-btn');
+const roundImage = document.getElementById('round-image');
+
+// Event listener to open file picker when "Change Image" button is clicked
+changeImageButton.addEventListener('click', () => {
+    imageUploadInput.click(); // Open the file picker
+});
+
+// Event listener to handle file upload and image change
+imageUploadInput.addEventListener('change', (event) => {
+    const file = event.target.files[0]; // Get the selected file
+    if (file) {
+        const reader = new FileReader(); // Create a FileReader to read the file
+        reader.onload = (e) => {
+            roundImage.src = e.target.result; // Set the uploaded image as the new src
+        };
+        reader.readAsDataURL(file); // Read the file as a data URL
+    }
+});
