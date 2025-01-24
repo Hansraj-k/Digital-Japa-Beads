@@ -251,6 +251,28 @@ roundImage.addEventListener('touchend', function(e) {
     }
 });
 
+// Select the upload input and target image element
+const imageUpload = document.getElementById('image-upload');
+const roundImage = document.querySelector('.round-image'); // Assuming you want to update the round image
+
+// Function to preview the selected image
+imageUpload.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            roundImage.src = e.target.result; // Set the selected image as the source
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Show the file input when clicking the image (optional)
+roundImage.addEventListener('click', () => {
+    imageUpload.click();
+});
+
+
 function hideAllPopups() {
     popup108.style.display = 'none';
     popupCountReset.style.display = 'none';
