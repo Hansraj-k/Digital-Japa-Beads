@@ -169,10 +169,7 @@ button:hover::after {
     border-radius: 50%;
     position: absolute;
     z-index: 1;
-    max-width: 100%;
-    max-height: 100%;
 }
-
 
 /* Count and round display styling */
 .count-display {
@@ -321,32 +318,37 @@ img, button, .fa {
     outline: none;
 }
 
-/* Center the image change menu in the middle of the image */
+/* Image change menu style */
 .image-change-menu {
     position: absolute;
-    display: none; /* Hidden initially */
-    background: #fff;
-    border: 1px solid #ccc;
+    background-color: #222;
+    color: white;
     padding: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    text-align: center;
-    width: 200px;
-    border-radius: 8px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    font-family: 'Biski', sans-serif;
 }
 
-/* Style the input and buttons */
-.image-change-menu input {
-    width: 100%;
+.image-change-menu p {
+    margin: 0 0 10px;
+}
+
+.image-change-menu input[type="file"] {
     margin-bottom: 10px;
+    padding: 5px;
 }
 
 .image-change-menu button {
-    width: 100%;
     padding: 8px;
-    background-color: #007bff;
-    color: white;
+    background-color: #333;
     border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
     border-radius: 5px;
 }
 
+.image-change-menu button:hover {
+    background-color: #555;
+}
