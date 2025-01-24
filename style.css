@@ -303,3 +303,11 @@ html, body {
 .footer img {
     height: 100px;
 }
+/* Copyright text styling */
+.footer .copyright {
+    font-size: 12px;
+    color: lightgrey;
+    margin-top: 10px;
+    text-align: center;
+    font-family: 'Biski', sans-serif;
+}
