@@ -244,3 +244,27 @@ roundImage.addEventListener('touchend', function(e) {
         showImageChangeMenu(e);
     }
 });
+
+
+// Select the target image element and input field
+const imageChangeMenu = document.querySelector('.image-change-menu');
+const imageInput = document.querySelector('.image-change-menu input[type="file"]');
+const targetImage = document.querySelector('.round-image'); // Adjust to match your target image selector
+
+// Listen for the file input change event
+imageInput.addEventListener('change', (event) => {
+    const file = event.target.files[0]; // Get the selected file
+
+    if (file) {
+        const reader = new FileReader();
+
+        // Once the file is read, update the image source
+        reader.onload = (e) => {
+            targetImage.src = e.target.result; // Set the base64 image data as the new src
+        };
+
+        reader.readAsDataURL(file); // Read the selected file
+    } else {
+        alert('No file selected. Please choose an image.');
+    }
+});
