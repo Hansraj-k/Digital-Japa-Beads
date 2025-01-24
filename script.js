@@ -187,3 +187,60 @@ const currentYear = dateInIST.getFullYear();
 
 // Set the year in the footer
 document.getElementById('current-year').textContent = currentYear;
+
+// Function to show an image change menu
+function showImageChangeMenu(event) {
+    event.preventDefault(); // Prevent the default action (context menu)
+
+    // Create the menu with options
+    const menu = document.createElement('div');
+    menu.classList.add('image-change-menu');
+    menu.innerHTML = `
+        <p>Change Image</p>
+        <input type="file" id="image-upload" accept="image/*">
+        <button id="close-menu">Close</button>
+    `;
+
+    // Append the menu to the body
+    document.body.appendChild(menu);
+
+    // Position the menu at the event's location
+    menu.style.left = `${event.clientX}px`;
+    menu.style.top = `${event.clientY}px`;
+
+    // Close menu when clicking the close button
+    document.getElementById('close-menu').addEventListener('click', () => {
+        document.body.removeChild(menu);
+    });
+
+    // Handle the file input to change the image
+    document.getElementById('image-upload').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.querySelector('.round-image').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        document.body.removeChild(menu); // Close the menu after selecting an image
+    });
+}
+
+// Event listener for right-click on desktop
+document.querySelector('.round-image').addEventListener('contextmenu', showImageChangeMenu);
+
+// For long click on mobile (touchstart and touchend)
+let touchStartTime;
+const roundImage = document.querySelector('.round-image');
+
+roundImage.addEventListener('touchstart', function(e) {
+    touchStartTime = Date.now();
+});
+
+roundImage.addEventListener('touchend', function(e) {
+    const touchEndTime = Date.now();
+    if (touchEndTime - touchStartTime > 500) { // If touch lasts longer than 500ms
+        showImageChangeMenu(e);
+    }
+});
