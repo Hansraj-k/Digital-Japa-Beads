@@ -73,6 +73,11 @@ function updateCircleText() {
     });
 }
 
+// Initial setup
+updateCountDisplay();
+updateRoundDisplay();
+updateCircleText();  // Ensure letters are displayed right away
+
 // Function to save count and round data in localStorage
 function saveData() {
     localStorage.setItem('count', count);
