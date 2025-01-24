@@ -180,7 +180,7 @@ muteBtn.style.display = isMuted ? 'none' : 'inline-block';
 unmuteBtn.style.display = isMuted ? 'inline-block' : 'none';
 
 // Create a date object for the current time in IST (Indian Standard Time)
-const dateInIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
+const dateInIST = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
 
 // Get the current year in IST
 const currentYear = dateInIST.getFullYear();
@@ -215,6 +215,7 @@ function showImageChangeMenu(event) {
             const reader = new FileReader();
             reader.onload = function (event) {
                 document.getElementById('round-image').src = event.target.result; // Update the image
+                localStorage.setItem('selectedImage', event.target.result); // Save the image to localStorage
             };
             reader.readAsDataURL(file);
         }
@@ -228,7 +229,9 @@ function showImageChangeMenu(event) {
 }
 
 // Event listener for right-click on desktop
-document.getElementById('round-image').addEventListener('contextmenu', showImageChangeMenu);
+document.getElementById('round-image').addEventListener('contextmenu', function (event) {
+    showImageChangeMenu(event);
+});
 
 // Event listener for long press on mobile
 document.getElementById('round-image').addEventListener('touchstart', function (e) {
