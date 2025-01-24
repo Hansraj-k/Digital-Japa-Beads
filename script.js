@@ -154,19 +154,25 @@ cancelResetRoundBtn.addEventListener('click', () => {
 // Event listeners for mute and unmute buttons
 muteBtn.addEventListener('click', () => {
     isMuted = true;
-    audio.muted = true;
+    localStorage.setItem('isMuted', 'true');
     muteBtn.style.display = 'none';
     unmuteBtn.style.display = 'inline-block';
-    localStorage.setItem('isMuted', JSON.stringify(isMuted));
 });
 
 unmuteBtn.addEventListener('click', () => {
     isMuted = false;
-    audio.muted = false;
+    localStorage.setItem('isMuted', 'false');
     muteBtn.style.display = 'inline-block';
     unmuteBtn.style.display = 'none';
-    localStorage.setItem('isMuted', JSON.stringify(isMuted));
 });
+
+// Load mute state on page load
+window.addEventListener('load', () => {
+    isMuted = localStorage.getItem('isMuted') === 'true';
+    muteBtn.style.display = isMuted ? 'none' : 'inline-block';
+    unmuteBtn.style.display = isMuted ? 'inline-block' : 'none';
+});
+
 
 // Initial setup
 updateCountDisplay();
