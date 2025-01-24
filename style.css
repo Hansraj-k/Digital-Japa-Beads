@@ -321,76 +321,32 @@ img, button, .fa {
     outline: none;
 }
 
-/* Image change menu style */
+/* Center the image change menu in the middle of the image */
 .image-change-menu {
     position: absolute;
-    background-color: #222;
-    color: white;
+    display: none; /* Hidden initially */
+    background: #fff;
+    border: 1px solid #ccc;
     padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    z-index: 10000;
-    font-family: 'Biski', sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    text-align: center;
+    width: 200px;
+    border-radius: 8px;
 }
 
-.image-change-menu p {
-    margin: 0 0 10px;
-}
-
-.image-change-menu input[type="file"] {
+/* Style the input and buttons */
+.image-change-menu input {
+    width: 100%;
     margin-bottom: 10px;
-    padding: 5px;
 }
 
 .image-change-menu button {
+    width: 100%;
     padding: 8px;
-    background-color: #333;
-    border: none;
+    background-color: #007bff;
     color: white;
-    cursor: pointer;
-    font-size: 14px;
+    border: none;
     border-radius: 5px;
 }
 
-.image-change-menu button:hover {
-    background-color: #555;
-}
-
-/* Basic styling for the image container */
-.image-container {
-    position: relative;
-    display: inline-block;
-}
-
-.round-image {
-    width: 300px; /* Adjust based on your needs */
-    height: auto;
-    border: 2px solid #ccc;
-}
-
-/* Style for the image change menu */
-.image-change-menu {
-    position: absolute;
-    padding: 10px;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    display: none; /* Hidden by default */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-}
-
-.image-change-menu input {
-    margin: 10px 0;
-}
-
-#close-menu {
-    margin-top: 10px;
-    background-color: #f1f1f1;
-    border: none;
-    padding: 5px;
-    cursor: pointer;
-}
-
-#close-menu:hover {
-    background-color: #e0e0e0;
-}
