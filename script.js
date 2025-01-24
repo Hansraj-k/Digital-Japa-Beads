@@ -244,19 +244,3 @@ roundImage.addEventListener('touchend', function(e) {
         showImageChangeMenu(e);
     }
 });
-
-// Select the image and popup elements
-const image = document.getElementById('circle-image');
-const popupImageClick = document.getElementById('popup-image-click');
-const closePopupImage = document.getElementById('close-popup-image');
-
-// Show the popup when the image is clicked
-image.addEventListener('click', () => {
-    popupImageClick.style.display = 'block';
-});
-
-// Close the popup when the close button is clicked
-closePopupImage.addEventListener('click', () => {
-    popupImageClick.style.display = 'none';
-});
-
