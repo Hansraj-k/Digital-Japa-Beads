@@ -33,6 +33,18 @@ function updateRoundDisplay() {
     roundDisplay.textContent = `Round: ${round}`;
 }
 
+// Function to update the displayed round
+function updateRoundDisplay() {
+    const roundLabel = document.querySelector('.round-label');
+    const roundNumber = document.querySelector('.round-number');
+    const completedLabel = document.querySelector('.completed-label');
+
+    roundLabel.textContent = 'Round';
+    roundNumber.textContent = round; // Update the round number dynamically
+    completedLabel.textContent = 'Completed';
+}
+
+
 // Function to update the circle text based on the count
 function updateCircleText() {
     const letters = 'HAREKRISHNA'.repeat(9).split(''); // Example text repeated to cover enough letters
