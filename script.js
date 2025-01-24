@@ -244,3 +244,25 @@ roundImage.addEventListener('touchend', function(e) {
         showImageChangeMenu(e);
     }
 });
+
+// Get the image and input elements
+const imageInput = document.getElementById('image-upload');
+const imageDisplay = document.getElementById('round-image');
+
+// Add event listener to the file input
+imageInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            imageDisplay.src = e.target.result; // Update the image source
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Optional: Add click handler for the image itself (if needed)
+imageDisplay.addEventListener('click', () => {
+    imageInput.click(); // Trigger the file input dialog
+});
+
