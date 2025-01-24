@@ -244,112 +244,77 @@ function showImageChangeMenu(event) {
         <button id="close-menu">Close</button>
     `;
 
-    // Append the menu to the body
-    document.body.appendChild(menu);
+    // Select the image element and the menu
+const imageElement = document.getElementById('round-image');
+let imageChangeMenu = null;
 
-    // Position the menu at the event's location
-    menu.style.left = `${event.pageX}px`;
-    menu.style.top = `${event.pageY}px`;
-
-    // Handle image file selection
-    document.getElementById('image-upload').addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                const imageUrl = event.target.result;
-                // Set the uploaded image as the new round image
-                document.getElementById('round-image').src = imageUrl;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // Close the menu
-    document.getElementById('close-menu').addEventListener('click', () => {
-        document.body.removeChild(menu);
-    });
-}
-
-
-
-// References to the buttons and elements
-// Function to show the image change menu when right-clicking (desktop) or long-pressing (mobile)
+// Function to show the image change menu at the center of the image
 function showImageChangeMenu(event) {
-    event.preventDefault(); // Prevent the default action (context menu or touch menu)
+    event.preventDefault(); // Prevent the default action (right-click)
 
-    const img = event.target; // Get the image that was right-clicked or long-pressed
+    // If the menu is already open, do not create another
+    if (!imageChangeMenu) {
+        // Create the image change menu dynamically
+        imageChangeMenu = document.createElement('div');
+        imageChangeMenu.classList.add('image-change-menu');
+        imageChangeMenu.innerHTML = `
+            <p>Change Image</p>
+            <input type="file" id="image-upload" accept="image/*">
+            <button id="close-menu">Close</button>
+        `;
+        document.body.appendChild(imageChangeMenu);
 
-    // Create the menu with options
-    const menu = document.createElement('div');
-    menu.classList.add('image-change-menu');
-    menu.innerHTML = `
-        <p>Change Image</p>
-        <input type="file" id="image-upload" accept="image/*">
-        <button id="close-menu">Close</button>
-    `;
+        // Position the menu in the center of the image
+        const rect = imageElement.getBoundingClientRect();
+        const menuWidth = imageChangeMenu.offsetWidth;
+        const menuHeight = imageChangeMenu.offsetHeight;
+        const menuX = rect.left + (rect.width / 2) - (menuWidth / 2);
+        const menuY = rect.top + (rect.height / 2) - (menuHeight / 2);
+        
+        imageChangeMenu.style.left = `${menuX}px`;
+        imageChangeMenu.style.top = `${menuY}px`;
 
-    // Append the menu to the body
-    document.body.appendChild(menu);
+        // Handle the image upload
+        document.getElementById('image-upload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imageElement.src = e.target.result;
+                    localStorage.setItem('selectedImage', e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+            // Remove the menu after selecting the image
+            document.body.removeChild(imageChangeMenu);
+            imageChangeMenu = null;
+        });
 
-    // Calculate the position for the menu to be centered on the image
-    const rect = img.getBoundingClientRect();
-    const menuWidth = 150; // Adjust based on your menu's size
-    const menuHeight = 100; // Adjust based on your menu's size
-
-    menu.style.left = `${rect.left + rect.width / 2 - menuWidth / 2}px`;
-    menu.style.top = `${rect.top + rect.height / 2 - menuHeight / 2}px`;
-
-    // Display the menu
-    menu.style.display = 'block';
-
-    // Handle file input for image upload
-    document.getElementById('image-upload').addEventListener('change', function(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                img.src = e.target.result; // Change the image source to the uploaded one
-                localStorage.setItem('selectedImage', e.target.result); // Save the new image source in localStorage
-            };
-            reader.readAsDataURL(file);
-        }
-        document.body.removeChild(menu); // Close the menu after selecting an image
-    });
-
-    // Close the menu when the 'close' button is clicked
-    document.getElementById('close-menu').addEventListener('click', () => {
-        document.body.removeChild(menu);
-    });
+        // Close the menu when clicking the close button
+        document.getElementById('close-menu').addEventListener('click', function() {
+            document.body.removeChild(imageChangeMenu);
+            imageChangeMenu = null;
+        });
+    }
 }
 
-// Event listener for right-click (desktop)
-document.getElementById('round-image').addEventListener('contextmenu', showImageChangeMenu);
-
-// Event listener for long press (mobile)
-document.getElementById('round-image').addEventListener('touchstart', function(event) {
-    let touchTimer;
-    event.preventDefault(); // Prevent the default touch menu
-
-    touchTimer = setTimeout(() => {
-        showImageChangeMenu(event); // Show the image change menu after 1 second of long press
-    }, 1000);
-
-    // Clear the timer if the touch ends before the timeout
-    document.getElementById('round-image').addEventListener('touchend', () => {
-        clearTimeout(touchTimer);
-    });
+// Function for long-press on mobile devices
+let pressTimer;
+imageElement.addEventListener('touchstart', function(e) {
+    pressTimer = setTimeout(() => showImageChangeMenu(e), 1000); // Trigger after 1 second
 });
 
-// Load the saved image or the default image when the page loads
+imageElement.addEventListener('touchend', function() {
+    clearTimeout(pressTimer); // Clear the timeout if touch ends before 1 second
+});
+
+// Event listener for right-click on desktop
+imageElement.addEventListener('contextmenu', showImageChangeMenu);
+
+// On page load, check if there's a saved image
 window.onload = function() {
     const savedImage = localStorage.getItem('selectedImage');
-    const roundImage = document.getElementById('round-image');
-    
     if (savedImage) {
-        roundImage.src = savedImage; // Set the saved image if available
-    } else {
-        roundImage.src = 'rkhkmc.png'; // Set the default image if no saved image exists
+        imageElement.src = savedImage; // Set the saved image
     }
 };
-
