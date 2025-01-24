@@ -228,19 +228,46 @@ function showImageChangeMenu(event) {
 }
 
 // Event listener for right-click on desktop
-document.querySelector('.round-image').addEventListener('contextmenu', showImageChangeMenu);
 
-// For long click on mobile (touchstart and touchend)
-let touchStartTime;
-const roundImage = document.querySelector('.round-image');
 
-roundImage.addEventListener('touchstart', function(e) {
-    touchStartTime = Date.now();
-});
+document.addEventListener('contextmenu', showImageChangeMenu);
 
-roundImage.addEventListener('touchend', function(e) {
-    const touchEndTime = Date.now();
-    if (touchEndTime - touchStartTime > 500) { // If touch lasts longer than 500ms
-        showImageChangeMenu(e);
-    }
-});
+function showImageChangeMenu(event) {
+    event.preventDefault(); // Prevent the default action (context menu)
+
+    // Create the menu with options
+    const menu = document.createElement('div');
+    menu.classList.add('image-change-menu');
+    menu.innerHTML = `
+        <p>Change Image</p>
+        <input type="file" id="image-upload" accept="image/*">
+        <button id="close-menu">Close</button>
+    `;
+
+    // Append the menu to the body
+    document.body.appendChild(menu);
+
+    // Position the menu at the event's location
+    menu.style.left = `${event.pageX}px`;
+    menu.style.top = `${event.pageY}px`;
+
+    // Handle image file selection
+    document.getElementById('image-upload').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const imageUrl = event.target.result;
+                // Set the uploaded image as the new round image
+                document.getElementById('round-image').src = imageUrl;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Close the menu
+    document.getElementById('close-menu').addEventListener('click', () => {
+        document.body.removeChild(menu);
+    });
+}
+
