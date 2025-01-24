@@ -20,6 +20,8 @@ let muteBtn = document.getElementById('mute-btn');
 let unmuteBtn = document.getElementById('unmute-btn');
 let isMuted = false;
 let totalLetters = 108;
+let radius = 120; // Initial radius of the outermost circle
+let maxRadius = 180; // Maximum radius for the innermost circle
 
 // Function to update the displayed count
 function updateCountDisplay() {
@@ -242,11 +244,3 @@ roundImage.addEventListener('touchend', function(e) {
         showImageChangeMenu(e);
     }
 });
-
-// Ensure the menu is positioned correctly on mobile
-function showImageChangeMenu(event) {
-    event.preventDefault(); // Prevent the default action (context menu)
-
-    // Create the menu with options
-    const menu = document.createElement('div');
-
