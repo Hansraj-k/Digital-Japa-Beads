@@ -244,3 +244,9 @@ roundImage.addEventListener('touchend', function(e) {
         showImageChangeMenu(e);
     }
 });
+
+function hideAllPopups() {
+    popup108.style.display = 'none';
+    popupCountReset.style.display = 'none';
+    popupRoundReset.style.display = 'none';
+}
