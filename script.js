@@ -548,64 +548,116 @@ function showImageChangeMenu(event) {
 
 
 
-const roundImage = document.getElementById('round-image');
+// References to the buttons and elements
+
+const changeImageBtn = document.getElementById('change-image-btn');
+
 const imageChangeMenu = document.getElementById('image-change-menu');
+
 const imageUpload = document.getElementById('image-upload');
+
+const imagePreview = document.getElementById('image-preview');
+
+const saveImageBtn = document.getElementById('save-image-btn');
+
+const resetImageBtn = document.getElementById('reset-image-btn');
+
 const closeImageMenuBtn = document.getElementById('close-image-menu');
-let longPressTimer;
 
-// Function to show the image change menu
-function showImageChangeMenu(x, y) {
-  imageChangeMenu.style.display = 'block';
-  imageChangeMenu.style.left = `${x}px`;
-  imageChangeMenu.style.top = `${y}px`;
-}
 
-// Function to hide the image change menu
-function hideImageChangeMenu() {
-  imageChangeMenu.style.display = 'none';
-}
 
-// Right-click (desktop) handler
-roundImage.addEventListener('contextmenu', (event) => {
-  event.preventDefault();
-  const { clientX, clientY } = event;
-  showImageChangeMenu(clientX, clientY);
+// Show the image change menu
+
+changeImageBtn.addEventListener('click', () => {
+
+    imageChangeMenu.style.display = 'block'; // Show the menu
+
 });
 
-// Long press (mobile) handler
-roundImage.addEventListener('touchstart', (event) => {
-  longPressTimer = setTimeout(() => {
-    const touch = event.touches[0];
-    showImageChangeMenu(touch.clientX, touch.clientY);
-  }, 600); // 600ms threshold for long press
+
+
+// Close the image change menu
+
+closeImageMenuBtn.addEventListener('click', () => {
+
+    imageChangeMenu.style.display = 'none'; // Hide the menu
+
 });
 
-roundImage.addEventListener('touchend', () => clearTimeout(longPressTimer));
-roundImage.addEventListener('touchmove', () => clearTimeout(longPressTimer));
 
-// Handle file input for image upload
+
+// Image upload handling
+
 imageUpload.addEventListener('change', (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const newImageSrc = e.target.result;
-      roundImage.src = newImageSrc;
-      localStorage.setItem('selectedImage', newImageSrc);
-    };
-    reader.readAsDataURL(file);
-  }
-  hideImageChangeMenu();
+
+    const file = event.target.files[0];
+
+    if (file) {
+
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+
+            imagePreview.src = e.target.result; // Display the selected image
+
+            imagePreview.style.display = 'block'; // Show preview
+
+        };
+
+        reader.readAsDataURL(file);
+
+    }
+
 });
 
-// Close image change menu
-closeImageMenuBtn.addEventListener('click', hideImageChangeMenu);
 
-// Load saved image from localStorage on page load
-window.onload = () => {
-  const savedImage = localStorage.getItem('selectedImage');
-  if (savedImage) {
-    roundImage.src = savedImage;
-  }
+
+// Save the image
+
+saveImageBtn.addEventListener('click', () => {
+
+    const newImageSrc = imagePreview.src;
+
+    if (newImageSrc) {
+
+        localStorage.setItem('selectedImage', newImageSrc); // Save the image source to localStorage
+
+        document.querySelector('.round-image').src = newImageSrc; // Update the round image in the UI
+
+        imageChangeMenu.style.display = 'none'; // Close the menu
+
+    }
+
+});
+
+
+
+// Reset the image to the default one
+
+resetImageBtn.addEventListener('click', () => {
+
+    localStorage.removeItem('selectedImage'); // Remove saved image from localStorage
+
+    document.querySelector('.round-image').src = 'rkhkmc.png'; // Reset to the default image
+
+    imagePreview.src = ''; // Clear preview
+
+    imagePreview.style.display = 'none'; // Hide preview
+
+});
+
+
+
+// Check if there's a saved image in localStorage
+
+window.onload = function() {
+
+    const savedImage = localStorage.getItem('selectedImage');
+
+    if (savedImage) {
+
+        document.querySelector('.round-image').src = savedImage; // Set the saved image
+
+    }
+
 };
