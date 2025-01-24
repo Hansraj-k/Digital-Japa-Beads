@@ -154,25 +154,19 @@ cancelResetRoundBtn.addEventListener('click', () => {
 // Event listeners for mute and unmute buttons
 muteBtn.addEventListener('click', () => {
     isMuted = true;
-    localStorage.setItem('isMuted', 'true');
+    audio.muted = true;
     muteBtn.style.display = 'none';
     unmuteBtn.style.display = 'inline-block';
+    localStorage.setItem('isMuted', JSON.stringify(isMuted));
 });
 
 unmuteBtn.addEventListener('click', () => {
     isMuted = false;
-    localStorage.setItem('isMuted', 'false');
+    audio.muted = false;
     muteBtn.style.display = 'inline-block';
     unmuteBtn.style.display = 'none';
+    localStorage.setItem('isMuted', JSON.stringify(isMuted));
 });
-
-// Load mute state on page load
-window.addEventListener('load', () => {
-    isMuted = localStorage.getItem('isMuted') === 'true';
-    muteBtn.style.display = isMuted ? 'none' : 'inline-block';
-    unmuteBtn.style.display = isMuted ? 'inline-block' : 'none';
-});
-
 
 // Initial setup
 updateCountDisplay();
@@ -250,31 +244,3 @@ roundImage.addEventListener('touchend', function(e) {
         showImageChangeMenu(e);
     }
 });
-
-// Select the upload input and target image element
-const imageUpload = document.getElementById('image-upload');
-const roundImage = document.querySelector('.round-image'); // Assuming you want to update the round image
-
-// Function to preview the selected image
-imageUpload.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            roundImage.src = e.target.result; // Set the selected image as the source
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
-// Show the file input when clicking the image (optional)
-roundImage.addEventListener('click', () => {
-    imageUpload.click();
-});
-
-
-function hideAllPopups() {
-    popup108.style.display = 'none';
-    popupCountReset.style.display = 'none';
-    popupRoundReset.style.display = 'none';
-}
