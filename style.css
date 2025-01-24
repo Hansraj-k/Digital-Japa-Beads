@@ -352,23 +352,3 @@ img, button, .fa {
 .image-change-menu button:hover {
     background-color: #555;
 }
-
-.image-change-menu {
-    position: absolute;
-    background-color: #222;
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    z-index: 10000;
-    font-family: 'Biski', sans-serif;
-    max-width: 90%; /* Ensure it fits on mobile screens */
-}
-
-.image-change-menu input[type="file"] {
-    width: 100%; /* Full width on mobile */
-    margin-bottom: 10px;
-    padding: 5px;
-    color: white; /* Match theme */
-    background-color: #333; /* Match theme */
-}
