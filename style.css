@@ -15,6 +15,42 @@
     position: relative;
 }
 
+/* Styling for the round display container */
+.round-display-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Styling for the round display text */
+.round-display {
+    text-align: center;
+    font-family: 'Biski', sans-serif;
+    font-size: 20px;
+    color: white;
+    line-height: 1.2;
+    position: relative;
+    display: flex; /* Ensures both number and text stay in a row */
+    flex-direction: column; /* Stack them vertically */
+    align-items: center;
+}
+
+/* Styling for the large round number */
+.round-number {
+    font-size: 50px;
+    font-weight: bold;
+    line-height: 1;
+    display: block;
+}
+
+/* Styling for the round text (Round Completed) */
+.round-text {
+    font-size: 20px;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+
 /* Styling for the large round number */
 .round-number {
     font-size: 50px;
