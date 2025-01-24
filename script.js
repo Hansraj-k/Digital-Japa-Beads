@@ -173,6 +173,12 @@ updateCountDisplay();
 updateRoundDisplay();
 updateCircleText();
 
+// Initial setup
+updateCountDisplay();
+updateRoundDisplay();
+updateCircleText();  // This ensures the circle text appears when the page loads
+
+
 // Load mute state from localStorage
 isMuted = JSON.parse(localStorage.getItem('isMuted')) || false;
 audio.muted = isMuted;
