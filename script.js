@@ -271,3 +271,62 @@ function showImageChangeMenu(event) {
     });
 }
 
+
+
+// References to the buttons and elements
+const changeImageBtn = document.getElementById('change-image-btn');
+const imageChangeMenu = document.getElementById('image-change-menu');
+const imageUpload = document.getElementById('image-upload');
+const imagePreview = document.getElementById('image-preview');
+const saveImageBtn = document.getElementById('save-image-btn');
+const resetImageBtn = document.getElementById('reset-image-btn');
+const closeImageMenuBtn = document.getElementById('close-image-menu');
+
+// Show the image change menu
+changeImageBtn.addEventListener('click', () => {
+    imageChangeMenu.style.display = 'block'; // Show the menu
+});
+
+// Close the image change menu
+closeImageMenuBtn.addEventListener('click', () => {
+    imageChangeMenu.style.display = 'none'; // Hide the menu
+});
+
+// Image upload handling
+imageUpload.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            imagePreview.src = e.target.result; // Display the selected image
+            imagePreview.style.display = 'block'; // Show preview
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Save the image
+saveImageBtn.addEventListener('click', () => {
+    const newImageSrc = imagePreview.src;
+    if (newImageSrc) {
+        localStorage.setItem('selectedImage', newImageSrc); // Save the image source to localStorage
+        document.querySelector('.round-image').src = newImageSrc; // Update the round image in the UI
+        imageChangeMenu.style.display = 'none'; // Close the menu
+    }
+});
+
+// Reset the image to the default one
+resetImageBtn.addEventListener('click', () => {
+    localStorage.removeItem('selectedImage'); // Remove saved image from localStorage
+    document.querySelector('.round-image').src = 'rkhkmc.png'; // Reset to the default image
+    imagePreview.src = ''; // Clear preview
+    imagePreview.style.display = 'none'; // Hide preview
+});
+
+// Check if there's a saved image in localStorage
+window.onload = function() {
+    const savedImage = localStorage.getItem('selectedImage');
+    if (savedImage) {
+        document.querySelector('.round-image').src = savedImage; // Set the saved image
+    }
+};
