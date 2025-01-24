@@ -32,12 +32,42 @@
     </div>
 
     <!-- Circle Container -->
-    <div class="circle-container">
-        <img src="rkhkmc.png" alt="Round Image" class="round-image">
-        <div class="circle-text">
-            <!-- Letters will go here -->
-        </div>
+    <!-- Circle Container -->
+<div class="circle-container">
+    <img id="round-image" src="rkhkmc.png" alt="Round Image" class="round-image">
+    <div class="circle-text" id="circle-text">
+        <!-- Letters will go here -->
     </div>
+</div>
+
+<!-- Popup for changing image -->
+<div id="popup-change-image" class="popup">
+    <div class="popup-content">
+        <p>Do you want to change the image or text?</p>
+        <button id="change-image-btn">Change Image</button>
+        <button id="change-text-btn">Change Text</button>
+        <button id="close-popup">Cancel</button>
+    </div>
+</div>
+
+<!-- Popup for uploading image -->
+<div id="popup-upload-image" class="popup">
+    <div class="popup-content">
+        <input type="file" id="upload-image" accept="image/*">
+        <button id="confirm-upload-image">Upload</button>
+        <button id="cancel-upload-image">Cancel</button>
+    </div>
+</div>
+
+<!-- Popup for changing text -->
+<div id="popup-change-text" class="popup">
+    <div class="popup-content">
+        <input type="text" id="new-text" placeholder="Enter new text">
+        <button id="confirm-change-text">Change Text</button>
+        <button id="cancel-change-text">Cancel</button>
+    </div>
+</div>
+
 
     <!-- Counter and Round Display -->
     <div class="counter-container">
