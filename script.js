@@ -274,59 +274,82 @@ function showImageChangeMenu(event) {
 
 
 // References to the buttons and elements
-const changeImageBtn = document.getElementById('change-image-btn');
-const imageChangeMenu = document.getElementById('image-change-menu');
-const imageUpload = document.getElementById('image-upload');
-const imagePreview = document.getElementById('image-preview');
-const saveImageBtn = document.getElementById('save-image-btn');
-const resetImageBtn = document.getElementById('reset-image-btn');
-const closeImageMenuBtn = document.getElementById('close-image-menu');
+// Function to show the image change menu when right-clicking (desktop) or long-pressing (mobile)
+function showImageChangeMenu(event) {
+    event.preventDefault(); // Prevent the default action (context menu or touch menu)
 
-// Show the image change menu
-changeImageBtn.addEventListener('click', () => {
-    imageChangeMenu.style.display = 'block'; // Show the menu
+    const img = event.target; // Get the image that was right-clicked or long-pressed
+
+    // Create the menu with options
+    const menu = document.createElement('div');
+    menu.classList.add('image-change-menu');
+    menu.innerHTML = `
+        <p>Change Image</p>
+        <input type="file" id="image-upload" accept="image/*">
+        <button id="close-menu">Close</button>
+    `;
+
+    // Append the menu to the body
+    document.body.appendChild(menu);
+
+    // Calculate the position for the menu to be centered on the image
+    const rect = img.getBoundingClientRect();
+    const menuWidth = 150; // Adjust based on your menu's size
+    const menuHeight = 100; // Adjust based on your menu's size
+
+    menu.style.left = `${rect.left + rect.width / 2 - menuWidth / 2}px`;
+    menu.style.top = `${rect.top + rect.height / 2 - menuHeight / 2}px`;
+
+    // Display the menu
+    menu.style.display = 'block';
+
+    // Handle file input for image upload
+    document.getElementById('image-upload').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                img.src = e.target.result; // Change the image source to the uploaded one
+                localStorage.setItem('selectedImage', e.target.result); // Save the new image source in localStorage
+            };
+            reader.readAsDataURL(file);
+        }
+        document.body.removeChild(menu); // Close the menu after selecting an image
+    });
+
+    // Close the menu when the 'close' button is clicked
+    document.getElementById('close-menu').addEventListener('click', () => {
+        document.body.removeChild(menu);
+    });
+}
+
+// Event listener for right-click (desktop)
+document.getElementById('round-image').addEventListener('contextmenu', showImageChangeMenu);
+
+// Event listener for long press (mobile)
+document.getElementById('round-image').addEventListener('touchstart', function(event) {
+    let touchTimer;
+    event.preventDefault(); // Prevent the default touch menu
+
+    touchTimer = setTimeout(() => {
+        showImageChangeMenu(event); // Show the image change menu after 1 second of long press
+    }, 1000);
+
+    // Clear the timer if the touch ends before the timeout
+    document.getElementById('round-image').addEventListener('touchend', () => {
+        clearTimeout(touchTimer);
+    });
 });
 
-// Close the image change menu
-closeImageMenuBtn.addEventListener('click', () => {
-    imageChangeMenu.style.display = 'none'; // Hide the menu
-});
-
-// Image upload handling
-imageUpload.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            imagePreview.src = e.target.result; // Display the selected image
-            imagePreview.style.display = 'block'; // Show preview
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
-// Save the image
-saveImageBtn.addEventListener('click', () => {
-    const newImageSrc = imagePreview.src;
-    if (newImageSrc) {
-        localStorage.setItem('selectedImage', newImageSrc); // Save the image source to localStorage
-        document.querySelector('.round-image').src = newImageSrc; // Update the round image in the UI
-        imageChangeMenu.style.display = 'none'; // Close the menu
-    }
-});
-
-// Reset the image to the default one
-resetImageBtn.addEventListener('click', () => {
-    localStorage.removeItem('selectedImage'); // Remove saved image from localStorage
-    document.querySelector('.round-image').src = 'rkhkmc.png'; // Reset to the default image
-    imagePreview.src = ''; // Clear preview
-    imagePreview.style.display = 'none'; // Hide preview
-});
-
-// Check if there's a saved image in localStorage
+// Load the saved image or the default image when the page loads
 window.onload = function() {
     const savedImage = localStorage.getItem('selectedImage');
+    const roundImage = document.getElementById('round-image');
+    
     if (savedImage) {
-        document.querySelector('.round-image').src = savedImage; // Set the saved image
+        roundImage.src = savedImage; // Set the saved image if available
+    } else {
+        roundImage.src = 'rkhkmc.png'; // Set the default image if no saved image exists
     }
 };
+
