@@ -268,3 +268,12 @@ imageInput.addEventListener('change', (event) => {
         alert('No file selected. Please choose an image.');
     }
 });
+
+function closeImageMenu() {
+    imageChangeMenu.style.display = 'none';
+}
+
+// Example: Open the menu (adjust as needed)
+document.getElementById('open-image-menu-btn').addEventListener('click', () => {
+    imageChangeMenu.style.display = 'block';
+});
