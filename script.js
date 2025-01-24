@@ -178,3 +178,12 @@ isMuted = JSON.parse(localStorage.getItem('isMuted')) || false;
 audio.muted = isMuted;
 muteBtn.style.display = isMuted ? 'none' : 'inline-block';
 unmuteBtn.style.display = isMuted ? 'inline-block' : 'none';
+
+// Create a date object for the current time in IST (Indian Standard Time)
+const dateInIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
+
+// Get the current year in IST
+const currentYear = dateInIST.getFullYear();
+
+// Set the year in the footer
+document.getElementById('current-year').textContent = currentYear;
