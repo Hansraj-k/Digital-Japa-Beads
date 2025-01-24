@@ -178,6 +178,12 @@ button:hover::after {
     font-family: 'Biski', sans-serif;
 }
 
+.round-display {
+    font-size: 20px;
+    margin: 10px 0;
+    font-family: 'Biski', sans-serif;
+}
+
 /* Popup styling */
 .popup {
     display: none;
@@ -232,7 +238,6 @@ button:hover::after {
     width: 90px;
     height: 90px;
 }
-
 .circle-container{
     padding-top: 270px; 
 }
@@ -256,9 +261,7 @@ button:hover::after {
     margin-top: 30px;
 }
 }
-
 p{font-weight: bold;  color: lightgrey;}
-
 html, body {
     margin: 0;
     padding: 0;
@@ -300,7 +303,6 @@ html, body {
 .footer img {
     height: 100px;
 }
-
 /* Copyright text styling */
 .footer .copyright {
     font-size: 12px;
