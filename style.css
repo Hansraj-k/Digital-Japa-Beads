@@ -1,3 +1,103 @@
+/* Styling for the round display container */
+.round-display-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Styling for the round display text */
+.round-display {
+    text-align: center;
+    font-family: 'Biski', sans-serif;
+    font-size: 20px;
+    color: white;
+    line-height: 1.2;
+    position: relative;
+}
+
+/* Styling for the round display container */
+.round-display-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Styling for the round display text */
+.round-display {
+    text-align: center;
+    font-family: 'Biski', sans-serif;
+    font-size: 20px;
+    color: white;
+    line-height: 1.2;
+    position: relative;
+    display: flex; /* Ensures both number and text stay in a row */
+    flex-direction: column; /* Stack them vertically */
+    align-items: center;
+}
+
+/* Styling for the large round number */
+.round-number {
+    font-size: 50px;
+    font-weight: bold;
+    line-height: 1;
+    display: block;
+}
+
+/* Styling for the round text (Round Completed) */
+.round-text {
+    font-size: 20px;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+
+/* Styling for the large round number */
+.round-number {
+    font-size: 50px;
+    font-weight: bold;
+    line-height: 1;
+    display: block;
+}
+
+/* Styling for the round display container */
+.round-display-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Styling for the round display text */
+.round-display {
+    text-align: center;
+    font-family: 'Biski', sans-serif;
+    font-size: 20px;
+    color: white;
+    line-height: 1.2;
+    position: relative;
+}
+
+/* Styling for the large round number */
+.round-number {
+    font-size: 50px;
+    font-weight: bold;
+    line-height: 1;
+    display: block;
+}
+
+/* Styling for the round text (Round Completed) */
+.round-text {
+    font-size: 20px;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+
+/* Styling for the round text (Round Completed) */
+.round-text {
+    font-size: 20px;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
 /* Define Kabel font */
 @font-face {
     font-family: 'Kabel';
@@ -57,37 +157,17 @@ body {
 /* Round display container */
 .round-display-container {
     display: flex;
-    justify-content: center;
+    justify-content: right;
     align-items: center;
-    flex-grow: 2;
-}
-
-/* Styling for the round display text */
-.round-display {
+    flex-grow: 2;  /* Adjusting the space to control gap */
     text-align: center;
-    font-family: 'Biski', sans-serif;
-    font-size: 20px;
-    color: white;
-    line-height: 1.2;
-    position: relative;
+}
+
+/* Toolbar right buttons */
+.toolbar-right {
     display: flex;
-    flex-direction: column;
     align-items: center;
-}
-
-/* Styling for the large round number */
-.round-number {
-    font-size: 50px;
-    font-weight: bold;
-    line-height: 1;
-    display: block;
-}
-
-/* Styling for the round text (Round Completed) */
-.round-text {
-    font-size: 20px;
-    line-height: 1.2;
-    text-transform: uppercase;
+    gap: 10px;  /* Adjusted the gap to give more space for the buttons */
 }
 
 /* Styling for buttons */
@@ -102,11 +182,11 @@ button {
     font-family: 'Biski', sans-serif;
 }
 
-#reset-count-btn {
+#reset-count-btn{
     padding: 10px 0px;
 }
 
-#reset-round-btn {
+#reset-round-btn{
     padding-right: 6px;
 }
 
@@ -119,7 +199,7 @@ button:hover {
 button:hover::after {
     content: attr(data-tooltip);
     position: absolute;
-    bottom: -35px;
+    bottom: -35px; /* Ensure enough space for multiple lines */
     left: 50%;
     transform: translateX(-50%);
     padding: 5px;
@@ -127,9 +207,9 @@ button:hover::after {
     color: white;
     border-radius: 5px;
     font-size: 12px;
-    white-space: pre-wrap;
-    text-align: center;
-    line-height: 1.2;
+    white-space: pre-wrap; /* Allow text to wrap to the next line */
+    text-align: center; /* Center the text */
+    line-height: 1.2; /* Adjust line spacing */
 }
 
 /* Counter container styling */
@@ -156,7 +236,6 @@ button:hover::after {
     justify-content: center;
     align-items: center;
     margin: auto;
-    padding-top: 270px;
 }
 
 /* Circle text inside the circle */
@@ -195,6 +274,12 @@ button:hover::after {
 /* Count and round display styling */
 .count-display {
     font-size: 51px;
+    margin: 10px 0;
+    font-family: 'Biski', sans-serif;
+}
+
+.round-display {
+    font-size: 20px;
     margin: 10px 0;
     font-family: 'Biski', sans-serif;
 }
@@ -253,6 +338,41 @@ button:hover::after {
     width: 90px;
     height: 90px;
 }
+.circle-container{
+    padding-top: 270px; 
+}
+
+/* Mobile-specific styling for the image */
+@media (max-width: 768px) {
+    .rkhkmc {
+        width: 150px;
+        height: 150px;
+    }
+    .circle-container{
+        padding-top: 450px; 
+    }
+    .toolbar-logo {
+    width: 30px;
+    height: 30px;
+}
+    #count-btn{
+        padding-top: 0px;}
+    .counter-container {
+    margin-top: 30px;
+}
+}
+p{font-weight: bold;  color: lightgrey;}
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%; /* Ensures the body fills the viewport */
+    display: flex;
+    flex-direction: column; /* Enables a column layout */
+}
+
+.container {
+    flex: 1; /* Allows the main content to expand while pushing the footer down */
+}
 
 .footer {
     background: #000;
@@ -283,7 +403,6 @@ button:hover::after {
 .footer img {
     height: 100px;
 }
-
 /* Copyright text styling */
 .footer .copyright {
     font-size: 12px;
@@ -291,46 +410,4 @@ button:hover::after {
     margin-top: 10px;
     text-align: center;
     font-family: 'Biski', sans-serif;
-}
-
-/* Mobile-specific styling for the image */
-@media (max-width: 768px) {
-    .rkhkmc {
-        width: 150px;
-        height: 150px;
-    }
-
-    .circle-container {
-        padding-top: 450px;
-    }
-
-    .toolbar-logo {
-        width: 30px;
-        height: 30px;
-    }
-
-    #count-btn {
-        padding-top: 0px;
-    }
-
-    .counter-container {
-        margin-top: 30px;
-    }
-}
-
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.container {
-    flex: 1;
-}
-
-footer p {
-    font-weight: bold;
-    color: lightgrey;
-}
+} remove duplicates
