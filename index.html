@@ -1,249 +1,151 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <meta name="theme-color" content="#000000">
-
     <title>Digital Japa Beads</title>
 
+    <!-- Linking CSS -->
     <link rel="stylesheet" href="style.css">
 
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Kabel&family=Biski&display=swap" rel="stylesheet">
 
+    <!-- Favicon -->
     <link rel="icon" href="rkhkmclogo.jpg">
 
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
+    <!-- Prevent right-click -->
     <script>
-
         document.addEventListener('contextmenu', (event) => event.preventDefault());
-
     </script>
-
 </head>
 
 <body>
-
     <div class="container">
 
+        <!-- Toolbar Section -->
         <div class="toolbar">
-
             <img src="rkhkmclogo.jpg" alt="Logo" class="toolbar-logo">
-
             <div class="round-display-container">
-
                 <div class="round-display" id="round-display">Round: 0</div>
-
             </div>
-
             <div class="toolbar-right">
-
                 <button id="reset-round-btn" data-tooltip="Reset Round">
-
                     <i class="fa-solid fa-arrows-rotate"></i>
-
                 </button>
-
                 <button id="mute-btn" data-tooltip="Mute Notification">
-
                     <i class="fa-solid fa-volume-high"></i>
-
                 </button>
-
                 <button id="unmute-btn" style="display: none;" data-tooltip="Unmute Notification">
-
                     <i class="fa-solid fa-volume-xmark"></i>
-
                 </button>
-
             </div>
-
         </div>
 
+        <!-- Circle Container -->
         <div class="circle-container">
-
             <img src="rkhkmc.png" alt="Round Image" class="round-image" id="round-image">
-
             <div class="circle-text"></div>
-
         </div>
 
-
-
-
-
-
-
-<!-- Image Change Menu -->
-
-<div id="image-change-menu" class="image-change-menu">
-
-    <p>Select an image</p>
-
-    <input type="file" id="image-upload" accept="image/*">
-
-    <div id="image-preview-container">
-
-        <img id="image-preview" src="" alt="Image Preview" />
-
-    </div>
-
-    <button id="save-image-btn">Save Image</button>
-
-    <button id="reset-image-btn">Reset Image</button>
-
-    <button id="close-image-menu">Close</button>
-
-</div>
-
-
-
-        
-
-        <div class="counter-container">
-
-            <div class="count-display-container">
-
-                <div class="count-display" id="count-display">0</div>
-
-                <button id="reset-count-btn" data-tooltip="Reset Count">
-
-                    <i class="fa-solid fa-arrows-rotate"></i>
-
-                </button>
-
+        <!-- Image Change Menu -->
+        <div id="image-change-menu" class="image-change-menu">
+            <p>Select an image</p>
+            <input type="file" id="image-upload" accept="image/*">
+            <div id="image-preview-container">
+                <img id="image-preview" src="" alt="Image Preview" />
             </div>
-
+            <button id="save-image-btn">Save Image</button>
+            <button id="reset-image-btn">Reset Image</button>
+            <button id="close-image-menu">Close</button>
         </div>
 
+        <!-- Counter Container -->
+        <div class="counter-container">
+            <div class="count-display-container">
+                <div class="count-display" id="count-display">0</div>
+                <button id="reset-count-btn" data-tooltip="Reset Count">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Count Button -->
         <div class="buttons">
-
             <button id="count-btn">
-
                 <img src="rkhkmc.jpg" alt="Plus Icon" class="rkhkmc">
-
             </button>
-
         </div>
 
-    </div>
-
-
-
-    <div id="popup-108" class="popup">
-
-        <div class="popup-content">
-
-            <p>Counter reached 108 counts. Do you want to reset?</p>
-
-            <button id="confirm-reset-108">Reset Count</button>
-
-            <button id="cancel-reset-108">Cancel</button>
-
+        <!-- Popups -->
+        <div id="popup-108" class="popup">
+            <div class="popup-content">
+                <p>Counter reached 108 counts. Do you want to reset?</p>
+                <button id="confirm-reset-108">Reset Count</button>
+                <button id="cancel-reset-108">Cancel</button>
+            </div>
         </div>
 
-    </div>
-
-
-
-    <div id="popup-count-reset" class="popup">
-
-        <div class="popup-content">
-
-            <p>Are you sure you want to reset the count only?</p>
-
-            <button id="confirm-reset-count">Yes</button>
-
-            <button id="cancel-reset-count">No</button>
-
+        <div id="popup-count-reset" class="popup">
+            <div class="popup-content">
+                <p>Are you sure you want to reset the count only?</p>
+                <button id="confirm-reset-count">Yes</button>
+                <button id="cancel-reset-count">No</button>
+            </div>
         </div>
 
-    </div>
-
-
-
-    <div id="popup-round-reset" class="popup">
-
-        <div class="popup-content">
-
-            <p>Are you sure you want to reset the round only?</p>
-
-            <button id="confirm-reset-round">Yes</button>
-
-            <button id="cancel-reset-round">No</button>
-
+        <div id="popup-round-reset" class="popup">
+            <div class="popup-content">
+                <p>Are you sure you want to reset the round only?</p>
+                <button id="confirm-reset-round">Yes</button>
+                <button id="cancel-reset-round">No</button>
+            </div>
         </div>
 
-    </div>
+        <!-- Footer -->
+        <div class="footer">
+            <div class="containerk">
+                <hr>
+                <p>Note: Your counter data saves automatically in your browser, letting you pick up where you left off. Clearing your browser's cache or data will reset it.</p>
 
+                <!-- Image Change Button -->
+                <button id="change-image-btn">Change Image</button>
 
+                <p class="end">
+                    <a href="https://hansrajweb.netlify.app">
+                        <img class="img" src="ta.png" alt="Footer Logo">
+                    </a>
+                </p>
 
-    <div class="footer">
-
-        <div class="containerk">
-
-            <hr>
-
-            <p>Note: Your counter data saves automatically in your browser, letting you pick up where you left off. Clearing your browser's cache or data will reset it.</p>
-    <!-- Image Change Button -->
-
-<button id="change-image-btn">Change Image</button>
-            <p class="end">
-
-                <a href="https://hansrajweb.netlify.app">
-
-                    <img class="img" src="ta.png" alt="Footer Logo">
-
-                </a>
-
-            </p>
-
-            <p class="copyright">
-
-                <i class="fa fa-copyright"></i> <span id="current-year"></span> Digital Japa Beads. All rights reserved.
-
-            </p>
-
+                <p class="copyright">
+                    <i class="fa fa-copyright"></i> <span id="current-year"></span> Digital Japa Beads. All rights reserved.
+                </p>
+            </div>
         </div>
-
     </div>
 
-
-
+    <!-- Audio -->
     <audio id="audio" src="rkhkmc.mp3" preload="auto"></audio>
 
-
-
+    <!-- Scripts -->
     <script src="script.js"></script>
 
     <script>
-
         if ('serviceWorker' in navigator) {
-
             navigator.serviceWorker.register('service-worker.js')
-
                 .then(() => {
-
                     console.log('Service Worker Registered');
-
                 })
-
                 .catch(error => {
-
                     console.log('Service Worker Registration Failed:', error);
-
                 });
-
         }
-
     </script>
-
 </body>
 
 </html>
