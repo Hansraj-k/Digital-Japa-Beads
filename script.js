@@ -291,3 +291,12 @@ window.onload = function() {
     }
 };
 
+
+// Image change on right-click or long press
+function showImageChangeMenu(event) {
+    event.preventDefault();
+    const menu = document.getElementById('image-change-menu');
+    menu.style.display = 'block';
+    menu.style.left = `${event.pageX}px`;
+    menu.style.top = `${event.pageY}px`;
+}
