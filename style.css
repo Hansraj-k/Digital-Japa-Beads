@@ -329,7 +329,7 @@ img, button, .fa {
 /* Image change menu style */
 .image-change-menu {
     position: fixed;
-    background-color: #222;
+    background-color: #000;
     color: white;
     padding: 10px;
     border-radius: 100px;
@@ -370,7 +370,7 @@ img, button, .fa {
 #image-preview {
     max-width: 100%;
     height: auto;
-    border-radius: 100px;
+    border-radius: 10px;
     margin-bottom: 10px;
 }
 
@@ -392,17 +392,17 @@ img, button, .fa {
 
 /* Hover effects for close and reset buttons */
 #reset-image-btn:hover {
-    background-color: #b71c1c;
+    background-color: #fff;
 }
 
 #save-image-btn:hover {
-    background-color: #388e3c;
+    background-color: #fff;
 }
 
 /* Image change menu style */
 .image-change-menu {
     position: fixed;
-    background-color: #222;
+    background-color: #000;
     color: white;
     padding: 10px;
     border-radius: 100px;
