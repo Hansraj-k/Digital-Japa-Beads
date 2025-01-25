@@ -8,6 +8,14 @@ let circleText = document.querySelector('.circle-text');
 let popup108 = document.getElementById('popup-108');
 let popupCountReset = document.getElementById('popup-count-reset');
 let popupRoundReset = document.getElementById('popup-round-reset');
+let confirmReset108Btn = document.getElementById('confirm-reset-108');
+let cancelReset108Btn = document.getElementById('cancel-reset-108');
+let confirmResetCountBtn = document.getElementById('confirm-reset-count');
+let cancelResetCountBtn = document.getElementById('cancel-reset-count');
+let confirmResetRoundBtn = document.getElementById('confirm-reset-round');
+let cancelResetRoundBtn = document.getElementById('cancel-reset-round');
+let resetCountBtn = document.getElementById('reset-count-btn');
+let resetRoundBtn = document.getElementById('reset-round-btn');
 let muteBtn = document.getElementById('mute-btn');
 let unmuteBtn = document.getElementById('unmute-btn');
 let isMuted = false;
@@ -27,7 +35,7 @@ function updateRoundDisplay() {
 
 // Function to update the circle text based on the count
 function updateCircleText() {
-    const letters = 'HAREKRISHNA'.repeat(9).split(''); // Example text repeated to cover enough letters
+    const letters = 'HAREKRISHNA'.repeat(9).split('');
     const circleDivisions = [33, 36, 39]; // Increased letters per circle for tighter spacing
     const radiusIncrement = 30; // Reduced increment radius for closer circles
     const initialRadius = 100; // Starting radius
@@ -53,7 +61,7 @@ function updateCircleText() {
             letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
 
             // Highlight the letters based on count
-            letter.style.color = letterIndex < count ? 'white' : 'grey'; // Default color
+            letter.style.color = letterIndex < count ? 'white' : 'grey';
 
             circleText.appendChild(letter);
             letterIndex++; // Move to the next letter
@@ -81,7 +89,7 @@ function updateCounter() {
             audio.play();
         }
     } else {
-        showResetPopup(); // Show reset popup if 108 is reached
+        showResetPopup(); // Function to show reset popup if 108 is reached
     }
 }
 
@@ -90,67 +98,71 @@ function showResetPopup() {
     popup108.style.display = 'block'; // Show the popup
 }
 
-// Event listeners for the main count button
+// Event listener for the main count button
 document.getElementById('count-btn').addEventListener('click', updateCounter);
 
-// Event listeners for the reset popups (Count, Round, and 108)
-const resetPopupElements = [
-    { btn: 'reset-count-btn', popup: popupCountReset, confirmBtn: 'confirm-reset-count', cancelBtn: 'cancel-reset-count', resetFunc: resetCount },
-    { btn: 'reset-round-btn', popup: popupRoundReset, confirmBtn: 'confirm-reset-round', cancelBtn: 'cancel-reset-round', resetFunc: resetRound },
-    { btn: 'confirm-reset-108', popup: popup108, resetFunc: reset108 }
-];
-
-resetPopupElements.forEach(({ btn, popup, confirmBtn, cancelBtn, resetFunc }) => {
-    document.getElementById(btn).addEventListener('click', () => {
-        popup.style.display = 'block';
-    });
-
-    document.getElementById(confirmBtn).addEventListener('click', () => {
-        resetFunc();
-        popup.style.display = 'none';
-        saveData();
-    });
-
-    document.getElementById(cancelBtn).addEventListener('click', () => {
-        popup.style.display = 'none';
-    });
-});
-
-// Reset functions for count, round, and 108
-function resetCount() {
-    count = 0;
-    updateCountDisplay();
-    updateCircleText();
-}
-
-function resetRound() {
-    round = 0;
-    updateRoundDisplay();
-}
-
-function reset108() {
+// Event listeners for the 108-count popup
+confirmReset108Btn.addEventListener('click', () => {
     count = 0;
     updateCountDisplay();
     updateCircleText();
     popup108.style.display = 'none';
-}
+    saveData();
+});
+
+cancelReset108Btn.addEventListener('click', () => {
+    popup108.style.display = 'none';
+});
+
+// Event listeners for the count reset button
+resetCountBtn.addEventListener('click', () => {
+    popupCountReset.style.display = 'block';
+});
+
+confirmResetCountBtn.addEventListener('click', () => {
+    count = 0;
+    updateCountDisplay();
+    updateCircleText();
+    popupCountReset.style.display = 'none';
+    saveData();
+});
+
+cancelResetCountBtn.addEventListener('click', () => {
+    popupCountReset.style.display = 'none';
+});
+
+// Event listeners for the round reset button
+resetRoundBtn.addEventListener('click', () => {
+    popupRoundReset.style.display = 'block';
+});
+
+confirmResetRoundBtn.addEventListener('click', () => {
+    round = 0;
+    updateRoundDisplay();
+    popupRoundReset.style.display = 'none';
+    saveData();
+});
+
+cancelResetRoundBtn.addEventListener('click', () => {
+    popupRoundReset.style.display = 'none';
+});
 
 // Event listeners for mute and unmute buttons
 muteBtn.addEventListener('click', () => {
-    toggleMute(true);
+    isMuted = true;
+    audio.muted = true;
+    muteBtn.style.display = 'none';
+    unmuteBtn.style.display = 'inline-block';
+    localStorage.setItem('isMuted', JSON.stringify(isMuted));
 });
 
 unmuteBtn.addEventListener('click', () => {
-    toggleMute(false);
-});
-
-function toggleMute(mute) {
-    isMuted = mute;
-    audio.muted = mute;
-    muteBtn.style.display = mute ? 'none' : 'inline-block';
-    unmuteBtn.style.display = mute ? 'inline-block' : 'none';
+    isMuted = false;
+    audio.muted = false;
+    muteBtn.style.display = 'inline-block';
+    unmuteBtn.style.display = 'none';
     localStorage.setItem('isMuted', JSON.stringify(isMuted));
-}
+});
 
 // Initial setup
 updateCountDisplay();
@@ -163,9 +175,13 @@ audio.muted = isMuted;
 muteBtn.style.display = isMuted ? 'none' : 'inline-block';
 unmuteBtn.style.display = isMuted ? 'inline-block' : 'none';
 
-// Set current year in footer
+// Create a date object for the current time in IST (Indian Standard Time)
 const dateInIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
+
+// Get the current year in IST
 const currentYear = dateInIST.getFullYear();
+
+// Set the year in the footer
 document.getElementById('current-year').textContent = currentYear;
 
 // Function to show an image change menu
@@ -194,11 +210,12 @@ function showImageChangeMenu(event) {
         if (file) {
             const reader = new FileReader();
             reader.onload = function (event) {
-                document.getElementById('round-image').src = event.target.result;
+                const imageUrl = event.target.result;
+                // Set the uploaded image as the new round image
+                document.getElementById('round-image').src = imageUrl;
             };
             reader.readAsDataURL(file);
         }
-        document.body.removeChild(menu); // Close the menu after selecting an image
     });
 
     // Close menu
@@ -207,10 +224,10 @@ function showImageChangeMenu(event) {
     });
 }
 
-// Event listener for right-click to show image change menu
+// Event listener for right-click on desktop
 document.addEventListener('contextmenu', showImageChangeMenu);
 
-// Handle image upload and save
+// References to the buttons and elements
 const changeImageBtn = document.getElementById('change-image-btn');
 const imageChangeMenu = document.getElementById('image-change-menu');
 const imageUpload = document.getElementById('image-upload');
@@ -219,14 +236,17 @@ const saveImageBtn = document.getElementById('save-image-btn');
 const resetImageBtn = document.getElementById('reset-image-btn');
 const closeImageMenuBtn = document.getElementById('close-image-menu');
 
+// Show the image change menu
 changeImageBtn.addEventListener('click', () => {
     imageChangeMenu.style.display = 'block'; // Show the menu
 });
 
+// Close the image change menu
 closeImageMenuBtn.addEventListener('click', () => {
     imageChangeMenu.style.display = 'none'; // Hide the menu
 });
 
+// Image upload handling
 imageUpload.addEventListener('change', (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -239,6 +259,7 @@ imageUpload.addEventListener('change', (event) => {
     }
 });
 
+// Save the image
 saveImageBtn.addEventListener('click', () => {
     const newImageSrc = imagePreview.src;
     if (newImageSrc) {
@@ -248,6 +269,7 @@ saveImageBtn.addEventListener('click', () => {
     }
 });
 
+// Reset the image to the default one
 resetImageBtn.addEventListener('click', () => {
     localStorage.removeItem('selectedImage'); // Remove saved image from localStorage
     document.querySelector('.round-image').src = 'rkhkmc.png'; // Reset to the default image
