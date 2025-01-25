@@ -290,3 +290,39 @@ window.onload = function() {
         document.querySelector('.round-image').src = savedImage; // Set the saved image
     }
 };
+
+document.addEventListener("DOMContentLoaded", function() {
+    const roundImage = document.getElementById("roundImage");
+    
+    // List of image sources to switch between
+    const images = ["image1.jpg", "image2.jpg", "image3.jpg"];
+    let currentImageIndex = 0;
+
+    // Function to change the image
+    function changeImage() {
+        currentImageIndex = (currentImageIndex + 1) % images.length;
+        roundImage.src = images[currentImageIndex];
+    }
+
+    // Right-click event for desktop
+    roundImage.addEventListener("contextmenu", function(e) {
+        e.preventDefault(); // Prevent the default right-click menu
+        changeImage();
+    });
+
+    // Long press event for mobile
+    let pressTimer;
+    roundImage.addEventListener("touchstart", function(e) {
+        pressTimer = setTimeout(() => {
+            changeImage();
+        }, 800); // Change image after 800ms long press
+    });
+
+    roundImage.addEventListener("touchend", function() {
+        clearTimeout(pressTimer); // Clear the timer if touch is released too soon
+    });
+
+    roundImage.addEventListener("touchcancel", function() {
+        clearTimeout(pressTimer); // Clear the timer if touch is canceled
+    });
+});
