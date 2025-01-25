@@ -46,7 +46,7 @@ body {
     align-items: center;
     width: 99%;
     padding: 10px;
-    background-color: #000;
+    background-color: black;
     position: fixed;
     top: 0;
     left: 0;
@@ -282,7 +282,7 @@ html, body {
 }
 
 .footer {
-    background: #000;
+    background: black;
     font-size: 14px;
     color: white;
     text-align: center;
@@ -329,7 +329,7 @@ img, button, .fa {
 /* Image change menu style */
 .image-change-menu {
     position: fixed;
-    background-color: #000;
+    background-color: black;
     color: white;
     padding: 10px;
     border-radius: 100px;
@@ -393,16 +393,18 @@ img, button, .fa {
 /* Hover effects for close and reset buttons */
 #reset-image-btn:hover {
     background-color: #fff;
+    color: black;
 }
 
 #save-image-btn:hover {
     background-color: #fff;
+    color: black;
 }
 
 /* Image change menu style */
 .image-change-menu {
     position: fixed;
-    background-color: #000;
+    background-color: black;
     color: white;
     padding: 10px;
     border-radius: 100px;
