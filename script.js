@@ -184,113 +184,6 @@ const currentYear = dateInIST.getFullYear();
 // Set the year in the footer
 document.getElementById('current-year').textContent = currentYear;
 
-// Function to show an image change menu
-function showImageChangeMenu(event) {
-    event.preventDefault(); // Prevent the default action (context menu)
-
-    // Create the menu with options
-    const menu = document.createElement('div');
-    menu.classList.add('image-change-menu');
-    menu.innerHTML = `
-        <p>Change Image</p>
-        <input type="file" id="image-upload" accept="image/*">
-        <button id="close-menu">Close</button>
-    `;
-
-    // Append the menu to the body
-    document.body.appendChild(menu);
-
-    // Position the menu at the event's location
-    menu.style.left = `${event.pageX}px`;
-    menu.style.top = `${event.pageY}px`;
-
-    // Handle image file selection
-    document.getElementById('image-upload').addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                const imageUrl = event.target.result;
-                // Set the uploaded image as the new round image
-                document.getElementById('round-image').src = imageUrl;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // Close menu
-    document.getElementById('close-menu').addEventListener('click', () => {
-        document.body.removeChild(menu);
-    });
-}
-
-// Event listener for right-click on round image for desktop
-document.getElementById('round-image').addEventListener('contextmenu', showImageChangeMenu);
-
-// Event listener for long press on round image for mobile
-document.getElementById('round-image').addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    showImageChangeMenu(e);
-});
-
-// References to the buttons and elements
-const changeImageBtn = document.getElementById('change-image-btn');
-const imageChangeMenu = document.getElementById('image-change-menu');
-const imageUpload = document.getElementById('image-upload');
-const imagePreview = document.getElementById('image-preview');
-const saveImageBtn = document.getElementById('save-image-btn');
-const resetImageBtn = document.getElementById('reset-image-btn');
-const closeImageMenuBtn = document.getElementById('close-image-menu');
-
-// Show the image change menu
-changeImageBtn.addEventListener('click', () => {
-    imageChangeMenu.style.display = 'block'; // Show the menu
-});
-
-// Close the image change menu
-closeImageMenuBtn.addEventListener('click', () => {
-    imageChangeMenu.style.display = 'none'; // Hide the menu
-});
-
-// Image upload handling
-imageUpload.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            imagePreview.src = e.target.result; // Display the selected image
-            imagePreview.style.display = 'block'; // Show preview
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
-// Save the image
-saveImageBtn.addEventListener('click', () => {
-    const newImageSrc = imagePreview.src;
-    if (newImageSrc) {
-        localStorage.setItem('selectedImage', newImageSrc); // Save the image source to localStorage
-        document.querySelector('.round-image').src = newImageSrc; // Update the round image in the UI
-        imageChangeMenu.style.display = 'none'; // Close the menu
-    }
-});
-
-// Reset the image to the default one
-resetImageBtn.addEventListener('click', () => {
-    localStorage.removeItem('selectedImage'); // Remove saved image from localStorage
-    document.querySelector('.round-image').src = 'rkhkmc.png'; // Reset to the default image
-    imagePreview.src = ''; // Clear preview
-    imagePreview.style.display = 'none'; // Hide preview
-});
-
-// Check if there's a saved image in localStorage
-window.onload = function() {
-    const savedImage = localStorage.getItem('selectedImage');
-    if (savedImage) {
-        document.querySelector('.round-image').src = savedImage; // Set the saved image
-    }
-};
-
 document.addEventListener("DOMContentLoaded", function() {
     const roundImage = document.getElementById("roundImage");
     
@@ -324,5 +217,47 @@ document.addEventListener("DOMContentLoaded", function() {
 
     roundImage.addEventListener("touchcancel", function() {
         clearTimeout(pressTimer); // Clear the timer if touch is canceled
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    const roundImage = document.getElementById("roundImage");
+    
+    // List of image sources to switch between
+    const images = ["image1.jpg", "image2.jpg", "image3.jpg"];
+    let currentImageIndex = 0;
+
+    // Function to change the image
+    function changeImage() {
+        console.log("Changing image");  // Check if this runs
+        currentImageIndex = (currentImageIndex + 1) % images.length;
+        roundImage.src = images[currentImageIndex];
+    }
+
+    // Right-click event for desktop
+    roundImage.addEventListener("contextmenu", function(e) {
+        e.preventDefault(); // Prevent the default right-click menu
+        console.log("Right-click detected");
+        changeImage();
+    });
+
+    // Long press event for mobile
+    let pressTimer;
+    roundImage.addEventListener("touchstart", function(e) {
+        console.log("Touch start detected");
+        pressTimer = setTimeout(() => {
+            console.log("Long press detected");
+            changeImage();
+        }, 800); // Change image after 800ms long press
+    });
+
+    roundImage.addEventListener("touchend", function() {
+        clearTimeout(pressTimer); // Clear the timer if touch is released too soon
+        console.log("Touch end detected");
+    });
+
+    roundImage.addEventListener("touchcancel", function() {
+        clearTimeout(pressTimer); // Clear the timer if touch is canceled
+        console.log("Touch canceled");
     });
 });
