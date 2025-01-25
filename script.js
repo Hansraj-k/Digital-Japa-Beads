@@ -194,6 +194,7 @@ function showImageChangeMenu(event) {
     menu.innerHTML = `
         <p>Change Image</p>
         <input type="file" id="image-upload" accept="image/*">
+        <button id="crop-image-btn">Crop Image</button>
         <button id="close-menu">Close</button>
     `;
 
@@ -212,7 +213,37 @@ function showImageChangeMenu(event) {
             reader.onload = function (event) {
                 const imageUrl = event.target.result;
                 // Set the uploaded image as the new round image
-                document.getElementById('round-image').src = imageUrl;
+                const imgElement = document.createElement('img');
+                imgElement.id = 'cropper-image';
+                imgElement.src = imageUrl;
+                document.body.appendChild(imgElement);
+                
+                // Initialize Cropper.js
+                const cropper = new Cropper(imgElement, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    background: false,
+                    guides: false,
+                    highlight: false,
+                    dragMode: 'move',
+                    cropBoxMovable: true,
+                    cropBoxResizable: true
+                });
+
+                // Crop image on button click
+                document.getElementById('crop-image-btn').addEventListener('click', () => {
+                    const croppedCanvas = cropper.getCroppedCanvas({
+                        width: 200,
+                        height: 200,
+                        imageSmoothingEnabled: true,
+                        imageSmoothingQuality: 'high'
+                    });
+
+                    // Display the cropped image in the round image
+                    document.getElementById('round-image').src = croppedCanvas.toDataURL();
+                    document.body.removeChild(menu); // Close the menu
+                    document.body.removeChild(imgElement); // Remove the cropper image element
+                });
             };
             reader.readAsDataURL(file);
         }
@@ -237,7 +268,6 @@ document.getElementById('round-image').addEventListener('touchstart', (e) => {
 const changeImageBtn = document.getElementById('change-image-btn');
 const imageChangeMenu = document.getElementById('image-change-menu');
 const imageUpload = document.getElementById('image-upload');
-const imagePreview = document.getElementById('image-preview');
 const saveImageBtn = document.getElementById('save-image-btn');
 const resetImageBtn = document.getElementById('reset-image-btn');
 const closeImageMenuBtn = document.getElementById('close-image-menu');
@@ -252,29 +282,11 @@ closeImageMenuBtn.addEventListener('click', () => {
     imageChangeMenu.style.display = 'none'; // Hide the menu
 });
 
-// Image upload handling
-imageUpload.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            imagePreview.src = e.target.result; // Display the selected image
-            imagePreview.style.display = 'block'; // Show preview
-            imagePreview.style.borderRadius = '50%'; // Round crop
-            imagePreview.style.width = '200px'; // Adjust size
-            imagePreview.style.height = '200px'; // Adjust size
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
 // Save the image
 saveImageBtn.addEventListener('click', () => {
-    const newImageSrc = imagePreview.src;
+    const newImageSrc = document.getElementById('round-image').src;
     if (newImageSrc) {
         localStorage.setItem('selectedImage', newImageSrc); // Save the image source to localStorage
-        document.querySelector('.round-image').src = newImageSrc; // Update the round image in the UI
-        imageChangeMenu.style.display = 'none'; // Close the menu
     }
 });
 
@@ -282,8 +294,6 @@ saveImageBtn.addEventListener('click', () => {
 resetImageBtn.addEventListener('click', () => {
     localStorage.removeItem('selectedImage'); // Remove saved image from localStorage
     document.querySelector('.round-image').src = 'rkhkmc.png'; // Reset to the default image
-    imagePreview.src = ''; // Clear preview
-    imagePreview.style.display = 'none'; // Hide preview
 });
 
 // Check if there's a saved image in localStorage
@@ -302,4 +312,3 @@ function showImageChangeMenu(event) {
     menu.style.left = `${event.pageX}px`;
     menu.style.top = `${event.pageY}px`;
 }
-
