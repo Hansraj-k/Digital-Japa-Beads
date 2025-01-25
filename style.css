@@ -843,3 +843,42 @@ img, button, .fa {
     background-color: #388e3c;
 
 }
+
+.image-change-menu {
+    position: absolute;
+    display: none; /* Initially hidden */
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    z-index: 1000;
+    border-radius: 8px;
+    width: 200px;
+}
+
+.image-change-menu p {
+    margin: 0 0 10px;
+    font-weight: bold;
+}
+
+#image-preview-container img {
+    max-width: 100%;
+    margin-top: 10px;
+}
+
+.image-change-menu button {
+    display: block;
+    margin: 10px 0 0;
+    width: 100%;
+    padding: 5px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.image-change-menu button:hover {
+    background: #0056b3;
+}
+
