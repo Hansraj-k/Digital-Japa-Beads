@@ -237,7 +237,6 @@ document.getElementById('round-image').addEventListener('touchstart', (e) => {
 const changeImageBtn = document.getElementById('change-image-btn');
 const imageChangeMenu = document.getElementById('image-change-menu');
 const imageUpload = document.getElementById('image-upload');
-const imagePreview = document.getElementById('image-preview');
 const saveImageBtn = document.getElementById('save-image-btn');
 const resetImageBtn = document.getElementById('reset-image-btn');
 const closeImageMenuBtn = document.getElementById('close-image-menu');
@@ -258,20 +257,12 @@ imageUpload.addEventListener('change', (event) => {
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            imagePreview.src = e.target.result; // Display the selected image
-            imagePreview.style.display = 'block'; // Show preview
+            const newImageSrc = e.target.result;
+            localStorage.setItem('selectedImage', newImageSrc); // Save the image source to localStorage
+            document.querySelector('.round-image').src = newImageSrc; // Update the round image in the UI
+            imageChangeMenu.style.display = 'none'; // Close the menu
         };
         reader.readAsDataURL(file);
-    }
-});
-
-// Save the image
-saveImageBtn.addEventListener('click', () => {
-    const newImageSrc = imagePreview.src;
-    if (newImageSrc) {
-        localStorage.setItem('selectedImage', newImageSrc); // Save the image source to localStorage
-        document.querySelector('.round-image').src = newImageSrc; // Update the round image in the UI
-        imageChangeMenu.style.display = 'none'; // Close the menu
     }
 });
 
@@ -279,8 +270,6 @@ saveImageBtn.addEventListener('click', () => {
 resetImageBtn.addEventListener('click', () => {
     localStorage.removeItem('selectedImage'); // Remove saved image from localStorage
     document.querySelector('.round-image').src = 'rkhkmc.png'; // Reset to the default image
-    imagePreview.src = ''; // Clear preview
-    imagePreview.style.display = 'none'; // Hide preview
 });
 
 // Check if there's a saved image in localStorage
