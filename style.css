@@ -1,4 +1,4 @@
-/* Define fonts */
+/* Define Kabel font */
 @font-face {
     font-family: 'Kabel';
     src: url('SAMAN___.TTF') format('truetype');
@@ -6,6 +6,7 @@
     font-style: normal;
 }
 
+/* Define Biski font */
 @font-face {
     font-family: 'Biski';
     src: url('BiskiTrial-Regular.otf');
@@ -32,9 +33,9 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    height: auto;
     width: 100%;
     position: relative;
-    flex: 1; /* Allows the main content to expand while pushing the footer down */
 }
 
 /* Toolbar styling */
@@ -49,13 +50,14 @@ body {
     top: 0;
     left: 0;
     z-index: 1000;
-    margin: 0 30px;
+    margin-left: 30px;
+    margin-right: 30px;
 }
 
 /* Round display container */
 .round-display-container {
     display: flex;
-    justify-content: flex-end;
+    justify-content: right;
     align-items: center;
     flex-grow: 2;
     text-align: center;
@@ -80,10 +82,20 @@ button {
     font-family: 'Biski', sans-serif;
 }
 
-/* Button hover styling */
+/* Specific button adjustments */
+#reset-count-btn {
+    padding: 10px 0px;
+}
+
+#reset-round-btn {
+    padding-right: 6px;
+}
+
+/* Button hover effects */
 button:hover {
     color: lightgray;
     transform: scale(1.1);
+    position: relative;
 }
 
 button:hover::after {
@@ -141,6 +153,18 @@ button:hover::after {
     pointer-events: none;
 }
 
+/* Letter styling */
+.letter {
+    font-family: 'Biski', sans-serif;
+    color: grey;
+    font-size: 18px;
+    position: absolute;
+    padding: 1px;
+    transition: color 0.3s, transform 0.3s;
+    cursor: pointer;
+    font-family: 'Kabel', sans-serif;
+}
+
 /* Round image styling */
 .round-image {
     width: 100px;
@@ -153,18 +177,16 @@ button:hover::after {
 }
 
 /* Count and round display styling */
-.count-display, .round-display {
-    font-family: 'Biski', sans-serif;
-}
-
 .count-display {
     font-size: 51px;
     margin: 10px 0;
+    font-family: 'Biski', sans-serif;
 }
 
 .round-display {
     font-size: 20px;
     margin: 10px 0;
+    font-family: 'Biski', sans-serif;
 }
 
 /* Popup styling */
@@ -201,6 +223,46 @@ button:hover::after {
 .popup button:hover {
     background-color: black;
     color: white;
+}
+
+/* Ensure mute and unmute buttons are visible */
+#mute-btn, #unmute-btn {
+    display: inline-block;
+    margin-right: 60px;
+    padding-left: 0px;
+    padding-right: 10px;
+}
+
+/* Default styling for the image */
+.rkhkmc {
+    width: 100px;
+    height: 100px;
+}
+
+.toolbar-logo {
+    width: 90px;
+    height: 90px;
+}
+
+/* Mobile-specific styling for the image */
+@media (max-width: 768px) {
+    .rkhkmc {
+        width: 150px;
+        height: 150px;
+    }
+    .circle-container {
+        padding-top: 420px;
+    }
+    .toolbar-logo {
+        width: 30px;
+        height: 30px;
+    }
+    #count-btn {
+        padding-top: 0px;
+    }
+    .counter-container {
+        margin-top: 30px;
+    }
 }
 
 /* Footer styling */
@@ -243,35 +305,15 @@ button:hover::after {
     font-family: 'Biski', sans-serif;
 }
 
-/* Mobile-specific styling */
-@media (max-width: 768px) {
-    .rkhkmc {
-        width: 150px;
-        height: 150px;
-    }
-
-    .circle-container {
-        padding-top: 420px;
-    }
-
-    .toolbar-logo {
-        width: 30px;
-        height: 30px;
-    }
-
-    #count-btn {
-        padding-top: 0px;
-    }
-
-    .counter-container {
-        margin-top: 30px;
-    }
+/* Remove blue highlight on images and icons when clicked on mobile */
+img, button, .fa {
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
 }
 
-/* Image change menu styling */
+/* Image change menu style */
 .image-change-menu {
     position: fixed;
-    display: none;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -283,6 +325,7 @@ button:hover::after {
     z-index: 1000;
     width: 80%;
     max-width: 400px;
+    font-family: 'Biski', sans-serif;
 }
 
 .image-change-menu p {
@@ -309,6 +352,7 @@ button:hover::after {
     margin-bottom: 10px;
 }
 
+/* Image change menu buttons */
 .image-change-menu button {
     padding: 10px 20px;
     background-color: #333;
@@ -325,6 +369,7 @@ button:hover::after {
     background-color: #555;
 }
 
+/* Hover effects for close and reset buttons */
 #reset-image-btn:hover {
     background-color: #b71c1c;
 }
@@ -332,10 +377,3 @@ button:hover::after {
 #save-image-btn:hover {
     background-color: #388e3c;
 }
-
-/* Remove blue highlight on images and icons when clicked on mobile */
-img, button, .fa {
-    -webkit-tap-highlight-color: transparent;
-    outline: none;
-}
-
