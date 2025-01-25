@@ -252,44 +252,17 @@ closeImageMenuBtn.addEventListener('click', () => {
     imageChangeMenu.style.display = 'none'; // Hide the menu
 });
 
-// Handle file upload and crop the image
-document.getElementById('image-upload').addEventListener('change', (event) => {
+// Image upload handling
+imageUpload.addEventListener('change', (event) => {
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
-        reader.onload = () => {
-            const image = new Image();
-            image.src = reader.result;
-            image.onload = () => {
-                // Create a canvas for cropping
-                const canvas = document.createElement('canvas');
-                const size = 200; // Adjust as per the `.round-image-container` size
-                canvas.width = size;
-                canvas.height = size;
-                const ctx = canvas.getContext('2d');
-
-                // Crop image to a circular shape
-                ctx.beginPath();
-                ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
-                ctx.clip();
-                ctx.drawImage(image, 0, 0, size, size);
-
-                // Set the cropped image as the preview
-                const croppedImage = canvas.toDataURL('image/png');
-                document.getElementById('round-image').src = croppedImage;
-
-                // Save the cropped image in localStorage
-                localStorage.setItem('selectedImage', croppedImage);
-            };
+        reader.onload = function(e) {
+            imagePreview.src = e.target.result; // Display the selected image
+            imagePreview.style.display = 'block'; // Show preview
         };
         reader.readAsDataURL(file);
     }
-});
-
-// Reset image to default
-document.getElementById('reset-image-btn').addEventListener('click', () => {
-    localStorage.removeItem('selectedImage');
-    document.getElementById('round-image').src = 'default-image.png';
 });
 
 // Save the image
