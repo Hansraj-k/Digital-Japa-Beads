@@ -1,5 +1,3 @@
-JS
-
 // Initialize count and round
 let count = parseInt(localStorage.getItem('count')) || 0;
 let round = parseInt(localStorage.getItem('round')) || 0;
