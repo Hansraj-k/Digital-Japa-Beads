@@ -284,3 +284,4 @@ window.onload = function() {
         document.querySelector('.round-image').src = savedImage; // Set the saved image
     }
 };
+
