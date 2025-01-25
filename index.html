@@ -16,8 +16,8 @@
 </head>
 
 <body>
-
     <div class="container">
+
         <!-- Toolbar Section -->
         <div class="toolbar">
             <img src="rkhkmclogo.jpg" alt="Logo" class="toolbar-logo">
@@ -65,7 +65,7 @@
             </div>
         </div>
 
-        <!-- Count Button -->
+        <!-- Count Button Section -->
         <div class="buttons">
             <button id="count-btn">
                 <img src="rkhkmc.jpg" alt="Plus Icon" class="rkhkmc">
@@ -73,15 +73,7 @@
         </div>
     </div>
 
-    <!-- Popups -->
-    <div id="popup-108" class="popup">
-        <div class="popup-content">
-            <p>Counter reached 108 counts. Do you want to reset?</p>
-            <button id="confirm-reset-108">Reset Count</button>
-            <button id="cancel-reset-108">Cancel</button>
-        </div>
-    </div>
-
+    <!-- Popup for Count Reset -->
     <div id="popup-count-reset" class="popup">
         <div class="popup-content">
             <p>Are you sure you want to reset the count only?</p>
@@ -90,6 +82,7 @@
         </div>
     </div>
 
+    <!-- Popup for Round Reset -->
     <div id="popup-round-reset" class="popup">
         <div class="popup-content">
             <p>Are you sure you want to reset the round only?</p>
@@ -103,7 +96,6 @@
         <div class="containerk">
             <hr>
             <p>Note: Your counter data saves automatically in your browser, letting you pick up where you left off. Clearing your browser's cache or data will reset it.</p>
-            <!-- Image Change Button -->
             <button id="change-image-btn">Change Image</button>
             <p class="end">
                 <a href="https://hansrajweb.netlify.app">
@@ -116,12 +108,9 @@
         </div>
     </div>
 
-    <!-- Audio Element -->
     <audio id="audio" src="rkhkmc.mp3" preload="auto"></audio>
 
     <script src="script.js"></script>
-
-    <!-- Service Worker -->
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('service-worker.js')
@@ -133,8 +122,6 @@
                 });
         }
     </script>
-
 </body>
 
 </html>
-
