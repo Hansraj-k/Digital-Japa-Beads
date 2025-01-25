@@ -1,3 +1,5 @@
+JS
+
 // Initialize count and round
 let count = parseInt(localStorage.getItem('count')) || 0;
 let round = parseInt(localStorage.getItem('round')) || 0;
@@ -51,20 +53,20 @@ function updateCircleText() {
 
         // Loop through the letters for this circle
         for (let i = 0; i < lettersInCircle; i++) {
-            const angle = angleStep * i; // Calculate angle for each letter
-            const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
-            const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
+   const angle = angleStep * i; // Calculate angle for each letter
+   const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
+   const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
 
-            const letter = document.createElement('span');
-            letter.className = 'letter';
-            letter.textContent = letters[letterIndex % letters.length]; // Set letter text
-            letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+   const letter = document.createElement('span');
+   letter.className = 'letter';
+   letter.textContent = letters[letterIndex % letters.length]; // Set letter text
+   letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
 
-            // Highlight the letters based on count
-            letter.style.color = letterIndex < count ? 'white' : 'grey';
+   // Highlight the letters based on count
+   letter.style.color = letterIndex < count ? 'white' : 'grey';
 
-            circleText.appendChild(letter);
-            letterIndex++; // Move to the next letter
+   circleText.appendChild(letter);
+   letterIndex++; // Move to the next letter
         }
     });
 }
@@ -83,10 +85,10 @@ function updateCounter() {
         updateCircleText();
         saveData();
         if (count === totalLetters) {
-            round++;
-            updateRoundDisplay();
-            popup108.style.display = 'block';
-            audio.play();
+   round++;
+   updateRoundDisplay();
+   popup108.style.display = 'block';
+   audio.play();
         }
     } else {
         showResetPopup(); // Function to show reset popup if 108 is reached
@@ -208,13 +210,13 @@ function showImageChangeMenu(event) {
     document.getElementById('image-upload').addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                const imageUrl = event.target.result;
-                // Set the uploaded image as the new round image
-                document.getElementById('round-image').src = imageUrl;
-            };
-            reader.readAsDataURL(file);
+   const reader = new FileReader();
+   reader.onload = function (event) {
+       const imageUrl = event.target.result;
+       // Set the uploaded image as the new round image
+       document.getElementById('round-image').src = imageUrl;
+   };
+   reader.readAsDataURL(file);
         }
     });
 
@@ -237,6 +239,7 @@ document.getElementById('round-image').addEventListener('touchstart', (e) => {
 const changeImageBtn = document.getElementById('change-image-btn');
 const imageChangeMenu = document.getElementById('image-change-menu');
 const imageUpload = document.getElementById('image-upload');
+const imagePreview = document.getElementById('image-preview');
 const saveImageBtn = document.getElementById('save-image-btn');
 const resetImageBtn = document.getElementById('reset-image-btn');
 const closeImageMenuBtn = document.getElementById('close-image-menu');
@@ -257,12 +260,20 @@ imageUpload.addEventListener('change', (event) => {
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            const newImageSrc = e.target.result;
-            localStorage.setItem('selectedImage', newImageSrc); // Save the image source to localStorage
-            document.querySelector('.round-image').src = newImageSrc; // Update the round image in the UI
-            imageChangeMenu.style.display = 'none'; // Close the menu
+   imagePreview.src = e.target.result; // Display the selected image
+   imagePreview.style.display = 'block'; // Show preview
         };
         reader.readAsDataURL(file);
+    }
+});
+
+// Save the image
+saveImageBtn.addEventListener('click', () => {
+    const newImageSrc = imagePreview.src;
+    if (newImageSrc) {
+        localStorage.setItem('selectedImage', newImageSrc); // Save the image source to localStorage
+        document.querySelector('.round-image').src = newImageSrc; // Update the round image in the UI
+        imageChangeMenu.style.display = 'none'; // Close the menu
     }
 });
 
@@ -270,6 +281,8 @@ imageUpload.addEventListener('change', (event) => {
 resetImageBtn.addEventListener('click', () => {
     localStorage.removeItem('selectedImage'); // Remove saved image from localStorage
     document.querySelector('.round-image').src = 'rkhkmc.png'; // Reset to the default image
+    imagePreview.src = ''; // Clear preview
+    imagePreview.style.display = 'none'; // Hide preview
 });
 
 // Check if there's a saved image in localStorage
