@@ -224,27 +224,13 @@ function showImageChangeMenu(event) {
     });
 }
 
-// Handle right-click on desktop
-document.addEventListener('contextmenu', (event) => {
-    const targetImage = event.target.closest('.round-image'); // Get the round image element
-    if (targetImage) {
-        showImageChangeMenu(event);
-    }
-});
+// Event listener for right-click on round image for desktop
+document.getElementById('round-image').addEventListener('contextmenu', showImageChangeMenu);
 
-// Handle long press on mobile
-let pressTimer;
-document.addEventListener('touchstart', (event) => {
-    const targetImage = event.target.closest('.round-image');
-    if (targetImage) {
-        pressTimer = setTimeout(() => {
-            showImageChangeMenu(event);
-        }, 1000); // Trigger the menu after 1 second of long press
-    }
-});
-
-document.addEventListener('touchend', () => {
-    clearTimeout(pressTimer); // Clear the timer if the touch ends before 1 second
+// Event listener for long press on round image for mobile
+document.getElementById('round-image').addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    showImageChangeMenu(e);
 });
 
 // References to the buttons and elements
