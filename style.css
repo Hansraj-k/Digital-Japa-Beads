@@ -399,30 +399,3 @@ img, button, .fa {
     background-color: #388e3c;
 }
 
-/* Container for crop functionality */
-#crop-container {
-    display: none;
-    position: relative;
-    width: 300px;
-    height: 300px;
-    overflow: hidden;
-    border-radius: 50%; /* Circular container */
-    border: 2px solid #000;
-}
-
-#crop-canvas {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-}
-
-#image-upload {
-    display: block;
-    margin: 10px 0;
-}
-
-#apply-crop {
-    display: block;
-    margin-top: 10px;
-}
-
