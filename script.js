@@ -284,3 +284,67 @@ window.onload = function() {
         document.querySelector('.round-image').src = savedImage; // Set the saved image
     }
 };
+
+let cropCanvas = document.getElementById('crop-canvas');
+let cropContext = cropCanvas.getContext('2d');
+let cropContainer = document.getElementById('crop-container');
+let imageUpload = document.getElementById('image-upload');
+let applyCropBtn = document.getElementById('apply-crop');
+let uploadedImage = null;
+
+// Handle image upload and crop
+imageUpload.addEventListener('change', function (event) {
+    let file = event.target.files[0];
+    if (file) {
+        let reader = new FileReader();
+        reader.onload = function (e) {
+            let img = new Image();
+            img.src = e.target.result;
+
+            img.onload = function () {
+                // Set canvas dimensions to match the crop area
+                cropCanvas.width = 300;
+                cropCanvas.height = 300;
+
+                // Show crop container
+                cropContainer.style.display = 'block';
+
+                // Draw the image on the canvas
+                cropContext.clearRect(0, 0, cropCanvas.width, cropCanvas.height);
+                cropContext.drawImage(img, 0, 0, img.width, img.height, 0, 0, cropCanvas.width, cropCanvas.height);
+                uploadedImage = img; // Store the image for later cropping
+            };
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Apply the crop to the canvas and save it
+applyCropBtn.addEventListener('click', function () {
+    if (uploadedImage) {
+        // Get the image data inside the circular area
+        let imageData = cropContext.getImageData(0, 0, cropCanvas.width, cropCanvas.height);
+        
+        // Create a new canvas for cropped image
+        let finalCanvas = document.createElement('canvas');
+        let finalContext = finalCanvas.getContext('2d');
+        finalCanvas.width = 300;
+        finalCanvas.height = 300;
+
+        // Draw the circular crop (masking the rest of the image)
+        finalContext.beginPath();
+        finalContext.arc(150, 150, 150, 0, 2 * Math.PI);
+        finalContext.clip();
+
+        // Draw the image data onto the final canvas (with the circle mask)
+        finalContext.putImageData(imageData, 0, 0);
+
+        // Save the cropped image as a data URL and update the image source
+        let croppedImageURL = finalCanvas.toDataURL();
+        document.querySelector('.round-image').src = croppedImageURL; // Update the image source with the cropped image
+
+        // Hide crop container and reset upload
+        cropContainer.style.display = 'none';
+        imageUpload.value = ''; // Reset the input
+    }
+});
