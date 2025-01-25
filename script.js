@@ -260,6 +260,9 @@ imageUpload.addEventListener('change', (event) => {
         reader.onload = function(e) {
             imagePreview.src = e.target.result; // Display the selected image
             imagePreview.style.display = 'block'; // Show preview
+            imagePreview.style.borderRadius = '50%'; // Round crop
+            imagePreview.style.width = '200px'; // Adjust size
+            imagePreview.style.height = '200px'; // Adjust size
         };
         reader.readAsDataURL(file);
     }
@@ -291,7 +294,6 @@ window.onload = function() {
     }
 };
 
-
 // Image change on right-click or long press
 function showImageChangeMenu(event) {
     event.preventDefault();
@@ -300,3 +302,4 @@ function showImageChangeMenu(event) {
     menu.style.left = `${event.pageX}px`;
     menu.style.top = `${event.pageY}px`;
 }
+
