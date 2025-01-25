@@ -225,7 +225,25 @@ function showImageChangeMenu(event) {
 }
 
 // Event listener for right-click on desktop
-document.addEventListener('contextmenu', showImageChangeMenu);
+document.addEventListener('contextmenu', (event) => {
+    if (event.target.matches('.round-image')) {
+        showImageChangeMenu(event);
+    }
+});
+
+// Event listener for long press on mobile
+document.addEventListener('touchstart', (event) => {
+    if (event.target.matches('.round-image')) {
+        let pressTimer;
+        pressTimer = setTimeout(() => {
+            showImageChangeMenu(event);
+        }, 1000); // 1 second for long press
+
+        event.target.addEventListener('touchend', () => {
+            clearTimeout(pressTimer); // Cancel the long press if the user lifts their finger
+        });
+    }
+}, false);
 
 // References to the buttons and elements
 const changeImageBtn = document.getElementById('change-image-btn');
@@ -284,4 +302,3 @@ window.onload = function() {
         document.querySelector('.round-image').src = savedImage; // Set the saved image
     }
 };
-
