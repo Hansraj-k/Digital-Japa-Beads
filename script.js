@@ -291,3 +291,63 @@ window.onload = function() {
     }
 };
 
+        // Initialize variables
+        let cropper;
+        const imageUpload = document.getElementById('image-upload');
+        const imagePreview = document.getElementById('image-preview');
+        const saveImageBtn = document.getElementById('save-image-btn');
+        const resetImageBtn = document.getElementById('reset-image-btn');
+        const closeImageMenu = document.getElementById('close-image-menu');
+        const imageChangeMenu = document.getElementById('image-change-menu');
+
+        // Open the image upload menu
+        imageUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    imagePreview.src = event.target.result;
+
+                    // Initialize Cropper.js once the image is loaded
+                    if (cropper) {
+                        cropper.destroy(); // Destroy previous instance if it exists
+                    }
+                    cropper = new Cropper(imagePreview, {
+                        aspectRatio: 1,  // Make the crop box a square (aspect ratio 1)
+                        viewMode: 1,
+                        scalable: false,
+                        zoomable: false,
+                        rotatable: false
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Save the cropped image
+        saveImageBtn.addEventListener('click', function() {
+            const canvas = cropper.getCroppedCanvas();
+            const dataUrl = canvas.toDataURL();
+            imagePreview.src = dataUrl;
+            cropper.destroy();
+            cropper = null;
+            imageChangeMenu.style.display = 'none'; // Close the image change menu
+        });
+
+        // Reset the image
+        resetImageBtn.addEventListener('click', function() {
+            imagePreview.src = ''; // Clear the preview
+            if (cropper) {
+                cropper.destroy(); // Destroy cropper
+                cropper = null;
+            }
+        });
+
+        // Close the image change menu
+        closeImageMenu.addEventListener('click', function() {
+            imageChangeMenu.style.display = 'none';
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+        });
