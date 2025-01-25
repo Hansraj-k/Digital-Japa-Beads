@@ -30,7 +30,7 @@ function updateCountDisplay() {
 
 // Function to update the displayed round
 function updateRoundDisplay() {
-    roundDisplay.textContent = Round: ${round};
+    roundDisplay.textContent = `Round: ${round}`;
 }
 
 // Function to update the circle text based on the count
@@ -58,7 +58,7 @@ function updateCircleText() {
             const letter = document.createElement('span');
             letter.className = 'letter';
             letter.textContent = letters[letterIndex % letters.length]; // Set letter text
-            letter.style.transform = translate(${x}px, ${y}px) rotate(${angle}deg);
+            letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
 
             // Highlight the letters based on count
             letter.style.color = letterIndex < count ? 'white' : 'grey';
@@ -191,18 +191,18 @@ function showImageChangeMenu(event) {
     // Create the menu with options
     const menu = document.createElement('div');
     menu.classList.add('image-change-menu');
-    menu.innerHTML = 
+    menu.innerHTML = `
         <p>Change Image</p>
         <input type="file" id="image-upload" accept="image/*">
         <button id="close-menu">Close</button>
-    ;
+    `;
 
     // Append the menu to the body
     document.body.appendChild(menu);
 
     // Position the menu at the event's location
-    menu.style.left = ${event.pageX}px;
-    menu.style.top = ${event.pageY}px;
+    menu.style.left = `${event.pageX}px`;
+    menu.style.top = `${event.pageY}px`;
 
     // Handle image file selection
     document.getElementById('image-upload').addEventListener('change', (e) => {
@@ -284,4 +284,3 @@ window.onload = function() {
         document.querySelector('.round-image').src = savedImage; // Set the saved image
     }
 };
-
