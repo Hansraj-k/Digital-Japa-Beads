@@ -332,7 +332,7 @@ img, button, .fa {
     background-color: #222;
     color: white;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 100px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     z-index: 10000;
     font-family: 'Biski', sans-serif;
@@ -370,7 +370,7 @@ img, button, .fa {
 #image-preview {
     max-width: 100%;
     height: auto;
-    border-radius: 10px;
+    border-radius: 100px;
     margin-bottom: 10px;
 }
 
@@ -379,7 +379,7 @@ img, button, .fa {
     background-color: #333;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 100px;
     cursor: pointer;
     margin: 5px;
     font-size: 14px;
@@ -405,7 +405,7 @@ img, button, .fa {
     background-color: #222;
     color: white;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 100px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     z-index: 10000;
     font-family: 'Biski', sans-serif;
@@ -437,7 +437,7 @@ img, button, .fa {
 #image-preview {
     max-width: 100%;
     height: auto;
-    border-radius: 10px;
+    border-radius: 100px;
     margin-bottom: 10px;
 }
 
@@ -446,7 +446,7 @@ img, button, .fa {
     background-color: #333;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 100px;
     cursor: pointer;
     margin: 5px;
     font-size: 14px;
