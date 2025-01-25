@@ -661,3 +661,94 @@ window.onload = function() {
     }
 
 };
+
+document.addEventListener('DOMContentLoaded', () => {
+    const roundImage = document.getElementById('round-image');
+    const imageChangeMenu = document.getElementById('image-change-menu');
+    const imageUpload = document.getElementById('image-upload');
+    const imagePreview = document.getElementById('image-preview');
+    const saveImageBtn = document.getElementById('save-image-btn');
+    const resetImageBtn = document.getElementById('reset-image-btn');
+    const closeImageMenuBtn = document.getElementById('close-image-menu');
+    let longPressTimer;
+
+    // Function to show the image change menu
+    function showImageChangeMenu(x, y) {
+        imageChangeMenu.style.display = 'block';
+        imageChangeMenu.style.left = `${x}px`;
+        imageChangeMenu.style.top = `${y}px`;
+    }
+
+    // Function to hide the image change menu
+    function hideImageChangeMenu() {
+        imageChangeMenu.style.display = 'none';
+        imageUpload.value = ''; // Clear the file input
+        imagePreview.src = ''; // Clear the preview
+    }
+
+    // Event handler for file upload
+    imageUpload.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imagePreview.src = e.target.result; // Show preview of selected image
+                imagePreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Save the selected image and update the displayed image
+    saveImageBtn.addEventListener('click', () => {
+        const newImageSrc = imagePreview.src;
+        if (newImageSrc) {
+            localStorage.setItem('selectedImage', newImageSrc); // Save the image to localStorage
+            roundImage.src = newImageSrc; // Update the displayed image
+        }
+        hideImageChangeMenu(); // Hide the menu
+    });
+
+    // Reset the image to the default
+    resetImageBtn.addEventListener('click', () => {
+        localStorage.removeItem('selectedImage'); // Remove saved image from localStorage
+        roundImage.src = 'rkhkmc.png'; // Reset to the default image
+        imagePreview.src = ''; // Clear the preview
+        imagePreview.style.display = 'none';
+    });
+
+    // Close the menu without saving changes
+    closeImageMenuBtn.addEventListener('click', hideImageChangeMenu);
+
+    // Right-click handler for desktop
+    roundImage.addEventListener('contextmenu', (event) => {
+        event.preventDefault(); // Prevent the default right-click menu
+        showImageChangeMenu(event.pageX, event.pageY); // Show custom menu at the cursor position
+    });
+
+    // Long-press handler for mobile
+    roundImage.addEventListener('touchstart', (event) => {
+        longPressTimer = setTimeout(() => {
+            const touch = event.touches[0];
+            showImageChangeMenu(touch.pageX, touch.pageY); // Show menu at touch position
+        }, 800); // Trigger after 800ms of long-press
+    });
+
+    roundImage.addEventListener('touchend', () => {
+        clearTimeout(longPressTimer); // Cancel the long-press if the touch ends early
+    });
+
+    // Load saved image on page load
+    const savedImage = localStorage.getItem('selectedImage');
+    if (savedImage) {
+        roundImage.src = savedImage; // Set the saved image
+    }
+
+    // Hide menu if clicking outside it
+    document.addEventListener('click', (event) => {
+        if (!imageChangeMenu.contains(event.target) && event.target !== roundImage) {
+            hideImageChangeMenu();
+        }
+    });
+});
+
