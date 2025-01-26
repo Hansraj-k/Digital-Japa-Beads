@@ -195,6 +195,10 @@ function showImageChangeMenu(event) {
         <p>Change Image</p>
         <input type="file" id="image-upload" accept="image/*">
         <button id="close-menu">Close</button>
+        <div id="crop-container" style="display:none;">
+            <img id="crop-image-preview" style="max-width: 100%; max-height: 300px;">
+            <button id="apply-crop">Apply Crop</button>
+        </div>
     `;
 
     // Append the menu to the body
@@ -204,18 +208,54 @@ function showImageChangeMenu(event) {
     menu.style.left = `${event.pageX}px`;
     menu.style.top = `${event.pageY}px`;
 
+    let cropper;
+
     // Handle image file selection
     document.getElementById('image-upload').addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = function (event) {
-                const imageUrl = event.target.result;
-                // Set the uploaded image as the new round image
-                document.getElementById('round-image').src = imageUrl;
+                const cropImagePreview = document.getElementById('crop-image-preview');
+                cropImagePreview.src = event.target.result;
+                cropImagePreview.style.display = 'block';
+                document.getElementById('crop-container').style.display = 'block';
+
+                // Initialize Cropper.js
+                cropper = new Cropper(cropImagePreview, {
+                    aspectRatio: 1, // Circle crop
+                    viewMode: 1,
+                    background: false,
+                    zoomable: true,
+                    ready() {
+                        // Overlay a circle on top of the image for better visualization
+                        const overlay = document.createElement('div');
+                        overlay.style.position = 'absolute';
+                        overlay.style.border = '2px solid rgba(0, 0, 0, 0.5)';
+                        overlay.style.borderRadius = '50%';
+                        overlay.style.width = '100%';
+                        overlay.style.height = '100%';
+                        overlay.style.pointerEvents = 'none';
+                        overlay.style.top = '0';
+                        overlay.style.left = '0';
+                        cropImagePreview.parentElement.appendChild(overlay);
+                    }
+                });
             };
             reader.readAsDataURL(file);
         }
+    });
+
+    // Apply crop and update the round image
+    document.getElementById('apply-crop').addEventListener('click', () => {
+        const canvas = cropper.getCroppedCanvas({
+            width: 300, // Adjust based on your desired resolution
+            height: 300,
+            fillColor: '#fff',
+        });
+        const imageUrl = canvas.toDataURL('image/png');
+        document.getElementById('round-image').src = imageUrl; // Update the round image
+        document.body.removeChild(menu); // Close the menu
     });
 
     // Close menu
@@ -233,70 +273,10 @@ document.getElementById('round-image').addEventListener('touchstart', (e) => {
     showImageChangeMenu(e);
 });
 
-// References to the buttons and elements
-const changeImageBtn = document.getElementById('change-image-btn');
-const imageChangeMenu = document.getElementById('image-change-menu');
-const imageUpload = document.getElementById('image-upload');
-const imagePreview = document.getElementById('image-preview');
-const saveImageBtn = document.getElementById('save-image-btn');
-const resetImageBtn = document.getElementById('reset-image-btn');
-const closeImageMenuBtn = document.getElementById('close-image-menu');
-
-// Show the image change menu
-changeImageBtn.addEventListener('click', () => {
-    imageChangeMenu.style.display = 'block'; // Show the menu
-});
-
-// Close the image change menu
-closeImageMenuBtn.addEventListener('click', () => {
-    imageChangeMenu.style.display = 'none'; // Hide the menu
-});
-
-// Image upload handling
-imageUpload.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            imagePreview.src = e.target.result; // Display the selected image
-            imagePreview.style.display = 'block'; // Show preview
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
-// Save the image
-saveImageBtn.addEventListener('click', () => {
-    const newImageSrc = imagePreview.src;
-    if (newImageSrc) {
-        localStorage.setItem('selectedImage', newImageSrc); // Save the image source to localStorage
-        document.querySelector('.round-image').src = newImageSrc; // Update the round image in the UI
-        imageChangeMenu.style.display = 'none'; // Close the menu
-    }
-});
-
-// Reset the image to the default one
-resetImageBtn.addEventListener('click', () => {
-    localStorage.removeItem('selectedImage'); // Remove saved image from localStorage
-    document.querySelector('.round-image').src = 'rkhkmc.png'; // Reset to the default image
-    imagePreview.src = ''; // Clear preview
-    imagePreview.style.display = 'none'; // Hide preview
-});
-
 // Check if there's a saved image in localStorage
-window.onload = function() {
+window.onload = function () {
     const savedImage = localStorage.getItem('selectedImage');
     if (savedImage) {
-        document.querySelector('.round-image').src = savedImage; // Set the saved image
+        document.getElementById('round-image').src = savedImage; // Set the saved image
     }
 };
-
-
-// Image change on right-click or long press
-function showImageChangeMenu(event) {
-    event.preventDefault();
-    const menu = document.getElementById('image-change-menu');
-    menu.style.display = 'block';
-    menu.style.left = `${event.pageX}px`;
-    menu.style.top = `${event.pageY}px`;
-}
