@@ -192,10 +192,10 @@ function showImageChangeMenu(event) {
     const menu = document.createElement('div');
     menu.classList.add('image-change-menu');
     menu.innerHTML = 
-        <p>Change Image</p>
-        <input type="file" id="image-upload" accept="image/*">
-        <button id="close-menu">Close</button>
-    ;
+    <p>Change Image</p>
+    <input type="file" id="image-upload" accept="image/*">
+    <button id="close-menu">Close</button>
+;
 
     // Append the menu to the body
     document.body.appendChild(menu);
