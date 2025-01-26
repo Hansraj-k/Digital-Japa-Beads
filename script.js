@@ -184,99 +184,88 @@ const currentYear = dateInIST.getFullYear();
 // Set the year in the footer
 document.getElementById('current-year').textContent = currentYear;
 
-// Function to show an image change menu
-function showImageChangeMenu(event) {
-    event.preventDefault(); // Prevent the default action (context menu)
+// Function to show the image change menu
+        function showImageChangeMenu(event) {
+            event.preventDefault(); // Prevent default action (context menu)
 
-    // Create the menu with options
-    const menu = document.createElement('div');
-    menu.classList.add('image-change-menu');
-    menu.innerHTML = `
-        <p>Change Image</p>
-        <input type="file" id="image-upload" accept="image/*">
-        <button id="close-menu">Close</button>
-        <div id="crop-container" style="display:none;">
-            <img id="crop-image-preview" style="max-width: 100%; max-height: 300px;">
-            <button id="apply-crop">Apply Crop</button>
-        </div>
-    `;
+            // Remove any existing menu
+            const existingMenu = document.querySelector('.image-change-menu');
+            if (existingMenu) existingMenu.remove();
 
-    // Append the menu to the body
-    document.body.appendChild(menu);
+            // Create the menu with options
+            const menu = document.createElement('div');
+            menu.classList.add('image-change-menu');
+            menu.innerHTML = `
+                <p><strong>Change Image</strong></p>
+                <input type="file" id="image-upload" accept="image/*">
+                <div id="crop-container" style="display: none;">
+                    <img id="crop-image-preview">
+                    <button id="apply-crop">Apply Crop</button>
+                </div>
+                <button id="close-menu">Close</button>
+            `;
 
-    // Position the menu at the event's location
-    menu.style.left = `${event.pageX}px`;
-    menu.style.top = `${event.pageY}px`;
+            // Append the menu to the body
+            document.body.appendChild(menu);
 
-    let cropper;
+            // Position the menu at the event's location
+            menu.style.left = `${event.pageX}px`;
+            menu.style.top = `${event.pageY}px`;
 
-    // Handle image file selection
-    document.getElementById('image-upload').addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                const cropImagePreview = document.getElementById('crop-image-preview');
-                cropImagePreview.src = event.target.result;
-                cropImagePreview.style.display = 'block';
-                document.getElementById('crop-container').style.display = 'block';
+            let cropper;
 
-                // Initialize Cropper.js
-                cropper = new Cropper(cropImagePreview, {
-                    aspectRatio: 1, // Circle crop
-                    viewMode: 1,
-                    background: false,
-                    zoomable: true,
-                    ready() {
-                        // Overlay a circle on top of the image for better visualization
-                        const overlay = document.createElement('div');
-                        overlay.style.position = 'absolute';
-                        overlay.style.border = '2px solid rgba(0, 0, 0, 0.5)';
-                        overlay.style.borderRadius = '50%';
-                        overlay.style.width = '100%';
-                        overlay.style.height = '100%';
-                        overlay.style.pointerEvents = 'none';
-                        overlay.style.top = '0';
-                        overlay.style.left = '0';
-                        cropImagePreview.parentElement.appendChild(overlay);
-                    }
-                });
-            };
-            reader.readAsDataURL(file);
+            // Handle image file selection
+            document.getElementById('image-upload').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        const cropImagePreview = document.getElementById('crop-image-preview');
+                        cropImagePreview.src = event.target.result;
+                        cropImagePreview.style.display = 'block';
+                        document.getElementById('crop-container').style.display = 'block';
+
+                        // Initialize Cropper.js
+                        if (cropper) cropper.destroy(); // Destroy any existing cropper instance
+                        cropper = new Cropper(cropImagePreview, {
+                            aspectRatio: 1, // Circle crop
+                            viewMode: 1,
+                            background: false,
+                            autoCropArea: 1,
+                            guides: false,
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Apply crop and update the round image
+            document.getElementById('apply-crop').addEventListener('click', () => {
+                if (cropper) {
+                    const canvas = cropper.getCroppedCanvas({
+                        width: 300,
+                        height: 300,
+                    });
+                    const imageUrl = canvas.toDataURL('image/png');
+                    document.getElementById('round-image').src = imageUrl; // Update the round image
+                    localStorage.setItem('selectedImage', imageUrl); // Save to localStorage
+                }
+                document.body.removeChild(menu); // Close the menu
+            });
+
+            // Close menu
+            document.getElementById('close-menu').addEventListener('click', () => {
+                document.body.removeChild(menu);
+            });
         }
-    });
 
-    // Apply crop and update the round image
-    document.getElementById('apply-crop').addEventListener('click', () => {
-        const canvas = cropper.getCroppedCanvas({
-            width: 300, // Adjust based on your desired resolution
-            height: 300,
-            fillColor: '#fff',
-        });
-        const imageUrl = canvas.toDataURL('image/png');
-        document.getElementById('round-image').src = imageUrl; // Update the round image
-        document.body.removeChild(menu); // Close the menu
-    });
+        // Event listener for right-click on round image for desktop
+        document.getElementById('round-image').addEventListener('contextmenu', showImageChangeMenu);
 
-    // Close menu
-    document.getElementById('close-menu').addEventListener('click', () => {
-        document.body.removeChild(menu);
-    });
-}
-
-// Event listener for right-click on round image for desktop
-document.getElementById('round-image').addEventListener('contextmenu', showImageChangeMenu);
-
-// Event listener for long press on round image for mobile
-document.getElementById('round-image').addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    showImageChangeMenu(e);
-});
-
-// Check if there's a saved image in localStorage
-window.onload = function () {
-    const savedImage = localStorage.getItem('selectedImage');
-    if (savedImage) {
-        document.getElementById('round-image').src = savedImage; // Set the saved image
-    }
-};
+        // Check if there's a saved image in localStorage
+        window.onload = function () {
+            const savedImage = localStorage.getItem('selectedImage');
+            if (savedImage) {
+                document.getElementById('round-image').src = savedImage; // Set the saved image
+            }
+        };
