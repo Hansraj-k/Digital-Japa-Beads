@@ -458,3 +458,24 @@ img, button, .fa {
 .image-change-menu button:hover {
     background-color: #555;
 }
+
+* Style for the circular preview */
+#image-preview-container {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%; /* Makes it a circle */
+    overflow: hidden; /* Ensures the image doesn't go outside the circle */
+    border: 2px solid #ccc;
+    margin: 10px auto;
+    display: none; /* Initially hidden */
+    position: relative;
+}
+
+#image-preview {
+    width: 100%;
+    height: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: grab; /* Allows users to drag for better positioning */
+}
