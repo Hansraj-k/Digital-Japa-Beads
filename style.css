@@ -479,3 +479,13 @@ img, button, .fa {
     left: 0;
     cursor: grab; /* Allows users to drag for better positioning */
 }
+
+#crop-container {
+            margin-top: 10px;
+        }
+
+        #crop-container img {
+            max-width: 100%;
+            max-height: 300px;
+            display: block;
+        }
