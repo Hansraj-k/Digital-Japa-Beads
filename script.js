@@ -184,35 +184,144 @@ const currentYear = dateInIST.getFullYear();
 // Set the year in the footer
 document.getElementById('current-year').textContent = currentYear;
 
-// Function to show an image change menu
-function showImageChangeMenu(event) {
-    event.preventDefault(); // Prevent the default action (context menu)
+// Initialize count and round
+let count = parseInt(localStorage.getItem('count')) || 0;
+let round = parseInt(localStorage.getItem('round')) || 0;
+let audio = document.getElementById('audio');
+let countDisplay = document.getElementById('count-display');
+let roundDisplay = document.getElementById('round-display');
+let circleText = document.querySelector('.circle-text');
+let popup108 = document.getElementById('popup-108');
+let popupCountReset = document.getElementById('popup-count-reset');
+let popupRoundReset = document.getElementById('popup-round-reset');
+let changeImageMenu = null; // Dynamically created menu
+let isMuted = JSON.parse(localStorage.getItem('isMuted')) || false;
+let totalLetters = 108;
+let radius = 120; // Initial radius of the outermost circle
 
-    // Create the menu with options
-    const menu = document.createElement('div');
-    menu.classList.add('image-change-menu');
-    menu.innerHTML = 
+// Update count display
+function updateCountDisplay() {
+    countDisplay.textContent = count;
+}
+
+// Update round display
+function updateRoundDisplay() {
+    roundDisplay.textContent = `Round: ${round}`;
+}
+
+// Update circle text
+function updateCircleText() {
+    const letters = 'HAREKRISHNA'.repeat(9).split('');
+    const circleDivisions = [33, 36, 39];
+    const radiusIncrement = 30;
+    const initialRadius = 100;
+    let letterIndex = 0;
+
+    circleText.innerHTML = ''; // Clear existing letters
+
+    circleDivisions.forEach((lettersInCircle, circleIndex) => {
+        const currentRadius = initialRadius + circleIndex * radiusIncrement;
+        const angleStep = 360 / lettersInCircle;
+
+        for (let i = 0; i < lettersInCircle; i++) {
+            const angle = angleStep * i;
+            const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
+            const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
+
+            const letter = document.createElement('span');
+            letter.className = 'letter';
+            letter.textContent = letters[letterIndex % letters.length];
+            letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+
+            // Highlight letters based on count
+            letter.style.color = letterIndex < count ? 'white' : 'grey';
+
+            circleText.appendChild(letter);
+            letterIndex++;
+        }
+    });
+}
+
+// Save data to localStorage
+function saveData() {
+    localStorage.setItem('count', count);
+    localStorage.setItem('round', round);
+}
+
+// Update the counter
+function updateCounter() {
+    if (count < totalLetters) {
+        count++;
+        updateCountDisplay();
+        updateCircleText();
+        saveData();
+        if (count === totalLetters) {
+            round++;
+            updateRoundDisplay();
+            popup108.style.display = 'block';
+            if (!isMuted) audio.play();
+        }
+    }
+}
+
+// Reset count
+function resetCount() {
+    count = 0;
+    updateCountDisplay();
+    updateCircleText();
+    saveData();
+}
+
+// Reset round
+function resetRound() {
+    round = 0;
+    updateRoundDisplay();
+    saveData();
+}
+
+// Mute and unmute audio
+function toggleMute() {
+    isMuted = !isMuted;
+    audio.muted = isMuted;
+    localStorage.setItem('isMuted', JSON.stringify(isMuted));
+    document.getElementById('mute-btn').style.display = isMuted ? 'none' : 'inline-block';
+    document.getElementById('unmute-btn').style.display = isMuted ? 'inline-block' : 'none';
+}
+
+// Show the image change menu
+function showImageChangeMenu(event) {
+    event.preventDefault();
+
+    // Remove existing menu if present
+    if (changeImageMenu) {
+        document.body.removeChild(changeImageMenu);
+        changeImageMenu = null;
+    }
+
+    // Create the menu
+    changeImageMenu = document.createElement('div');
+    changeImageMenu.className = 'image-change-menu';
+    changeImageMenu.innerHTML = `
         <p>Change Image</p>
         <input type="file" id="image-upload" accept="image/*">
         <button id="close-menu">Close</button>
-    ;
+    `;
 
-    // Append the menu to the body
-    document.body.appendChild(menu);
+    document.body.appendChild(changeImageMenu);
 
-    // Position the menu at the event's location
-    menu.style.left = ${event.pageX}px;
-    menu.style.top = ${event.pageY}px;
+    // Position the menu
+    changeImageMenu.style.left = `${event.pageX}px`;
+    changeImageMenu.style.top = `${event.pageY}px`;
 
-    // Handle image file selection
+    // Handle file upload
     document.getElementById('image-upload').addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = function (event) {
                 const imageUrl = event.target.result;
-                // Set the uploaded image as the new round image
                 document.getElementById('round-image').src = imageUrl;
+                localStorage.setItem('selectedImage', imageUrl);
             };
             reader.readAsDataURL(file);
         }
@@ -220,83 +329,26 @@ function showImageChangeMenu(event) {
 
     // Close menu
     document.getElementById('close-menu').addEventListener('click', () => {
-        document.body.removeChild(menu);
+        document.body.removeChild(changeImageMenu);
+        changeImageMenu = null;
     });
 }
 
-// Event listener for right-click on round image for desktop
-document.getElementById('round-image').addEventListener('contextmenu', showImageChangeMenu);
-
-// Event listener for long press on round image for mobile
-document.getElementById('round-image').addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    showImageChangeMenu(e);
-});
-
-// References to the buttons and elements
-const changeImageBtn = document.getElementById('change-image-btn');
-const imageChangeMenu = document.getElementById('image-change-menu');
-const imageUpload = document.getElementById('image-upload');
-const imagePreview = document.getElementById('image-preview');
-const saveImageBtn = document.getElementById('save-image-btn');
-const resetImageBtn = document.getElementById('reset-image-btn');
-const closeImageMenuBtn = document.getElementById('close-image-menu');
-
-// Show the image change menu
-changeImageBtn.addEventListener('click', () => {
-    imageChangeMenu.style.display = 'block'; // Show the menu
-});
-
-// Close the image change menu
-closeImageMenuBtn.addEventListener('click', () => {
-    imageChangeMenu.style.display = 'none'; // Hide the menu
-});
-
-// Image upload handling
-imageUpload.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            imagePreview.src = e.target.result; // Display the selected image
-            imagePreview.style.display = 'block'; // Show preview
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
-// Save the image
-saveImageBtn.addEventListener('click', () => {
-    const newImageSrc = imagePreview.src;
-    if (newImageSrc) {
-        localStorage.setItem('selectedImage', newImageSrc); // Save the image source to localStorage
-        document.querySelector('.round-image').src = newImageSrc; // Update the round image in the UI
-        imageChangeMenu.style.display = 'none'; // Close the menu
-    }
-});
-
-// Reset the image to the default one
-resetImageBtn.addEventListener('click', () => {
-    localStorage.removeItem('selectedImage'); // Remove saved image from localStorage
-    document.querySelector('.round-image').src = 'rkhkmc.png'; // Reset to the default image
-    imagePreview.src = ''; // Clear preview
-    imagePreview.style.display = 'none'; // Hide preview
-});
-
-// Check if there's a saved image in localStorage
-window.onload = function() {
+// Load saved image on page load
+window.onload = function () {
     const savedImage = localStorage.getItem('selectedImage');
     if (savedImage) {
-        document.querySelector('.round-image').src = savedImage; // Set the saved image
+        document.getElementById('round-image').src = savedImage;
     }
+    updateCountDisplay();
+    updateRoundDisplay();
+    updateCircleText();
 };
 
-
-// Image change on right-click or long press
-function showImageChangeMenu(event) {
-    event.preventDefault();
-    const menu = document.getElementById('image-change-menu');
-    menu.style.display = 'block';
-    menu.style.left = ${event.pageX}px;
-    menu.style.top = ${event.pageY}px;
-}
+// Add event listeners
+document.getElementById('count-btn').addEventListener('click', updateCounter);
+document.getElementById('reset-count-btn').addEventListener('click', resetCount);
+document.getElementById('reset-round-btn').addEventListener('click', resetRound);
+document.getElementById('mute-btn').addEventListener('click', toggleMute);
+document.getElementById('unmute-btn').addEventListener('click', toggleMute);
+document.getElementById('round-image').addEventListener('contextmenu', showImageChangeMenu);
