@@ -184,35 +184,35 @@ const currentYear = dateInIST.getFullYear();
 // Set the year in the footer
 document.getElementById('current-year').textContent = currentYear;
 
-// Function to show an image change menu
+// Consolidated Functions and Fixed Template Literals
 function showImageChangeMenu(event) {
-    event.preventDefault(); // Prevent the default action (context menu)
+    event.preventDefault();
 
-    // Create the menu with options
     const menu = document.createElement('div');
     menu.classList.add('image-change-menu');
-    menu.innerHTML = 
-    <p>Change Image</p>
-    <input type="file" id="image-upload" accept="image/*">
-    <button id="close-menu">Close</button>
-;
+    menu.innerHTML = `
+        <p>Change Image</p>
+        <input type="file" id="image-upload" accept="image/*">
+        <button id="close-menu">Close</button>
+    `;
 
-    // Append the menu to the body
     document.body.appendChild(menu);
 
-    // Position the menu at the event's location
-    menu.style.left = ${event.pageX}px;
-    menu.style.top = ${event.pageY}px;
+    // Position the menu at event's location
+    const x = event.pageX || event.touches?.[0]?.clientX || 0;
+    const y = event.pageY || event.touches?.[0]?.clientY || 0;
+    menu.style.left = `${x}px`;
+    menu.style.top = `${y}px`;
 
-    // Handle image file selection
+    // Image upload handling
     document.getElementById('image-upload').addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = function (event) {
                 const imageUrl = event.target.result;
-                // Set the uploaded image as the new round image
                 document.getElementById('round-image').src = imageUrl;
+                localStorage.setItem('selectedImage', imageUrl);
             };
             reader.readAsDataURL(file);
         }
@@ -224,80 +224,17 @@ function showImageChangeMenu(event) {
     });
 }
 
-// Event listener for right-click on round image for desktop
-document.getElementById('round-image').addEventListener('contextmenu', showImageChangeMenu);
-
-// Event listener for long press on round image for mobile
-document.getElementById('round-image').addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    showImageChangeMenu(e);
+// Event listener for round image interactions
+const roundImage = document.getElementById('round-image');
+roundImage.addEventListener('contextmenu', showImageChangeMenu);
+roundImage.addEventListener('touchstart', (e) => {
+    setTimeout(() => showImageChangeMenu(e), 500); // Debounce for long press
 });
 
-// References to the buttons and elements
-const changeImageBtn = document.getElementById('change-image-btn');
-const imageChangeMenu = document.getElementById('image-change-menu');
-const imageUpload = document.getElementById('image-upload');
-const imagePreview = document.getElementById('image-preview');
-const saveImageBtn = document.getElementById('save-image-btn');
-const resetImageBtn = document.getElementById('reset-image-btn');
-const closeImageMenuBtn = document.getElementById('close-image-menu');
-
-// Show the image change menu
-changeImageBtn.addEventListener('click', () => {
-    imageChangeMenu.style.display = 'block'; // Show the menu
-});
-
-// Close the image change menu
-closeImageMenuBtn.addEventListener('click', () => {
-    imageChangeMenu.style.display = 'none'; // Hide the menu
-});
-
-// Image upload handling
-imageUpload.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            imagePreview.src = e.target.result; // Display the selected image
-            imagePreview.style.display = 'block'; // Show preview
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
-// Save the image
-saveImageBtn.addEventListener('click', () => {
-    const newImageSrc = imagePreview.src;
-    if (newImageSrc) {
-        localStorage.setItem('selectedImage', newImageSrc); // Save the image source to localStorage
-        document.querySelector('.round-image').src = newImageSrc; // Update the round image in the UI
-        imageChangeMenu.style.display = 'none'; // Close the menu
-    }
-});
-
-// Reset the image to the default one
-resetImageBtn.addEventListener('click', () => {
-    localStorage.removeItem('selectedImage'); // Remove saved image from localStorage
-    document.querySelector('.round-image').src = 'rkhkmc.png'; // Reset to the default image
-    imagePreview.src = ''; // Clear preview
-    imagePreview.style.display = 'none'; // Hide preview
-});
-
-// Check if there's a saved image in localStorage
-window.onload = function() {
+// Load saved image on page load
+window.onload = function () {
     const savedImage = localStorage.getItem('selectedImage');
     if (savedImage) {
-        document.querySelector('.round-image').src = savedImage; // Set the saved image
+        document.getElementById('round-image').src = savedImage;
     }
 };
-
-
-// Image change on right-click or long press
-function showImageChangeMenu(event) {
-    event.preventDefault();
-    const menu = document.getElementById('image-change-menu');
-    menu.style.display = 'block';
-    menu.style.left = ${event.pageX}px;
-    menu.style.top = ${event.pageY}px;
-}
-
