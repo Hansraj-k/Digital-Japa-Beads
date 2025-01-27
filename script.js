@@ -300,3 +300,4 @@ function showImageChangeMenu(event) {
     menu.style.left = ${event.pageX}px;
     menu.style.top = ${event.pageY}px;
 }
+
