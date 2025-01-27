@@ -186,42 +186,79 @@ document.getElementById('current-year').textContent = currentYear;
 
 // Function to show an image change menu
 function showImageChangeMenu(event) {
-event.preventDefault(); // Prevent the default action (context menu)
+    event.preventDefault(); // Prevent the default action (context menu)
 
-// Create the menu with options
-const menu = document.createElement('div');
-menu.classList.add('image-change-menu');
-menu.innerHTML = 
-       <p>Change Image</p>
-       <input type="file" id="image-upload" accept="image/*">
-       <button id="close-menu">Close</button>
-   ;
+    // Create the menu with options
+    const menu = document.createElement('div');
+    menu.classList.add('image-change-menu');
+    menu.innerHTML = 
+        `<p>Change Image</p>
+        <input type="file" id="image-upload" accept="image/*">
+        <button id="close-menu">Close</button>
+        <div id="image-cropper-container" style="display:none;">
+            <div id="image-cropper" class="cropper">
+                <img id="cropper-image" src="" alt="Crop image" style="width: 100%; height: 100%;" />
+                <div id="cropper-resize" class="resize-handle"></div>
+            </div>
+            <button id="set-image-btn">Set as Circle Image</button>
+        </div>`;
 
-// Append the menu to the body
-document.body.appendChild(menu);
+    // Append the menu to the body
+    document.body.appendChild(menu);
 
-// Position the menu at the event's location
-menu.style.left = ${event.pageX}px;
-menu.style.top = ${event.pageY}px;
+    // Position the menu at the event's location
+    menu.style.left = `${event.pageX}px`;
+    menu.style.top = `${event.pageY}px`;
 
-// Handle image file selection
-document.getElementById('image-upload').addEventListener('change', (e) => {
-const file = e.target.files[0];
-if (file) {
-const reader = new FileReader();
-reader.onload = function (event) {
+    // Handle image file selection
+    document.getElementById('image-upload').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
                 const imageUrl = event.target.result;
-                // Set the uploaded image as the new round image
-                document.getElementById('round-image').src = imageUrl;
-};
-reader.readAsDataURL(file);
-}
-});
+                // Show the cropper and set the image for cropping
+                document.getElementById('image-cropper-container').style.display = 'block';
+                document.getElementById('cropper-image').src = imageUrl;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
 
-// Close menu
-document.getElementById('close-menu').addEventListener('click', () => {
-document.body.removeChild(menu);
-});
+    // Close menu
+    document.getElementById('close-menu').addEventListener('click', () => {
+        document.body.removeChild(menu);
+    });
+
+    // Set circle image
+    document.getElementById('set-image-btn').addEventListener('click', () => {
+        const cropperImage = document.getElementById('cropper-image');
+        const cropperContainer = document.getElementById('image-cropper');
+        
+        // Creating a circular image from the cropped area
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        const size = Math.min(cropperContainer.offsetWidth, cropperContainer.offsetHeight);
+        canvas.width = size;
+        canvas.height = size;
+        
+        // Drawing the circular crop on canvas
+        ctx.beginPath();
+        ctx.arc(size / 2, size / 2, size / 2, 0, 2 * Math.PI);
+        ctx.closePath();
+        ctx.clip();
+        
+        ctx.drawImage(cropperImage, 0, 0, cropperImage.width, cropperImage.height, 0, 0, size, size);
+        
+        // Convert canvas to data URL
+        const imageUrl = canvas.toDataURL();
+        
+        // Update the image
+        document.getElementById('round-image').src = imageUrl;
+        localStorage.setItem('selectedImage', imageUrl); // Save the image source to localStorage
+        document.body.removeChild(menu); // Close the menu
+    });
 }
 
 // Event listener for right-click on round image for desktop
@@ -229,8 +266,8 @@ document.getElementById('round-image').addEventListener('contextmenu', showImage
 
 // Event listener for long press on round image for mobile
 document.getElementById('round-image').addEventListener('touchstart', (e) => {
-e.preventDefault();
-showImageChangeMenu(e);
+    e.preventDefault();
+    showImageChangeMenu(e);
 });
 
 // References to the buttons and elements
@@ -285,19 +322,9 @@ resetImageBtn.addEventListener('click', () => {
 
 // Check if there's a saved image in localStorage
 window.onload = function() {
-const savedImage = localStorage.getItem('selectedImage');
-if (savedImage) {
+    const savedImage = localStorage.getItem('selectedImage');
+    if (savedImage) {
         document.querySelector('.round-image').src = savedImage; // Set the saved image
-}
+    }
 };
-
-
-// Image change on right-click or long press
-function showImageChangeMenu(event) {
-    event.preventDefault();
-    const menu = document.getElementById('image-change-menu');
-    menu.style.display = 'block';
-    menu.style.left = ${event.pageX}px;
-    menu.style.top = ${event.pageY}px;
-}
 
