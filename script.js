@@ -186,42 +186,133 @@ document.getElementById('current-year').textContent = currentYear;
 
 // Function to show an image change menu
 function showImageChangeMenu(event) {
-event.preventDefault(); // Prevent the default action (context menu)
+    event.preventDefault(); // Prevent the default action (context menu)
 
-// Create the menu with options
-const menu = document.createElement('div');
-menu.classList.add('image-change-menu');
-menu.innerHTML = `
-       <p>Change Image</p>
-       <input type="file" id="image-upload" accept="image/*">
-       <button id="close-menu">Close</button>
-   `;
+    // Create the menu with options
+    const menu = document.createElement('div');
+    menu.classList.add('image-change-menu');
+    menu.innerHTML = `
+        <p>Change Image</p>
+        <input type="file" id="image-upload" accept="image/*">
+        <div id="crop-container">
+            <canvas id="image-canvas"></canvas>
+            <div id="crop-overlay"></div>
+        </div>
+        <button id="save-image">Save</button>
+        <button id="close-menu">Close</button>
+    `;
 
-// Append the menu to the body
-document.body.appendChild(menu);
+    // Append the menu to the body
+    document.body.appendChild(menu);
 
-// Position the menu at the event's location
-menu.style.left = `${event.pageX}px`;
-menu.style.top = `${event.pageY}px`;
+    // Position the menu at the event's location
+    menu.style.left = `${event.pageX}px`;
+    menu.style.top = `${event.pageY}px`;
 
-// Handle image file selection
-document.getElementById('image-upload').addEventListener('change', (e) => {
-const file = e.target.files[0];
-if (file) {
-const reader = new FileReader();
-reader.onload = function (event) {
+    const imageCanvas = document.getElementById('image-canvas');
+    const cropOverlay = document.getElementById('crop-overlay');
+    const context = imageCanvas.getContext('2d');
+    let uploadedImage = null;
+    let cropX = 50, cropY = 50, cropSize = 150;
+
+    // Update the crop overlay position
+    function updateCropOverlay() {
+        cropOverlay.style.left = `${cropX}px`;
+        cropOverlay.style.top = `${cropY}px`;
+        cropOverlay.style.width = `${cropSize}px`;
+        cropOverlay.style.height = `${cropSize}px`;
+    }
+
+    // Handle image upload
+    document.getElementById('image-upload').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
                 const imageUrl = event.target.result;
-                // Set the uploaded image as the new round image
-                document.getElementById('round-image').src = imageUrl;
-};
-reader.readAsDataURL(file);
-}
-});
+                const img = new Image();
+                img.onload = function () {
+                    uploadedImage = img;
+                    imageCanvas.width = img.width;
+                    imageCanvas.height = img.height;
+                    context.drawImage(img, 0, 0);
+                    cropX = (img.width - cropSize) / 2;
+                    cropY = (img.height - cropSize) / 2;
+                    updateCropOverlay();
+                };
+                img.src = imageUrl;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
 
-// Close menu
-document.getElementById('close-menu').addEventListener('click', () => {
-document.body.removeChild(menu);
-});
+    // Drag to adjust the crop overlay
+    let isDragging = false;
+    cropOverlay.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        const startX = e.clientX;
+        const startY = e.clientY;
+
+        const initialX = cropX;
+        const initialY = cropY;
+
+        function onMouseMove(e) {
+            if (isDragging) {
+                const deltaX = e.clientX - startX;
+                const deltaY = e.clientY - startY;
+                cropX = Math.max(0, Math.min(initialX + deltaX, imageCanvas.width - cropSize));
+                cropY = Math.max(0, Math.min(initialY + deltaY, imageCanvas.height - cropSize));
+                updateCropOverlay();
+            }
+        }
+
+        function onMouseUp() {
+            isDragging = false;
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        }
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    });
+
+    // Save the cropped image
+    document.getElementById('save-image').addEventListener('click', () => {
+        if (uploadedImage) {
+            const croppedCanvas = document.createElement('canvas');
+            const croppedContext = croppedCanvas.getContext('2d');
+            croppedCanvas.width = cropSize;
+            croppedCanvas.height = cropSize;
+
+            croppedContext.beginPath();
+            croppedContext.arc(cropSize / 2, cropSize / 2, cropSize / 2, 0, Math.PI * 2);
+            croppedContext.closePath();
+            croppedContext.clip();
+
+            croppedContext.drawImage(
+                uploadedImage,
+                cropX, cropY, cropSize, cropSize,
+                0, 0, cropSize, cropSize
+            );
+
+            const croppedImageUrl = croppedCanvas.toDataURL();
+            document.getElementById('round-image').src = croppedImageUrl;
+            localStorage.setItem('selectedImage', croppedImageUrl);
+            document.body.removeChild(menu);
+        }
+    });
+
+    // Close menu
+    document.getElementById('close-menu').addEventListener('click', () => {
+        document.body.removeChild(menu);
+    });
+
+    // Style the crop overlay
+    cropOverlay.style.position = 'absolute';
+    cropOverlay.style.border = '2px dashed #fff';
+    cropOverlay.style.borderRadius = '50%';
+    cropOverlay.style.cursor = 'move';
+    updateCropOverlay();
 }
 
 // Event listener for right-click on round image for desktop
@@ -229,74 +320,14 @@ document.getElementById('round-image').addEventListener('contextmenu', showImage
 
 // Event listener for long press on round image for mobile
 document.getElementById('round-image').addEventListener('touchstart', (e) => {
-e.preventDefault();
-showImageChangeMenu(e);
-});
-
-// References to the buttons and elements
-const changeImageBtn = document.getElementById('change-image-btn');
-const imageChangeMenu = document.getElementById('image-change-menu');
-const imageUpload = document.getElementById('image-upload');
-const imagePreview = document.getElementById('image-preview');
-const saveImageBtn = document.getElementById('save-image-btn');
-const resetImageBtn = document.getElementById('reset-image-btn');
-const closeImageMenuBtn = document.getElementById('close-image-menu');
-
-// Show the image change menu
-changeImageBtn.addEventListener('click', () => {
-    imageChangeMenu.style.display = 'block'; // Show the menu
-});
-
-// Close the image change menu
-closeImageMenuBtn.addEventListener('click', () => {
-    imageChangeMenu.style.display = 'none'; // Hide the menu
-});
-
-// Image upload handling
-imageUpload.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            imagePreview.src = e.target.result; // Display the selected image
-            imagePreview.style.display = 'block'; // Show preview
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
-// Save the image
-saveImageBtn.addEventListener('click', () => {
-    const newImageSrc = imagePreview.src;
-    if (newImageSrc) {
-        localStorage.setItem('selectedImage', newImageSrc); // Save the image source to localStorage
-        document.querySelector('.round-image').src = newImageSrc; // Update the round image in the UI
-        imageChangeMenu.style.display = 'none'; // Close the menu
-    }
-});
-
-// Reset the image to the default one
-resetImageBtn.addEventListener('click', () => {
-    localStorage.removeItem('selectedImage'); // Remove saved image from localStorage
-    document.querySelector('.round-image').src = 'rkhkmc.png'; // Reset to the default image
-    imagePreview.src = ''; // Clear preview
-    imagePreview.style.display = 'none'; // Hide preview
+    e.preventDefault();
+    showImageChangeMenu(e);
 });
 
 // Check if there's a saved image in localStorage
 window.onload = function() {
-const savedImage = localStorage.getItem('selectedImage');
-if (savedImage) {
-        document.querySelector('.round-image').src = savedImage; // Set the saved image
-}
+    const savedImage = localStorage.getItem('selectedImage');
+    if (savedImage) {
+        document.getElementById('round-image').src = savedImage;
+    }
 };
-
-
-// Image change on right-click or long press
-function showImageChangeMenu(event) {
-    event.preventDefault();
-    const menu = document.getElementById('image-change-menu');
-    menu.style.display = 'block';
-    menu.style.left = `${event.pageX}px`;
-    menu.style.top = `${event.pageY}px`;
-}
