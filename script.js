@@ -213,7 +213,9 @@ function showImageChangeMenu(event) {
     const cropOverlay = document.getElementById('crop-overlay');
     const context = imageCanvas.getContext('2d');
     let uploadedImage = null;
-    let cropX = 50, cropY = 50, cropSize = 150;
+    let cropX = 50,
+        cropY = 50,
+        cropSize = 150;
 
     // Update the crop overlay position
     function updateCropOverlay() {
@@ -291,8 +293,14 @@ function showImageChangeMenu(event) {
 
             croppedContext.drawImage(
                 uploadedImage,
-                cropX, cropY, cropSize, cropSize,
-                0, 0, cropSize, cropSize
+                cropX,
+                cropY,
+                cropSize,
+                cropSize,
+                0,
+                0,
+                cropSize,
+                cropSize
             );
 
             const croppedImageUrl = croppedCanvas.toDataURL();
@@ -318,16 +326,11 @@ function showImageChangeMenu(event) {
 // Event listener for right-click on round image for desktop
 document.getElementById('round-image').addEventListener('contextmenu', showImageChangeMenu);
 
-// Event listener for long press on round image for mobile
-document.getElementById('round-image').addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    showImageChangeMenu(e);
-});
-
 // Check if there's a saved image in localStorage
-window.onload = function() {
+window.onload = function () {
     const savedImage = localStorage.getItem('selectedImage');
     if (savedImage) {
         document.getElementById('round-image').src = savedImage;
     }
 };
+
