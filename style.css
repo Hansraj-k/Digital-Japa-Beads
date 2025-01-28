@@ -466,29 +466,53 @@ img, button, .fa {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.9); /* Dark background */
+    display: flex; /* Flexbox for centering */
     justify-content: center;
     align-items: center;
     z-index: 1000;
 }
 
 .popup-content-notify {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
+    background: #1e1e1e; /* Darker background for the popup */
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.6); /* Soft shadow */
     text-align: center;
+    color: #ffffff; /* White text for contrast */
+    width: 90%;
+    max-width: 400px;
+}
+
+.popup-heading {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #4caf50; /* Accent color */
 }
 
 #close-popup-notify {
     margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #4CAF50;
+    padding: 12px 25px;
+    background-color: #4caf50; /* Green button */
     color: white;
     border: none;
+    border-radius: 6px;
     cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
 }
 
 #close-popup-notify:hover {
-    background-color: #45a049;
+    background-color: #45a049; /* Lighter green on hover */
+}
+
+@media (max-width: 480px) {
+    .popup-content-notify {
+        padding: 15px;
+    }
+    #close-popup-notify {
+        width: 100%;
+    }
 }
 
