@@ -304,11 +304,11 @@ function showImageChangeMenu(event) {
 // Check if the popup has been shown before
 if (!localStorage.getItem('popupShown')) {
     // Show the popup if not shown before
-    document.getElementById('image-change-popup').style.display = 'flex';
+    document.getElementById('popupnotify').style.display = 'flex';
 
     // Event listener to close the popup
-    document.getElementById('close-popup-btn').addEventListener('click', function () {
-        document.getElementById('image-change-popup').style.display = 'none';
+    document.getElementById('close-popupnotify').addEventListener('click', function () {
+        document.getElementById('popupnotify').style.display = 'none';
         localStorage.setItem('popupShown', 'true'); // Mark as shown
     });
 }
