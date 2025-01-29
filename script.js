@@ -301,18 +301,14 @@ function showImageChangeMenu(event) {
     menu.style.top = `${event.pageY}px`;
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    // Check if the popup has been shown before
-    if (!localStorage.getItem('popupShown')) {
-        // Show the popup if not shown before
-        const popup = document.getElementById('popupnotify');
-        popup.style.display = 'flex';
+// Check if the popup has been shown before
+if (!localStorage.getItem('popupShown')) {
+    // Show the popup if not shown before
+    document.getElementById('popupnotify').style.display = 'flex';
 
-        // Event listener to close the popup
-        document.getElementById('close-popup-notify').addEventListener('click', function () {
-            // Hide the popup and mark it as shown
-            popup.style.display = 'none';
-            localStorage.setItem('popupShown', 'true'); // Mark as shown
-        });
-    }
-});
+    // Event listener to close the popup
+    document.getElementById('close-popupnotify').addEventListener('click', function () {
+        document.getElementById('popupnotify').style.display = 'none';
+        localStorage.setItem('popupShown', 'true'); // Mark as shown
+    });
+}
