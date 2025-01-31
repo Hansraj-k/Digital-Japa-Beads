@@ -313,105 +313,40 @@ if (!localStorage.getItem('popupShown')) {
     });
 }
 
-// Initialize variables
-let circleText = 'HAREKRISHNA'.repeat(9); // Default circle text
-let count = parseInt(localStorage.getItem('count')) || 0;
-let round = parseInt(localStorage.getItem('round')) || 0;
-let totalLetters = 108; // Total letters to count
+// References to the buttons and elements for text change
+const changeTextBtn = document.getElementById('change-text-btn');
+const textChangeMenu = document.getElementById('text-change-menu');
+const textEditor = document.getElementById('text-editor');
+const saveTextBtn = document.getElementById('save-text-btn');
+const closeTextMenuBtn = document.getElementById('close-text-menu');
 
-// Get elements from the DOM
-let countDisplay = document.getElementById('count-display');
-let roundDisplay = document.getElementById('round-display');
-let circleTextDisplay = document.getElementById('circle-text-display');
-let changeCircleTextBtn = document.getElementById('change-circle-text-btn');
-let circleTextChangeMenu = document.getElementById('circle-text-change-menu');
-let circleTextEditor = document.getElementById('circle-text-editor');
-let saveCircleTextBtn = document.getElementById('save-circle-text-btn');
-let resetCircleTextBtn = document.getElementById('reset-circle-text-btn');
-let closeCircleTextMenuBtn = document.getElementById('close-circle-text-menu');
+// Show the text change menu
+changeTextBtn.addEventListener('click', () => {
+    textChangeMenu.style.display = 'block'; // Show the text editor menu
+    textEditor.value = circleText.innerHTML; // Populate the editor with current circle text
+});
 
-// Function to update the circle text (this will update the text display in a circular format)
-function updateCircleText() {
-    const letters = circleText.split('');
-    const circleDivisions = [33, 36, 39]; // Letters per circle division
-    const radiusIncrement = 30; // Radius for circle divisions
-    const initialRadius = 100; // Starting radius for the first circle
-    let letterIndex = 0; // To track letters for display
+// Close the text change menu
+closeTextMenuBtn.addEventListener('click', () => {
+    textChangeMenu.style.display = 'none'; // Hide the menu
+});
 
-    // Clear existing letters
-    circleTextDisplay.innerHTML = '';
+// Save the new text
+saveTextBtn.addEventListener('click', () => {
+    circleText.innerHTML = textEditor.value; // Set the new text inside circle-text div
+    textChangeMenu.style.display = 'none'; // Hide the menu
+    saveData(); // Optionally save this new text if needed in localStorage
+});
 
-    // Loop through circle divisions
-    circleDivisions.forEach((lettersInCircle, circleIndex) => {
-        const currentRadius = initialRadius + circleIndex * radiusIncrement; // Calculate radius for the circle
-        const angleStep = 360 / lettersInCircle; // Angle per letter in the circle
-
-        // Loop through letters for each circle
-        for (let i = 0; i < lettersInCircle; i++) {
-            const angle = angleStep * i; // Angle for the letter
-            const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
-            const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
-
-            const letter = document.createElement('span');
-            letter.className = 'letter';
-            letter.textContent = letters[letterIndex % letters.length]; // Get the letter to display
-            letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`; // Position the letter around the circle
-
-            // Highlight the letters based on count
-            letter.style.color = letterIndex < count ? 'white' : 'grey';
-
-            circleTextDisplay.appendChild(letter); // Add letter to the display
-            letterIndex++; // Move to the next letter
-        }
-    });
+// Optional: Function to save the new text to localStorage (if required)
+function saveData() {
+    localStorage.setItem('circleText', circleText.innerHTML);
 }
 
-// Show the text change menu when the button is clicked
-changeCircleTextBtn.addEventListener('click', () => {
-    circleTextChangeMenu.style.display = 'block'; // Display the text editor
-    circleTextEditor.value = circleText; // Preload current text into the editor
-});
-
-// Close the circle text editor menu
-closeCircleTextMenuBtn.addEventListener('click', () => {
-    circleTextChangeMenu.style.display = 'none'; // Hide the text editor
-});
-
-// Save the new circle text
-saveCircleTextBtn.addEventListener('click', () => {
-    const newText = circleTextEditor.value; // Get the new text from the editor
-    if (newText) {
-        localStorage.setItem('circleText', newText); // Save the new text in localStorage
-        circleText = newText; // Update the circle text variable
-        updateCircleText(); // Re-render the circle text with the new text
-        circleTextChangeMenu.style.display = 'none'; // Hide the editor
-    }
-});
-
-// Reset the circle text to default
-resetCircleTextBtn.addEventListener('click', () => {
-    localStorage.removeItem('circleText'); // Remove saved text from localStorage
-    circleText = 'HAREKRISHNA'.repeat(9); // Reset to default text
-    updateCircleText(); // Re-render the circle text with default text
-    circleTextEditor.value = ''; // Clear the editor
-    circleTextChangeMenu.style.display = 'none'; // Hide the editor
-});
-
-// Check for saved circle text in localStorage on page load
+// On page load, check if there's saved text in localStorage
 window.onload = function() {
     const savedText = localStorage.getItem('circleText');
     if (savedText) {
-        circleText = savedText; // Load the saved text from localStorage
+        circleText.innerHTML = savedText; // Set the saved text
     }
-    updateCircleText(); // Update the display with saved or default text
 };
-
-// Your existing functions for count and round will remain unchanged, just call them as before
-function updateCountDisplay() {
-    countDisplay.textContent = count;
-}
-
-function updateRoundDisplay() {
-    roundDisplay.textContent = `Round: ${round}`;
-}
-
