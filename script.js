@@ -312,3 +312,106 @@ if (!localStorage.getItem('popupShown')) {
         localStorage.setItem('popupShown', 'true'); // Mark as shown
     });
 }
+
+// Initialize variables
+let circleText = 'HAREKRISHNA'.repeat(9); // Default text to show in circle
+let count = parseInt(localStorage.getItem('count')) || 0;
+let round = parseInt(localStorage.getItem('round')) || 0;
+let totalLetters = 108; // Total letters to count
+
+// Get elements from the DOM
+let countDisplay = document.getElementById('count-display');
+let roundDisplay = document.getElementById('round-display');
+let circleTextDisplay = document.getElementById('circle-text-display');
+let changeCircleTextBtn = document.getElementById('change-circle-text-btn');
+let circleTextChangeMenu = document.getElementById('circle-text-change-menu');
+let circleTextEditor = document.getElementById('circle-text-editor');
+let saveCircleTextBtn = document.getElementById('save-circle-text-btn');
+let resetCircleTextBtn = document.getElementById('reset-circle-text-btn');
+let closeCircleTextMenuBtn = document.getElementById('close-circle-text-menu');
+
+// Function to update the circle text display (around the circles)
+function updateCircleText() {
+    const letters = circleText.split('');
+    const circleDivisions = [33, 36, 39]; // Number of letters per circle
+    const radiusIncrement = 30; // Radius increment for each circle
+    const initialRadius = 100; // Starting radius for the first circle
+    let letterIndex = 0; // Index to track which letter to display
+
+    // Clear existing letters in the circle text display
+    circleTextDisplay.innerHTML = '';
+
+    // Loop through each circle division
+    circleDivisions.forEach((lettersInCircle, circleIndex) => {
+        const currentRadius = initialRadius + circleIndex * radiusIncrement; // Calculate the radius for this circle
+        const angleStep = 360 / lettersInCircle; // Angle for each letter in the circle
+
+        // Loop through the letters for this circle
+        for (let i = 0; i < lettersInCircle; i++) {
+            const angle = angleStep * i; // Calculate the angle for each letter
+            const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
+            const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
+
+            const letter = document.createElement('span');
+            letter.className = 'letter';
+            letter.textContent = letters[letterIndex % letters.length]; // Set letter text
+            letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`; // Position and rotate the letters
+
+            // Highlight the letters based on the count
+            letter.style.color = letterIndex < count ? 'white' : 'grey';
+
+            circleTextDisplay.appendChild(letter); // Append the letter to the circle display
+            letterIndex++; // Move to the next letter
+        }
+    });
+}
+
+// Show the circle text change menu when the button is clicked
+changeCircleTextBtn.addEventListener('click', () => {
+    circleTextChangeMenu.style.display = 'block'; // Show the text editor menu
+    circleTextEditor.value = circleText; // Load the current text into the editor
+});
+
+// Close the circle text editor menu
+closeCircleTextMenuBtn.addEventListener('click', () => {
+    circleTextChangeMenu.style.display = 'none'; // Hide the text editor menu
+});
+
+// Save the new circle text
+saveCircleTextBtn.addEventListener('click', () => {
+    const newText = circleTextEditor.value; // Get the text from the editor
+    if (newText) {
+        localStorage.setItem('circleText', newText); // Save the new text to localStorage
+        circleText = newText; // Update the circleText variable
+        updateCircleText(); // Re-render the circle text display
+        circleTextChangeMenu.style.display = 'none'; // Hide the menu
+    }
+});
+
+// Reset the circle text to default
+resetCircleTextBtn.addEventListener('click', () => {
+    localStorage.removeItem('circleText'); // Remove saved circle text from localStorage
+    circleText = 'HAREKRISHNA'.repeat(9); // Reset to default text
+    updateCircleText(); // Re-render the circle text display
+    circleTextEditor.value = ''; // Clear the editor
+    circleTextChangeMenu.style.display = 'none'; // Hide the menu
+});
+
+// Check for saved circle text in localStorage
+window.onload = function() {
+    const savedText = localStorage.getItem('circleText');
+    if (savedText) {
+        circleText = savedText; // Load saved text from localStorage
+    }
+    updateCircleText(); // Display the saved or default text
+};
+
+// Example code for updating count (if needed for your full setup)
+function updateCountDisplay() {
+    countDisplay.textContent = count;
+}
+
+function updateRoundDisplay() {
+    roundDisplay.textContent = `Round: ${round}`;
+}
+
