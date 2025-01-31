@@ -313,28 +313,49 @@ if (!localStorage.getItem('popupShown')) {
     });
 }
 
-// References to the buttons and elements for text change
-const changeTextBtn = document.getElementById('change-text-btn');
-const textChangeMenu = document.getElementById('text-change-menu');
-const textEditor = document.getElementById('text-editor');
-const saveTextBtn = document.getElementById('save-text-btn');
-const closeTextMenuBtn = document.getElementById('close-text-menu');
+// Function to update the circle text based on the count
+function updateCircleText() {
+    // Get the updated text from the circleText div
+    const text = circleText.innerHTML.trim(); // Ensure to remove any extra whitespace
+    const letters = text.split(''); // Split the updated text into individual characters
+    const circleDivisions = [33, 36, 39]; // Increased letters per circle for tighter spacing
+    const radiusIncrement = 30; // Reduced increment radius for closer circles
+    const initialRadius = 100; // Starting radius
+    let letterIndex = 0; // Index to track which letter to display
 
-// Show the text change menu
-changeTextBtn.addEventListener('click', () => {
-    textChangeMenu.style.display = 'block'; // Show the text editor menu
-    textEditor.value = circleText.innerHTML; // Populate the editor with current circle text
-});
+    // Clear existing letters
+    circleText.innerHTML = '';
 
-// Close the text change menu
-closeTextMenuBtn.addEventListener('click', () => {
-    textChangeMenu.style.display = 'none'; // Hide the menu
-});
+    // Loop through each circle
+    circleDivisions.forEach((lettersInCircle, circleIndex) => {
+        const currentRadius = initialRadius + circleIndex * radiusIncrement; // Calculate radius for this circle
+        const angleStep = 360 / lettersInCircle; // Angle step for this circle
+
+        // Loop through the letters for this circle
+        for (let i = 0; i < lettersInCircle; i++) {
+            const angle = angleStep * i; // Calculate angle for each letter
+            const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
+            const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
+
+            const letter = document.createElement('span');
+            letter.className = 'letter';
+            letter.textContent = letters[letterIndex % letters.length]; // Set letter text
+            letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+
+            // Highlight the letters based on count
+            letter.style.color = letterIndex < count ? 'white' : 'grey';
+
+            circleText.appendChild(letter);
+            letterIndex++; // Move to the next letter
+        }
+    });
+}
 
 // Save the new text
 saveTextBtn.addEventListener('click', () => {
     circleText.innerHTML = textEditor.value; // Set the new text inside circle-text div
     textChangeMenu.style.display = 'none'; // Hide the menu
+    updateCircleText(); // Update the circle text based on the new input
     saveData(); // Optionally save this new text if needed in localStorage
 });
 
@@ -348,5 +369,7 @@ window.onload = function() {
     const savedText = localStorage.getItem('circleText');
     if (savedText) {
         circleText.innerHTML = savedText; // Set the saved text
+        updateCircleText(); // Update the circle with the saved text
     }
 };
+
