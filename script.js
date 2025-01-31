@@ -23,6 +23,13 @@ let totalLetters = 108;
 let radius = 120; // Initial radius of the outermost circle
 let maxRadius = 180; // Maximum radius for the innermost circle
 
+// Default text for the circle
+const defaultText = 'HAREKRISHNA';
+
+// Set default circle text on load
+circleText.innerHTML = defaultText;
+updateCircleText();
+
 // Function to update the displayed count
 function updateCountDisplay() {
     countDisplay.textContent = count;
@@ -212,11 +219,35 @@ cancelTextBtn.addEventListener('click', () => {
     textChangeMenu.style.display = 'none'; // Hide the menu without saving changes
 });
 
-// Check if there's a saved text in localStorage
+// Image change functionality
+let changeImageBtn = document.getElementById('change-image-btn');
+let imageInput = document.getElementById('image-input');
+let roundImage = document.getElementById('round-image');
+
+// Show file input when the "Change Image" button is clicked
+changeImageBtn.addEventListener('click', function () {
+    imageInput.click(); // Trigger the file input
+});
+
+// Listen for image file selection
+imageInput.addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function () {
+            roundImage.src = reader.result; // Update the image source
+        };
+        reader.readAsDataURL(file); // Read the selected image file
+    }
+});
+
+// Ensure the default text is applied if there's no saved text
 window.onload = function() {
     const savedText = localStorage.getItem('circleText');
     if (savedText) {
         circleText.innerHTML = savedText; // Set the saved text
-        updateCircleText(); // Update the circle with the saved text
+    } else {
+        circleText.innerHTML = defaultText; // Keep default text if none is saved
     }
+    updateCircleText(); // Update the circle with the saved or default text
 };
