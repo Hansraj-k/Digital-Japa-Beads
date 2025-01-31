@@ -534,4 +534,22 @@ img, button, .fa {
     to { opacity: 1; }
 }
 
+.text-change-container {
+    margin-top: 10px;
+    text-align: center;
+}
 
+.text-change-container input {
+    padding: 5px;
+    font-size: 16px;
+}
+
+.text-change-container button {
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
