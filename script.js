@@ -4,7 +4,7 @@ let round = parseInt(localStorage.getItem('round')) || 0;
 let audio = document.getElementById('audio');
 let countDisplay = document.getElementById('count-display');
 let roundDisplay = document.getElementById('round-display');
-let circleText = document.querySelector('.circle-text');
+let circleText = document.getElementById('circle-text');
 let popup108 = document.getElementById('popup-108');
 let popupCountReset = document.getElementById('popup-count-reset');
 let popupRoundReset = document.getElementById('popup-round-reset');
@@ -241,13 +241,3 @@ imageInput.addEventListener('change', function (event) {
     }
 });
 
-// Ensure the default text is applied if there's no saved text
-window.onload = function() {
-    const savedText = localStorage.getItem('circleText');
-    if (savedText) {
-        circleText.innerHTML = savedText; // Set the saved text
-    } else {
-        circleText.innerHTML = defaultText; // Keep default text if none is saved
-    }
-    updateCircleText(); // Update the circle with the saved or default text
-};
