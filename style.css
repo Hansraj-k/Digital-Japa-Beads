@@ -534,34 +534,44 @@ img, button, .fa {
     to { opacity: 1; }
 }
 
-/* Add styles for the text change menu */
+/* Text Change Popup */
 .text-change-menu {
     position: absolute;
-    background-color: #fff;
+    background-color: white;
+    border: 1px solid #ccc;
     padding: 20px;
-    border: 2px solid #ccc;
-    z-index: 1000;
+    display: none;
+    z-index: 9999;
+    width: 300px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Optional: Style the buttons */
-button {
-    padding: 5px 15px;
-    margin: 5px;
+#text-editor {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+#save-text-btn, #close-text-menu {
+    padding: 10px 15px;
+    margin-top: 5px;
+}
+
+#save-text-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
     cursor: pointer;
 }
 
-/* Styling for the circle text editor */
-#circle-text-editor {
-    width: 100%;
-    height: 100px;
+#close-text-menu {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    cursor: pointer;
 }
 
-/* Circle text display */
-#circle-text-display {
-    text-align: center;
-    font-size: 18px;
-    font-weight: bold;
-    color: #333;
+#save-text-btn:hover, #close-text-menu:hover {
+    opacity: 0.8;
 }
-
-
