@@ -540,8 +540,14 @@ img, button, .fa {
     background-color: #fff;
     padding: 20px;
     border: 2px solid #ccc;
-    display: none;
     z-index: 1000;
+}
+
+/* Optional: Style the buttons */
+button {
+    padding: 5px 15px;
+    margin: 5px;
+    cursor: pointer;
 }
 
 /* Styling for the circle text editor */
@@ -557,3 +563,5 @@ img, button, .fa {
     font-weight: bold;
     color: #333;
 }
+
+
