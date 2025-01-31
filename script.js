@@ -1,4 +1,4 @@
-// Initialize count and round 
+ // Initialize count and round 
 let count = parseInt(localStorage.getItem('count')) || 0;
 let round = parseInt(localStorage.getItem('round')) || 0;
 let audio = document.getElementById('audio');
@@ -310,90 +310,5 @@ if (!localStorage.getItem('popupShown')) {
     document.getElementById('close-popupnotify').addEventListener('click', function () {
         document.getElementById('popupnotify').style.display = 'none';
         localStorage.setItem('popupShown', 'true'); // Mark as shown
-    });
-}
-
-// References to new elements
-const changeCircleTextBtn = document.getElementById('change-circle-text-btn');
-const circleTextChangeMenu = document.getElementById('circle-text-change-menu');
-const circleTextEditor = document.getElementById('circle-text-editor');
-const saveCircleTextBtn = document.getElementById('save-circle-text-btn');
-const resetCircleTextBtn = document.getElementById('reset-circle-text-btn');
-const closeCircleTextMenuBtn = document.getElementById('close-circle-text-menu');
-const circleTextDisplay = document.getElementById('circle-text-display');
-
-// Show the circle text change menu
-changeCircleTextBtn.addEventListener('click', () => {
-    circleTextChangeMenu.style.display = 'block'; // Show the menu
-    circleTextEditor.value = circleTextDisplay.textContent; // Load the current circle text into the editor
-});
-
-// Close the circle text change menu
-closeCircleTextMenuBtn.addEventListener('click', () => {
-    circleTextChangeMenu.style.display = 'none'; // Hide the menu
-});
-
-// Save the circle text
-saveCircleTextBtn.addEventListener('click', () => {
-    const newCircleText = circleTextEditor.value;
-    if (newCircleText) {
-        localStorage.setItem('circleText', newCircleText); // Save the text to localStorage
-        circleTextDisplay.textContent = newCircleText; // Update the circle text in the UI
-        circleTextChangeMenu.style.display = 'none'; // Close the menu
-        updateCircleText(); // Update the circle text display if required
-    }
-});
-
-// Reset the circle text to default
-resetCircleTextBtn.addEventListener('click', () => {
-    localStorage.removeItem('circleText'); // Remove saved circle text from localStorage
-    circleTextDisplay.textContent = 'HAREKRISHNA'.repeat(9); // Reset to the default text (or any default you prefer)
-    circleTextEditor.value = ''; // Clear the editor
-    circleTextChangeMenu.style.display = 'none'; // Close the menu
-    updateCircleText(); // Update the circle text display if required
-});
-
-// Check if there's saved circle text in localStorage
-window.onload = function() {
-    const savedCircleText = localStorage.getItem('circleText');
-    if (savedCircleText) {
-        circleTextDisplay.textContent = savedCircleText; // Set the saved circle text in the UI
-        updateCircleText(); // Ensure the circle text is updated in the display as well
-    }
-};
-
-// Function to update the circle text (based on the count or other factors, as in your previous code)
-function updateCircleText() {
-    const letters = circleTextDisplay.textContent.split('');
-    const circleDivisions = [33, 36, 39]; // Increase letters per circle for tighter spacing
-    const radiusIncrement = 30; // Reduced increment radius for closer circles
-    const initialRadius = 100; // Starting radius
-    let letterIndex = 0; // Index to track which letter to display
-
-    // Clear existing letters
-    document.querySelector('.circle-text').innerHTML = '';
-
-    // Loop through each circle
-    circleDivisions.forEach((lettersInCircle, circleIndex) => {
-        const currentRadius = initialRadius + circleIndex * radiusIncrement; // Calculate radius for this circle
-        const angleStep = 360 / lettersInCircle; // Angle step for this circle
-
-        // Loop through the letters for this circle
-        for (let i = 0; i < lettersInCircle; i++) {
-            const angle = angleStep * i; // Calculate angle for each letter
-            const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
-            const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
-
-            const letter = document.createElement('span');
-            letter.className = 'letter';
-            letter.textContent = letters[letterIndex % letters.length]; // Set letter text
-            letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
-
-            // Highlight the letters based on count (you may adjust this as needed)
-            letter.style.color = letterIndex < count ? 'white' : 'grey';
-
-            document.querySelector('.circle-text').appendChild(letter);
-            letterIndex++; // Move to the next letter
-        }
     });
 }
