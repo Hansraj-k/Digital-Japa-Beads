@@ -313,3 +313,54 @@ if (!localStorage.getItem('popupShown')) {
     });
 }
 
+// Get the saved text from localStorage or default to "HAREKRISHNA"
+let customText = localStorage.getItem('customText') || "HAREKRISHNA";
+
+document.getElementById('custom-text').value = customText; // Set input field with saved text
+
+// Function to update the text around the image dynamically
+function updateCircleText() {
+    const letters = customText.repeat(9).split(''); // Use custom text
+    const circleDivisions = [33, 36, 39]; // Adjust spacing
+    const radiusIncrement = 30;
+    const initialRadius = 100;
+    let letterIndex = 0;
+
+    // Clear existing text
+    circleText.innerHTML = '';
+
+    // Loop through each circle
+    circleDivisions.forEach((lettersInCircle, circleIndex) => {
+        const currentRadius = initialRadius + circleIndex * radiusIncrement;
+        const angleStep = 360 / lettersInCircle;
+
+        for (let i = 0; i < lettersInCircle; i++) {
+            const angle = angleStep * i;
+            const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
+            const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
+
+            const letter = document.createElement('span');
+            letter.className = 'letter';
+            letter.textContent = letters[letterIndex % letters.length]; // Use the user-defined text
+            letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+
+            // Highlight based on count
+            letter.style.color = letterIndex < count ? 'white' : 'grey';
+
+            circleText.appendChild(letter);
+            letterIndex++;
+        }
+    });
+}
+
+// Save new text when user enters it
+document.getElementById('save-text-btn').addEventListener('click', () => {
+    customText = document.getElementById('custom-text').value || "HAREKRISHNA"; // Default if empty
+    localStorage.setItem('customText', customText); // Save text in localStorage
+    updateCircleText(); // Update text dynamically
+});
+
+// Load the saved text when the page loads
+updateCircleText();
+
+
