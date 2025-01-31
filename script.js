@@ -1,10 +1,10 @@
-// Initialize count, round, and other variables
+// Initialize count and round 
 let count = parseInt(localStorage.getItem('count')) || 0;
 let round = parseInt(localStorage.getItem('round')) || 0;
 let audio = document.getElementById('audio');
 let countDisplay = document.getElementById('count-display');
 let roundDisplay = document.getElementById('round-display');
-let circleText = document.getElementById('circle-text');
+let circleText = document.querySelector('.circle-text');
 let popup108 = document.getElementById('popup-108');
 let popupCountReset = document.getElementById('popup-count-reset');
 let popupRoundReset = document.getElementById('popup-round-reset');
@@ -23,87 +23,79 @@ let totalLetters = 108;
 let radius = 120; // Initial radius of the outermost circle
 let maxRadius = 180; // Maximum radius for the innermost circle
 
-// Default text for the circle
-const defaultText = 'HAREKRISHNA';
-
-// Set default circle text on load
-circleText.innerHTML = defaultText;
-updateCircleText();
-
 // Function to update the displayed count
 function updateCountDisplay() {
-    countDisplay.textContent = count;
+countDisplay.textContent = count;
 }
 
 // Function to update the displayed round
 function updateRoundDisplay() {
-    roundDisplay.textContent = `Round: ${round}`;
+roundDisplay.textContent = `Round: ${round}`;
 }
 
-// Function to update the circle text based on the count and entered text
+// Function to update the circle text based on the count
 function updateCircleText() {
-    const text = circleText.innerHTML.trim(); // Get the updated text
-    const letters = text.split(''); // Split the updated text into individual characters
-    const circleDivisions = [33, 36, 39]; // Increased letters per circle for tighter spacing
-    const radiusIncrement = 30; // Reduced increment radius for closer circles
-    const initialRadius = 100; // Starting radius
-    let letterIndex = 0; // Index to track which letter to display
+const letters = 'HAREKRISHNA'.repeat(9).split('');
+const circleDivisions = [33, 36, 39]; // Increased letters per circle for tighter spacing
+const radiusIncrement = 30; // Reduced increment radius for closer circles
+const initialRadius = 100; // Starting radius
+let letterIndex = 0; // Index to track which letter to display
 
-    // Clear existing letters
-    circleText.innerHTML = '';
+// Clear existing letters
+circleText.innerHTML = '';
 
-    // Loop through each circle
-    circleDivisions.forEach((lettersInCircle, circleIndex) => {
-        const currentRadius = initialRadius + circleIndex * radiusIncrement; // Calculate radius for this circle
-        const angleStep = 360 / lettersInCircle; // Angle step for this circle
+// Loop through each circle
+circleDivisions.forEach((lettersInCircle, circleIndex) => {
+const currentRadius = initialRadius + circleIndex * radiusIncrement; // Calculate radius for this circle
+const angleStep = 360 / lettersInCircle; // Angle step for this circle
 
-        // Loop through the letters for this circle
-        for (let i = 0; i < lettersInCircle; i++) {
-            const angle = angleStep * i; // Calculate angle for each letter
-            const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
-            const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
+// Loop through the letters for this circle
+for (let i = 0; i < lettersInCircle; i++) {
+const angle = angleStep * i; // Calculate angle for each letter
+const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
+const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
 
-            const letter = document.createElement('span');
-            letter.className = 'letter';
-            letter.textContent = letters[letterIndex % letters.length]; // Set letter text
-            letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+const letter = document.createElement('span');
+letter.className = 'letter';
+letter.textContent = letters[letterIndex % letters.length]; // Set letter text
+letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
 
-            // Highlight the letters based on count
-            letter.style.color = letterIndex < count ? 'white' : 'grey';
+// Highlight the letters based on count
+letter.style.color = letterIndex < count ? 'white' : 'grey';
 
-            circleText.appendChild(letter);
-            letterIndex++; // Move to the next letter
-        }
-    });
+circleText.appendChild(letter);
+letterIndex++; // Move to the next letter
+}
+});
 }
 
 // Function to save count and round data in localStorage
 function saveData() {
-    localStorage.setItem('count', count);
-    localStorage.setItem('round', round);
+localStorage.setItem('count', count);
+localStorage.setItem('round', round);
 }
 
 // Function to update the counter
 function updateCounter() {
-    if (count < totalLetters) {
-        count++;
-        updateCountDisplay();
-        updateCircleText();
-        saveData();
-        if (count === totalLetters) {
-            round++;
-            updateRoundDisplay();
-            popup108.style.display = 'block';
-            audio.play();
-        }
-    } else {
-        showResetPopup(); // Function to show reset popup if 108 is reached
-    }
+if (count < totalLetters) {
+count++;
+updateCountDisplay();
+updateCircleText();
+saveData();
+if (count === totalLetters) {
+round++;
+updateRoundDisplay();
+popup108.style.display = 'block';
+audio.play();
+}
+} else {
+showResetPopup(); // Function to show reset popup if 108 is reached
+}
 }
 
 // Show the reset confirmation popup
 function showResetPopup() {
-    popup108.style.display = 'block'; // Show the popup
+popup108.style.display = 'block'; // Show the popup
 }
 
 // Event listener for the main count button
@@ -111,65 +103,64 @@ document.getElementById('count-btn').addEventListener('click', updateCounter);
 
 // Event listeners for the 108-count popup
 confirmReset108Btn.addEventListener('click', () => {
-    count = 0;
-    updateCountDisplay();
-    updateCircleText();
-    popup108.style.display = 'none';
-    saveData();
+count = 0;
+updateCountDisplay();
+updateCircleText();
+popup108.style.display = 'none';
+saveData();
 });
 
 cancelReset108Btn.addEventListener('click', () => {
-    popup108.style.display = 'none';
+popup108.style.display = 'none';
 });
 
 // Event listeners for the count reset button
 resetCountBtn.addEventListener('click', () => {
-    popupCountReset.style.display = 'block';
+popupCountReset.style.display = 'block';
 });
 
 confirmResetCountBtn.addEventListener('click', () => {
-    count = 0;
-    updateCountDisplay();
-    updateCircleText();
-    popupCountReset.style.display = 'none';
-    saveData();
+count = 0;
+updateCountDisplay();
+updateCircleText();
+popupCountReset.style.display = 'none';
+saveData();
 });
 
 cancelResetCountBtn.addEventListener('click', () => {
-    popupCountReset.style.display = 'none';
+popupCountReset.style.display = 'none';
 });
-
 // Event listeners for the round reset button
 resetRoundBtn.addEventListener('click', () => {
-    popupRoundReset.style.display = 'block';
+popupRoundReset.style.display = 'block';
 });
 
 confirmResetRoundBtn.addEventListener('click', () => {
-    round = 0;
-    updateRoundDisplay();
-    popupRoundReset.style.display = 'none';
-    saveData();
+round = 0;
+updateRoundDisplay();
+popupRoundReset.style.display = 'none';
+saveData();
 });
 
 cancelResetRoundBtn.addEventListener('click', () => {
-    popupRoundReset.style.display = 'none';
+popupRoundReset.style.display = 'none';
 });
 
 // Event listeners for mute and unmute buttons
 muteBtn.addEventListener('click', () => {
-    isMuted = true;
-    audio.muted = true;
-    muteBtn.style.display = 'none';
-    unmuteBtn.style.display = 'inline-block';
-    localStorage.setItem('isMuted', JSON.stringify(isMuted));
+isMuted = true;
+audio.muted = true;
+muteBtn.style.display = 'none';
+unmuteBtn.style.display = 'inline-block';
+localStorage.setItem('isMuted', JSON.stringify(isMuted));
 });
 
 unmuteBtn.addEventListener('click', () => {
-    isMuted = false;
-    audio.muted = false;
-    muteBtn.style.display = 'inline-block';
-    unmuteBtn.style.display = 'none';
-    localStorage.setItem('isMuted', JSON.stringify(isMuted));
+isMuted = false;
+audio.muted = false;
+muteBtn.style.display = 'inline-block';
+unmuteBtn.style.display = 'none';
+localStorage.setItem('isMuted', JSON.stringify(isMuted));
 });
 
 // Initial setup
@@ -192,52 +183,130 @@ const currentYear = dateInIST.getFullYear();
 // Set the year in the footer
 document.getElementById('current-year').textContent = currentYear;
 
-// Text Editor Functionality
+// Function to show an image change menu
+function showImageChangeMenu(event) {
+event.preventDefault(); // Prevent the default action (context menu)
 
-// Show text editor
-let textChangeMenu = document.getElementById('text-change-menu');
-let textEditor = document.getElementById('text-editor');
-let saveTextBtn = document.getElementById('save-text-btn');
-let cancelTextBtn = document.getElementById('cancel-text-btn');
+// Create the menu with options
+const menu = document.createElement('div');
+menu.classList.add('image-change-menu');
+menu.innerHTML = `
+       <p>Change Image</p>
+       <input type="file" id="image-upload" accept="image/*">
+       <button id="close-menu">Close</button>
+   `;
 
-// Show the text editor when the change text button is clicked
-document.getElementById('change-text-btn').addEventListener('click', function () {
-    textChangeMenu.style.display = 'block';
-    textEditor.value = circleText.innerHTML; // Populate editor with the current circle text
+// Append the menu to the body
+document.body.appendChild(menu);
+
+// Position the menu at the event's location
+menu.style.left = `${event.pageX}px`;
+menu.style.top = `${event.pageY}px`;
+
+// Handle image file selection
+document.getElementById('image-upload').addEventListener('change', (e) => {
+const file = e.target.files[0];
+if (file) {
+const reader = new FileReader();
+reader.onload = function (event) {
+                const imageUrl = event.target.result;
+                // Set the uploaded image as the new round image
+                document.getElementById('round-image').src = imageUrl;
+};
+reader.readAsDataURL(file);
+}
 });
 
-// Save the updated text
-saveTextBtn.addEventListener('click', () => {
-    circleText.innerHTML = textEditor.value; // Set the new text inside circle-text div
-    textChangeMenu.style.display = 'none'; // Hide the menu
-    updateCircleText(); // Update the circle with the new text
-    saveData(); // Save the updated text to localStorage (optional)
+// Close menu
+document.getElementById('close-menu').addEventListener('click', () => {
+document.body.removeChild(menu);
+});
+}
+
+// Event listener for right-click on round image for desktop
+document.getElementById('round-image').addEventListener('contextmenu', showImageChangeMenu);
+
+// Event listener for long press on round image for mobile
+document.getElementById('round-image').addEventListener('touchstart', (e) => {
+e.preventDefault();
+showImageChangeMenu(e);
 });
 
-// Cancel button for the text editor
-cancelTextBtn.addEventListener('click', () => {
-    textChangeMenu.style.display = 'none'; // Hide the menu without saving changes
+// References to the buttons and elements
+const changeImageBtn = document.getElementById('change-image-btn');
+const imageChangeMenu = document.getElementById('image-change-menu');
+const imageUpload = document.getElementById('image-upload');
+const imagePreview = document.getElementById('image-preview');
+const saveImageBtn = document.getElementById('save-image-btn');
+const resetImageBtn = document.getElementById('reset-image-btn');
+const closeImageMenuBtn = document.getElementById('close-image-menu');
+
+// Show the image change menu
+changeImageBtn.addEventListener('click', () => {
+    imageChangeMenu.style.display = 'block'; // Show the menu
 });
 
-// Image change functionality
-let changeImageBtn = document.getElementById('change-image-btn');
-let imageInput = document.getElementById('image-input');
-let roundImage = document.getElementById('round-image');
-
-// Show file input when the "Change Image" button is clicked
-changeImageBtn.addEventListener('click', function () {
-    imageInput.click(); // Trigger the file input
+// Close the image change menu
+closeImageMenuBtn.addEventListener('click', () => {
+    imageChangeMenu.style.display = 'none'; // Hide the menu
 });
 
-// Listen for image file selection
-imageInput.addEventListener('change', function (event) {
+// Image upload handling
+imageUpload.addEventListener('change', (event) => {
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
-        reader.onload = function () {
-            roundImage.src = reader.result; // Update the image source
+        reader.onload = function(e) {
+            imagePreview.src = e.target.result; // Display the selected image
+            imagePreview.style.display = 'block'; // Show preview
         };
-        reader.readAsDataURL(file); // Read the selected image file
+        reader.readAsDataURL(file);
     }
 });
 
+// Save the image
+saveImageBtn.addEventListener('click', () => {
+    const newImageSrc = imagePreview.src;
+    if (newImageSrc) {
+        localStorage.setItem('selectedImage', newImageSrc); // Save the image source to localStorage
+        document.querySelector('.round-image').src = newImageSrc; // Update the round image in the UI
+        imageChangeMenu.style.display = 'none'; // Close the menu
+    }
+});
+
+// Reset the image to the default one
+resetImageBtn.addEventListener('click', () => {
+    localStorage.removeItem('selectedImage'); // Remove saved image from localStorage
+    document.querySelector('.round-image').src = 'rkhkmc.png'; // Reset to the default image
+    imagePreview.src = ''; // Clear preview
+    imagePreview.style.display = 'none'; // Hide preview
+});
+
+// Check if there's a saved image in localStorage
+window.onload = function() {
+const savedImage = localStorage.getItem('selectedImage');
+if (savedImage) {
+        document.querySelector('.round-image').src = savedImage; // Set the saved image
+}
+};
+
+// Image change on right-click or long press
+function showImageChangeMenu(event) {
+    event.preventDefault();
+    const menu = document.getElementById('image-change-menu');
+    menu.style.display = 'block';
+    menu.style.left = `${event.pageX}px`;
+    menu.style.top = `${event.pageY}px`;
+}
+
+// Check if the popup has been shown before
+if (!localStorage.getItem('popupShown')) {
+    // Show the popup if not shown before
+    document.getElementById('popupnotify').style.display = 'flex';
+
+    // Event listener to close the popup
+    document.getElementById('close-popupnotify').addEventListener('click', function () {
+        document.getElementById('popupnotify').style.display = 'none';
+        localStorage.setItem('popupShown', 'true'); // Mark as shown
+    });
+}
