@@ -534,7 +534,7 @@ img, button, .fa {
     to { opacity: 1; }
 }
 
-/* Add styles for the circle text editor popup */
+/* Add styles for the text change menu */
 .text-change-menu {
     position: absolute;
     background-color: #fff;
@@ -544,24 +544,16 @@ img, button, .fa {
     z-index: 1000;
 }
 
-/* Styling the circle text display */
+/* Styling for the circle text editor */
+#circle-text-editor {
+    width: 100%;
+    height: 100px;
+}
+
+/* Circle text display */
 #circle-text-display {
     text-align: center;
     font-size: 18px;
     font-weight: bold;
     color: #333;
 }
-
-/* Optional: Style the buttons */
-button {
-    padding: 5px 15px;
-    margin: 5px;
-    cursor: pointer;
-}
-
-/* Styling the text editor */
-#circle-text-editor {
-    width: 100%;
-    height: 100px;
-}
-
