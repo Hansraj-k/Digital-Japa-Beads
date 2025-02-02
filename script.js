@@ -311,110 +311,53 @@ if (!localStorage.getItem('popupShown')) {
     });
 }
 
-const chantMessages = [
-  "Your mantra awaits! Chant today and feel the peace unfold.",
-  "Start your day with a chant to elevate your spirit and energy.",
-  "Take a moment to chant and let the calmness fill your soul.",
-  "Chanting today keeps the stress away—your peaceful self is calling!",
-  "Set the tone for today: chant and align with your higher self.",
-  "A chant a day keeps negativity at bay—let’s begin!",
-  "Elevate your mind, body, and soul with today's chant.",
-  "Chant today, stay grounded, and let your intentions soar.",
-  "Your chant is the key to unlocking a peaceful mind today!",
-  "Let the power of your chant guide you through the day!",
-  "Chanting is a gift to yourself—take a moment now!",
-  "Make today’s chant your moment of calm amid the chaos.",
-  "Your peaceful state is just a chant away—don’t miss it!",
-  "Let your inner peace shine through today with a chant.",
-  "The rhythm of your chant is the heartbeat of your spirit!",
-  "Chant today and align with your true, peaceful self.",
-  "A peaceful mind begins with a chant—take a deep breath!",
-  "Empower your day with the magic of a chant!",
-  "Chant now and set your soul free for the day ahead.",
-  "Let your chant be your morning meditation—stay centered.",
-  "Chanting today is an act of self-love and peace.",
-  "Start your day with a chant and invite calmness into your life.",
-  "Your chant is waiting—don’t let the day slip by without it!",
-  "Turn up your inner peace—chant now and feel the shift!",
-  "Just one chant, and you’re ready to conquer the day with calmness.",
-  "Breathe in, chant out, and watch your energy transform.",
-  "Let your mantra be your guide today—chant and feel the flow.",
-  "Step into serenity today—chant to reset your mind.",
-  "A powerful day begins with a powerful chant!",
-  "Pause, chant, and experience the magic within—today’s the day!"
-];
-
-// Show notification
-function showNotification() {
-  const currentMessage = chantMessages[new Date().getDate() % chantMessages.length];
-  new Notification("Daily Chant Reminder", {
-    body: currentMessage,
-    icon: "https://via.placeholder.com/150",
-  });
-}
-
-// Request notification permission if not granted yet
+// Function to request notification permission
 function requestNotificationPermission() {
-  if (Notification.permission === "default") {
-    Notification.requestPermission().then(permission => {
-      if (permission !== "granted") {
-        alert("Please allow notifications to receive daily chants!");
-      }
-    });
-  }
-}
-
-// Save settings in localStorage
-function saveSettings() {
-  const enableNotifications = document.getElementById("enableNotifications").checked;
-  const notificationTime = document.getElementById("notificationTime").value;
-
-  localStorage.setItem("enableNotifications", enableNotifications);
-  localStorage.setItem("notificationTime", notificationTime);
-  document.getElementById("popupSettings").style.display = "none";
-}
-
-// Load user settings from localStorage
-function loadSettings() {
-  const enableNotifications = localStorage.getItem("enableNotifications") === "true";
-  const notificationTime = localStorage.getItem("notificationTime") || "08:00";
-
-  document.getElementById("enableNotifications").checked = enableNotifications;
-  document.getElementById("notificationTime").value = notificationTime;
-
-  if (enableNotifications) {
-    scheduleNotification(notificationTime);
-  }
-}
-
-// Schedule notification based on user settings
-function scheduleNotification(time) {
-  const [hours, minutes] = time.split(":");
-  const now = new Date();
-  const notificationTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0, 0);
-
-  // If the time is in the past today, set it for tomorrow
-  if (notificationTime <= now) {
-    notificationTime.setDate(notificationTime.getDate() + 1);
-  }
-
-  const delay = notificationTime - now;
-
-  setTimeout(() => {
-    if (localStorage.getItem("enableNotifications") === "true") {
-      showNotification();
+    if (Notification.permission === "default") {
+        // Request permission only after user interaction
+        document.getElementById("request-permission-btn").addEventListener("click", () => {
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    alert("You will receive daily chant notifications!");
+                    // You can call your function to schedule notifications after permission is granted
+                    scheduleNotification(document.getElementById("notificationTime").value);
+                } else {
+                    alert("Notification permission denied.");
+                }
+            });
+        });
+    } else if (Notification.permission === "granted") {
+        // If permission already granted, schedule notifications
+        scheduleNotification(document.getElementById("notificationTime").value);
+    } else {
+        alert("Notifications are blocked in your browser settings.");
     }
-  }, delay);
 }
 
-// Handle the notification toggle button
-document.getElementById("notificationButton").addEventListener("click", () => {
-  const popup = document.getElementById("popupSettings");
-  popup.style.display = popup.style.display === "block" ? "none" : "block";
-});
+// Function to schedule a notification
+function scheduleNotification(time) {
+    const now = new Date();
+    const notificationTime = new Date(time);
 
-// On page load, request permission and load settings
+    // Calculate the time difference for scheduling
+    const delay = notificationTime - now;
+    if (delay > 0) {
+        setTimeout(() => {
+            new Notification("Chanting Reminder", {
+                body: "It's time to chant your prayers!",
+                icon: "notification-icon.png"
+            });
+        }, delay);
+    } else {
+        alert("Please choose a time in the future for the notification.");
+    }
+}
+// Event listener to show the settings menu for notifications
+document.getElementById("notificationButton").addEventListener("click", () => {
+    const popup = document.getElementById("popupSettings");
+    popup.style.display = popup.style.display === "block" ? "none" : "block";
+});
+// On page load, request permission if not granted yet
 window.onload = () => {
-  requestNotificationPermission();
-  loadSettings();
+    requestNotificationPermission();
 };
