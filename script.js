@@ -310,3 +310,72 @@ if (!localStorage.getItem('popupShown')) {
         localStorage.setItem('popupShown', 'true'); // Mark as shown
     });
 }
+
+// Widget elements
+let widget = document.getElementById('widget');
+let openWidgetBtn = document.getElementById('open-widget-btn');
+let closeWidgetBtn = document.getElementById('close-widget-btn');
+
+// References to existing buttons and displays
+let countDisplay = document.getElementById('count-display');
+let roundDisplay = document.getElementById('round-display');
+let countBtn = document.getElementById('count-btn');
+let resetCountBtn = document.getElementById('reset-count-btn');
+let resetRoundBtn = document.getElementById('reset-round-btn');
+
+// Function to update the displayed count
+function updateCountDisplay() {
+    countDisplay.textContent = count;
+}
+
+// Function to update the displayed round
+function updateRoundDisplay() {
+    roundDisplay.textContent = `Round: ${round}`;
+}
+
+// Event listener to open the widget
+openWidgetBtn.addEventListener('click', () => {
+    widget.style.display = 'block'; // Show the widget
+    updateCountDisplay(); // Update the count display in the widget
+    updateRoundDisplay(); // Update the round display in the widget
+});
+
+// Event listener to close the widget
+closeWidgetBtn.addEventListener('click', () => {
+    widget.style.display = 'none'; // Hide the widget
+});
+
+// Function to update the counter
+function updateCounter() {
+    if (count < totalLetters) {
+        count++;
+        updateCountDisplay();
+        updateCircleText();
+        saveData();
+        if (count === totalLetters) {
+            round++;
+            updateRoundDisplay();
+            popup108.style.display = 'block';
+            audio.play();
+        }
+    } else {
+        showResetPopup(); // Show the reset popup if 108 is reached
+    }
+}
+
+// Event listener for the count button
+countBtn.addEventListener('click', updateCounter);
+
+// Event listeners for the reset count button
+resetCountBtn.addEventListener('click', () => {
+    popupCountReset.style.display = 'block';
+});
+
+// Event listeners for the reset round button
+resetRoundBtn.addEventListener('click', () => {
+    popupRoundReset.style.display = 'block';
+});
+
+// Initialize the widget display
+updateCountDisplay();
+updateRoundDisplay();
