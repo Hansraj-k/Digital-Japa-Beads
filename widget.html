@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japa Counter Widget</title>
+    <link rel="stylesheet" href="style.css"> <!-- Uses the existing CSS -->
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: black;
+            color: white;
+            font-size: 24px;
+        }
+        .widget-container {
+            text-align: center;
+        }
+        button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 18px;
+            border-radius: 8px;
+            background: white;
+            color: black;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="widget-container">
+        <div id="count-display">0</div>
+        <button id="count-btn">+1</button>
+        <button id="reset-count-btn">Reset Count</button>
+        <div id="round-display">Round: 0</div>
+        <button id="reset-round-btn">Reset Round</button>
+    </div>
+
+    <script src="widget.js"></script> <!-- Separate script for widget functionality -->
+</body>
+</html>
