@@ -1,40 +1,16 @@
-// Load stored values
-let count = parseInt(localStorage.getItem('count')) || 0;
-let round = parseInt(localStorage.getItem('round')) || 0;
+let count = 0;
 
-// Get elements
-let countDisplay = document.getElementById('count-display');
-let roundDisplay = document.getElementById('round-display');
-let countBtn = document.getElementById('count-btn');
-let resetCountBtn = document.getElementById('reset-count-btn');
-let resetRoundBtn = document.getElementById('reset-round-btn');
-
-// Update display
-function updateDisplay() {
-    countDisplay.textContent = count;
-    roundDisplay.textContent = `Round: ${round}`;
-}
-
-// Increment count
-countBtn.addEventListener('click', () => {
+document.getElementById("count-btn").addEventListener("click", () => {
     count++;
-    localStorage.setItem('count', count);
-    updateDisplay();
+    document.getElementById("counter").textContent = count;
 });
 
-// Reset count
-resetCountBtn.addEventListener('click', () => {
+document.getElementById("reset-count").addEventListener("click", () => {
     count = 0;
-    localStorage.setItem('count', count);
-    updateDisplay();
+    document.getElementById("counter").textContent = count;
 });
 
-// Reset round
-resetRoundBtn.addEventListener('click', () => {
-    round = 0;
-    localStorage.setItem('round', round);
-    updateDisplay();
+document.getElementById("reset-round").addEventListener("click", () => {
+    count = 0;
+    document.getElementById("counter").textContent = count;
 });
-
-// Initial update
-updateDisplay();
