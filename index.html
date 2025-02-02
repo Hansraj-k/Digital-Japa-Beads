@@ -61,7 +61,16 @@
             <button id="reset-image-btn">Reset Image</button>
             <button id="close-image-menu">Close</button>
         </div>
-
+        <div id="popupSettings" class="popup">
+            <h2>Notification Settings</h2>
+            <label for="notificationTime">Time of Day (HH:mm):</label>
+            <input type="time" id="notificationTime" value="08:00">
+            <br>
+            <label for="enableNotifications">Enable Notifications:</label>
+            <input type="checkbox" id="enableNotifications">
+            <br>
+        <button onclick="saveSettings()">Save Settings</button>
+        </div>
         <div class="counter-container">
             <div class="count-display-container">
                 <div class="count-display" id="count-display">0</div>
