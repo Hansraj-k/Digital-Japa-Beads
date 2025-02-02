@@ -48,3 +48,19 @@
       }
 	]
 }
+
+"shortcuts": [
+  {
+    "name": "Japa Counter Widget",
+    "short_name": "Japa Widget",
+    "description": "Quick access to count tracker",
+    "url": "/widget.html",
+    "icons": [
+      {
+        "src": "rkhkmclogo.jpg",
+        "sizes": "192x192",
+        "type": "image/jpeg"
+      }
+    ]
+  }
+]
