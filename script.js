@@ -311,46 +311,110 @@ if (!localStorage.getItem('popupShown')) {
     });
 }
 
-function requestNotificationPermission() {
-  if (Notification.permission === "default") {
-    Notification.requestPermission().then(permission => {
-      if (permission === "granted") {
-        scheduleDailyNotification();
-      }
-    });
-  } else if (Notification.permission === "granted") {
-    scheduleDailyNotification();
-  }
-}
+const chantMessages = [
+  "Your mantra awaits! Chant today and feel the peace unfold.",
+  "Start your day with a chant to elevate your spirit and energy.",
+  "Take a moment to chant and let the calmness fill your soul.",
+  "Chanting today keeps the stress away—your peaceful self is calling!",
+  "Set the tone for today: chant and align with your higher self.",
+  "A chant a day keeps negativity at bay—let’s begin!",
+  "Elevate your mind, body, and soul with today's chant.",
+  "Chant today, stay grounded, and let your intentions soar.",
+  "Your chant is the key to unlocking a peaceful mind today!",
+  "Let the power of your chant guide you through the day!",
+  "Chanting is a gift to yourself—take a moment now!",
+  "Make today’s chant your moment of calm amid the chaos.",
+  "Your peaceful state is just a chant away—don’t miss it!",
+  "Let your inner peace shine through today with a chant.",
+  "The rhythm of your chant is the heartbeat of your spirit!",
+  "Chant today and align with your true, peaceful self.",
+  "A peaceful mind begins with a chant—take a deep breath!",
+  "Empower your day with the magic of a chant!",
+  "Chant now and set your soul free for the day ahead.",
+  "Let your chant be your morning meditation—stay centered.",
+  "Chanting today is an act of self-love and peace.",
+  "Start your day with a chant and invite calmness into your life.",
+  "Your chant is waiting—don’t let the day slip by without it!",
+  "Turn up your inner peace—chant now and feel the shift!",
+  "Just one chant, and you’re ready to conquer the day with calmness.",
+  "Breathe in, chant out, and watch your energy transform.",
+  "Let your mantra be your guide today—chant and feel the flow.",
+  "Step into serenity today—chant to reset your mind.",
+  "A powerful day begins with a powerful chant!",
+  "Pause, chant, and experience the magic within—today’s the day!"
+];
 
-function scheduleDailyNotification() {
-  // Check if a notification was already shown today
-  let lastNotificationTime = localStorage.getItem('lastNotificationTime');
-  let currentTime = new Date().getTime();
-
-  // If no notification has been shown yet or it's a new day
-  if (!lastNotificationTime || (currentTime - lastNotificationTime) > 86400000) { // 86400000 ms = 24 hours
-    showDailyNotification();
-    localStorage.setItem('lastNotificationTime', currentTime); // Save the current timestamp
-  }
-
-  // Schedule the next check (every hour in case user hasn't refreshed the page)
-  setInterval(() => {
-    let lastNotificationTime = localStorage.getItem('lastNotificationTime');
-    let currentTime = new Date().getTime();
-    if ((currentTime - lastNotificationTime) > 86400000) {
-      showDailyNotification();
-      localStorage.setItem('lastNotificationTime', currentTime);
-    }
-  }, 3600000); // Check every hour
-}
-
-function showDailyNotification() {
-  const notification = new Notification("Chant Today Reminder!", {
-    body: "Don't forget to chant today to stay on track!",
-    icon: "/rkhkmc.png" // Add your custom icon
+// Show notification
+function showNotification() {
+  const currentMessage = chantMessages[new Date().getDate() % chantMessages.length];
+  new Notification("Daily Chant Reminder", {
+    body: currentMessage,
+    icon: "https://via.placeholder.com/150",
   });
 }
 
-// Call the function to ask for permission and show the notification
-requestNotificationPermission();
+// Request notification permission if not granted yet
+function requestNotificationPermission() {
+  if (Notification.permission === "default") {
+    Notification.requestPermission().then(permission => {
+      if (permission !== "granted") {
+        alert("Please allow notifications to receive daily chants!");
+      }
+    });
+  }
+}
+
+// Save settings in localStorage
+function saveSettings() {
+  const enableNotifications = document.getElementById("enableNotifications").checked;
+  const notificationTime = document.getElementById("notificationTime").value;
+
+  localStorage.setItem("enableNotifications", enableNotifications);
+  localStorage.setItem("notificationTime", notificationTime);
+  document.getElementById("popupSettings").style.display = "none";
+}
+
+// Load user settings from localStorage
+function loadSettings() {
+  const enableNotifications = localStorage.getItem("enableNotifications") === "true";
+  const notificationTime = localStorage.getItem("notificationTime") || "08:00";
+
+  document.getElementById("enableNotifications").checked = enableNotifications;
+  document.getElementById("notificationTime").value = notificationTime;
+
+  if (enableNotifications) {
+    scheduleNotification(notificationTime);
+  }
+}
+
+// Schedule notification based on user settings
+function scheduleNotification(time) {
+  const [hours, minutes] = time.split(":");
+  const now = new Date();
+  const notificationTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0, 0);
+
+  // If the time is in the past today, set it for tomorrow
+  if (notificationTime <= now) {
+    notificationTime.setDate(notificationTime.getDate() + 1);
+  }
+
+  const delay = notificationTime - now;
+
+  setTimeout(() => {
+    if (localStorage.getItem("enableNotifications") === "true") {
+      showNotification();
+    }
+  }, delay);
+}
+
+// Handle the notification toggle button
+document.getElementById("notificationButton").addEventListener("click", () => {
+  const popup = document.getElementById("popupSettings");
+  popup.style.display = popup.style.display === "block" ? "none" : "block";
+});
+
+// On page load, request permission and load settings
+window.onload = () => {
+  requestNotificationPermission();
+  loadSettings();
+};
