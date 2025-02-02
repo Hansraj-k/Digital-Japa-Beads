@@ -310,3 +310,47 @@ if (!localStorage.getItem('popupShown')) {
         localStorage.setItem('popupShown', 'true'); // Mark as shown
     });
 }
+
+function requestNotificationPermission() {
+  if (Notification.permission === "default") {
+    Notification.requestPermission().then(permission => {
+      if (permission === "granted") {
+        scheduleDailyNotification();
+      }
+    });
+  } else if (Notification.permission === "granted") {
+    scheduleDailyNotification();
+  }
+}
+
+function scheduleDailyNotification() {
+  // Check if a notification was already shown today
+  let lastNotificationTime = localStorage.getItem('lastNotificationTime');
+  let currentTime = new Date().getTime();
+
+  // If no notification has been shown yet or it's a new day
+  if (!lastNotificationTime || (currentTime - lastNotificationTime) > 86400000) { // 86400000 ms = 24 hours
+    showDailyNotification();
+    localStorage.setItem('lastNotificationTime', currentTime); // Save the current timestamp
+  }
+
+  // Schedule the next check (every hour in case user hasn't refreshed the page)
+  setInterval(() => {
+    let lastNotificationTime = localStorage.getItem('lastNotificationTime');
+    let currentTime = new Date().getTime();
+    if ((currentTime - lastNotificationTime) > 86400000) {
+      showDailyNotification();
+      localStorage.setItem('lastNotificationTime', currentTime);
+    }
+  }, 3600000); // Check every hour
+}
+
+function showDailyNotification() {
+  const notification = new Notification("Chant Today Reminder!", {
+    body: "Don't forget to chant today to stay on track!",
+    icon: "/rkhkmc.png" // Add your custom icon
+  });
+}
+
+// Call the function to ask for permission and show the notification
+requestNotificationPermission();
