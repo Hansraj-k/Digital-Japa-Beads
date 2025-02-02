@@ -10,6 +10,8 @@ document.getElementById("reset-count").addEventListener("click", () => {
     document.getElementById("counter").textContent = count;
 });
 
+
+
 document.getElementById("reset-round").addEventListener("click", () => {
     count = 0;
     document.getElementById("counter").textContent = count;
