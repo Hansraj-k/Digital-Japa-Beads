@@ -348,7 +348,7 @@ function showNotification() {
   const currentMessage = chantMessages[new Date().getDate() % chantMessages.length];
   new Notification("Daily Chant Reminder", {
     body: currentMessage,
-    icon: "https://via.placeholder.com/150",
+    icon: "/rkhkmclogo.jpg",
   });
 }
 // Request notification permission if not granted yet
