@@ -4,41 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Japa Counter Widget</title>
-    <link rel="stylesheet" href="style.css"> <!-- Uses the existing CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="widget.js"></script>
     <style>
         body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
-            background: black;
-            color: white;
-            font-size: 24px;
+            margin: 0;
         }
-        .widget-container {
-            text-align: center;
+        #counter {
+            font-size: 3rem;
+            margin-bottom: 10px;
         }
         button {
-            margin: 10px;
+            font-size: 1.5rem;
             padding: 10px;
-            font-size: 18px;
-            border-radius: 8px;
-            background: white;
-            color: black;
-            border: none;
+            margin: 5px;
         }
     </style>
 </head>
 <body>
-    <div class="widget-container">
-        <div id="count-display">0</div>
-        <button id="count-btn">+1</button>
-        <button id="reset-count-btn">Reset Count</button>
-        <div id="round-display">Round: 0</div>
-        <button id="reset-round-btn">Reset Round</button>
-    </div>
-
-    <script src="widget.js"></script> <!-- Separate script for widget functionality -->
+    <div id="counter">0</div>
+    <button id="count-btn">+1</button>
+    <button id="reset-count">Reset Count</button>
+    <button id="reset-round">Reset Round</button>
 </body>
 </html>
