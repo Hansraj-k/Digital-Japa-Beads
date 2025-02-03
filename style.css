@@ -83,6 +83,10 @@ button {
     font-family: 'Biski', sans-serif;
 }
 
+#notificationButton {
+    padding: 10px 20px;
+}
+
 #reset-count-btn {
     padding: 10px 0px;
 }
