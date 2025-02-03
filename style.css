@@ -87,6 +87,10 @@ button {
     padding: 6px;
 }
 
+#reset-round-btn{
+    padding: 6px;
+}
+
 #reset-count-btn {
     padding: 10px 0px;
 }
