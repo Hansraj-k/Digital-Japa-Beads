@@ -343,15 +343,19 @@ const chantMessages = [
   "A powerful day begins with a powerful chant!",
   "Pause, chant, and experience the magic within—today’s the day!"
 ];
-// Show notification
+
 function showNotification() {
-  const currentMessage = chantMessages[new Date().getDate() % chantMessages.length];
-  new Notification("Daily Chant Reminder", {
-    body: currentMessage,
-    icon: "/rkhkmclogo.jpg",
-  });
+  if (Notification.permission === "granted") {
+    const currentMessage = chantMessages[new Date().getDate() % chantMessages.length];
+    new Notification("Daily Chant Reminder", {
+      body: currentMessage,
+      icon: "/rkhkmclogo.jpg"
+    });
+  } else {
+    console.log("Notification permission not granted.");
+  }
 }
-// Request notification permission if not granted yet
+
 function requestNotificationPermission() {
   if (Notification.permission === "default") {
     Notification.requestPermission().then(permission => {
@@ -361,15 +365,18 @@ function requestNotificationPermission() {
     });
   }
 }
-// Save settings in localStorage
+
 function saveSettings() {
   const enableNotifications = document.getElementById("enableNotifications").checked;
   const notificationTime = document.getElementById("notificationTime").value;
   localStorage.setItem("enableNotifications", enableNotifications);
   localStorage.setItem("notificationTime", notificationTime);
   document.getElementById("popupSettings").style.display = "none";
+  if (enableNotifications) {
+    scheduleNotification(notificationTime);
+  }
 }
-// Load user settings from localStorage
+
 function loadSettings() {
   const enableNotifications = localStorage.getItem("enableNotifications") === "true";
   const notificationTime = localStorage.getItem("notificationTime") || "08:00";
@@ -380,12 +387,10 @@ function loadSettings() {
   }
 }
 
-// Schedule notification based on user settings
 function scheduleNotification(time) {
   const [hours, minutes] = time.split(":");
   const now = new Date();
   const notificationTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0, 0);
-  // If the time is in the past today, set it for tomorrow
   if (notificationTime <= now) {
     notificationTime.setDate(notificationTime.getDate() + 1);
   }
@@ -394,14 +399,15 @@ function scheduleNotification(time) {
     if (localStorage.getItem("enableNotifications") === "true") {
       showNotification();
     }
+    scheduleNotification(time);
   }, delay);
 }
-// Handle the notification toggle button
+
 document.getElementById("notificationButton").addEventListener("click", () => {
   const popup = document.getElementById("popupSettings");
   popup.style.display = popup.style.display === "block" ? "none" : "block";
 });
-// On page load, request permission and load settings
+
 window.onload = () => {
   requestNotificationPermission();
   loadSettings();
