@@ -329,7 +329,7 @@ html, body {
 }
 
 /* Remove blue highlight on images and icons when clicked on mobile */
-img, button, .fa {
+img, button, .fa , a{
     -webkit-tap-highlight-color: transparent;
     outline: none;
 }
