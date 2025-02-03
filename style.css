@@ -235,7 +235,7 @@ button:hover::after {
 /* Ensure mute and unmute buttons are visible */
 #mute-btn, #unmute-btn {
     display: inline-block;
-    margin-right: 60px;
+    margin-right: 45px;
     padding-left: 0px;
     padding-right: 10px;
 }
