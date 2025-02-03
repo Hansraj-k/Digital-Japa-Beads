@@ -45,7 +45,7 @@ body {
     justify-content: space-between;
     align-items: center;
     width: 99%;
-    padding: 10px;
+    padding: 10px 10px 10px 0px;
     background-color: black;
     position: fixed;
     top: 0;
