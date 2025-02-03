@@ -130,15 +130,49 @@
     <audio id="audio" src="rkhkmc.mp3" preload="auto"></audio>
     <script src="script.js"></script>
     <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js')
-                .then(() => {
-                    console.log('Service Worker Registered');
-                })
-                .catch(error => {
-                    console.log('Service Worker Registration Failed:', error);
-                });
-        }
+        // Register service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+  }).catch(function(error) {
+    console.log('ServiceWorker registration failed: ', error);
+  });
+}
+
+// Request notification permission
+function requestNotificationPermission() {
+  if (Notification.permission === 'default') {
+    Notification.requestPermission().then(permission => {
+      if (permission !== 'granted') {
+        alert('Please allow notifications to receive daily chants!');
+      }
+    });
+  }
+}
+
+// Show notification
+function showNotification(message) {
+  if ('serviceWorker' in navigator && Notification.permission === 'granted') {
+    navigator.serviceWorker.ready.then(function(registration) {
+      registration.showNotification('Daily Chant Reminder', {
+        body: message,
+        icon: '/rkhkmclogo.jpg',
+      });
+    });
+  }
+}
+
+// Example service-worker.js file
+self.addEventListener('push', function(event) {
+  const message = event.data.text();
+  event.waitUntil(
+    self.registration.showNotification('Daily Chant Reminder', {
+      body: message,
+      icon: '/rkhkmclogo.jpg',
+    })
+  );
+});
+
     </script>
 </body>
 </html>
