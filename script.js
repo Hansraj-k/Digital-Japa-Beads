@@ -345,6 +345,7 @@ const chantMessages = [
 ];
 
 function showNotification() {
+  console.log('Attempting to show notification');
   if (Notification.permission === "granted") {
     const currentMessage = chantMessages[new Date().getDate() % chantMessages.length];
     new Notification("Daily Chant Reminder", {
@@ -359,6 +360,7 @@ function showNotification() {
 function requestNotificationPermission() {
   if (Notification.permission === "default") {
     Notification.requestPermission().then(permission => {
+      console.log('Notification permission:', permission);
       if (permission !== "granted") {
         alert("Please allow notifications to receive daily chants!");
       }
@@ -367,6 +369,7 @@ function requestNotificationPermission() {
 }
 
 function saveSettings() {
+  console.log('Saving settings');
   const enableNotifications = document.getElementById("enableNotifications").checked;
   const notificationTime = document.getElementById("notificationTime").value;
   localStorage.setItem("enableNotifications", enableNotifications);
@@ -378,6 +381,7 @@ function saveSettings() {
 }
 
 function loadSettings() {
+  console.log('Loading settings');
   const enableNotifications = localStorage.getItem("enableNotifications") === "true";
   const notificationTime = localStorage.getItem("notificationTime") || "08:00";
   document.getElementById("enableNotifications").checked = enableNotifications;
@@ -388,6 +392,7 @@ function loadSettings() {
 }
 
 function scheduleNotification(time) {
+  console.log('Scheduling notification for', time);
   const [hours, minutes] = time.split(":");
   const now = new Date();
   const notificationTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0, 0);
@@ -395,6 +400,7 @@ function scheduleNotification(time) {
     notificationTime.setDate(notificationTime.getDate() + 1);
   }
   const delay = notificationTime - now;
+  console.log('Notification will be shown in', delay / 1000, 'seconds');
   setTimeout(() => {
     if (localStorage.getItem("enableNotifications") === "true") {
       showNotification();
@@ -404,11 +410,33 @@ function scheduleNotification(time) {
 }
 
 document.getElementById("notificationButton").addEventListener("click", () => {
+  console.log('Notification button clicked');
   const popup = document.getElementById("popupSettings");
   popup.style.display = popup.style.display === "block" ? "none" : "block";
 });
 
 window.onload = () => {
+  console.log('Page loaded');
   requestNotificationPermission();
   loadSettings();
 };
+
+// Register service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+  }).catch(function(error) {
+    console.log('ServiceWorker registration failed: ', error);
+  });
+}
+
+// Example service-worker.js file
+self.addEventListener('push', function(event) {
+  const message = event.data.text();
+  event.waitUntil(
+    self.registration.showNotification('Daily Chant Reminder', {
+      body: message,
+      icon: '/rkhkmclogo.jpg',
+    })
+  );
+});
