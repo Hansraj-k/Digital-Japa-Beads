@@ -543,9 +543,9 @@ img, button, .fa , a{
 
 #made-with-img {
     position: absolute;
-    bottom: -20px; /* Moves it further down */
+    bottom: -60px; /* Moves it further down */
     right: 10px;
-    width: 120px; /* Increased size */
+    width: 210px; /* Increased size */
     opacity: 0.9; /* Slightly more visible */
 }
 
