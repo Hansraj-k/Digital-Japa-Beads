@@ -1,4 +1,4 @@
-const CACHE_VERSION = new Date().toISOString(); // Unique version for each update
+const CACHE_VERSION = 'v2.0';  // Manually update this version when deploying
 const CACHE_NAME = `digital-japa-counter-cache-${CACHE_VERSION}`;
 const ASSETS = [ 
     '/',
@@ -33,24 +33,37 @@ self.addEventListener('install', (event) => {
 
 // Fetch event: Serve from cache, update in background
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request).then((fetchResponse) => {
+  if (event.request.url.includes('.html') || event.request.url.includes('.css') || event.request.url.includes('.js') || event.request.url.includes('.json')) {
+    event.respondWith(
+      fetch(event.request).then((fetchResponse) => {
         return caches.open(CACHE_NAME).then((cache) => {
           cache.put(event.request, fetchResponse.clone()); // Update cache in background
           return fetchResponse;
         });
-      });
-    }).catch(() => {
-      console.warn('Failed to fetch:', event.request.url);
-      return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
-    })
-  );
+      }).catch(() => {
+        return caches.match(event.request);
+      })
+    );
+  } else {
+    event.respondWith(
+      caches.match(event.request).then((response) => {
+        return response || fetch(event.request).then((fetchResponse) => {
+          return caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, fetchResponse.clone()); // Update cache in background
+            return fetchResponse;
+          });
+        });
+      }).catch(() => {
+        return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
+      })
+    );
+  }
 });
 
-// Activate event: Clear old caches and force refresh
+
 self.addEventListener('activate', (event) => {
   console.log("Service Worker Activated");
+
   event.waitUntil(
     caches.keys().then((keys) => 
       Promise.all(
@@ -63,6 +76,11 @@ self.addEventListener('activate', (event) => {
       )
     ).then(() => self.clients.claim())
   );
+
+  // Force all tabs to refresh
+  self.clients.matchAll({ type: 'window' }).then(clients => {
+    clients.forEach(client => client.navigate(client.url));
+  });
 });
 // Notify clients to refresh
 self.addEventListener('message', (event) => {
