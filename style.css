@@ -553,3 +553,18 @@ img, button, .fa , a{
     width: 240px; /* Adjust size */
     opacity: 0.9;
 }
+
+#install-btn {
+  background-image: url('rkhkmc-app.png');
+  background-size: contain; /* Ensure the image fits the button */
+  background-repeat: no-repeat;
+  padding: 10px 20px; /* Adjust the padding to make room for the image */
+  color: white; /* Text color for the button */
+  font-size: 16px; /* Text size */
+  border: none; /* Optional: remove button border */
+  cursor: pointer;
+}
+
+#install-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1); /* Optional: Add hover effect */
+}
