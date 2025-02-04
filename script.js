@@ -414,29 +414,8 @@ document.getElementById("notificationButton").addEventListener("click", () => {
   const popup = document.getElementById("popupSettings");
   popup.style.display = popup.style.display === "block" ? "none" : "block";
 });
-
 window.onload = () => {
   console.log('Page loaded');
   requestNotificationPermission();
   loadSettings();
 };
-
-// Register service worker
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-  }).catch(function(error) {
-    console.log('ServiceWorker registration failed: ', error);
-  });
-}
-
-// Example service-worker.js file
-self.addEventListener('push', function(event) {
-  const message = event.data.text();
-  event.waitUntil(
-    self.registration.showNotification('Daily Chant Reminder', {
-      body: message,
-      icon: '/rkhkmclogo.jpg',
-    })
-  );
-});
