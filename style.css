@@ -543,7 +543,7 @@ img, button, .fa , a{
 
 #made-with-img {
     position: absolute;
-    bottom: -60px; /* Moves it further down */
+    bottom: -69px; /* Moves it further down */
     right: 10px;
     width: 210px; /* Increased size */
     opacity: 0.9; /* Slightly more visible */
