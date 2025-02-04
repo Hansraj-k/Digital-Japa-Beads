@@ -391,7 +391,6 @@ function loadSettings() {
     scheduleNotification(notificationTime);
   }
 }
-
 function scheduleNotification(time) {
   console.log('Scheduling notification for', time);
   const [hours, minutes] = time.split(":");
