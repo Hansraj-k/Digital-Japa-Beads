@@ -408,7 +408,6 @@ function scheduleNotification(time) {
     scheduleNotification(time);
   }, delay);
 }
-
 document.getElementById("notificationButton").addEventListener("click", () => {
   console.log('Notification button clicked');
   const popup = document.getElementById("popupSettings");
