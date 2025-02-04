@@ -64,6 +64,7 @@ if ('serviceWorker' in navigator) {
     console.log('ServiceWorker registration failed: ', error);
   });
 }
+
 // Example service-worker.js file
 self.addEventListener('push', function(event) {
   console.log("Push notification received: ", event);
