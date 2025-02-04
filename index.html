@@ -15,7 +15,6 @@
         document.addEventListener('contextmenu', (event) => event.preventDefault());
     </script>
 </head>
-    
 <body>
     <div id="popupnotify" class="popupnotify">
     <div class="popupnotify-content">
@@ -105,8 +104,7 @@
             <p>Are you sure you want to reset the round only?</p>
             <button id="confirm-reset-round">Yes</button>
             <button id="cancel-reset-round">No</button>
-        </div>
-    </div>
+        </div></div>
     <div class="footer">
         <div class="containerk">
             <hr>
@@ -118,7 +116,6 @@
                 <img src="rkhkmc-app .png" alt="Install PWA">
               </button>
             </div>
-
             <p class="end">
                 <a href="https://hansrajweb.netlify.app">
                     <img class="img" src="rkspsauswbhkb.png" alt="Footer Logo">
@@ -135,7 +132,7 @@
   // Your code to add event listeners
   const changeImageBtn = document.getElementById('change-image-btn');
   const imageUpload = document.getElementById('image-upload');
-  
+
   // Check if the elements exist before adding event listeners
   if (changeImageBtn) {
     changeImageBtn.addEventListener('click', () => {
@@ -149,86 +146,51 @@
     });
   }
 });</script>
-    
     <script>
-       if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/service-worker.js').then((registration) => {
-    console.log('ServiceWorker registered with scope:', registration.scope);
-
-    registration.onupdatefound = () => {
-      const newSW = registration.installing;
-      newSW.onstatechange = () => {
-        if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
-          console.log("New version available, refreshing...");
-          window.location.reload();  // Force refresh
-        }
-      };
-    };
-
-  }).catch((error) => {
-    console.log('ServiceWorker registration failed:', error);
+        if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+  }).catch(function(error) {
+    console.log('ServiceWorker registration failed: ', error);
   });
-
-  // Periodically check for updates
-  setInterval(() => {
-    navigator.serviceWorker.getRegistration().then((registration) => {
-      if (registration) registration.update();
-    });
-  }, 60000); // Every 60 seconds
 }
-
     </script>
     <script>
+        // script.js
 let deferredPrompt; // Variable to hold the install prompt event
-
-// Function to check if PWA is installed
-function isPWAInstalled() {
-  return (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true);
-}
-
-// Hide install button if PWA is already installed
-document.addEventListener('DOMContentLoaded', () => {
-  const installBtn = document.getElementById('install-btn');
-
-  if (installBtn && isPWAInstalled()) {
-    installBtn.style.display = 'none';
-  }
-});
 
 // Listen for the 'beforeinstallprompt' event
 window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault(); // Prevent default prompt
+  // Prevent the default prompt from showing
+  e.preventDefault();
+
+  // Save the event so it can be triggered later
   deferredPrompt = e;
 
+  // Show the install button
   const installBtn = document.getElementById('install-btn');
-  if (installBtn && !isPWAInstalled()) {
-    installBtn.style.display = 'block'; // Show the button only if PWA is not installed
+  if (installBtn) {
+    installBtn.style.display = 'block'; // Show the button
   }
 
+  // Add click event listener to the install button
   installBtn.addEventListener('click', () => {
-    installBtn.style.display = 'none'; // Hide after click
+    // Hide the install button after click
+    installBtn.style.display = 'none';
+
+    // Show the install prompt
     deferredPrompt.prompt();
 
+    // Wait for the user's response to the prompt
     deferredPrompt.userChoice.then((choiceResult) => {
       if (choiceResult.outcome === 'accepted') {
         console.log('User accepted the A2HS prompt');
       } else {
         console.log('User dismissed the A2HS prompt');
       }
-      deferredPrompt = null;
+      deferredPrompt = null; // Reset the deferredPrompt variable
     });
   });
-});
-
-// Hide install button if PWA is installed
-window.addEventListener('appinstalled', () => {
-  console.log('PWA was installed');
-  const installBtn = document.getElementById('install-btn');
-  if (installBtn) {
-    installBtn.style.display = 'none';
-  }
-});
-</script>
-    
+});</script>
 </body>
 </html>
