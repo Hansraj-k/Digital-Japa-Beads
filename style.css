@@ -543,8 +543,9 @@ img, button, .fa , a{
 
 #made-with-img {
     position: absolute;
-    bottom: 10px;
+    bottom: -20px; /* Moves it further down */
     right: 10px;
-    width: 100px; /* Adjust as needed */
-    opacity: 0.7; /* Optional: Make it slightly transparent */
+    width: 120px; /* Increased size */
+    opacity: 0.9; /* Slightly more visible */
 }
+
