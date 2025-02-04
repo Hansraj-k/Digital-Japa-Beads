@@ -424,23 +424,29 @@ document.addEventListener('DOMContentLoaded', () => {
     function adjustCircleContainer() {
         const circleContainer = document.querySelector('.circle-container');
         const isPWAInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-
+        console.log("Checking PWA installation:", isPWAInstalled);  // Debugging log
+        
         if (window.innerWidth <= 768) {
             // For mobile devices (max-width: 768px)
             if (isPWAInstalled) {
+                console.log("Mobile PWA detected, changing padding to 514px");
                 circleContainer.style.paddingTop = '514px';
             } else {
+                console.log("Mobile PWA not detected, changing padding to 540px");
                 circleContainer.style.paddingTop = '540px';
             }
         } else {
             // For larger screen sizes
             if (isPWAInstalled) {
+                console.log("Desktop PWA detected, changing padding to 399px");
                 circleContainer.style.paddingTop = '399px';
             } else {
+                console.log("Desktop PWA not detected, changing padding to 510px");
                 circleContainer.style.paddingTop = '510px';
             }
         }
     }
+       
 
     adjustCircleContainer(); // Run on page load
     window.addEventListener('resize', adjustCircleContainer); // Adjust on resize
