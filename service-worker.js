@@ -55,13 +55,21 @@ self.addEventListener('activate', (event) => {
     self.clients.claim(); // Ensure clients use the updated service worker
 });
 
+// Register service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+  }).catch(function(error) {
+    console.log('ServiceWorker registration failed: ', error);
+  });
+}
+// Example service-worker.js file
 self.addEventListener('push', function(event) {
-    const message = event.data.text();
-    event.waitUntil(
-        self.registration.showNotification('Daily Chant Reminder', {
-            body: message,
-            icon: '/rkhkmclogo.jpg',
-            badge: '/rkhkmclogo.jpg'
-        })
-    );
+  const message = event.data.text();
+  event.waitUntil(
+    self.registration.showNotification('Daily Chant Reminder', {
+      body: message,
+      icon: '/rkhkmclogo.jpg',
+    })
+  );
 });
