@@ -358,6 +358,7 @@ function showNotification() {
 }
 
 function requestNotificationPermission() {
+  // Only request permission if it's not already granted
   if (Notification.permission === "default") {
     Notification.requestPermission().then(permission => {
       console.log('Notification permission:', permission);
