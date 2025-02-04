@@ -542,19 +542,16 @@ img, button, .fa , a{
 }
 
 #made-with-container {
-    position: absolute;
-    bottom: -69px; /* Moves it further down */
-    right: 10px;
-    background-color: rgba(0, 0, 0, 0.8); /* Black background with some transparency */
-    padding: 10px; /* Padding around the image */
-    border-radius: 10px; /* Rounded corners for a better look */
+    background-color: rgba(0, 0, 0, 0.8); /* Black background */
+    padding: 10px;
+    border-radius: 10px; /* Rounded corners */
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 15px; /* Space from buttons */
 }
 
 #made-with-img {
-    width: 210px; /* Increased size */
-    opacity: 0.9; /* Slightly more visible */
+    width: 150px; /* Adjust size */
+    opacity: 0.9;
 }
-
