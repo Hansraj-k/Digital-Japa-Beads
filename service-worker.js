@@ -1,4 +1,5 @@
-const CACHE_NAME = 'digital-japa-counter-cache-v1';
+const CACHE_VERSION = new Date().toISOString(); // Unique version for each update
+const CACHE_NAME = `digital-japa-counter-cache-${CACHE_VERSION}`;
 const ASSETS = [ 
     '/',
     '/index.html',
@@ -15,8 +16,9 @@ const ASSETS = [
     '/service-worker.js',
     '/rkhkmc_mwfet.png',
     '/rkspsauswbhkb.png',
-    ];
+];
 
+// Install event: Cache assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -29,17 +31,24 @@ self.addEventListener('install', (event) => {
   self.skipWaiting(); // Activate immediately
 });
 
+// Fetch event: Serve from cache, update in background
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((response) => {
-      return response || fetch(event.request).catch(() => {
-        console.warn('Failed to fetch:', event.request.url);
-        return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
+      return response || fetch(event.request).then((fetchResponse) => {
+        return caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, fetchResponse.clone()); // Update cache in background
+          return fetchResponse;
+        });
       });
+    }).catch(() => {
+      console.warn('Failed to fetch:', event.request.url);
+      return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
     })
   );
 });
 
+// Activate event: Clear old caches and force refresh
 self.addEventListener('activate', (event) => {
   console.log("Service Worker Activated");
   event.waitUntil(
@@ -47,27 +56,45 @@ self.addEventListener('activate', (event) => {
       Promise.all(
         keys.map((key) => {
           if (key !== CACHE_NAME) {
+            console.log(`Deleting old cache: ${key}`);
             return caches.delete(key);
           }
         })
       )
-    )
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim(); // Ensure clients use the updated service worker
 });
 
-// Register service worker
+// Notify clients to refresh
+self.addEventListener('message', (event) => {
+  if (event.data === 'update') {
+    self.skipWaiting();
+  }
+});
+
+// Register service worker and check for updates
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-  }).catch(function(error) {
-    console.log('ServiceWorker registration failed: ', error);
+  navigator.serviceWorker.register('/service-worker.js').then((registration) => {
+    console.log('ServiceWorker registered with scope:', registration.scope);
+
+    // Check for updates periodically
+    setInterval(() => {
+      registration.update();
+    }, 60000); // Check every 60 seconds
+
+    // Listen for updates
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      console.log("New service worker activated, refreshing page...");
+      window.location.reload();
+    });
+  }).catch((error) => {
+    console.log('ServiceWorker registration failed:', error);
   });
 }
 
-// Example service-worker.js file
+// Push Notification Handling
 self.addEventListener('push', function(event) {
-  console.log("Push notification received: ", event);
+  console.log("Push notification received:", event);
   const message = event.data ? event.data.text() : 'No message payload';
   event.waitUntil(
     self.registration.showNotification('Daily Chant Reminder', {
