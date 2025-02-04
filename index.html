@@ -151,13 +151,32 @@
 });</script>
     
     <script>
-        if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-  }).catch(function(error) {
-    console.log('ServiceWorker registration failed: ', error);
+       if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js').then((registration) => {
+    console.log('ServiceWorker registered with scope:', registration.scope);
+
+    registration.onupdatefound = () => {
+      const newSW = registration.installing;
+      newSW.onstatechange = () => {
+        if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+          console.log("New version available, refreshing...");
+          window.location.reload();  // Force refresh
+        }
+      };
+    };
+
+  }).catch((error) => {
+    console.log('ServiceWorker registration failed:', error);
   });
+
+  // Periodically check for updates
+  setInterval(() => {
+    navigator.serviceWorker.getRegistration().then((registration) => {
+      if (registration) registration.update();
+    });
+  }, 60000); // Every 60 seconds
 }
+
     </script>
     <script>
         // script.js
