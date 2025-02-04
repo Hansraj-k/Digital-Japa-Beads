@@ -179,42 +179,56 @@
 
     </script>
     <script>
-        // script.js
 let deferredPrompt; // Variable to hold the install prompt event
+
+// Function to check if PWA is installed
+function isPWAInstalled() {
+  return (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true);
+}
+
+// Hide install button if PWA is already installed
+document.addEventListener('DOMContentLoaded', () => {
+  const installBtn = document.getElementById('install-btn');
+
+  if (installBtn && isPWAInstalled()) {
+    installBtn.style.display = 'none';
+  }
+});
 
 // Listen for the 'beforeinstallprompt' event
 window.addEventListener('beforeinstallprompt', (e) => {
-  // Prevent the default prompt from showing
-  e.preventDefault();
-
-  // Save the event so it can be triggered later
+  e.preventDefault(); // Prevent default prompt
   deferredPrompt = e;
 
-  // Show the install button
   const installBtn = document.getElementById('install-btn');
-  if (installBtn) {
-    installBtn.style.display = 'block'; // Show the button
+  if (installBtn && !isPWAInstalled()) {
+    installBtn.style.display = 'block'; // Show the button only if PWA is not installed
   }
 
-  // Add click event listener to the install button
   installBtn.addEventListener('click', () => {
-    // Hide the install button after click
-    installBtn.style.display = 'none';
-
-    // Show the install prompt
+    installBtn.style.display = 'none'; // Hide after click
     deferredPrompt.prompt();
-      
-    // Wait for the user's response to the prompt
+
     deferredPrompt.userChoice.then((choiceResult) => {
       if (choiceResult.outcome === 'accepted') {
         console.log('User accepted the A2HS prompt');
       } else {
         console.log('User dismissed the A2HS prompt');
       }
-      deferredPrompt = null; // Reset the deferredPrompt variable
+      deferredPrompt = null;
     });
   });
 });
-    </script>
+
+// Hide install button if PWA is installed
+window.addEventListener('appinstalled', () => {
+  console.log('PWA was installed');
+  const installBtn = document.getElementById('install-btn');
+  if (installBtn) {
+    installBtn.style.display = 'none';
+  }
+});
+</script>
+    
 </body>
 </html>
