@@ -391,6 +391,7 @@ function loadSettings() {
     scheduleNotification(notificationTime);
   }
 }
+
 function scheduleNotification(time) {
   console.log('Scheduling notification for', time);
   const [hours, minutes] = time.split(":");
@@ -418,3 +419,29 @@ window.onload = () => {
   requestNotificationPermission();
   loadSettings();
 };
+
+document.addEventListener('DOMContentLoaded', () => {
+    function adjustCircleContainer() {
+        const circleContainer = document.querySelector('.circle-container');
+        const isPWAInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+        if (window.innerWidth <= 768) {
+            // For mobile devices (max-width: 768px)
+            if (isPWAInstalled) {
+                circleContainer.style.paddingTop = '514px';
+            } else {
+                circleContainer.style.paddingTop = '540px';
+            }
+        } else {
+            // For larger screen sizes
+            if (isPWAInstalled) {
+                circleContainer.style.paddingTop = '399px';
+            } else {
+                circleContainer.style.paddingTop = '510px';
+            }
+        }
+    }
+
+    adjustCircleContainer(); // Run on page load
+    window.addEventListener('resize', adjustCircleContainer); // Adjust on resize
+});
