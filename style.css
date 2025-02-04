@@ -555,14 +555,9 @@ img, button, .fa , a{
     opacity: 0.9;
 }
 
-#install-btn {
-  justify-content: center; /* Center items vertically */
-  padding: 15px;
-  cursor: pointer;
-  
-}
-
 #install-btn img {
-  width: 150px; /* Adjust size as needed */
+  width: 3000px; /* Adjust size as needed */
   height: auto;
+  justify-content: center; /* Center items vertically */
+  cursor: pointer;
 }
