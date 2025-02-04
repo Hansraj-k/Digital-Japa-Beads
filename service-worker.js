@@ -1,5 +1,6 @@
 const CACHE_NAME = 'digital-japa-counter-cache-v1';
-const ASSETS = [ '/',
+const ASSETS = [ 
+    '/',
     '/index.html',
     '/style.css',
     '/script.js',
@@ -13,7 +14,8 @@ const ASSETS = [ '/',
     '/SAMAN___.TTF',
     '/service-worker.js',
     '/rkhkmc_mwfet.png',
-    '/rkspsauswbhkb.png',];
+    '/rkspsauswbhkb.png',
+    ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
