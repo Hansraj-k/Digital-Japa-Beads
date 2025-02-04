@@ -16,26 +16,26 @@ const ASSETS = [ '/',
     '/rkspsauswbhkb.png',];
 
 self.addEventListener('install', (event) => {
-    event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll(ASSETS)
-                .catch((err) => {
-                    console.error('Failed to cache assets:', err);
-                });
-        })
-    );
-    self.skipWaiting(); // Activate immediately
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS)
+        .catch((err) => {
+          console.error('Failed to cache assets:', err);
+        });
+    })
+  );
+  self.skipWaiting(); // Activate immediately
 });
 
 self.addEventListener('fetch', (event) => {
-    event.respondWith(
-        caches.match(event.request).then((response) => {
-            return response || fetch(event.request).catch(() => {
-                console.warn('Failed to fetch:', event.request.url);
-                return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
-            });
-        })
-    );
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request).catch(() => {
+        console.warn('Failed to fetch:', event.request.url);
+        return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
+      });
+    })
+  );
 });
 
 self.addEventListener('activate', (event) => {
