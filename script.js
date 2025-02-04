@@ -271,8 +271,7 @@ saveImageBtn.addEventListener('click', () => {
         localStorage.setItem('selectedImage', newImageSrc); // Save the image source to localStorage
         document.querySelector('.round-image').src = newImageSrc; // Update the round image in the UI
         imageChangeMenu.style.display = 'none'; // Close the menu
-    }
-});
+    }});
 
 // Reset the image to the default one
 resetImageBtn.addEventListener('click', () => {
@@ -447,7 +446,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
        
-
     adjustCircleContainer(); // Run on page load
     window.addEventListener('resize', adjustCircleContainer); // Adjust on resize
 });
