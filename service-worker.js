@@ -76,3 +76,9 @@ self.addEventListener('push', function(event) {
     })
   );
 });
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.ready.then(function(registration) {
+    registration.update();
+  });
+}
