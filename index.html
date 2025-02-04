@@ -125,6 +125,25 @@
     </div>
     <audio id="audio" src="rkhkmc.mp3" preload="auto"></audio>
     <script src="script.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', () => {
+  // Your code to add event listeners
+  const changeImageBtn = document.getElementById('change-image-btn');
+  const imageUpload = document.getElementById('image-upload');
+  
+  // Check if the elements exist before adding event listeners
+  if (changeImageBtn) {
+    changeImageBtn.addEventListener('click', () => {
+      imageChangeMenu.style.display = 'block'; // Show the menu
+    });
+  }
+
+  if (imageUpload) {
+    imageUpload.addEventListener('change', (event) => {
+      // Image upload logic
+    });
+  }
+});</script>
+
     <script>
         if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
