@@ -556,15 +556,27 @@ img, button, .fa , a{
 }
 
 #install-btn {
-  background-image: url('rkhkmc-app.png');
-  background-size: contain; /* Ensure the image fits the button */
-  background-repeat: no-repeat;
-  padding: 10px 20px; /* Adjust the padding to make room for the image */
-  color: white; /* Text color for the button */
-  font-size: 16px; /* Text size */
-  border: none; /* Optional: remove button border */
+  display: flex;
+  flex-direction: column; /* Stack image and text */
+  align-items: center; /* Center items horizontally */
+  justify-content: center; /* Center items vertically */
+  background-color: #007bff; /* Button color */
+  color: white;
+  font-size: 16px;
+  border: none;
+  padding: 15px;
   cursor: pointer;
+  border-radius: 10px;
+  text-align: center;
+  margin: 20px auto; /* Center button horizontally */
+  display: block;
 }
 
+#install-btn img {
+  width: 50px; /* Adjust size as needed */
+  height: auto;
+  margin-bottom: 10px; /* Space between image and text */
+}
 #install-btn:hover {
-  background-color: rgba(0, 0, 0, 0.1); /* Optional: Add hover effect */}
+  background-color: #0056b3; /* Darker shade on hover */
+}
