@@ -9,7 +9,19 @@
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="rkhkmclogo.jpg">
     <meta name="description" content="Digital Japa Beads: A modern twist on the traditional spiritual practice. Track your mantra count and achieve mindfulness with our digital solution.">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; script-src 'self'; style-src 'self';">
+   <meta http-equiv="Content-Security-Policy" content="
+  default-src 'self'; 
+  script-src 'self' https://trusted-cdn.com; 
+  style-src 'self' 'unsafe-inline'; 
+  img-src 'self' data:; 
+  font-src 'self' https://fonts.gstatic.com; 
+  connect-src 'self' https://api.trusted-source.com; 
+  frame-ancestors 'none'; 
+  object-src 'none'; 
+  form-action 'self'; 
+  base-uri 'self'; 
+  manifest-src 'self';
+">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>
