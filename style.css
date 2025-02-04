@@ -543,12 +543,10 @@ img, button, .fa , a{
 
 #made-with-container {
     background-color: rgba(0, 0, 0, 0.8); /* Black background */
-    padding: 10px;
     border-radius: 10px; /* Rounded corners */
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 15px; /* Space from buttons */
 }
 
 #made-with-img {
