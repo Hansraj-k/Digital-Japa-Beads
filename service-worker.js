@@ -7,6 +7,14 @@ const ASSETS = [
     '/rkhkmclogo.jpg',
     '/rkhkmc.mp3',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css',
+    '/BiskiTrial-Regular.otf',
+    '/manifest.json',
+    '/rkhkmc.jpg',
+    '/rkhkmc.png',
+    '/SAMAN___.TTF',
+    '/service-worker.js',
+    '/rkhkmc_mwfet.png',
+    '/rkspsauswbhkb.png',
 ];
 
 self.addEventListener('install', (event) => {
@@ -45,4 +53,15 @@ self.addEventListener('activate', (event) => {
         )
     );
     self.clients.claim(); // Ensure clients use the updated service worker
+});
+
+self.addEventListener('push', function(event) {
+    const message = event.data.text();
+    event.waitUntil(
+        self.registration.showNotification('Daily Chant Reminder', {
+            body: message,
+            icon: '/rkhkmclogo.jpg',
+            badge: '/rkhkmclogo.jpg'
+        })
+    );
 });
