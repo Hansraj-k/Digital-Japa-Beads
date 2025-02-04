@@ -562,15 +562,12 @@ img, button, .fa , a{
   display: flex;
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically if needed */
-  height: 100vh; /* Optional: Centers it on the full page */
 }
 #install-btn {
-  background: none;
-  border: none;
   cursor: pointer;
 }
 #install-btn img {
   width: 300px; /* Adjust size as needed */
   height: auto;
   display: block; /* Ensures image is treated as a block element */
-  margin: 0 auto; /* Centers the image */}
+}
