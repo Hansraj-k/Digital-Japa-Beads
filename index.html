@@ -111,7 +111,10 @@
             <p>Note: Your counter data saves automatically in your browser, letting you pick up where you left off. Clearing your browser's cache or data will reset it.</p>
             <!-- Image Change Button -->
             <button id="change-image-btn">Change Image</button>
-
+            <button id="install-btn" style="display: none;">
+  <img src="rkhkmc-app.png" alt="Install PWA" style="width: 30px; height: 30px; margin-right: 10px;">
+  Install PWA
+</button>
             <p class="end">
                 <a href="https://hansrajweb.netlify.app">
                     <img class="img" src="rkspsauswbhkb.png" alt="Footer Logo">
@@ -142,7 +145,6 @@
     });
   }
 });</script>
-
     <script>
         if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
@@ -151,6 +153,44 @@
     console.log('ServiceWorker registration failed: ', error);
   });
 }
+    </script>
+    <script>
+        // script.js
+let deferredPrompt; // Variable to hold the install prompt event
+
+// Listen for the 'beforeinstallprompt' event
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Prevent the default prompt from showing
+  e.preventDefault();
+
+  // Save the event so it can be triggered later
+  deferredPrompt = e;
+
+  // Show the install button
+  const installBtn = document.getElementById('install-btn');
+  if (installBtn) {
+    installBtn.style.display = 'block'; // Show the button
+  }
+
+  // Add click event listener to the install button
+  installBtn.addEventListener('click', () => {
+    // Hide the install button after click
+    installBtn.style.display = 'none';
+
+    // Show the install prompt
+    deferredPrompt.prompt();
+
+    // Wait for the user's response to the prompt
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the A2HS prompt');
+      } else {
+        console.log('User dismissed the A2HS prompt');
+      }
+      deferredPrompt = null; // Reset the deferredPrompt variable
+    });
+  });
+});
     </script>
 </body>
 </html>
