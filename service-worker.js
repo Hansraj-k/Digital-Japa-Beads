@@ -63,7 +63,8 @@ if ('serviceWorker' in navigator) {
 }
 // Example service-worker.js file
 self.addEventListener('push', function(event) {
-  const message = event.data.text() || 'Daily Chant Reminder!'; // Ensure a message is passed.
+  console.log("Push notification received: ", event);
+  const message = event.data ? event.data.text() : 'No message payload';
   event.waitUntil(
     self.registration.showNotification('Daily Chant Reminder', {
       body: message,
