@@ -270,6 +270,7 @@ button:hover::after {
     #count-btn {
         padding-top: 0px;
     }
+    
     #install-btn img {
         width: 210px; /* Adjust size as needed */
     }
@@ -557,9 +558,22 @@ img, button, .fa , a{
     opacity: 0.9;
 }
 
+.install-container {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically if needed */
+  height: 100vh; /* Optional: Centers it on the full page */
+}
+
+#install-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
 #install-btn img {
   width: 300px; /* Adjust size as needed */
   height: auto;
-  justify-content: center; /* Center items vertically */
-  cursor: pointer;
+  display: block; /* Ensures image is treated as a block element */
+  margin: 0 auto; /* Centers the image */
 }
