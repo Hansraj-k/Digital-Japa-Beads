@@ -64,14 +64,11 @@ self.addEventListener('activate', (event) => {
     ).then(() => self.clients.claim())
   );
 });
-
 // Notify clients to refresh
 self.addEventListener('message', (event) => {
   if (event.data === 'update') {
     self.skipWaiting();
-  }
-});
-
+  }});
 // Register service worker and check for updates
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/service-worker.js').then((registration) => {
