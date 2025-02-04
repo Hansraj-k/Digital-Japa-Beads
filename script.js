@@ -408,13 +408,16 @@ function scheduleNotification(time) {
     scheduleNotification(time);
   }, delay);
 }
-document.getElementById("notificationButton").addEventListener("click", () => {
-  console.log('Notification button clicked');
-  const popup = document.getElementById("popupSettings");
-  popup.style.display = popup.style.display === "block" ? "none" : "block";
+document.getElementById('notificationButton').addEventListener('click', () => {
+  if (Notification.permission !== "granted") {
+    Notification.requestPermission().then(permission => {
+      if (permission === "granted") {
+        console.log("Notification permission granted!");
+      } else {
+        console.log("Notification permission denied.");
+      }
+    });
+  } else {
+    console.log("Permission already granted!");
+  }
 });
-window.onload = () => {
-  console.log('Page loaded');
-  requestNotificationPermission();
-  loadSettings();
-};
