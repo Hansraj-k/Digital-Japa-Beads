@@ -58,7 +58,8 @@
             <button id="close-image-menu">Close</button>
             <div id="made-with-container">
                 <img id="made-with-img" src="rkhkmc_mwfet.png" alt="Made With">
-            </div></div>
+            </div>
+        </div>
         <div id="popupSettings" class="popup">
             <h2>Notification Settings</h2>
             <label for="notificationTime">Time of Day (HH:mm):</label>
@@ -123,13 +124,12 @@
     <script src="script.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js')
-                .then(() => {
-                    console.log('Service Worker Registered');
-                })
-                .catch(error => {
-                    console.log('Service Worker Registration Failed:', error);
-                });
-        }
-    </script></body>
+  navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+  }).catch(function(error) {
+    console.log('ServiceWorker registration failed: ', error);
+  });
+}
+    </script>
+</body>
 </html>
