@@ -162,28 +162,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!installBtn) return; // Ensure button exists
 
-    // Check if the user is on a mobile device
+    // Function to check if the user is on a mobile device
     function isMobileDevice() {
         return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     }
 
-    // Check if the PWA is installed
+    // Function to check if the PWA is already installed
     function isPWAInstalled() {
         return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
     }
 
-    // Hide button if PWA is already installed
-    if (!isMobileDevice() || isPWAInstalled()) {
+    // Hide button if PWA is already installed OR if it's running inside a PWA
+    if (isPWAInstalled() || !isMobileDevice()) {
         installBtn.style.display = 'none';
         return;
     }
 
+    // Show the install button only when the browser triggers the install prompt
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault(); // Prevent default prompt
         deferredPrompt = e; // Store the event
 
-        // Show the install button only on mobile
-        if (isMobileDevice()) {
+        // Show the install button only if inside a browser (not in PWA)
+        if (!isPWAInstalled()) {
             installBtn.style.display = 'block';
         }
 
@@ -204,7 +205,6 @@ document.addEventListener('DOMContentLoaded', () => {
         installBtn.style.display = 'none';
     });
 });
-
 </script>
 <script>
    document.addEventListener('DOMContentLoaded', () => {
