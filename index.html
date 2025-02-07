@@ -156,46 +156,7 @@
 }
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-    let deferredPrompt; // Variable to hold the install event
-
-    const installBtn = document.getElementById('install-btn');
-    if (!installBtn) return; // Ensure button exists
-
-    // Check if the user is on a mobile device
-    function isMobileDevice() {
-        return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    }
-
-    // Hide the install button on laptops
-    if (!isMobileDevice()) {
-        installBtn.style.display = 'none';
-        return;
-    }
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault(); // Prevent default prompt
-        deferredPrompt = e; // Store the event
-
-        // Show the install button only on mobile
-        if (isMobileDevice()) {
-            installBtn.style.display = 'block';
-        }
-
-        installBtn.addEventListener('click', async () => {
-            installBtn.style.display = 'none'; // Hide button after click
-            deferredPrompt.prompt(); // Show prompt
-
-            const choiceResult = await deferredPrompt.userChoice;
-            console.log(choiceResult.outcome === 'accepted' ? 'User installed PWA' : 'User dismissed PWA install');
-
-            deferredPrompt = null; // Reset
-        });
-    });
-});
-</script>
-<script>
-   document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
     let deferredPrompt; // Variable to hold the install event
     const installBtn = document.getElementById('install-btn');
     
@@ -239,6 +200,50 @@
     });
 });
 </script>
-    
+<script>
+   document.addEventListener('DOMContentLoaded', () => {
+    function adjustCircleContainer() {
+        const circleContainer = document.querySelector('.circle-container');
+        if (!circleContainer) {
+            console.error("Error: .circle-container not found in the DOM.");
+            return;
+        }
+
+        // Detect if the device is mobile
+        const isMobile = /Android|iPhone|iPad|iPod/.test(navigator.userAgent);
+
+        // Check if PWA is installed (only matters for mobile)
+        const isPWAInstalled = isMobile && (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true);
+
+        console.log("Device Type:", isMobile ? "Mobile" : "Laptop/Desktop");
+        console.log("PWA Installed:", isPWAInstalled);
+        console.log("Window Width:", window.innerWidth);
+
+        let newPadding;
+        if (isMobile) {
+            // Mobile behavior
+            newPadding = isPWAInstalled ? '495px' : '630px';
+        } else {
+            // Laptop/Desktop behavior
+            newPadding = window.innerWidth <= 768 ? '480px' : '399px';
+        }
+
+        // Apply padding using setProperty
+        circleContainer.style.setProperty("padding-top", newPadding, "important");
+        console.log(`Applied padding-top: ${newPadding}`);
+    }
+
+    // Run adjustment on page load
+    setTimeout(() => {
+        adjustCircleContainer();
+        window.addEventListener('resize', adjustCircleContainer);
+    }, 200);
+
+    // Listen for PWA installation event (mobile only)
+    window.addEventListener('appinstalled', () => {
+        console.log("PWA Installed - Rechecking Padding");
+        setTimeout(adjustCircleContainer, 500); // Delay to ensure system updates
+    });
+});</script>
 </body>
 </html>
