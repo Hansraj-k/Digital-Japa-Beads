@@ -14,6 +14,46 @@
     <script>
         document.addEventListener('contextmenu', (event) => event.preventDefault());
     </script>
+    <style type="text/css">
+    a{
+      color: black;
+    }
+    a:hover {
+      color: black;
+      text-decoration: none;
+    }
+    .sold{
+      filter: grayscale(100%);
+      height: 100px;
+    }
+    .sold:hover{
+      filter: grayscale(0%);
+    }
+
+    /* width */
+    ::-webkit-scrollbar {
+      width: 3px;
+    }
+    
+    /* Track */
+    ::-webkit-scrollbar-track {
+      box-shadow: transparent; 
+    }
+     
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: white; 
+      border-radius: 12px;
+    }
+    /* Handle */
+    ::-webkit-scrollbar {
+      background: black; 
+    }
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: white; 
+    }
+  </style>
 </head>
 <body>
     <div id="popupnotify" class="popupnotify">
