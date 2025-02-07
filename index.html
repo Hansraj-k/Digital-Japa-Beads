@@ -196,7 +196,6 @@
     });
 });
 </script>
-
 <script>
     document.addEventListener('DOMContentLoaded', () => {
     function adjustCircleContainer() {
@@ -207,6 +206,7 @@
             return;
         }
 
+        // Force checking if PWA is installed
         const isPWAInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
         console.log("PWA Installed:", isPWAInstalled);
         console.log("Window Width:", window.innerWidth);
@@ -218,17 +218,23 @@
             newPadding = isPWAInstalled ? '399px' : '510px';
         }
 
-        // Apply padding using setProperty to ensure it works
+        // Apply padding using setProperty
         circleContainer.style.setProperty("padding-top", newPadding, "important");
         console.log(`Applied padding-top: ${newPadding}`);
     }
 
+    // Run adjustment on page load
     setTimeout(() => {
         adjustCircleContainer();
         window.addEventListener('resize', adjustCircleContainer);
-    }, 200); // Delay to ensure styles apply
+    }, 200);
+
+    // 🔥 Fix: Listen for PWA installation event
+    window.addEventListener('appinstalled', () => {
+        console.log("PWA Installed - Rechecking Padding");
+        setTimeout(adjustCircleContainer, 500); // Delay for the system to update
+    });
 });
 </script>
-    
 </body>
 </html>
