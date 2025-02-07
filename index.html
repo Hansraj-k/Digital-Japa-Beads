@@ -194,7 +194,36 @@ window.addEventListener('beforeinstallprompt', (e) => {
 });</script>
 
 <script>
-    
+    document.addEventListener('DOMContentLoaded', () => {
+    function adjustCircleContainer() {
+        const circleContainer = document.querySelector('.circle-container');
+
+        if (!circleContainer) {
+            console.error("Error: .circle-container not found in the DOM.");
+            return;
+        }
+
+        const isPWAInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        console.log("PWA Installed:", isPWAInstalled);
+        console.log("Window Width:", window.innerWidth);
+
+        let newPadding;
+        if (window.innerWidth <= 768) {
+            newPadding = isPWAInstalled ? '514px' : '540px';
+        } else {
+            newPadding = isPWAInstalled ? '399px' : '510px';
+        }
+
+        // Apply padding using setProperty to ensure it works
+        circleContainer.style.setProperty("padding-top", newPadding, "important");
+        console.log(`Applied padding-top: ${newPadding}`);
+    }
+
+    setTimeout(() => {
+        adjustCircleContainer();
+        window.addEventListener('resize', adjustCircleContainer);
+    }, 200); // Delay to ensure styles apply
+});
 </script>
     
 </body>
