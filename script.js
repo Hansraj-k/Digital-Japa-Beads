@@ -422,14 +422,17 @@ window.onload = () => {
 document.addEventListener('DOMContentLoaded', () => {
     function adjustCircleContainer() {
         const circleContainer = document.querySelector('.circle-container');
-        const isPWAInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-        console.log("Checking PWA installation:", isPWAInstalled);  // Debugging log
-
         if (!circleContainer) {
-            console.log("Circle container not found!");
+            console.error("Circle container not found!");
             return;
         }
 
+        const isPWAInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        console.log("Checking PWA installation:", isPWAInstalled);  // Debugging log
+
+        console.log("Window width:", window.innerWidth);  // Debugging log
+        console.log("Current padding:", circleContainer.style.paddingTop);  // Debugging log
+        
         if (window.innerWidth <= 768) {
             // For mobile devices (max-width: 768px)
             if (isPWAInstalled) {
@@ -449,8 +452,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 circleContainer.style.paddingTop = '510px';
             }
         }
+        
+        console.log("New padding set to:", circleContainer.style.paddingTop);  // Debugging log
     }
 
     adjustCircleContainer(); // Run on page load
     window.addEventListener('resize', adjustCircleContainer); // Adjust on resize
 });
+
