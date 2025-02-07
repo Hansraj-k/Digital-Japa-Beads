@@ -495,8 +495,7 @@ img, button, .fa , a{
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Popup Title */
-.popupnotify-title {
+/* Popup Title */.popupnotify-title {
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 12px;
