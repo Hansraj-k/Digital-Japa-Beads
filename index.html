@@ -128,7 +128,8 @@
     </div>
     <audio id="audio" src="rkhkmc.mp3" preload="auto"></audio>
     <script src="script.js"></script>
-    <script>document.addEventListener('DOMContentLoaded', () => {
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
   // Your code to add event listeners
   const changeImageBtn = document.getElementById('change-image-btn');
   const imageUpload = document.getElementById('image-upload');
@@ -145,8 +146,9 @@
       // Image upload logic
     });
   }
-});</script>
-    <script>
+});
+</script>
+<script>
         if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
     console.log('ServiceWorker registration successful with scope: ', registration.scope);
@@ -162,33 +164,38 @@
     const installBtn = document.getElementById('install-btn');
     if (!installBtn) return; // Ensure button exists
 
+    // Check if the user is on a mobile device
+    function isMobileDevice() {
+        return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    }
+
+    // Hide the install button on laptops
+    if (!isMobileDevice()) {
+        installBtn.style.display = 'none';
+        return;
+    }
+
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault(); // Prevent default prompt
         deferredPrompt = e; // Store the event
 
-        // Show the install button
-        installBtn.style.display = 'block';
+        // Show the install button only on mobile
+        if (isMobileDevice()) {
+            installBtn.style.display = 'block';
+        }
 
         installBtn.addEventListener('click', async () => {
             installBtn.style.display = 'none'; // Hide button after click
             deferredPrompt.prompt(); // Show prompt
 
             const choiceResult = await deferredPrompt.userChoice;
-            if (choiceResult.outcome === 'accepted') {
-                console.log('User accepted the PWA install');
-            } else {
-                console.log('User dismissed the PWA install');
-            }
+            console.log(choiceResult.outcome === 'accepted' ? 'User installed PWA' : 'User dismissed PWA install');
 
             deferredPrompt = null; // Reset
         });
     });
-
-    // Detect if PWA is already installed and hide the button
-    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-        installBtn.style.display = 'none';
-    }
-});</script>
+});
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
