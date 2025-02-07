@@ -86,7 +86,7 @@ button {
 }
 
 #reset-round-btn{
-    padding: 6px;
+    padding-left: 15px;
 }
 
 #reset-count-btn {
@@ -233,6 +233,7 @@ button:hover::after {
 /* Ensure mute and unmute buttons are visible */
 #mute-btn, #unmute-btn {
     display: inline-block;
+    padding-left: 0px;
 }
 
 /* Default styling for the image */
