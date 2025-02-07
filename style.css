@@ -145,6 +145,7 @@ button:hover::after {
     justify-content: center;
     align-items: center;
     margin: auto;
+    padding-top: 0px !important;
 }
 
 /* Circle text inside the circle */
@@ -256,11 +257,7 @@ button:hover::after {
         width: 150px;
         height: 150px;
     }
-
-    .circle-container {
-        
-    }
-
+    
     .toolbar-logo {
         width: 30px;
         height: 30px;
