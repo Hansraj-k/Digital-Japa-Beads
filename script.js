@@ -424,17 +424,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const textInput = document.getElementById("circle-text-input");
     const saveTextBtn = document.getElementById("save-circle-text-btn");
 
-    // Default text if nothing is stored
+    // Load text from localStorage or use default
     let circleTextContent = localStorage.getItem("circleText") || "HARE KRISHNA";
+    textInput.value = circleTextContent; // Show the current text in input box
 
     function updateCircleText() {
         const letters = circleTextContent.repeat(9).split("");
-        const circleDivisions = [33, 36, 39]; // Number of letters in each circle
-        const radiusIncrement = 30; // Spacing between circles
-        const initialRadius = 100; // Starting radius
+        const circleDivisions = [33, 36, 39]; // Number of letters per circle
+        const radiusIncrement = 30; // Distance between circles
+        const initialRadius = 100; // Base radius
         let letterIndex = 0;
 
-        // Clear existing text
+        // Clear existing text before re-rendering
         circleText.innerHTML = "";
 
         circleDivisions.forEach((lettersInCircle, circleIndex) => {
@@ -449,7 +450,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 const letter = document.createElement("span");
                 letter.className = "letter";
                 letter.textContent = letters[letterIndex % letters.length];
+                letter.style.position = "absolute";
+                letter.style.left = `50%`;
+                letter.style.top = `50%`;
                 letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+                letter.style.transformOrigin = "center";
 
                 circleText.appendChild(letter);
                 letterIndex++;
@@ -457,7 +462,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Event listener to save and update text
+    // Save new text and update
     saveTextBtn.addEventListener("click", function () {
         const newText = textInput.value.trim();
         if (newText) {
@@ -467,6 +472,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Load and display text when the page loads
+    // Initial render
     updateCircleText();
 });
