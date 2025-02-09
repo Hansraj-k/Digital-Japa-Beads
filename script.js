@@ -419,42 +419,44 @@ window.onload = () => {
   loadSettings();
 };
 
-// Function to update the circle text based on the count
-function updateCircleText(customText) {
-    const defaultText = 'HAREKRISHNA'.repeat(9).split('');
-    const letters = customText ? customText.repeat(9).split('') : defaultText;
-    const circleDivisions = [33, 36, 39]; // Increased letters per circle for tighter spacing
-    const radiusIncrement = 30; // Reduced increment radius for closer circles
-    const initialRadius = 100; // Starting radius
-    let letterIndex = 0; // Index to track which letter to display
 
-    // Clear existing letters
-    circleText.innerHTML = '';
+       
+        // Function to update the circle text based on the count
+        function updateCircleText(customText) {
+            const defaultText = 'HAREKRISHNA'.repeat(9).split('');
+            const letters = customText ? customText.repeat(9).split('') : defaultText;
+            const circleDivisions = [33, 36, 39]; // Increased letters per circle for tighter spacing
+            const radiusIncrement = 30; // Reduced increment radius for closer circles
+            const initialRadius = 100; // Starting radius
+            let letterIndex = 0; // Index to track which letter to display
+            const circleText = document.getElementById('circle-text'); // Reference the correct ID
 
-    // Loop through each circle
-    circleDivisions.forEach((lettersInCircle, circleIndex) => {
-        const currentRadius = initialRadius + circleIndex * radiusIncrement; // Calculate radius for this circle
-        const angleStep = 360 / lettersInCircle; // Angle step for this circle
+            // Clear existing letters
+            circleText.innerHTML = '';
 
-        // Loop through the letters for this circle
-        for (let i = 0; i < lettersInCircle; i++) {
-            const angle = angleStep * i; // Calculate angle for each letter
-            const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
-            const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
+            // Loop through each circle
+            circleDivisions.forEach((lettersInCircle, circleIndex) => {
+                const currentRadius = initialRadius + circleIndex * radiusIncrement; // Calculate radius for this circle
+                const angleStep = 360 / lettersInCircle; // Angle step for this circle
 
-            const letter = document.createElement('span');
-            letter.className = 'letter';
-            letter.textContent = letters[letterIndex % letters.length]; // Set letter text
-            letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+                // Loop through the letters for this circle
+                for (let i = 0; i < lettersInCircle; i++) {
+                    const angle = angleStep * i; // Calculate angle for each letter
+                    const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
+                    const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
 
-            // Highlight the letters based on count
-            letter.style.color = letterIndex < count ? 'white' : 'grey';
+                    const letter = document.createElement('span');
+                    letter.className = 'letter';
+                    letter.textContent = letters[letterIndex % letters.length]; // Set letter text
+                    letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
 
-            circleText.appendChild(letter);
-            letterIndex++; // Move to the next letter
-        }
-    });
-}
-// Example usage: Call the function with a custom text
-const customText = 'JAYASRIKRISHNA'; // Replace with your desired text
-updateCircleText(customText);
+                    // Highlight the letters based on count
+                    letter.style.color = letterIndex < count ? 'white' : 'grey';
+
+                    circleText.appendChild(letter);
+                    letterIndex++; // Move to the next letter
+                }
+            });
+        }// Example usage: Call the function with a custom text
+        const customText = 'JAYASRIKRISHNA'; // Replace with your desired text
+        updateCircleText(customText);
