@@ -420,16 +420,15 @@ window.onload = () => {
 };
 
 
-       
         // Function to update the circle text based on the count
         function updateCircleText(customText) {
-            const defaultText = 'HAREKRISHNA'.repeat(9).split('');
-            const letters = customText ? customText.repeat(9).split('') : defaultText;
+            const letters = customText ? customText.repeat(9).split('') : 'HAREKRISHNA'.repeat(9).split('');
             const circleDivisions = [33, 36, 39]; // Increased letters per circle for tighter spacing
             const radiusIncrement = 30; // Reduced increment radius for closer circles
             const initialRadius = 100; // Starting radius
             let letterIndex = 0; // Index to track which letter to display
             const circleText = document.getElementById('circle-text'); // Reference the correct ID
+            const count = letters.length; // Count based on the length of letters
 
             // Clear existing letters
             circleText.innerHTML = '';
@@ -457,6 +456,7 @@ window.onload = () => {
                     letterIndex++; // Move to the next letter
                 }
             });
-        }// Example usage: Call the function with a custom text
-        const customText = 'JAYASRIKRISHNA'; // Replace with your desired text
-        updateCircleText(customText);
+        }
+
+        // Initial call to display default text
+        updateCircleText('');
