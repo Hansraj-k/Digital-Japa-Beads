@@ -419,58 +419,54 @@ window.onload = () => {
   loadSettings();
 };
 
-// Get references to input field and button
-const textInput = document.getElementById('circle-text-input');
-const saveTextBtn = document.getElementById('save-circle-text-btn');
+document.addEventListener("DOMContentLoaded", function () {
+    const circleText = document.querySelector(".circle-text");
+    const textInput = document.getElementById("circle-text-input");
+    const saveTextBtn = document.getElementById("save-circle-text-btn");
 
-// Load saved text or use default
-let circleTextContent = localStorage.getItem('circleText') || 'HAREKRISHNA';
+    // Default text if nothing is stored
+    let circleTextContent = localStorage.getItem("circleText") || "HARE KRISHNA";
 
-// Function to update the displayed circle text
-function updateCircleText() {
-    const letters = circleTextContent.repeat(9).split(''); // Use custom or default text
-    const circleDivisions = [33, 36, 39]; // Letters per circle
-    const radiusIncrement = 30; // Spacing between circles
-    const initialRadius = 100; // Starting radius
-    let letterIndex = 0;
+    function updateCircleText() {
+        const letters = circleTextContent.repeat(9).split("");
+        const circleDivisions = [33, 36, 39]; // Number of letters in each circle
+        const radiusIncrement = 30; // Spacing between circles
+        const initialRadius = 100; // Starting radius
+        let letterIndex = 0;
 
-    // Clear existing letters
-    circleText.innerHTML = '';
+        // Clear existing text
+        circleText.innerHTML = "";
 
-    circleDivisions.forEach((lettersInCircle, circleIndex) => {
-        const currentRadius = initialRadius + circleIndex * radiusIncrement;
-        const angleStep = 360 / lettersInCircle;
+        circleDivisions.forEach((lettersInCircle, circleIndex) => {
+            const currentRadius = initialRadius + circleIndex * radiusIncrement;
+            const angleStep = 360 / lettersInCircle;
 
-        for (let i = 0; i < lettersInCircle; i++) {
-            const angle = angleStep * i;
-            const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
-            const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
+            for (let i = 0; i < lettersInCircle; i++) {
+                const angle = angleStep * i;
+                const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
+                const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
 
-            const letter = document.createElement('span');
-            letter.className = 'letter';
-            letter.textContent = letters[letterIndex % letters.length];
-            letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+                const letter = document.createElement("span");
+                letter.className = "letter";
+                letter.textContent = letters[letterIndex % letters.length];
+                letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
 
-            // Highlight letters based on count
-            letter.style.color = letterIndex < count ? 'white' : 'grey';
+                circleText.appendChild(letter);
+                letterIndex++;
+            }
+        });
+    }
 
-            circleText.appendChild(letter);
-            letterIndex++;
+    // Event listener to save and update text
+    saveTextBtn.addEventListener("click", function () {
+        const newText = textInput.value.trim();
+        if (newText) {
+            circleTextContent = newText;
+            localStorage.setItem("circleText", newText);
+            updateCircleText();
         }
     });
-}
 
-// Event listener to save new text
-saveTextBtn.addEventListener('click', () => {
-    const newText = textInput.value.trim();
-    if (newText) {
-        circleTextContent = newText;
-        localStorage.setItem('circleText', newText); // Save custom text
-        updateCircleText(); // Refresh text display
-    }
-});
-
-// Load saved text on page load
-window.addEventListener('load', () => {
+    // Load and display text when the page loads
     updateCircleText();
 });
