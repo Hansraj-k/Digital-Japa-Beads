@@ -33,6 +33,42 @@ function updateRoundDisplay() {
 roundDisplay.textContent = `Round: ${round}`;
 }
 
+// Function to update the circle text based on the count
+function updateCircleText() {
+const letters = 'HAREKRISHNA'.repeat(9).split('');
+const circleDivisions = [33, 36, 39]; // Increased letters per circle for tighter spacing
+const radiusIncrement = 30; // Reduced increment radius for closer circles
+const initialRadius = 100; // Starting radius
+let letterIndex = 0; // Index to track which letter to display
+
+// Clear existing letters
+circleText.innerHTML = '';
+
+// Loop through each circle
+circleDivisions.forEach((lettersInCircle, circleIndex) => {
+const currentRadius = initialRadius + circleIndex * radiusIncrement; // Calculate radius for this circle
+const angleStep = 360 / lettersInCircle; // Angle step for this circle
+
+// Loop through the letters for this circle
+for (let i = 0; i < lettersInCircle; i++) {
+const angle = angleStep * i; // Calculate angle for each letter
+const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
+const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
+
+const letter = document.createElement('span');
+letter.className = 'letter';
+letter.textContent = letters[letterIndex % letters.length]; // Set letter text
+letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+
+// Highlight the letters based on count
+letter.style.color = letterIndex < count ? 'white' : 'grey';
+
+circleText.appendChild(letter);
+letterIndex++; // Move to the next letter
+}
+});
+}
+
 // Function to save count and round data in localStorage
 function saveData() {
 localStorage.setItem('count', count);
@@ -382,45 +418,3 @@ window.onload = () => {
   requestNotificationPermission();
   loadSettings();
 };
-
-
-        // Function to update the circle text based on the count
-        function updateCircleText(customText) {
-            const letters = customText ? customText.repeat(9).split('') : 'HAREKRISHNA'.repeat(9).split('');
-            const circleDivisions = [33, 36, 39]; // Increased letters per circle for tighter spacing
-            const radiusIncrement = 30; // Reduced increment radius for closer circles
-            const initialRadius = 100; // Starting radius
-            let letterIndex = 0; // Index to track which letter to display
-            const circleText = document.getElementById('circle-text'); // Reference the correct ID
-            const count = letters.length; // Count based on the length of letters
-
-            // Clear existing letters
-            circleText.innerHTML = '';
-
-            // Loop through each circle
-            circleDivisions.forEach((lettersInCircle, circleIndex) => {
-                const currentRadius = initialRadius + circleIndex * radiusIncrement; // Calculate radius for this circle
-                const angleStep = 360 / lettersInCircle; // Angle step for this circle
-
-                // Loop through the letters for this circle
-                for (let i = 0; i < lettersInCircle; i++) {
-                    const angle = angleStep * i; // Calculate angle for each letter
-                    const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
-                    const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
-
-                    const letter = document.createElement('span');
-                    letter.className = 'letter';
-                    letter.textContent = letters[letterIndex % letters.length]; // Set letter text
-                    letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
-
-                    // Highlight the letters based on count
-                    letter.style.color = letterIndex < count ? 'white' : 'grey';
-
-                    circleText.appendChild(letter);
-                    letterIndex++; // Move to the next letter
-                }
-            });
-        }
-
-        // Initial call to display default text
-        updateCircleText('');
