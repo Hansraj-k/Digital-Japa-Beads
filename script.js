@@ -420,45 +420,37 @@ window.onload = () => {
 };
 
 document.addEventListener("DOMContentLoaded", function () {
-    const circleText = document.querySelector(".circle-text");
+    const circleTextContainer = document.querySelector(".circle-text");
     const textInput = document.getElementById("circle-text-input");
     const saveTextBtn = document.getElementById("save-circle-text-btn");
 
-    // Load text from localStorage or use default
+    // Load saved text or use default
     let circleTextContent = localStorage.getItem("circleText") || "HARE KRISHNA";
-    textInput.value = circleTextContent; // Show the current text in input box
+    textInput.value = circleTextContent; // Show the saved text in the input
 
     function updateCircleText() {
-        const letters = circleTextContent.repeat(9).split("");
-        const circleDivisions = [33, 36, 39]; // Number of letters per circle
-        const radiusIncrement = 30; // Distance between circles
-        const initialRadius = 100; // Base radius
-        let letterIndex = 0;
+        circleTextContainer.innerHTML = ""; // Clear previous text
 
-        // Clear existing text before re-rendering
-        circleText.innerHTML = "";
+        const letters = circleTextContent.repeat(9).split(""); // Repeat for full circles
+        const totalLetters = 36; // Adjust number of letters per full circle
+        const radius = 100; // Adjust size of the circular text
+        const angleStep = 360 / totalLetters; // Distribute letters evenly
 
-        circleDivisions.forEach((lettersInCircle, circleIndex) => {
-            const currentRadius = initialRadius + circleIndex * radiusIncrement;
-            const angleStep = 360 / lettersInCircle;
+        letters.slice(0, totalLetters).forEach((letter, i) => {
+            const angle = angleStep * i;
+            const x = Math.cos((angle * Math.PI) / 180) * radius;
+            const y = Math.sin((angle * Math.PI) / 180) * radius;
 
-            for (let i = 0; i < lettersInCircle; i++) {
-                const angle = angleStep * i;
-                const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
-                const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
+            const letterSpan = document.createElement("span");
+            letterSpan.className = "letter";
+            letterSpan.textContent = letter;
+            letterSpan.style.position = "absolute";
+            letterSpan.style.left = `50%`;
+            letterSpan.style.top = `50%`;
+            letterSpan.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+            letterSpan.style.transformOrigin = "center";
 
-                const letter = document.createElement("span");
-                letter.className = "letter";
-                letter.textContent = letters[letterIndex % letters.length];
-                letter.style.position = "absolute";
-                letter.style.left = `50%`;
-                letter.style.top = `50%`;
-                letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
-                letter.style.transformOrigin = "center";
-
-                circleText.appendChild(letter);
-                letterIndex++;
-            }
+            circleTextContainer.appendChild(letterSpan);
         });
     }
 
