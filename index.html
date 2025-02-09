@@ -145,10 +145,9 @@
             <button id="confirm-reset-round">Yes</button>
             <button id="cancel-reset-round">No</button>
         </div></div>
-    <div>
-    <input type="text" id="circle-text-input" placeholder="Enter your mantra">
-    <button id="save-circle-text-btn">Save Text</button>
-</div>
+   
+    <input type="text" id="customTextInput" placeholder="Enter custom text">
+    <button onclick="updateCircleText(document.getElementById('customTextInput').value)">Update Text</button>
     <div class="footer">
         <div class="containerk">
             <hr>
