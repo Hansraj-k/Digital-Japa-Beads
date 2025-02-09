@@ -419,51 +419,42 @@ window.onload = () => {
   loadSettings();
 };
 
-document.addEventListener("DOMContentLoaded", function () {
-    const circleTextContainer = document.querySelector(".circle-text");
-    const textInput = document.getElementById("circle-text-input");
-    const saveTextBtn = document.getElementById("save-circle-text-btn");
+// Function to update the circle text based on the count
+function updateCircleText(customText) {
+    const defaultText = 'HAREKRISHNA'.repeat(9).split('');
+    const letters = customText ? customText.repeat(9).split('') : defaultText;
+    const circleDivisions = [33, 36, 39]; // Increased letters per circle for tighter spacing
+    const radiusIncrement = 30; // Reduced increment radius for closer circles
+    const initialRadius = 100; // Starting radius
+    let letterIndex = 0; // Index to track which letter to display
 
-    // Load saved text or use default
-    let circleTextContent = localStorage.getItem("circleText") || "HARE KRISHNA";
-    textInput.value = circleTextContent; // Show the saved text in the input
+    // Clear existing letters
+    circleText.innerHTML = '';
 
-    function updateCircleText() {
-        circleTextContainer.innerHTML = ""; // Clear previous text
+    // Loop through each circle
+    circleDivisions.forEach((lettersInCircle, circleIndex) => {
+        const currentRadius = initialRadius + circleIndex * radiusIncrement; // Calculate radius for this circle
+        const angleStep = 360 / lettersInCircle; // Angle step for this circle
 
-        const letters = circleTextContent.repeat(9).split(""); // Repeat for full circles
-        const totalLetters = 36; // Adjust number of letters per full circle
-        const radius = 100; // Adjust size of the circular text
-        const angleStep = 360 / totalLetters; // Distribute letters evenly
+        // Loop through the letters for this circle
+        for (let i = 0; i < lettersInCircle; i++) {
+            const angle = angleStep * i; // Calculate angle for each letter
+            const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
+            const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
 
-        letters.slice(0, totalLetters).forEach((letter, i) => {
-            const angle = angleStep * i;
-            const x = Math.cos((angle * Math.PI) / 180) * radius;
-            const y = Math.sin((angle * Math.PI) / 180) * radius;
+            const letter = document.createElement('span');
+            letter.className = 'letter';
+            letter.textContent = letters[letterIndex % letters.length]; // Set letter text
+            letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
 
-            const letterSpan = document.createElement("span");
-            letterSpan.className = "letter";
-            letterSpan.textContent = letter;
-            letterSpan.style.position = "absolute";
-            letterSpan.style.left = `50%`;
-            letterSpan.style.top = `50%`;
-            letterSpan.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
-            letterSpan.style.transformOrigin = "center";
+            // Highlight the letters based on count
+            letter.style.color = letterIndex < count ? 'white' : 'grey';
 
-            circleTextContainer.appendChild(letterSpan);
-        });
-    }
-
-    // Save new text and update
-    saveTextBtn.addEventListener("click", function () {
-        const newText = textInput.value.trim();
-        if (newText) {
-            circleTextContent = newText;
-            localStorage.setItem("circleText", newText);
-            updateCircleText();
+            circleText.appendChild(letter);
+            letterIndex++; // Move to the next letter
         }
     });
-
-    // Initial render
-    updateCircleText();
-});
+}
+// Example usage: Call the function with a custom text
+const customText = 'JAYASRIKRISHNA'; // Replace with your desired text
+updateCircleText(customText);
