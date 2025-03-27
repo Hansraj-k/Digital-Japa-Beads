@@ -16,86 +16,95 @@ let confirmResetRoundBtn = document.getElementById('confirm-reset-round');
 let cancelResetRoundBtn = document.getElementById('cancel-reset-round');
 let resetCountBtn = document.getElementById('reset-count-btn');
 let resetRoundBtn = document.getElementById('reset-round-btn');
-let muteBtn = document.getElementById('mute-btn');
-let unmuteBtn = document.getElementById('unmute-btn');
+let settingsBtn = document.getElementById('settings-btn');
 let isMuted = false;
+let vibrationCountEnabled = JSON.parse(localStorage.getItem('vibrationCountEnabled')) || false;
+let vibrationDuration = parseInt(localStorage.getItem('vibrationDuration')) || 60;
+let vibration108Enabled = JSON.parse(localStorage.getItem('vibration108Enabled')) || false;
+let vibrationDuration108 = parseInt(localStorage.getItem('vibrationDuration108')) || 1000;
 let totalLetters = 108;
 let radius = 120; // Initial radius of the outermost circle
 let maxRadius = 180; // Maximum radius for the innermost circle
 
 // Function to update the displayed count
 function updateCountDisplay() {
-countDisplay.textContent = count;
+    countDisplay.textContent = count;
 }
 
 // Function to update the displayed round
 function updateRoundDisplay() {
-roundDisplay.textContent = `Round: ${round}`;
+    roundDisplay.textContent = `Round: ${round}`;
 }
 
 // Function to update the circle text based on the count
 function updateCircleText() {
-const letters = 'HAREKRISHNA'.repeat(9).split('');
-const circleDivisions = [33, 36, 39]; // Increased letters per circle for tighter spacing
-const radiusIncrement = 30; // Reduced increment radius for closer circles
-const initialRadius = 100; // Starting radius
-let letterIndex = 0; // Index to track which letter to display
+    const letters = 'HAREKRISHNA'.repeat(9).split('');
+    const circleDivisions = [33, 36, 39]; // Increased letters per circle for tighter spacing
+    const radiusIncrement = 30; // Reduced increment radius for closer circles
+    const initialRadius = 100; // Starting radius
+    let letterIndex = 0; // Index to track which letter to display
 
-// Clear existing letters
-circleText.innerHTML = '';
+    // Clear existing letters
+    circleText.innerHTML = '';
 
-// Loop through each circle
-circleDivisions.forEach((lettersInCircle, circleIndex) => {
-const currentRadius = initialRadius + circleIndex * radiusIncrement; // Calculate radius for this circle
-const angleStep = 360 / lettersInCircle; // Angle step for this circle
+    // Loop through each circle
+    circleDivisions.forEach((lettersInCircle, circleIndex) => {
+        const currentRadius = initialRadius + circleIndex * radiusIncrement; // Calculate radius for this circle
+        const angleStep = 360 / lettersInCircle; // Angle step for this circle
 
-// Loop through the letters for this circle
-for (let i = 0; i < lettersInCircle; i++) {
-const angle = angleStep * i; // Calculate angle for each letter
-const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
-const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
+        // Loop through the letters for this circle
+        for (let i = 0; i < lettersInCircle; i++) {
+            const angle = angleStep * i; // Calculate angle for each letter
+            const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
+            const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
 
-const letter = document.createElement('span');
-letter.className = 'letter';
-letter.textContent = letters[letterIndex % letters.length]; // Set letter text
-letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+            const letter = document.createElement('span');
+            letter.className = 'letter';
+            letter.textContent = letters[letterIndex % letters.length]; // Set letter text
+            letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
 
-// Highlight the letters based on count
-letter.style.color = letterIndex < count ? 'white' : 'grey';
+            // Highlight the letters based on count
+            letter.style.color = letterIndex < count ? 'white' : 'grey';
 
-circleText.appendChild(letter);
-letterIndex++; // Move to the next letter
-}
-});
+            circleText.appendChild(letter);
+            letterIndex++; // Move to the next letter
+        }
+    });
 }
 
 // Function to save count and round data in localStorage
 function saveData() {
-localStorage.setItem('count', count);
-localStorage.setItem('round', round);
+    localStorage.setItem('count', count);
+    localStorage.setItem('round', round);
 }
 
 // Function to update the counter
 function updateCounter() {
-if (count < totalLetters) {
-count++;
-updateCountDisplay();
-updateCircleText();
-saveData();
-if (count === totalLetters) {
-round++;
-updateRoundDisplay();
-popup108.style.display = 'block';
-audio.play();
-}
-} else {
-showResetPopup(); // Function to show reset popup if 108 is reached
-}
+    if (count < totalLetters) {
+        count++;
+        updateCountDisplay();
+        updateCircleText();
+        saveData();
+        if (vibrationCountEnabled && navigator.vibrate) {
+            navigator.vibrate(vibrationDuration); // Small vibration on each count
+        }
+        if (count === totalLetters) {
+            round++;
+            updateRoundDisplay();
+            popup108.style.display = 'block';
+            audio.play();
+            if (vibration108Enabled && navigator.vibrate) {
+                navigator.vibrate(vibrationDuration108); // Long and intense vibration
+            }
+        }
+    } else {
+        showResetPopup(); // Function to show reset popup if 108 is reached
+    }
 }
 
 // Show the reset confirmation popup
 function showResetPopup() {
-popup108.style.display = 'block'; // Show the popup
+    popup108.style.display = 'block'; // Show the popup
 }
 
 // Event listener for the main count button
@@ -103,64 +112,87 @@ document.getElementById('count-btn').addEventListener('click', updateCounter);
 
 // Event listeners for the 108-count popup
 confirmReset108Btn.addEventListener('click', () => {
-count = 0;
-updateCountDisplay();
-updateCircleText();
-popup108.style.display = 'none';
-saveData();
+    count = 0;
+    updateCountDisplay();
+    updateCircleText();
+    popup108.style.display = 'none';
+    saveData();
 });
 
 cancelReset108Btn.addEventListener('click', () => {
-popup108.style.display = 'none';
+    popup108.style.display = 'none';
 });
 
 // Event listeners for the count reset button
 resetCountBtn.addEventListener('click', () => {
-popupCountReset.style.display = 'block';
+    popupCountReset.style.display = 'block';
 });
 
 confirmResetCountBtn.addEventListener('click', () => {
-count = 0;
-updateCountDisplay();
-updateCircleText();
-popupCountReset.style.display = 'none';
-saveData();
+    count = 0;
+    updateCountDisplay();
+    updateCircleText();
+    popupCountReset.style.display = 'none';
+    saveData();
 });
 
 cancelResetCountBtn.addEventListener('click', () => {
-popupCountReset.style.display = 'none';
+    popupCountReset.style.display = 'none';
 });
+
 // Event listeners for the round reset button
 resetRoundBtn.addEventListener('click', () => {
-popupRoundReset.style.display = 'block';
+    popupRoundReset.style.display = 'block';
 });
 
 confirmResetRoundBtn.addEventListener('click', () => {
-round = 0;
-updateRoundDisplay();
-popupRoundReset.style.display = 'none';
-saveData();
+    round = 0;
+    updateRoundDisplay();
+    popupRoundReset.style.display = 'none';
+    saveData();
 });
 
 cancelResetRoundBtn.addEventListener('click', () => {
-popupRoundReset.style.display = 'none';
+    popupRoundReset.style.display = 'none';
 });
 
-// Event listeners for mute and unmute buttons
-muteBtn.addEventListener('click', () => {
-isMuted = true;
-audio.muted = true;
-muteBtn.style.display = 'none';
-unmuteBtn.style.display = 'inline-block';
-localStorage.setItem('isMuted', JSON.stringify(isMuted));
+// Event listener for the settings button
+settingsBtn.addEventListener('click', () => {
+    const popup = document.getElementById('popupSettings');
+    popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
 });
 
-unmuteBtn.addEventListener('click', () => {
-isMuted = false;
-audio.muted = false;
-muteBtn.style.display = 'inline-block';
-unmuteBtn.style.display = 'none';
-localStorage.setItem('isMuted', JSON.stringify(isMuted));
+// Load vibration settings from localStorage
+document.addEventListener('DOMContentLoaded', () => {
+    const vibrationCountCheckbox = document.getElementById('vibration-count');
+    const vibrationDurationSlider = document.getElementById('vibration-duration');
+    const vibration108Checkbox = document.getElementById('vibration-108');
+    const vibrationDuration108Slider = document.getElementById('vibration-duration-108');
+
+    vibrationCountCheckbox.checked = vibrationCountEnabled;
+    vibrationDurationSlider.value = vibrationDuration;
+    vibration108Checkbox.checked = vibration108Enabled;
+    vibrationDuration108Slider.value = vibrationDuration108;
+
+    vibrationCountCheckbox.addEventListener('change', () => {
+        vibrationCountEnabled = vibrationCountCheckbox.checked;
+        localStorage.setItem('vibrationCountEnabled', vibrationCountEnabled);
+    });
+
+    vibrationDurationSlider.addEventListener('input', () => {
+        vibrationDuration = parseInt(vibrationDurationSlider.value);
+        localStorage.setItem('vibrationDuration', vibrationDuration);
+    });
+
+    vibration108Checkbox.addEventListener('change', () => {
+        vibration108Enabled = vibration108Checkbox.checked;
+        localStorage.setItem('vibration108Enabled', vibration108Enabled);
+    });
+
+    vibrationDuration108Slider.addEventListener('input', () => {
+        vibrationDuration108 = parseInt(vibrationDuration108Slider.value);
+        localStorage.setItem('vibrationDuration108', vibrationDuration108);
+    });
 });
 
 // Initial setup
@@ -171,8 +203,6 @@ updateCircleText();
 // Load mute state from localStorage
 isMuted = JSON.parse(localStorage.getItem('isMuted')) || false;
 audio.muted = isMuted;
-muteBtn.style.display = isMuted ? 'none' : 'inline-block';
-unmuteBtn.style.display = isMuted ? 'inline-block' : 'none';
 
 // Create a date object for the current time in IST (Indian Standard Time)
 const dateInIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
@@ -185,42 +215,42 @@ document.getElementById('current-year').textContent = currentYear;
 
 // Function to show an image change menu
 function showImageChangeMenu(event) {
-event.preventDefault(); // Prevent the default action (context menu)
+    event.preventDefault(); // Prevent the default action (context menu)
 
-// Create the menu with options
-const menu = document.createElement('div');
-menu.classList.add('image-change-menu');
-menu.innerHTML = `
-       <p>Change Image</p>
-       <input type="file" id="image-upload" accept="image/*">
-       <button id="close-menu">Close</button>
-   `;
+    // Create the menu with options
+    const menu = document.createElement('div');
+    menu.classList.add('image-change-menu');
+    menu.innerHTML = `
+        <p>Change Image</p>
+        <input type="file" id="image-upload" accept="image/*">
+        <button id="close-menu">Close</button>
+    `;
 
-// Append the menu to the body
-document.body.appendChild(menu);
+    // Append the menu to the body
+    document.body.appendChild(menu);
 
-// Position the menu at the event's location
-menu.style.left = `${event.pageX}px`;
-menu.style.top = `${event.pageY}px`;
+    // Position the menu at the event's location
+    menu.style.left = `${event.pageX}px`;
+    menu.style.top = `${event.pageY}px`;
 
-// Handle image file selection
-document.getElementById('image-upload').addEventListener('change', (e) => {
-const file = e.target.files[0];
-if (file) {
-const reader = new FileReader();
-reader.onload = function (event) {
+    // Handle image file selection
+    document.getElementById('image-upload').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
                 const imageUrl = event.target.result;
                 // Set the uploaded image as the new round image
                 document.getElementById('round-image').src = imageUrl;
-};
-reader.readAsDataURL(file);
-}
-});
+            };
+            reader.readAsDataURL(file);
+        }
+    });
 
-// Close menu
-document.getElementById('close-menu').addEventListener('click', () => {
-document.body.removeChild(menu);
-});
+    // Close menu
+    document.getElementById('close-menu').addEventListener('click', () => {
+        document.body.removeChild(menu);
+    });
 }
 
 // Event listener for right-click on round image for desktop
@@ -228,8 +258,8 @@ document.getElementById('round-image').addEventListener('contextmenu', showImage
 
 // Event listener for long press on round image for mobile
 document.getElementById('round-image').addEventListener('touchstart', (e) => {
-e.preventDefault();
-showImageChangeMenu(e);
+    e.preventDefault();
+    showImageChangeMenu(e);
 });
 
 // References to the buttons and elements
@@ -271,7 +301,8 @@ saveImageBtn.addEventListener('click', () => {
         localStorage.setItem('selectedImage', newImageSrc); // Save the image source to localStorage
         document.querySelector('.round-image').src = newImageSrc; // Update the round image in the UI
         imageChangeMenu.style.display = 'none'; // Close the menu
-    }});
+    }
+});
 
 // Reset the image to the default one
 resetImageBtn.addEventListener('click', () => {
@@ -283,10 +314,10 @@ resetImageBtn.addEventListener('click', () => {
 
 // Check if there's a saved image in localStorage
 window.onload = function() {
-const savedImage = localStorage.getItem('selectedImage');
-if (savedImage) {
+    const savedImage = localStorage.getItem('selectedImage');
+    if (savedImage) {
         document.querySelector('.round-image').src = savedImage; // Set the saved image
-}
+    }
 };
 
 // Image change on right-click or long press
@@ -408,41 +439,15 @@ function scheduleNotification(time) {
     scheduleNotification(time);
   }, delay);
 }
+
 document.getElementById("notificationButton").addEventListener("click", () => {
   console.log('Notification button clicked');
   const popup = document.getElementById("popupSettings");
   popup.style.display = popup.style.display === "block" ? "none" : "block";
 });
+
 window.onload = () => {
   console.log('Page loaded');
   requestNotificationPermission();
   loadSettings();
 };
-
-function updateCounter() {
-    if (count < totalLetters) {
-        count++;
-        updateCountDisplay();
-        updateCircleText();
-        saveData();
-        
-        // Vibrate briefly on every count
-        if (navigator.vibrate) {
-            navigator.vibrate(60); // Small vibration on each count
-        }
-        
-        if (count === totalLetters) {
-            round++;
-            updateRoundDisplay();
-            popup108.style.display = 'block';
-            audio.play();
-            
-            // Strong continuous vibration when count reaches 108
-            if (navigator.vibrate) {
-                navigator.vibrate([1000]); // Long and intense vibration
-            }
-        }
-    } else {
-        showResetPopup(); // Function to show reset popup if 108 is reached
-    }
-}
