@@ -439,7 +439,7 @@ function updateCounter() {
             
             // Strong continuous vibration when count reaches 108
             if (navigator.vibrate) {
-                navigator.vibrate([1000, 1000, 1000, 1000, 1000]); // Long and intense vibration
+                navigator.vibrate([1000]); // Long and intense vibration
             }
         }
     } else {
