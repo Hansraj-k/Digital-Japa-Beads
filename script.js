@@ -426,15 +426,20 @@ function updateCounter() {
         updateCircleText();
         saveData();
         
+        // Vibrate briefly on every count
+        if (navigator.vibrate) {
+            navigator.vibrate(50); // Small vibration on each count
+        }
+        
         if (count === totalLetters) {
             round++;
             updateRoundDisplay();
             popup108.style.display = 'block';
             audio.play();
             
-            // Strong vibration pattern when count reaches 108
+            // Strong continuous vibration when count reaches 108
             if (navigator.vibrate) {
-                navigator.vibrate([300, 100, 300, 100, 500]); // Vibrate in a strong pattern
+                navigator.vibrate([1000, 1000, 1000, 1000, 1000]); // Long and intense vibration
             }
         }
     } else {
