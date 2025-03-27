@@ -111,6 +111,49 @@
             <br>
         <button onclick="saveSettings()">Save Settings</button>
         </div>
+         <div id="popupSettings" class="popup">
+        <h2>App Settings</h2>
+        
+        <div class="settings-section">
+            <label for="enableNotifications">Enable Notifications:</label>
+            <input type="checkbox" id="enableNotifications">
+        </div>
+        
+        <div class="settings-section">
+            <label for="notificationTime">Notification Time (HH:mm):</label>
+            <input type="time" id="notificationTime" value="10:08">
+        </div>
+        
+        <div class="settings-section">
+            <label for="enableMute">Mute Sounds:</label>
+            <input type="checkbox" id="enableMute">
+        </div>
+        
+        <div class="settings-section">
+            <label for="enableVibration">Enable Vibration:</label>
+            <input type="checkbox" id="enableVibration">
+        </div>
+        
+        <div class="settings-section">
+            <label for="vibrationIntensity">Vibration Intensity:</label>
+            <div class="slider-container">
+                <span>Light</span>
+                <input type="range" id="vibrationIntensity" min="30" max="90" value="60">
+                <span>Strong</span>
+            </div>
+        </div>
+        
+        <div class="settings-section">
+            <label for="vibrationDuration">Vibration Duration (ms):</label>
+            <div class="slider-container">
+                <span>Short</span>
+                <input type="range" id="vibrationDuration" min="600" max="1500" value="1000">
+                <span>Long</span>
+            </div>
+        </div>
+        
+        <button onclick="saveSettings()">Save Settings</button>
+    </div>
         <div class="counter-container">
             <div class="count-display-container">
                 <div class="count-display" id="count-display">0</div>
