@@ -441,3 +441,115 @@ function updateCounter() {
         showResetPopup(); // Function to show reset popup if 108 is reached
     }
 }
+
+// Settings variables
+let isMuted = false;
+let isVibrationEnabled = false;
+let vibrationIntensity = 60;
+let roundCompleteVibration = 1000;
+
+// Settings buttons
+const settingsButton = document.getElementById('settingsButton');
+const popupSettings = document.getElementById('popupSettings');
+const saveSettingsBtn = document.getElementById('saveSettings');
+const cancelSettingsBtn = document.getElementById('cancelSettings');
+
+// Settings inputs
+const muteAudioCheckbox = document.getElementById('muteAudio');
+const enableVibrationCheckbox = document.getElementById('enableVibration');
+const vibrationIntensitySlider = document.getElementById('vibrationIntensity');
+const roundCompleteVibrationSlider = document.getElementById('roundCompleteVibration');
+const vibrationValueSpan = document.getElementById('vibrationValue');
+const roundCompleteVibrationValueSpan = document.getElementById('roundCompleteVibrationValue');
+
+// Load saved settings
+function loadSettings() {
+    isMuted = JSON.parse(localStorage.getItem('isMuted')) || false;
+    isVibrationEnabled = JSON.parse(localStorage.getItem('isVibrationEnabled')) || false;
+    vibrationIntensity = parseInt(localStorage.getItem('vibrationIntensity')) || 60;
+    roundCompleteVibration = parseInt(localStorage.getItem('roundCompleteVibration')) || 1000;
+
+    // Update UI
+    muteAudioCheckbox.checked = isMuted;
+    enableVibrationCheckbox.checked = isVibrationEnabled;
+    vibrationIntensitySlider.value = vibrationIntensity;
+    roundCompleteVibrationSlider.value = roundCompleteVibration;
+    vibrationValueSpan.textContent = vibrationIntensity;
+    roundCompleteVibrationValueSpan.textContent = roundCompleteVibration;
+
+    // Apply audio mute
+    audio.muted = isMuted;
+}
+
+// Save settings
+function saveSettings() {
+    isMuted = muteAudioCheckbox.checked;
+    isVibrationEnabled = enableVibrationCheckbox.checked;
+    vibrationIntensity = parseInt(vibrationIntensitySlider.value);
+    roundCompleteVibration = parseInt(roundCompleteVibrationSlider.value);
+
+    // Save to localStorage
+    localStorage.setItem('isMuted', JSON.stringify(isMuted));
+    localStorage.setItem('isVibrationEnabled', JSON.stringify(isVibrationEnabled));
+    localStorage.setItem('vibrationIntensity', vibrationIntensity);
+    localStorage.setItem('roundCompleteVibration', roundCompleteVibration);
+
+    // Apply audio mute
+    audio.muted = isMuted;
+
+    // Close settings
+    popupSettings.style.display = 'none';
+}
+
+// Update slider labels in real-time
+vibrationIntensitySlider.addEventListener('input', () => {
+    vibrationValueSpan.textContent = vibrationIntensitySlider.value;
+});
+
+roundCompleteVibrationSlider.addEventListener('input', () => {
+    roundCompleteVibrationValueSpan.textContent = roundCompleteVibrationSlider.value;
+});
+
+// Event Listeners for Settings
+settingsButton.addEventListener('click', () => {
+    loadSettings();
+    popupSettings.style.display = 'block';
+});
+
+saveSettingsBtn.addEventListener('click', saveSettings);
+
+cancelSettingsBtn.addEventListener('click', () => {
+    popupSettings.style.display = 'none';
+});
+
+// Modify updateCounter function to use new vibration settings
+function updateCounter() {
+    if (count < totalLetters) {
+        count++;
+        updateCountDisplay();
+        updateCircleText();
+        saveData();
+        
+        // Vibrate briefly on every count
+        if (isVibrationEnabled && navigator.vibrate) {
+            navigator.vibrate(vibrationIntensity); // Customizable vibration
+        }
+        
+        if (count === totalLetters) {
+            round++;
+            updateRoundDisplay();
+            popup108.style.display = 'block';
+            audio.play();
+            
+            // Strong continuous vibration when count reaches 108
+            if (isVibrationEnabled && navigator.vibrate) {
+                navigator.vibrate([roundCompleteVibration]); // Customizable vibration
+            }
+        }
+    } else {
+        showResetPopup();
+    }
+}
+
+// Load settings on page load
+window.addEventListener('load', loadSettings);
