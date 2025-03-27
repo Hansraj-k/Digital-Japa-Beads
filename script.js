@@ -428,7 +428,7 @@ function updateCounter() {
         
         // Vibrate briefly on every count
         if (navigator.vibrate) {
-            navigator.vibrate(50); // Small vibration on each count
+            navigator.vibrate(60); // Small vibration on each count
         }
         
         if (count === totalLetters) {
