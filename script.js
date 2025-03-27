@@ -441,3 +441,108 @@ function updateCounter() {
         showResetPopup(); // Function to show reset popup if 108 is reached
     }
 }
+
+// New global variables for settings
+let isMuted = false;
+let isVibrationEnabled = false;
+let vibrationIntensity = 60;
+let vibrationDuration = 1000;
+
+function saveSettings() {
+    console.log('Saving settings');
+    
+    // Notification settings
+    const enableNotifications = document.getElementById("enableNotifications").checked;
+    const notificationTime = document.getElementById("notificationTime").value;
+    
+    // Sound settings
+    isMuted = document.getElementById("enableMute").checked;
+    
+    // Vibration settings
+    isVibrationEnabled = document.getElementById("enableVibration").checked;
+    vibrationIntensity = parseInt(document.getElementById("vibrationIntensity").value);
+    vibrationDuration = parseInt(document.getElementById("vibrationDuration").value);
+    
+    // Save to localStorage
+    localStorage.setItem("enableNotifications", enableNotifications);
+    localStorage.setItem("notificationTime", notificationTime);
+    localStorage.setItem("isMuted", isMuted);
+    localStorage.setItem("isVibrationEnabled", isVibrationEnabled);
+    localStorage.setItem("vibrationIntensity", vibrationIntensity);
+    localStorage.setItem("vibrationDuration", vibrationDuration);
+    
+    // Update audio mute state
+    audio.muted = isMuted;
+    
+    document.getElementById("popupSettings").style.display = "none";
+    
+    if (enableNotifications) {
+        scheduleNotification(notificationTime);
+    }
+}
+
+function loadSettings() {
+    console.log('Loading settings');
+    
+    // Load notification settings
+    const enableNotifications = localStorage.getItem("enableNotifications") === "true";
+    const notificationTime = localStorage.getItem("notificationTime") || "08:00";
+    
+    // Load sound settings
+    isMuted = localStorage.getItem("isMuted") === "true";
+    
+    // Load vibration settings
+    isVibrationEnabled = localStorage.getItem("isVibrationEnabled") === "true";
+    vibrationIntensity = parseInt(localStorage.getItem("vibrationIntensity") || "60");
+    vibrationDuration = parseInt(localStorage.getItem("vibrationDuration") || "1000");
+    
+    // Set form values
+    document.getElementById("enableNotifications").checked = enableNotifications;
+    document.getElementById("notificationTime").value = notificationTime;
+    document.getElementById("enableMute").checked = isMuted;
+    document.getElementById("enableVibration").checked = isVibrationEnabled;
+    document.getElementById("vibrationIntensity").value = vibrationIntensity;
+    document.getElementById("vibrationDuration").value = vibrationDuration;
+    
+    // Update audio mute state
+    audio.muted = isMuted;
+    
+    if (enableNotifications) {
+        scheduleNotification(notificationTime);
+    }
+}
+
+function updateCounter() {
+    if (count < totalLetters) {
+        count++;
+        updateCountDisplay();
+        updateCircleText();
+        saveData();
+        
+        // Vibrate with settings
+        if (isVibrationEnabled && navigator.vibrate) {
+            navigator.vibrate(vibrationIntensity);
+        }
+        
+        if (count === totalLetters) {
+            round++;
+            updateRoundDisplay();
+            popup108.style.display = 'block';
+            audio.play();
+            
+            // Strong continuous vibration when count reaches 108
+            if (isVibrationEnabled && navigator.vibrate) {
+                navigator.vibrate([vibrationDuration]);
+            }
+        }
+    } else {
+        showResetPopup();
+    }
+}
+
+// Modify window.onload to include loadSettings
+window.onload = () => {
+    console.log('Page loaded');
+    requestNotificationPermission();
+    loadSettings();
+};
