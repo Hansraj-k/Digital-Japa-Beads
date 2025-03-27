@@ -78,7 +78,7 @@
                 <!-- <button id="notificationButton">
                     <i class="fa-solid fa-bell"></i>
                 </button>-->
-                <button id="settingsButton" data-tooltip="Mute Notification">
+                <button id="mute-btn" data-tooltip="Mute Notification">
                     <i class="fa-solid fa-volume-high"></i>
                 </button>
                 <button id="unmute-btn" style="display: none;" data-tooltip="Unmute Notification">
@@ -111,38 +111,6 @@
             <br>
         <button onclick="saveSettings()">Save Settings</button>
         </div>-->
-        <div id="popupSettings" class="popup">
-    <div class="popup-content">
-        <h2>App Settings</h2>
-        
-        <div class="setting-group">
-            <label for="muteAudio">Mute Audio</label>
-            <input type="checkbox" id="muteAudio">
-        </div>
-
-        <div class="setting-group">
-            <label for="enableVibration">Enable Vibration</label>
-            <input type="checkbox" id="enableVibration">
-        </div>
-
-        <div class="setting-group">
-            <label for="vibrationIntensity">Vibration Intensity (ms)</label>
-            <input type="range" id="vibrationIntensity" min="30" max="90" value="60">
-            <span id="vibrationValue">60</span>
-        </div>
-
-        <div class="setting-group">
-            <label for="roundCompleteVibration">Round Complete Vibration (ms)</label>
-            <input type="range" id="roundCompleteVibration" min="600" max="1500" value="1000">
-            <span id="roundCompleteVibrationValue">1000</span>
-        </div>
-
-        <div class="settings-buttons">
-            <button id="saveSettings">Save Settings</button>
-            <button id="cancelSettings">Cancel</button>
-        </div>
-    </div>
-</div>
         <div class="counter-container">
             <div class="count-display-container">
                 <div class="count-display" id="count-display">0</div>
