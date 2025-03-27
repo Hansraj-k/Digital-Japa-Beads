@@ -34,12 +34,12 @@
     ::-webkit-scrollbar {
       width: 5.1px;
     }
-
+    
     /* Track */
     ::-webkit-scrollbar-track {
       box-shadow: transparent; 
     }
-
+     
     /* Handle */
     ::-webkit-scrollbar-thumb {
       background: white; 
@@ -110,20 +110,6 @@
             <input type="checkbox" id="enableNotifications">
             <br>
         <button onclick="saveSettings()">Save Settings</button>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         </div>
         <div class="counter-container">
             <div class="count-display-container">
@@ -160,27 +146,7 @@
             <button id="cancel-reset-round">No</button>
         </div>
     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
     <div class="footer">
         <div class="containerk">
             <hr>
@@ -201,7 +167,7 @@
                 <i class="fa fa-copyright"></i> <span id="current-year"></span> Digital Japa Beads. All rights reserved.
             </p>
         </div></div>
-
+    
     <audio id="audio" src="rkhkmc.mp3" preload="auto"></audio>
     <script src="script.js"></script>
     <script>
@@ -223,7 +189,6 @@
 });
 </script>
 <script>
-
         if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
     console.log('ServiceWorker registration successful with scope: ', registration.scope);
@@ -263,64 +228,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Show the install button only if inside a browser (not in PWA)
         if (!isPWAInstalled()) {
             installBtn.style.display = 'block';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         }
 
         installBtn.addEventListener('click', async () => {
             installBtn.style.display = 'none'; // Hide button after click
             deferredPrompt.prompt(); // Show prompt
-
-
 
             const choiceResult = await deferredPrompt.userChoice;
             console.log(choiceResult.outcome === 'accepted' ? 'User installed PWA' : 'User dismissed PWA install');
@@ -366,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Apply padding using setProperty
         circleContainer.style.setProperty("padding-top", newPadding, "important");
-        console.log(`Applied padding-top: ${newPadding}`);
+        console.log(Applied padding-top: ${newPadding});
     }
 
     // Run adjustment on page load
