@@ -34,12 +34,12 @@
     ::-webkit-scrollbar {
       width: 5.1px;
     }
-    
+
     /* Track */
     ::-webkit-scrollbar-track {
       box-shadow: transparent; 
     }
-     
+
     /* Handle */
     ::-webkit-scrollbar-thumb {
       background: white; 
@@ -72,7 +72,7 @@
                 <div class="round-display" id="round-display">Round: 0</div>
             </div>
             <div class="toolbar-right">
-                <button id="settings-btn" data-tooltip="Reset Round">
+                <button id="reset-round-btn" data-tooltip="Reset Round">
                     <i class="fa-solid fa-arrows-rotate"></i>
                 </button>
                 <!-- <button id="notificationButton">
@@ -146,27 +146,27 @@
             <button id="cancel-reset-round">No</button>
         </div>
     </div>
-    <div id="settings-menu" class="popup">
-    <h2>Settings</h2>
+    
 
-    <label>
-        <input type="checkbox" id="mute-toggle">
-        Mute Sound
-    </label>
 
-    <label>
-        <input type="checkbox" id="vibration-toggle">
-        Enable Vibration
-    </label>
 
-    <label for="short-vibration-slider">Short Vibration Duration (30ms - 90ms):</label>
-    <input type="range" id="short-vibration-slider" min="30" max="90" value="60">
 
-    <label for="long-vibration-slider">Long Vibration Duration (600ms - 1500ms):</label>
-    <input type="range" id="long-vibration-slider" min="600" max="1500" value="1000">
 
-    <button id="close-settings">Close</button>
-</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <div class="footer">
         <div class="containerk">
             <hr>
@@ -187,7 +187,7 @@
                 <i class="fa fa-copyright"></i> <span id="current-year"></span> Digital Japa Beads. All rights reserved.
             </p>
         </div></div>
-    
+
     <audio id="audio" src="rkhkmc.mp3" preload="auto"></audio>
     <script src="script.js"></script>
     <script>
