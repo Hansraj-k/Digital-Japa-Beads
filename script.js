@@ -418,3 +418,26 @@ window.onload = () => {
   requestNotificationPermission();
   loadSettings();
 };
+
+function updateCounter() {
+    if (count < totalLetters) {
+        count++;
+        updateCountDisplay();
+        updateCircleText();
+        saveData();
+        
+        if (count === totalLetters) {
+            round++;
+            updateRoundDisplay();
+            popup108.style.display = 'block';
+            audio.play();
+            
+            // Strong vibration pattern when count reaches 108
+            if (navigator.vibrate) {
+                navigator.vibrate([300, 100, 300, 100, 500]); // Vibrate in a strong pattern
+            }
+        }
+    } else {
+        showResetPopup(); // Function to show reset popup if 108 is reached
+    }
+}
