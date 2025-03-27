@@ -564,3 +564,45 @@ img, button, .fa , a{
   height: auto;
   display: block; /* Ensures image is treated as a block element */
 }
+
+#popupSettings {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 1000;
+    width: 90%;
+    max-width: 400px;
+}
+
+.setting-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.setting-group label {
+    margin-right: 10px;
+}
+
+.setting-group input[type="range"] {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.settings-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.settings-buttons button {
+    flex-grow: 1;
+    margin: 0 5px;
+}
