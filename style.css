@@ -9,7 +9,7 @@
 /* Define Biski font */
 @font-face {
     font-family: 'Biski';
-    src: url('BiskiTrial-Regular.otf');
+    src: url('Raleway-VariableFont_wght.ttf');
     font-weight: normal;
     font-style: normal;
 }
@@ -51,6 +51,185 @@ body {
     top: 0;
     left: 0;
     z-index: 1000;
+}
+
+/* Settings section alignment */
+.settings-section {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.settings-subtext {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    font-weight: normal;
+}
+
+.settings-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.settings-option h3 {
+    margin-right: 30px;
+    font-size: 16px;
+    color: #00ffd5;
+    flex-grow: 1;
+    text-align: left;
+}
+
+/* New Toggle Switch Styles */
+.button-cover {
+    height: auto;
+    margin: 0;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.button {
+    position: relative;
+    width: 74px;
+    height: 36px;
+    overflow: hidden;
+}
+
+.button.r, .button.r .layer {
+    border-radius: 100px;
+    border: 1px solid #f2f2f2;
+    width: 60px;
+}
+
+.checkbox {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 3;
+}
+
+.knobs {
+    z-index: 2;
+}
+
+.layer {
+    width: 100%;
+    background-color: #ebf7fc;
+    transition: 0.3s ease all;
+    z-index: 1;
+}
+
+/* Button style */
+#sound-toggle + .knobs:before,
+#count-vibration-toggle + .knobs:before,
+#complete-vibration-toggle + .knobs:before {
+    content: "OFF";
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 20px;
+    height: 10px;
+    color: #000;
+    font-size: 10px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1;
+    padding: 9px 4px;
+    background-color: #f44336;
+    border-radius: 50%;
+    transition: 0.3s ease all, left 0.3s cubic-bezier(0.18, 0.89, 0.35, 1.15);
+}
+
+#sound-toggle:active + .knobs:before,
+#count-vibration-toggle:active + .knobs:before,
+#complete-vibration-toggle:active + .knobs:before {
+    width: 46px;
+    border-radius: 100px;
+}
+
+#sound-toggle:checked:active + .knobs:before,
+#count-vibration-toggle:checked:active + .knobs:before,
+#complete-vibration-toggle:checked:active + .knobs:before {
+    margin-left: -26px;
+}
+
+#sound-toggle:checked + .knobs:before,
+#count-vibration-toggle:checked + .knobs:before,
+#complete-vibration-toggle:checked + .knobs:before {
+    content: "ON";
+    left: 30px;
+    background-color: #00ffd5;
+}
+
+#sound-toggle:checked ~ .layer,
+#count-vibration-toggle:checked ~ .layer,
+#complete-vibration-toggle:checked ~ .layer {
+    background-color: #fcebeb;
+}
+
+.slider-container {
+    margin-top: 5px;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.slider-container h3 {
+    font-size: 16px;
+    color: #00ffd5;
+    margin-bottom: 5.1mm;
+}
+
+.slider-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.slider-controls input[type="range"] {
+    flex-grow: 1;
+    height: 8px;
+    -webkit-appearance: none;
+    background: #333;
+    border-radius: 4px;
+    outline: none;
+}
+
+.slider-controls input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: #00ffd5;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.slider-value {
+    width: 50px;
+    text-align: right;
+    margin-bottom: 1.5px;
+    font-size: 14px;
+}
+
+/* Right-align buttons in toolbar */
+.toolbar-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.round-display-container {
+    margin-right: auto;
+    padding-left: 10px;
 }
 
 /* Round display container */
@@ -105,7 +284,7 @@ button:hover {
 
 button:hover::after {
     content: attr(data-tooltip);
-    position: absolute;
+    position: centre;
     bottom: -35px;
     left: 50%;
     transform: translateX(-50%);
@@ -185,6 +364,7 @@ button:hover::after {
 .count-display {
     font-size: 51px;
     margin: 10px 0;
+    font-weight: 300;
     font-family: 'Biski', sans-serif;
 }
 
@@ -565,3 +745,48 @@ img, button, .fa , a{
   display: block; /* Ensures image is treated as a block element */
 }
 
+/* Settings Buttons */
+.settings-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.settings-buttons button {
+    flex: 1;
+    margin: 0 5px;
+    padding: 10px;
+    border-radius: 25px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.settings-buttons button:hover {
+    transform: scale(1.05);
+}
+
+#save-settings {
+    background-color: #00ffd5;
+    color: black;
+}
+
+#close-settings {
+    background-color: #333;
+    color: white;
+}
+
+#settings-btn {
+    color: white;
+    font-size: 15px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: color 0.3s, transform 0.3s;
+    font-family: 'Biski', sans-serif;
+    padding-top: 10px;
+    padding-right: 21px;
+    padding-bottom: 10px;
+padding-left: 0;
+}
