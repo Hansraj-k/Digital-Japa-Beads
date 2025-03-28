@@ -58,13 +58,18 @@
 <body>
     <div id="popupnotify" class="popupnotify">
     <div class="popupnotify-content">
-        <p class="popupnotify-title">Customize Your Image</p>
-        <p>Right-click (desktop) or long-press (mobile) on the image to change it!</p>
-        <p>Or, hit the "Change Image" button below for a quick update.</p>
-        <p class="popupnotify-highlight"><strong>Remember:</strong><br> 108 chants = 1 round of progress!</p>
-        <button id="close-popupnotify">Got it!</button>
+        <p class="popupnotify-title">Customize Your Vibe ✨</p>
+        <p>Wanna tweak your settings? Tap the settings button to:</p>
+        <ul>
+            <li>Change notification & vibration settings 🔔</li>
+            <li>Switch up the center image 🎨</li>
+            <li>Adjust the count buttons 🔢</li>
+        </ul>
+        <p class="popupnotify-highlight"><strong>Pro Tip:</strong><br> 108 chants = 1 round of progress! 🚀</p>
+        <button id="close-popupnotify">Got it! ✅</button>
     </div>
 </div>
+
     <div class="container">
         <div class="toolbar">
             <img src="rkhkmclogo.jpg" alt="Logo" class="toolbar-logo">
@@ -100,6 +105,7 @@
             <div class="settings-section">
                 <div class="settings-option">
                     <h3>Notification</h3>
+
                     <div class="button-cover">
                         <div class="button r">
                             <input type="checkbox" id="sound-toggle" class="checkbox" checked>
@@ -107,7 +113,7 @@
                             <div class="layer"></div>
                         </div>
                     </div>
-                </div>
+                </div><p class="settings-subtext">Plays a musical notification after completing each round</p>
                 <div class="slider-container" id="volume-control-container">
                     <div class="slider-controls"><h3>Volume</h3>
                         <input type="range" min="0" max="210" value="210" class="slider" id="volume-slider">
@@ -116,43 +122,66 @@
                 </div>
             </div>
 
-            <div class="settings-section">
-                <div class="settings-option">
-                    <h3>Vibration on Count</h3>
-                    <div class="button-cover">
-                        <div class="button r">
-                            <input type="checkbox" id="count-vibration-toggle" class="checkbox">
-                            <div class="knobs"></div>
-                            <div class="layer"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="slider-container">
-                    <div class="slider-controls"><h3>Haptics</h3>
-                        <input type="range" min="30" max="90" value="60" class="slider" id="count-vibration-slider">
-                        <span class="slider-value" id="count-vibration-value">60ms</span>
-                    </div>
-                </div>
+            <div class="settings-section vibration-setting">
+    <div class="settings-option">
+        <h3>Vibration on Count</h3>
+        <div class="button-cover">
+            <div class="button r">
+                <input type="checkbox" id="count-vibration-toggle" class="checkbox">
+                <div class="knobs"></div>
+                <div class="layer"></div>
             </div>
+        </div>
+    </div>
+    <div class="slider-container">
+        <div class="slider-controls"><h3>Haptics</h3>
+            <input type="range" min="30" max="90" value="60" class="slider" id="count-vibration-slider">
+            <span class="slider-value" id="count-vibration-value">60ms</span>
+        </div>
+    </div>
+</div>
 
-            <div class="settings-section">
-                <div class="settings-option">
-                    <h3>Vibration on 108 Counts</h3>
-                    <div class="button-cover">
-                        <div class="button r">
-                            <input type="checkbox" id="complete-vibration-toggle" class="checkbox" checked>
-                            <div class="knobs"></div>
-                            <div class="layer"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="slider-container">
-                    <div class="slider-controls"><h3>Haptics</h3>
-                        <input type="range" min="600" max="1500" value="1000" class="slider" id="complete-vibration-slider">
-                        <span class="slider-value" id="complete-vibration-value">1000ms</span>
-                    </div>
-                </div>
+<div class="settings-section vibration-setting">
+    <div class="settings-option">
+        <h3>Vibration on 108 Counts</h3>
+        <div class="button-cover">
+            <div class="button r">
+                <input type="checkbox" id="complete-vibration-toggle" class="checkbox" checked>
+                <div class="knobs"></div>
+                <div class="layer"></div>
             </div>
+        </div>
+    </div>
+    <div class="slider-container">
+        <div class="slider-controls"><h3>Haptics</h3>
+            <input type="range" min="600" max="1500" value="1000" class="slider" id="complete-vibration-slider">
+            <span class="slider-value" id="complete-vibration-value">1000ms</span>
+        </div>
+    </div>
+</div>
+
+<div class="settings-section">
+    <div class="settings-option">
+        <h3>Button Size</h3>
+        <div class="size-controls">
+            <button id="decrease-btn-size" class="size-btn">-</button>
+            <span id="button-size-value">100%</span>
+            <button id="increase-btn-size" class="size-btn">+</button>
+        </div>
+    </div>
+</div>
+
+<div class="settings-section">
+                <div class="settings-option change-image-btn">
+              <!-- Image Change Button -->
+            <button id="change-image-btn">Change Image</button>
+                </div>
+                </div>
+<div class="settings-section reset-default-section">
+    <div class="settings-option">
+        <button id="reset-default-settings" class="reset-default-btn">Reset to Default</button>
+    </div>
+</div>
             <button id="save-settings">Save Settings</button>
             <button id="close-settings">Close</button>
         </div>
@@ -196,8 +225,6 @@
         <div class="containerk">
             <hr>
             <p>Note: Your counter data saves automatically in your browser, letting you pick up where you left off. Clearing your browser's cache or data will reset it.</p>
-            <!-- Image Change Button -->
-            <button id="change-image-btn">Change Image</button>
             <div class="install-container">
               <button id="install-btn">
                 <img src="rkhkmc-app .png" alt="Install PWA">
@@ -286,24 +313,31 @@ document.addEventListener('DOMContentLoaded', () => {
         installBtn.style.display = 'none';
     });
 });
-</script><script>
+</script>
+<script>
    document.addEventListener('DOMContentLoaded', () => {
-    function adjustCircleContainer() {
-        const circleContainer = document.querySelector('.circle-container');
-        if (!circleContainer) return;
+   function adjustCircleContainer() {
+    const circleContainer = document.querySelector('.circle-container');
+    if (!circleContainer) return;
 
-        const isMobile = /Android|iPhone|iPad|iPod/.test(navigator.userAgent);
-        const isPWAInstalled = isMobile && (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true);
+    const isMobile = /Android|iPhone|iPad|iPod/.test(navigator.userAgent);
+    const isPWAInstalled = isMobile && (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true);
 
-        let newPadding;
-        if (isMobile) {
-            newPadding = isPWAInstalled ? '495px' : '630px';
-        } else {
-            newPadding = window.innerWidth <= 768 ? '480px' : '399px';
-        }
-
-        circleContainer.style.setProperty("padding-top", newPadding, "important");
+    // Base padding values
+    let basePadding;
+    if (isMobile) {
+        basePadding = isPWAInstalled ? 495 : 504;
+    } else {
+        basePadding = window.innerWidth <= 768 ? 480 : 423;
     }
+
+    // Adjust padding based on button size (3px per 10% size change)
+    const sizeAdjustment = (currentButtonSize - 100) * 0.9; // 3px per 10%
+    const newPadding = basePadding + sizeAdjustment;
+
+    circleContainer.style.setProperty("padding-top", `${newPadding}px`, "important");
+}
+
     setTimeout(() => {
         adjustCircleContainer();
         window.addEventListener('resize', adjustCircleContainer);
