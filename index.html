@@ -75,15 +75,9 @@
                 <button id="reset-round-btn" data-tooltip="Reset Round">
                     <i class="fa-solid fa-arrows-rotate"></i>
                 </button>
-                <!-- <button id="notificationButton">
-                    <i class="fa-solid fa-bell"></i>
-                </button>-->
-                <button id="mute-btn" data-tooltip="Mute Notification">
-                    <i class="fa-solid fa-volume-high"></i>
+                <button id="settings-btn" data-tooltip="Settings">
+                    <i class="fa-solid fa-gear"></i>
                 </button>
-                <button id="unmute-btn" style="display: none;" data-tooltip="Unmute Notification">
-                    <i class="fa-solid fa-volume-xmark"></i>
-                </button> 
             </div></div>
         <div class="circle-container">
             <img src="rkhkmc.png" alt="Round Image" class="round-image" id="round-image">
@@ -101,16 +95,67 @@
                 <img id="made-with-img" src="rkhkmc_mwfet.png" alt="Made With">
             </div>
         </div>
-        <!-- <div id="popupSettings" class="popup">
-            <h2>Notification Settings</h2>
-            <label for="notificationTime">Time of Day (HH:mm):</label>
-            <input type="time" id="notificationTime" value="10:08">
-            <br>
-            <label for="enableNotifications">Enable Notifications:</label>
-            <input type="checkbox" id="enableNotifications">
-            <br>
-        <button onclick="saveSettings()">Save Settings</button>
-        </div>-->
+        <div id="settings-popup" class="popup">
+            <h2>Settings</h2>
+            <div class="settings-section">
+                <div class="settings-option">
+                    <h3>Notification</h3>
+                    <div class="button-cover">
+                        <div class="button r">
+                            <input type="checkbox" id="sound-toggle" class="checkbox" checked>
+                            <div class="knobs"></div>
+                            <div class="layer"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slider-container" id="volume-control-container">
+                    <div class="slider-controls"><h3>Volume</h3>
+                        <input type="range" min="0" max="210" value="210" class="slider" id="volume-slider">
+                        <span class="slider-value" id="volume-value">210</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="settings-option">
+                    <h3>Vibration on Count</h3>
+                    <div class="button-cover">
+                        <div class="button r">
+                            <input type="checkbox" id="count-vibration-toggle" class="checkbox">
+                            <div class="knobs"></div>
+                            <div class="layer"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slider-container">
+                    <div class="slider-controls"><h3>Haptics</h3>
+                        <input type="range" min="30" max="90" value="60" class="slider" id="count-vibration-slider">
+                        <span class="slider-value" id="count-vibration-value">60ms</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="settings-option">
+                    <h3>Vibration on 108 Counts</h3>
+                    <div class="button-cover">
+                        <div class="button r">
+                            <input type="checkbox" id="complete-vibration-toggle" class="checkbox" checked>
+                            <div class="knobs"></div>
+                            <div class="layer"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slider-container">
+                    <div class="slider-controls"><h3>Haptics</h3>
+                        <input type="range" min="600" max="1500" value="1000" class="slider" id="complete-vibration-slider">
+                        <span class="slider-value" id="complete-vibration-value">1000ms</span>
+                    </div>
+                </div>
+            </div>
+            <button id="save-settings">Save Settings</button>
+            <button id="close-settings">Close</button>
+        </div>
         <div class="counter-container">
             <div class="count-display-container">
                 <div class="count-display" id="count-display">0</div>
@@ -147,26 +192,6 @@
         </div>
     </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     <div class="footer">
         <div class="containerk">
             <hr>
@@ -191,21 +216,23 @@
     <audio id="audio" src="rkhkmc.mp3" preload="auto"></audio>
     <script src="script.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {// Your code to add event listeners
+        document.addEventListener('DOMContentLoaded', () => {
   const changeImageBtn = document.getElementById('change-image-btn');
   const imageUpload = document.getElementById('image-upload');
 
-  // Check if the elements exist before adding event listeners
   if (changeImageBtn) {
     changeImageBtn.addEventListener('click', () => {
-      imageChangeMenu.style.display = 'block'; // Show the menu
+      document.getElementById('image-change-menu').style.display = 'block';
     });
   }
 
   if (imageUpload) {
-    imageUpload.addEventListener('change', (event) => {// Image upload logic
-    });
+    imageUpload.addEventListener('change', (event) => {});
   }
+  
+  // Initialize audio with sound on
+  document.getElementById('audio').volume = 1;
+  document.getElementById('audio').muted = false;
 });
 </script>
 <script>
@@ -222,96 +249,70 @@ document.addEventListener('DOMContentLoaded', () => {
     let deferredPrompt;
     const installBtn = document.getElementById('install-btn');
 
-    if (!installBtn) return; // Ensure button exists
+    if (!installBtn) return;
 
-    // Function to check if the user is on a mobile device
     function isMobileDevice() {
         return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     }
 
-    // Function to check if the PWA is already installed
     function isPWAInstalled() {
         return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
     }
 
-    // Hide button if PWA is already installed OR if it's running inside a PWA
     if (isPWAInstalled() || !isMobileDevice()) {
         installBtn.style.display = 'none';
         return;
     }
 
-    // Show the install button only when the browser triggers the install prompt
     window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault(); // Prevent default prompt
-        deferredPrompt = e; // Store the event
-
-        // Show the install button only if inside a browser (not in PWA)
+        e.preventDefault();
+        deferredPrompt = e;
+        
         if (!isPWAInstalled()) {
             installBtn.style.display = 'block';
         }
 
         installBtn.addEventListener('click', async () => {
-            installBtn.style.display = 'none'; // Hide button after click
-            deferredPrompt.prompt(); // Show prompt
-
+            installBtn.style.display = 'none';
+            deferredPrompt.prompt();
             const choiceResult = await deferredPrompt.userChoice;
             console.log(choiceResult.outcome === 'accepted' ? 'User installed PWA' : 'User dismissed PWA install');
-
-            deferredPrompt = null; // Reset
+            deferredPrompt = null;
         });
     });
 
-    // Hide the button when the PWA is installed
     window.addEventListener('appinstalled', () => {
         console.log('PWA Installed - Hiding Install Button');
         installBtn.style.display = 'none';
     });
 });
-</script>
-<script>
+</script><script>
    document.addEventListener('DOMContentLoaded', () => {
     function adjustCircleContainer() {
         const circleContainer = document.querySelector('.circle-container');
-        if (!circleContainer) {
-            console.error("Error: .circle-container not found in the DOM.");
-            return;
-        }
+        if (!circleContainer) return;
 
-        // Detect if the device is mobile
         const isMobile = /Android|iPhone|iPad|iPod/.test(navigator.userAgent);
-
-        // Check if PWA is installed (only matters for mobile)
         const isPWAInstalled = isMobile && (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true);
-
-        console.log("Device Type:", isMobile ? "Mobile" : "Laptop/Desktop");
-        console.log("PWA Installed:", isPWAInstalled);
-        console.log("Window Width:", window.innerWidth);
 
         let newPadding;
         if (isMobile) {
-            // Mobile behavior
             newPadding = isPWAInstalled ? '495px' : '630px';
         } else {
-            // Laptop/Desktop behavior
             newPadding = window.innerWidth <= 768 ? '480px' : '399px';
         }
 
-        // Apply padding using setProperty
         circleContainer.style.setProperty("padding-top", newPadding, "important");
-        console.log(`Applied padding-top: ${newPadding}`);
     }
-
-    // Run adjustment on page load
     setTimeout(() => {
         adjustCircleContainer();
         window.addEventListener('resize', adjustCircleContainer);
     }, 200);
 
-    // Listen for PWA installation event (mobile only)
     window.addEventListener('appinstalled', () => {
-        console.log("PWA Installed - Rechecking Padding");
-        setTimeout(adjustCircleContainer, 500); // Delay to ensure system updates
+        setTimeout(adjustCircleContainer, 500);
     });
-});</script>
+});
+</script>
 </body>
 </html>
