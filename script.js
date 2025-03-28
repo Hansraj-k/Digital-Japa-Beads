@@ -27,30 +27,43 @@ let countVibrationSlider = document.getElementById('count-vibration-slider');
 let completeVibrationSlider = document.getElementById('complete-vibration-slider');
 let countVibrationValue = document.getElementById('count-vibration-value');
 let completeVibrationValue = document.getElementById('complete-vibration-value');
-let soundStatus = document.getElementById('sound-status');
-let countVibrationStatus = document.getElementById('count-vibration-status');
-let completeVibrationStatus = document.getElementById('complete-vibration-status');
 let volumeSlider = document.getElementById('volume-slider');
 let volumeValue = document.getElementById('volume-value');
 let volumeControlContainer = document.getElementById('volume-control-container');
+
+// Button size variables
+let currentButtonSize = 100;
+const minButtonSize = 50;
+const maxButtonSize = 150;
+const sizeStep = 10;
 
 let totalLetters = 108;
 let radius = 120;
 let maxRadius = 180;
 
-// Initialize audio with sound on by default
-audio.volume = 1;
-audio.muted = false;
-
-// Vibration settings with sound enabled by default
+// Vibration settings with default values
 let vibrationSettings = {
     soundEnabled: true,
     countVibrationEnabled: false,
     countVibrationDuration: 60,
     completeVibrationEnabled: true,
     completeVibrationDuration: 1000,
-    volume: 210
+    volume: 210,
+    buttonSize: 100
 };
+
+// Function to update slider fill color
+function updateSliderFill(slider) {
+    const value = slider.value;
+    const max = slider.max;
+    const percent = (value / max) * 100;
+    
+    // For WebKit browsers
+    slider.style.background = `linear-gradient(to right, #00ffd5 ${percent}%, #333 ${percent}%)`;
+    
+    // For Firefox
+    slider.style.setProperty('--fill-percent', `${percent}%`);
+}
 
 // Function to update the displayed count
 function updateCountDisplay() {
@@ -107,7 +120,8 @@ function saveSettingsToStorage() {
         countVibrationDuration: parseInt(countVibrationSlider.value),
         completeVibrationEnabled: completeVibrationToggle.checked,
         completeVibrationDuration: parseInt(completeVibrationSlider.value),
-        volume: parseInt(volumeSlider.value)
+        volume: parseInt(volumeSlider.value),
+        buttonSize: currentButtonSize
     };
     localStorage.setItem('vibrationSettings', JSON.stringify(vibrationSettings));
 }
@@ -117,34 +131,128 @@ function loadSettingsFromStorage() {
     const savedSettings = localStorage.getItem('vibrationSettings');
     if (savedSettings) {
         vibrationSettings = JSON.parse(savedSettings);
-    } else {
-        // Default settings with sound ON
-        vibrationSettings = {
-            soundEnabled: true,
-            countVibrationEnabled: false,
-            countVibrationDuration: 60,
-            completeVibrationEnabled: true,
-            completeVibrationDuration: 1000,
-            volume: 210
-        };
+        
+        // Update UI with loaded settings
+        soundToggle.checked = vibrationSettings.soundEnabled !== false;
+        countVibrationToggle.checked = vibrationSettings.countVibrationEnabled || false;
+        completeVibrationToggle.checked = vibrationSettings.completeVibrationEnabled !== false;
+        countVibrationSlider.value = vibrationSettings.countVibrationDuration || 60;
+        completeVibrationSlider.value = vibrationSettings.completeVibrationDuration || 1000;
+        volumeSlider.value = vibrationSettings.volume !== undefined ? vibrationSettings.volume : 210;
+        
+        // Load button size if it exists
+        if (vibrationSettings.buttonSize) {
+            currentButtonSize = vibrationSettings.buttonSize;
+            updateButtonSize(currentButtonSize);
+        }
     }
-    
-    // Update UI with loaded settings
-    soundToggle.checked = vibrationSettings.soundEnabled !== false;
-    countVibrationToggle.checked = vibrationSettings.countVibrationEnabled || false;
-    completeVibrationToggle.checked = vibrationSettings.completeVibrationEnabled !== false;
-    countVibrationSlider.value = vibrationSettings.countVibrationDuration || 60;
-    completeVibrationSlider.value = vibrationSettings.completeVibrationDuration || 1000;
-    volumeSlider.value = vibrationSettings.volume !== undefined ? vibrationSettings.volume : 210;
     
     updateSettingsUI();
 }
 
+// Function to update button size
+function updateButtonSize(newSize) {
+    // Ensure size stays within bounds
+    currentButtonSize = Math.max(minButtonSize, Math.min(maxButtonSize, newSize));
+    
+    // Update display
+    document.getElementById('button-size-value').textContent = `${currentButtonSize}%`;
+    
+    // Scale the button and image
+    const countBtn = document.getElementById('count-btn');
+    const btnImg = countBtn.querySelector('img');
+    
+    // Apply scaling
+    countBtn.style.transform = `scale(${currentButtonSize / 100})`;
+    if (btnImg) {
+        btnImg.style.width = `${currentButtonSize}px`;
+        btnImg.style.height = `${currentButtonSize}px`;
+    }
+    
+    // Adjust container padding dynamically
+    const basePadding = window.innerWidth <= 768 ? 30 : 20;
+    const adjustedPadding = basePadding * (currentButtonSize / 100);
+    document.querySelector('.buttons').style.padding = `${adjustedPadding}px 0`;
+    
+    // Update circle container padding
+    adjustCircleContainer();
+    
+    // Save settings
+    vibrationSettings.buttonSize = currentButtonSize;
+    saveSettingsToStorage();
+}
+
+// Function to adjust circle container padding based on device and button size
+function adjustCircleContainer() {
+    const circleContainer = document.querySelector('.circle-container');
+    if (!circleContainer) return;
+
+    const isMobile = /Android|iPhone|iPad|iPod/.test(navigator.userAgent);
+    const isPWAInstalled = isMobile && (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true);
+
+    // Base padding values
+    let basePadding;
+    if (isMobile) {
+        basePadding = isPWAInstalled ? 495 : 504;
+    } else {
+        basePadding = window.innerWidth <= 768 ? 480 : 423;
+    }
+
+    // Adjust padding based on button size (3px per 10% size change)
+    const sizeAdjustment = (currentButtonSize - 100) * 0.9; // 3px per 10%
+    const newPadding = basePadding + sizeAdjustment;
+
+    circleContainer.style.setProperty("padding-top", `${newPadding}px`, "important");
+}
+
 // Function to update settings UI
 function updateSettingsUI() {
-    volumeControlContainer.style.display = soundToggle.checked ? 'block' : 'none';
+    // Update slider fill colors
+    updateSliderFill(volumeSlider);
+    updateSliderFill(countVibrationSlider);
+    updateSliderFill(completeVibrationSlider);
+    
+    // Update display values
+    volumeValue.textContent = volumeSlider.value;
+    countVibrationValue.textContent = `${countVibrationSlider.value}ms`;
+    completeVibrationValue.textContent = `${completeVibrationSlider.value}ms`;
+    
+    // Update audio settings
     audio.volume = volumeSlider.value / 210;
     audio.muted = !soundToggle.checked;
+    
+    // Show/hide volume control
+    volumeControlContainer.style.display = soundToggle.checked ? 'block' : 'none';
+    
+    // Handle vibration settings visibility
+    const vibrationSettings = document.querySelectorAll('.vibration-setting');
+    vibrationSettings.forEach(setting => {
+        if (isMobileDevice()) {
+            // On mobile, show toggle and conditionally show slider
+            setting.style.display = 'block';
+            const sliderContainer = setting.querySelector('.slider-container');
+            if (sliderContainer) {
+                const toggle = setting.querySelector('.checkbox');
+                sliderContainer.style.display = toggle.checked ? 'block' : 'none';
+            }
+        } else {
+            // On desktop, hide entire vibration setting
+            setting.style.display = 'none';
+        }
+    });
+}
+
+// Function to check if device is mobile
+function isMobileDevice() {
+    return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+// Function to close all popups
+function closeAllPopups() {
+    const popups = document.querySelectorAll('.popup, .popupnotify, #image-change-menu');
+    popups.forEach(popup => {
+        popup.style.display = 'none';
+    });
 }
 
 // Function to update the counter
@@ -193,6 +301,7 @@ cancelReset108Btn.addEventListener('click', () => {
 });
 
 resetCountBtn.addEventListener('click', () => {
+    closeAllPopups();
     popupCountReset.style.display = 'block';
 });
 
@@ -209,6 +318,7 @@ cancelResetCountBtn.addEventListener('click', () => {
 });
 
 resetRoundBtn.addEventListener('click', () => {
+    closeAllPopups();
     popupRoundReset.style.display = 'block';
 });
 
@@ -224,6 +334,7 @@ cancelResetRoundBtn.addEventListener('click', () => {
 });
 
 settingsBtn.addEventListener('click', () => {
+    closeAllPopups();
     settingsPopup.style.display = 'block';
 });
 
@@ -242,25 +353,32 @@ soundToggle.addEventListener('change', function() {
     updateSettingsUI();
 });
 
-countVibrationToggle.addEventListener('change', function() {
-    // No additional action needed for UI
-});
-
-completeVibrationToggle.addEventListener('change', function() {
-    // No additional action needed for UI
-});
+countVibrationToggle.addEventListener('change', updateSettingsUI);
+completeVibrationToggle.addEventListener('change', updateSettingsUI);
 
 countVibrationSlider.addEventListener('input', function() {
+    updateSliderFill(this);
     countVibrationValue.textContent = `${this.value}ms`;
 });
 
 completeVibrationSlider.addEventListener('input', function() {
+    updateSliderFill(this);
     completeVibrationValue.textContent = `${this.value}ms`;
 });
 
 volumeSlider.addEventListener('input', function() {
+    updateSliderFill(this);
     volumeValue.textContent = this.value;
     audio.volume = this.value / 210;
+});
+
+// Button size controls
+document.getElementById('decrease-btn-size').addEventListener('click', () => {
+    updateButtonSize(currentButtonSize - sizeStep);
+});
+
+document.getElementById('increase-btn-size').addEventListener('click', () => {
+    updateButtonSize(currentButtonSize + sizeStep);
 });
 
 // Initialize the app
@@ -284,6 +402,7 @@ const resetImageBtn = document.getElementById('reset-image-btn');
 const closeImageMenuBtn = document.getElementById('close-image-menu');
 
 changeImageBtn.addEventListener('click', () => {
+    closeAllPopups();
     imageChangeMenu.style.display = 'block';
 });
 
@@ -369,29 +488,86 @@ if (installBtn) {
     });
 }
 
-// Responsive padding adjustment
-function adjustCircleContainer() {
-    const circleContainer = document.querySelector('.circle-container');
-    if (!circleContainer) return;
+// Initialize slider fill colors on load
+document.addEventListener('DOMContentLoaded', function() {
+    updateSliderFill(volumeSlider);
+    updateSliderFill(countVibrationSlider);
+    updateSliderFill(completeVibrationSlider);
+});
 
-    const isMobile = /Android|iPhone|iPad|iPod/.test(navigator.userAgent);
-    const isPWAInstalled = isMobile && (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true);
+// Adjust circle container padding on load and resize
+window.addEventListener('load', function() {
+    adjustCircleContainer();
+    updateButtonSize(currentButtonSize);
+});
 
-    let newPadding;
-    if (isMobile) {
-        newPadding = isPWAInstalled ? '495px' : '630px';
-    } else {
-        newPadding = window.innerWidth <= 768 ? '480px' : '399px';
-    }
+window.addEventListener('resize', function() {
+    adjustCircleContainer();
+    updateButtonSize(currentButtonSize);
+});
 
-    circleContainer.style.setProperty("padding-top", newPadding, "important");
+// Adjust padding when app is installed
+window.addEventListener('appinstalled', () => {
+    setTimeout(() => {
+        adjustCircleContainer();
+        updateButtonSize(currentButtonSize);
+    }, 500);
+});
+
+// Default settings values
+const defaultSettings = {
+    soundEnabled: true,
+    countVibrationEnabled: false,
+    countVibrationDuration: 60,
+    completeVibrationEnabled: true,
+    completeVibrationDuration: 1000,
+    volume: 210,
+    buttonSize: 100
+};
+
+// Function to reset all settings to default
+function resetToDefaultSettings() {
+    // Update UI elements
+    soundToggle.checked = defaultSettings.soundEnabled;
+    countVibrationToggle.checked = defaultSettings.countVibrationEnabled;
+    completeVibrationToggle.checked = defaultSettings.completeVibrationEnabled;
+    countVibrationSlider.value = defaultSettings.countVibrationDuration;
+    completeVibrationSlider.value = defaultSettings.completeVibrationDuration;
+    volumeSlider.value = defaultSettings.volume;
+    
+    // Reset button size
+    currentButtonSize = defaultSettings.buttonSize;
+    updateButtonSize(currentButtonSize);
+    
+    // Update the UI
+    updateSettingsUI();
+    
+    // Show confirmation
+    alert("All settings have been reset to default values.");
 }
 
-setTimeout(() => {
-    adjustCircleContainer();
-    window.addEventListener('resize', adjustCircleContainer);
-}, 200);
+// Event listener for reset button
+document.getElementById('reset-default-settings').addEventListener('click', resetToDefaultSettings);
 
-window.addEventListener('appinstalled', () => {
-    setTimeout(adjustCircleContainer, 500);
-});
+function resetToDefaultSettings() {
+    if (confirm("Are you sure you want to reset all settings to default values?")) {
+        // Update UI elements
+        soundToggle.checked = defaultSettings.soundEnabled;
+        countVibrationToggle.checked = defaultSettings.countVibrationEnabled;
+        completeVibrationToggle.checked = defaultSettings.completeVibrationEnabled;
+        countVibrationSlider.value = defaultSettings.countVibrationDuration;
+        completeVibrationSlider.value = defaultSettings.completeVibrationDuration;
+        volumeSlider.value = defaultSettings.volume;
+        
+        // Reset button size
+        currentButtonSize = defaultSettings.buttonSize;
+        updateButtonSize(currentButtonSize);
+        
+        // Update the UI
+        updateSettingsUI();
+        
+        // Save the default settings
+        vibrationSettings = {...defaultSettings};
+        saveSettingsToStorage();
+    }
+}
