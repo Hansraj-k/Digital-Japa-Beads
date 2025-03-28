@@ -882,7 +882,40 @@ img, button, .fa , a{
     justify-content: center;
     width: 100%;
 }
+
 .reset-default-btn {
     max-width: 250px;
     /* rest of the styles remain the same */
+}
+
+.settings-subtext {
+    font-size: 12px;
+    color: #999999;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    font-style: italic;
+    line-height: 1.2;
+    max-width: 201px;
+margin: 0 auto; /* Center the paragraph */
+}
+
+.settings-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.settings-option > div:first-child {
+    flex-grow: 1;
+    margin-right: 20px;
+}
+
+@media (max-width: 480px) {
+    .settings-subtext {
+        font-size: 11px;
+        max-width: 160px;
+    }
 }
