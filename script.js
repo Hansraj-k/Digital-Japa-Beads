@@ -16,223 +16,265 @@ let confirmResetRoundBtn = document.getElementById('confirm-reset-round');
 let cancelResetRoundBtn = document.getElementById('cancel-reset-round');
 let resetCountBtn = document.getElementById('reset-count-btn');
 let resetRoundBtn = document.getElementById('reset-round-btn');
-let muteBtn = document.getElementById('mute-btn');
-let unmuteBtn = document.getElementById('unmute-btn');
-let isMuted = false;
+let settingsBtn = document.getElementById('settings-btn');
+let settingsPopup = document.getElementById('settings-popup');
+let closeSettingsBtn = document.getElementById('close-settings');
+let saveSettingsBtn = document.getElementById('save-settings');
+let soundToggle = document.getElementById('sound-toggle');
+let countVibrationToggle = document.getElementById('count-vibration-toggle');
+let completeVibrationToggle = document.getElementById('complete-vibration-toggle');
+let countVibrationSlider = document.getElementById('count-vibration-slider');
+let completeVibrationSlider = document.getElementById('complete-vibration-slider');
+let countVibrationValue = document.getElementById('count-vibration-value');
+let completeVibrationValue = document.getElementById('complete-vibration-value');
+let soundStatus = document.getElementById('sound-status');
+let countVibrationStatus = document.getElementById('count-vibration-status');
+let completeVibrationStatus = document.getElementById('complete-vibration-status');
+let volumeSlider = document.getElementById('volume-slider');
+let volumeValue = document.getElementById('volume-value');
+let volumeControlContainer = document.getElementById('volume-control-container');
+
 let totalLetters = 108;
-let radius = 120; // Initial radius of the outermost circle
-let maxRadius = 180; // Maximum radius for the innermost circle
+let radius = 120;
+let maxRadius = 180;
+
+// Initialize audio with sound on by default
+audio.volume = 1;
+audio.muted = false;
+
+// Vibration settings with sound enabled by default
+let vibrationSettings = {
+    soundEnabled: true,
+    countVibrationEnabled: false,
+    countVibrationDuration: 60,
+    completeVibrationEnabled: true,
+    completeVibrationDuration: 1000,
+    volume: 210
+};
 
 // Function to update the displayed count
 function updateCountDisplay() {
-countDisplay.textContent = count;
+    countDisplay.textContent = count;
 }
 
 // Function to update the displayed round
 function updateRoundDisplay() {
-roundDisplay.textContent = `Round: ${round}`;
+    roundDisplay.textContent = `Round: ${round}`;
 }
 
 // Function to update the circle text based on the count
 function updateCircleText() {
-const letters = 'HAREKRISHNA'.repeat(9).split('');
-const circleDivisions = [33, 36, 39]; // Increased letters per circle for tighter spacing
-const radiusIncrement = 30; // Reduced increment radius for closer circles
-const initialRadius = 100; // Starting radius
-let letterIndex = 0; // Index to track which letter to display
+    const letters = 'HAREKRISHNA'.repeat(9).split('');
+    const circleDivisions = [33, 36, 39];
+    const radiusIncrement = 30;
+    const initialRadius = 100;
+    let letterIndex = 0;
 
-// Clear existing letters
-circleText.innerHTML = '';
+    circleText.innerHTML = '';
 
-// Loop through each circle
-circleDivisions.forEach((lettersInCircle, circleIndex) => {
-const currentRadius = initialRadius + circleIndex * radiusIncrement; // Calculate radius for this circle
-const angleStep = 360 / lettersInCircle; // Angle step for this circle
+    circleDivisions.forEach((lettersInCircle, circleIndex) => {
+        const currentRadius = initialRadius + circleIndex * radiusIncrement;
+        const angleStep = 360 / lettersInCircle;
 
-// Loop through the letters for this circle
-for (let i = 0; i < lettersInCircle; i++) {
-const angle = angleStep * i; // Calculate angle for each letter
-const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
-const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
+        for (let i = 0; i < lettersInCircle; i++) {
+            const angle = angleStep * i;
+            const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
+            const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
 
-const letter = document.createElement('span');
-letter.className = 'letter';
-letter.textContent = letters[letterIndex % letters.length]; // Set letter text
-letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+            const letter = document.createElement('span');
+            letter.className = 'letter';
+            letter.textContent = letters[letterIndex % letters.length];
+            letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+            letter.style.color = letterIndex < count ? 'white' : 'grey';
 
-// Highlight the letters based on count
-letter.style.color = letterIndex < count ? 'white' : 'grey';
-
-circleText.appendChild(letter);
-letterIndex++; // Move to the next letter
-}
-});
+            circleText.appendChild(letter);
+            letterIndex++;
+        }
+    });
 }
 
-// Function to save count and round data in localStorage
+// Function to save count and round data
 function saveData() {
-localStorage.setItem('count', count);
-localStorage.setItem('round', round);
+    localStorage.setItem('count', count);
+    localStorage.setItem('round', round);
+}
+
+// Function to save settings to localStorage
+function saveSettingsToStorage() {
+    vibrationSettings = {
+        soundEnabled: soundToggle.checked,
+        countVibrationEnabled: countVibrationToggle.checked,
+        countVibrationDuration: parseInt(countVibrationSlider.value),
+        completeVibrationEnabled: completeVibrationToggle.checked,
+        completeVibrationDuration: parseInt(completeVibrationSlider.value),
+        volume: parseInt(volumeSlider.value)
+    };
+    localStorage.setItem('vibrationSettings', JSON.stringify(vibrationSettings));
+}
+
+// Function to load settings from localStorage
+function loadSettingsFromStorage() {
+    const savedSettings = localStorage.getItem('vibrationSettings');
+    if (savedSettings) {
+        vibrationSettings = JSON.parse(savedSettings);
+    } else {
+        // Default settings with sound ON
+        vibrationSettings = {
+            soundEnabled: true,
+            countVibrationEnabled: false,
+            countVibrationDuration: 60,
+            completeVibrationEnabled: true,
+            completeVibrationDuration: 1000,
+            volume: 210
+        };
+    }
+    
+    // Update UI with loaded settings
+    soundToggle.checked = vibrationSettings.soundEnabled !== false;
+    countVibrationToggle.checked = vibrationSettings.countVibrationEnabled || false;
+    completeVibrationToggle.checked = vibrationSettings.completeVibrationEnabled !== false;
+    countVibrationSlider.value = vibrationSettings.countVibrationDuration || 60;
+    completeVibrationSlider.value = vibrationSettings.completeVibrationDuration || 1000;
+    volumeSlider.value = vibrationSettings.volume !== undefined ? vibrationSettings.volume : 210;
+    
+    updateSettingsUI();
+}
+
+// Function to update settings UI
+function updateSettingsUI() {
+    volumeControlContainer.style.display = soundToggle.checked ? 'block' : 'none';
+    audio.volume = volumeSlider.value / 210;
+    audio.muted = !soundToggle.checked;
 }
 
 // Function to update the counter
 function updateCounter() {
-if (count < totalLetters) {
-count++;
-updateCountDisplay();
-updateCircleText();
-saveData();
-if (count === totalLetters) {
-round++;
-updateRoundDisplay();
-popup108.style.display = 'block';
-audio.play();
-}
-} else {
-showResetPopup(); // Function to show reset popup if 108 is reached
-}
+    if (count < totalLetters) {
+        count++;
+        updateCountDisplay();
+        updateCircleText();
+        saveData();
+
+        if (countVibrationToggle.checked && navigator.vibrate) {
+            navigator.vibrate(parseInt(countVibrationSlider.value));
+        }
+
+        if (count === totalLetters) {
+            round++;
+            updateRoundDisplay();
+            popup108.style.display = 'block';
+            
+            if (soundToggle.checked) {
+                audio.play();
+            }
+            
+            if (completeVibrationToggle.checked && navigator.vibrate) {
+                navigator.vibrate(parseInt(completeVibrationSlider.value));
+            }
+        }
+    } else {
+        popup108.style.display = 'block';
+    }
 }
 
-// Show the reset confirmation popup
-function showResetPopup() {
-popup108.style.display = 'block'; // Show the popup
-}
-
-// Event listener for the main count button
+// Event listeners
 document.getElementById('count-btn').addEventListener('click', updateCounter);
 
-// Event listeners for the 108-count popup
 confirmReset108Btn.addEventListener('click', () => {
-count = 0;
-updateCountDisplay();
-updateCircleText();
-popup108.style.display = 'none';
-saveData();
+    count = 0;
+    updateCountDisplay();
+    updateCircleText();
+    popup108.style.display = 'none';
+    saveData();
 });
 
 cancelReset108Btn.addEventListener('click', () => {
-popup108.style.display = 'none';
+    popup108.style.display = 'none';
 });
 
-// Event listeners for the count reset button
 resetCountBtn.addEventListener('click', () => {
-popupCountReset.style.display = 'block';
+    popupCountReset.style.display = 'block';
 });
 
 confirmResetCountBtn.addEventListener('click', () => {
-count = 0;
-updateCountDisplay();
-updateCircleText();
-popupCountReset.style.display = 'none';
-saveData();
+    count = 0;
+    updateCountDisplay();
+    updateCircleText();
+    popupCountReset.style.display = 'none';
+    saveData();
 });
 
 cancelResetCountBtn.addEventListener('click', () => {
-popupCountReset.style.display = 'none';
+    popupCountReset.style.display = 'none';
 });
-// Event listeners for the round reset button
+
 resetRoundBtn.addEventListener('click', () => {
-popupRoundReset.style.display = 'block';
+    popupRoundReset.style.display = 'block';
 });
 
 confirmResetRoundBtn.addEventListener('click', () => {
-round = 0;
-updateRoundDisplay();
-popupRoundReset.style.display = 'none';
-saveData();
+    round = 0;
+    updateRoundDisplay();
+    popupRoundReset.style.display = 'none';
+    saveData();
 });
 
 cancelResetRoundBtn.addEventListener('click', () => {
-popupRoundReset.style.display = 'none';
+    popupRoundReset.style.display = 'none';
 });
 
-// Event listeners for mute and unmute buttons
-muteBtn.addEventListener('click', () => {
-isMuted = true;
-audio.muted = true;
-muteBtn.style.display = 'none';
-unmuteBtn.style.display = 'inline-block';
-localStorage.setItem('isMuted', JSON.stringify(isMuted));
+settingsBtn.addEventListener('click', () => {
+    settingsPopup.style.display = 'block';
 });
 
-unmuteBtn.addEventListener('click', () => {
-isMuted = false;
-audio.muted = false;
-muteBtn.style.display = 'inline-block';
-unmuteBtn.style.display = 'none';
-localStorage.setItem('isMuted', JSON.stringify(isMuted));
+closeSettingsBtn.addEventListener('click', () => {
+    settingsPopup.style.display = 'none';
 });
 
-// Initial setup
+saveSettingsBtn.addEventListener('click', () => {
+    saveSettingsToStorage();
+    updateSettingsUI();
+    settingsPopup.style.display = 'none';
+});
+
+soundToggle.addEventListener('change', function() {
+    volumeControlContainer.style.display = this.checked ? 'block' : 'none';
+    updateSettingsUI();
+});
+
+countVibrationToggle.addEventListener('change', function() {
+    // No additional action needed for UI
+});
+
+completeVibrationToggle.addEventListener('change', function() {
+    // No additional action needed for UI
+});
+
+countVibrationSlider.addEventListener('input', function() {
+    countVibrationValue.textContent = `${this.value}ms`;
+});
+
+completeVibrationSlider.addEventListener('input', function() {
+    completeVibrationValue.textContent = `${this.value}ms`;
+});
+
+volumeSlider.addEventListener('input', function() {
+    volumeValue.textContent = this.value;
+    audio.volume = this.value / 210;
+});
+
+// Initialize the app
 updateCountDisplay();
 updateRoundDisplay();
 updateCircleText();
+loadSettingsFromStorage();
 
-// Load mute state from localStorage
-isMuted = JSON.parse(localStorage.getItem('isMuted')) || false;
-audio.muted = isMuted;
-muteBtn.style.display = isMuted ? 'none' : 'inline-block';
-unmuteBtn.style.display = isMuted ? 'inline-block' : 'none';
-
-// Create a date object for the current time in IST (Indian Standard Time)
+// Set current year in footer
 const dateInIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
-
-// Get the current year in IST
 const currentYear = dateInIST.getFullYear();
-
-// Set the year in the footer
 document.getElementById('current-year').textContent = currentYear;
 
-// Function to show an image change menu
-function showImageChangeMenu(event) {
-event.preventDefault(); // Prevent the default action (context menu)
-
-// Create the menu with options
-const menu = document.createElement('div');
-menu.classList.add('image-change-menu');
-menu.innerHTML = `
-       <p>Change Image</p>
-       <input type="file" id="image-upload" accept="image/*">
-       <button id="close-menu">Close</button>
-   `;
-
-// Append the menu to the body
-document.body.appendChild(menu);
-
-// Position the menu at the event's location
-menu.style.left = `${event.pageX}px`;
-menu.style.top = `${event.pageY}px`;
-
-// Handle image file selection
-document.getElementById('image-upload').addEventListener('change', (e) => {
-const file = e.target.files[0];
-if (file) {
-const reader = new FileReader();
-reader.onload = function (event) {
-                const imageUrl = event.target.result;
-                // Set the uploaded image as the new round image
-                document.getElementById('round-image').src = imageUrl;
-};
-reader.readAsDataURL(file);
-}
-});
-
-// Close menu
-document.getElementById('close-menu').addEventListener('click', () => {
-document.body.removeChild(menu);
-});
-}
-
-// Event listener for right-click on round image for desktop
-document.getElementById('round-image').addEventListener('contextmenu', showImageChangeMenu);
-
-// Event listener for long press on round image for mobile
-document.getElementById('round-image').addEventListener('touchstart', (e) => {
-e.preventDefault();
-showImageChangeMenu(e);
-});
-
-// References to the buttons and elements
+// Image change functionality
 const changeImageBtn = document.getElementById('change-image-btn');
 const imageChangeMenu = document.getElementById('image-change-menu');
 const imageUpload = document.getElementById('image-upload');
@@ -241,210 +283,115 @@ const saveImageBtn = document.getElementById('save-image-btn');
 const resetImageBtn = document.getElementById('reset-image-btn');
 const closeImageMenuBtn = document.getElementById('close-image-menu');
 
-// Show the image change menu
 changeImageBtn.addEventListener('click', () => {
-    imageChangeMenu.style.display = 'block'; // Show the menu
+    imageChangeMenu.style.display = 'block';
 });
 
-// Close the image change menu
 closeImageMenuBtn.addEventListener('click', () => {
-    imageChangeMenu.style.display = 'none'; // Hide the menu
+    imageChangeMenu.style.display = 'none';
 });
 
-// Image upload handling
 imageUpload.addEventListener('change', (event) => {
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            imagePreview.src = e.target.result; // Display the selected image
-            imagePreview.style.display = 'block'; // Show preview
+            imagePreview.src = e.target.result;
+            imagePreview.style.display = 'block';
         };
         reader.readAsDataURL(file);
     }
 });
 
-// Save the image
 saveImageBtn.addEventListener('click', () => {
     const newImageSrc = imagePreview.src;
     if (newImageSrc) {
-        localStorage.setItem('selectedImage', newImageSrc); // Save the image source to localStorage
-        document.querySelector('.round-image').src = newImageSrc; // Update the round image in the UI
-        imageChangeMenu.style.display = 'none'; // Close the menu
-    }});
+        localStorage.setItem('selectedImage', newImageSrc);
+        document.querySelector('.round-image').src = newImageSrc;
+        imageChangeMenu.style.display = 'none';
+    }
+});
 
-// Reset the image to the default one
 resetImageBtn.addEventListener('click', () => {
-    localStorage.removeItem('selectedImage'); // Remove saved image from localStorage
-    document.querySelector('.round-image').src = 'rkhkmc.png'; // Reset to the default image
-    imagePreview.src = ''; // Clear preview
-    imagePreview.style.display = 'none'; // Hide preview
+    localStorage.removeItem('selectedImage');
+    document.querySelector('.round-image').src = 'rkhkmc.png';
+    imagePreview.src = '';
+    imagePreview.style.display = 'none';
 });
 
-// Check if there's a saved image in localStorage
+// Check for saved image
 window.onload = function() {
-const savedImage = localStorage.getItem('selectedImage');
-if (savedImage) {
-        document.querySelector('.round-image').src = savedImage; // Set the saved image
-}
+    const savedImage = localStorage.getItem('selectedImage');
+    if (savedImage) {
+        document.querySelector('.round-image').src = savedImage;
+    }
 };
 
-// Image change on right-click or long press
-function showImageChangeMenu(event) {
-    event.preventDefault();
-    const menu = document.getElementById('image-change-menu');
-    menu.style.display = 'block';
-    menu.style.left = `${event.pageX}px`;
-    menu.style.top = `${event.pageY}px`;
-}
-
-// Check if the popup has been shown before
+// Show popup notification if first visit
 if (!localStorage.getItem('popupShown')) {
-    // Show the popup if not shown before
     document.getElementById('popupnotify').style.display = 'flex';
-
-    // Event listener to close the popup
-    document.getElementById('close-popupnotify').addEventListener('click', function () {
+    document.getElementById('close-popupnotify').addEventListener('click', function() {
         document.getElementById('popupnotify').style.display = 'none';
-        localStorage.setItem('popupShown', 'true'); // Mark as shown
+        localStorage.setItem('popupShown', 'true');
     });
 }
 
-const chantMessages = [
-  "Your mantra awaits! Chant today and feel the peace unfold.",
-  "Start your day with a chant to elevate your spirit and energy.",
-  "Take a moment to chant and let the calmness fill your soul.",
-  "Chanting today keeps the stress away—your peaceful self is calling!",
-  "Set the tone for today: chant and align with your higher self.",
-  "A chant a day keeps negativity at bay—let’s begin!",
-  "Elevate your mind, body, and soul with today's chant.",
-  "Chant today, stay grounded, and let your intentions soar.",
-  "Your chant is the key to unlocking a peaceful mind today!",
-  "Let the power of your chant guide you through the day!",
-  "Chanting is a gift to yourself—take a moment now!",
-  "Make today’s chant your moment of calm amid the chaos.",
-  "Your peaceful state is just a chant away—don’t miss it!",
-  "Let your inner peace shine through today with a chant.",
-  "The rhythm of your chant is the heartbeat of your spirit!",
-  "Chant today and align with your true, peaceful self.",
-  "A peaceful mind begins with a chant—take a deep breath!",
-  "Empower your day with the magic of a chant!",
-  "Chant now and set your soul free for the day ahead.",
-  "Let your chant be your morning meditation—stay centered.",
-  "Chanting today is an act of self-love and peace.",
-  "Start your day with a chant and invite calmness into your life.",
-  "Your chant is waiting—don’t let the day slip by without it!",
-  "Turn up your inner peace—chant now and feel the shift!",
-  "Just one chant, and you’re ready to conquer the day with calmness.",
-  "Breathe in, chant out, and watch your energy transform.",
-  "Let your mantra be your guide today—chant and feel the flow.",
-  "Step into serenity today—chant to reset your mind.",
-  "A powerful day begins with a powerful chant!",
-  "Pause, chant, and experience the magic within—today’s the day!"
-];
-
-function showNotification() {
-  console.log('Attempting to show notification');
-  if (Notification.permission === "granted") {
-    const currentMessage = chantMessages[new Date().getDate() % chantMessages.length];
-    new Notification("Daily Chant Reminder", {
-      body: currentMessage,
-      icon: "/rkhkmclogo.jpg"
+// PWA installation handling
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }).catch(function(error) {
+        console.log('ServiceWorker registration failed: ', error);
     });
-  } else {
-    console.log("Notification permission not granted.");
-  }
 }
 
-function requestNotificationPermission() {
-  // Only request permission if it's not already granted
-  if (Notification.permission === "default") {
-    Notification.requestPermission().then(permission => {
-      console.log('Notification permission:', permission);
-      if (permission !== "granted") {
-        alert("Please allow notifications to receive daily chants!");
-      }
+// Install button handling
+let deferredPrompt;
+const installBtn = document.getElementById('install-btn');
+
+if (installBtn) {
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installBtn.style.display = 'block';
+        
+        installBtn.addEventListener('click', async () => {
+            installBtn.style.display = 'none';
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`User ${outcome} the install prompt`);
+            deferredPrompt = null;
+        });
     });
-  }
+
+    window.addEventListener('appinstalled', () => {
+        installBtn.style.display = 'none';
+    });
 }
 
-function saveSettings() {
-  console.log('Saving settings');
-  const enableNotifications = document.getElementById("enableNotifications").checked;
-  const notificationTime = document.getElementById("notificationTime").value;
-  localStorage.setItem("enableNotifications", enableNotifications);
-  localStorage.setItem("notificationTime", notificationTime);
-  document.getElementById("popupSettings").style.display = "none";
-  if (enableNotifications) {
-    scheduleNotification(notificationTime);
-  }
-}
+// Responsive padding adjustment
+function adjustCircleContainer() {
+    const circleContainer = document.querySelector('.circle-container');
+    if (!circleContainer) return;
 
-function loadSettings() {
-  console.log('Loading settings');
-  const enableNotifications = localStorage.getItem("enableNotifications") === "true";
-  const notificationTime = localStorage.getItem("notificationTime") || "08:00";
-  document.getElementById("enableNotifications").checked = enableNotifications;
-  document.getElementById("notificationTime").value = notificationTime;
-  if (enableNotifications) {
-    scheduleNotification(notificationTime);
-  }
-}
+    const isMobile = /Android|iPhone|iPad|iPod/.test(navigator.userAgent);
+    const isPWAInstalled = isMobile && (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true);
 
-function scheduleNotification(time) {
-  console.log('Scheduling notification for', time);
-  const [hours, minutes] = time.split(":");
-  const now = new Date();
-  const notificationTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0, 0);
-  if (notificationTime <= now) {
-    notificationTime.setDate(notificationTime.getDate() + 1);
-  }
-  const delay = notificationTime - now;
-  console.log('Notification will be shown in', delay / 1000, 'seconds');
-  setTimeout(() => {
-    if (localStorage.getItem("enableNotifications") === "true") {
-      showNotification();
-    }
-    scheduleNotification(time);
-  }, delay);
-}
-document.getElementById("notificationButton").addEventListener("click", () => {
-  console.log('Notification button clicked');
-  const popup = document.getElementById("popupSettings");
-  popup.style.display = popup.style.display === "block" ? "none" : "block";
-});
-window.onload = () => {
-  console.log('Page loaded');
-  requestNotificationPermission();
-  loadSettings();
-};
-
-function updateCounter() {
-    if (count < totalLetters) {
-        count++;
-        updateCountDisplay();
-        updateCircleText();
-        saveData();
-
-        // Vibrate briefly on every count
-        if (navigator.vibrate) {
-            navigator.vibrate(50); // Small vibration on each count
-        }
-
-        if (count === totalLetters) {
-            round++;
-            updateRoundDisplay();
-            popup108.style.display = 'block';
-            audio.play();
-
-            // Strong continuous vibration when count reaches 108
-            if (navigator.vibrate) {
-                navigator.vibrate([1000]); // Long and intense vibration
-            }
-        }
+    let newPadding;
+    if (isMobile) {
+        newPadding = isPWAInstalled ? '495px' : '630px';
     } else {
-        showResetPopup(); // Function to show reset popup if 108 is reached
+        newPadding = window.innerWidth <= 768 ? '480px' : '399px';
     }
+
+    circleContainer.style.setProperty("padding-top", newPadding, "important");
 }
 
+setTimeout(() => {
+    adjustCircleContainer();
+    window.addEventListener('resize', adjustCircleContainer);
+}, 200);
 
+window.addEventListener('appinstalled', () => {
+    setTimeout(adjustCircleContainer, 500);
+});
