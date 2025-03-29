@@ -576,3 +576,63 @@ settingsBtn.addEventListener('click', () => {
     closeAllPopups();
     settingsPopup.style.display = 'block';
 });
+
+// Precise slider fill calculation
+function updateSliderFill(slider) {
+    const value = parseFloat(slider.value);
+    const min = parseFloat(slider.min);
+    const max = parseFloat(slider.max);
+    
+    // Calculate percentage with precise decimal points
+    const percent = ((value - min) / (max - min)) * 100;
+    
+    // Update CSS variable with precise value
+    slider.style.setProperty('--fill-percent', `${percent}%`);
+    
+    // Update display values
+    if (slider.id === 'volume-slider') {
+        document.getElementById('volume-value').textContent = Math.round(value);
+        audio.volume = value / 210;
+    } else if (slider.id === 'count-vibration-slider') {
+        document.getElementById('count-vibration-value').textContent = `${Math.round(value)}ms`;
+    } else if (slider.id === 'complete-vibration-slider') {
+        document.getElementById('complete-vibration-value').textContent = `${Math.round(value)}ms`;
+    }
+}
+
+// Initialize sliders with precise values
+function initializeSliders() {
+    const sliders = document.querySelectorAll('.slider-controls input[type="range"]');
+    
+    sliders.forEach(slider => {
+        // Set initial position
+        updateSliderFill(slider);
+        
+        // Add input event listener
+        slider.addEventListener('input', function() {
+            updateSliderFill(this);
+        });
+    });
+}
+
+// Update loadSettingsFromStorage to ensure precise values
+function loadSettingsFromStorage() {
+    const savedSettings = localStorage.getItem('vibrationSettings');
+    if (savedSettings) {
+        vibrationSettings = JSON.parse(savedSettings);
+        
+        // Set precise slider values
+        document.getElementById('count-vibration-slider').value = vibrationSettings.countVibrationDuration || 60;
+        document.getElementById('complete-vibration-slider').value = vibrationSettings.completeVibrationDuration || 1000;
+        document.getElementById('volume-slider').value = vibrationSettings.volume || 210;
+        
+        // Update all sliders
+        initializeSliders();
+    }
+}
+
+// Call this when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeSliders();
+    loadSettingsFromStorage();
+});
