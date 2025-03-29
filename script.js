@@ -577,3 +577,142 @@ settingsBtn.addEventListener('click', () => {
     settingsPopup.style.display = 'block';
 });
 
+// Streak variables
+let streak = parseInt(localStorage.getItem('streak')) || 0;
+let lastActivityDate = localStorage.getItem('lastActivityDate') || '';
+let streakDisplay = document.getElementById('streak-display');
+let streakCalendar = document.getElementById('streak-calendar');
+let streakPopup = document.getElementById('streak-popup');
+let closeStreakPopup = document.getElementById('close-streak-popup');
+let streakMessage = document.getElementById('streak-message');
+
+// Days of week abbreviations
+const dayAbbreviations = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+// Function to update streak
+function updateStreak() {
+    const today = new Date().toDateString();
+    
+    // If no last activity date, start new streak
+    if (!lastActivityDate) {
+        streak = 1;
+        showStreakPopup("You've started a new streak! 🔥");
+    } 
+    // If activity was yesterday, increment streak
+    else {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        
+        if (lastActivityDate === yesterday.toDateString()) {
+            streak++;
+            showStreakPopup(`Your streak continues! 🔥\nNow at ${streak} day${streak > 1 ? 's' : ''}!`);
+        } 
+        // If activity was today, do nothing
+        else if (lastActivityDate === today) {
+            // No change
+        }
+        // Otherwise, reset streak
+        else {
+            streak = 1;
+            showStreakPopup("You've started a new streak! 🔥");
+        }
+    }
+    
+    // Update last activity date
+    lastActivityDate = today;
+    localStorage.setItem('streak', streak);
+    localStorage.setItem('lastActivityDate', lastActivityDate);
+    
+    // Update display
+    updateStreakDisplay();
+}
+
+// Function to update streak display
+function updateStreakDisplay() {
+    streakDisplay.textContent = `🔥 Streak: ${streak} day${streak !== 1 ? 's' : ''}`;
+    renderStreakCalendar();
+}
+
+// Function to render streak calendar
+function renderStreakCalendar() {
+    streakCalendar.innerHTML = '';
+    const today = new Date();
+    
+    // Create calendar for last 7 days
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        
+        const dayElement = document.createElement('div');
+        dayElement.className = 'streak-day';
+        
+        // Check if this day had activity
+        const activityDate = new Date(lastActivityDate);
+        const checkDate = new Date(date.toDateString());
+        
+        // Highlight if this day had activity
+        if (activityDate >= checkDate && i !== 0) {
+            dayElement.classList.add('active');
+        }
+        
+        // Mark today
+        if (i === 0) {
+            dayElement.classList.add('today');
+        }
+        
+        // Add day abbreviation
+        dayElement.setAttribute('data-day', dayAbbreviations[date.getDay()]);
+        
+        // Add date number
+        dayElement.textContent = date.getDate();
+        
+        streakCalendar.appendChild(dayElement);
+    }
+}
+
+// Function to show streak popup
+function showStreakPopup(message) {
+    // Only show popup if streak increased or new streak started
+    streakMessage.textContent = message;
+    streakPopup.style.display = 'block';
+    
+    // Auto-close after 5 seconds
+    setTimeout(() => {
+        streakPopup.style.display = 'none';
+    }, 5000);
+}
+
+// Close streak popup
+closeStreakPopup.addEventListener('click', () => {
+    streakPopup.style.display = 'none';
+});
+
+// Initialize streak
+updateStreakDisplay();
+
+// Update streak when counter is incremented
+document.getElementById('count-btn').addEventListener('click', () => {
+    // Only update streak if count was 0 (new session)
+    if (count === 0) {
+        updateStreak();
+    }
+});
+
+// Also check streak on app load
+window.addEventListener('load', () => {
+    // Check if we need to reset streak (missed a day)
+    if (lastActivityDate) {
+        const lastDate = new Date(lastActivityDate);
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        
+        // If last activity was before yesterday, reset streak
+        if (lastDate.toDateString() !== today.toDateString() && 
+            lastDate.toDateString() !== yesterday.toDateString()) {
+            streak = 0;
+            localStorage.setItem('streak', streak);
+            updateStreakDisplay();
+        }
+    }
+});
