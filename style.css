@@ -952,6 +952,10 @@ margin: 0 auto; /* Center the paragraph */
         margin-top: 30px;
 }
 
+#settings-popup {
+    display: none;
+}
+
 .popup-scroll-container {
     overflow-y: auto;
     max-height: calc(80vh - 100px); /* Account for buttons and padding */
