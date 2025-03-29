@@ -57,10 +57,10 @@ function updateSliderFill(slider) {
     const value = slider.value;
     const max = slider.max;
     const percent = (value / max) * 100;
-    
+
     // For WebKit browsers
     slider.style.background = `linear-gradient(to right, #00ffd5 ${percent}%, #333 ${percent}%)`;
-    
+
     // For Firefox
     slider.style.setProperty('--fill-percent', `${percent}%`);
 }
@@ -131,7 +131,7 @@ function loadSettingsFromStorage() {
     const savedSettings = localStorage.getItem('vibrationSettings');
     if (savedSettings) {
         vibrationSettings = JSON.parse(savedSettings);
-        
+
         // Update UI with loaded settings
         soundToggle.checked = vibrationSettings.soundEnabled !== false;
         countVibrationToggle.checked = vibrationSettings.countVibrationEnabled || false;
@@ -139,14 +139,14 @@ function loadSettingsFromStorage() {
         countVibrationSlider.value = vibrationSettings.countVibrationDuration || 60;
         completeVibrationSlider.value = vibrationSettings.completeVibrationDuration || 1000;
         volumeSlider.value = vibrationSettings.volume !== undefined ? vibrationSettings.volume : 210;
-        
+
         // Load button size if it exists
         if (vibrationSettings.buttonSize) {
             currentButtonSize = vibrationSettings.buttonSize;
             updateButtonSize(currentButtonSize);
         }
     }
-    
+
     updateSettingsUI();
 }
 
@@ -154,29 +154,29 @@ function loadSettingsFromStorage() {
 function updateButtonSize(newSize) {
     // Ensure size stays within bounds
     currentButtonSize = Math.max(minButtonSize, Math.min(maxButtonSize, newSize));
-    
+
     // Update display
     document.getElementById('button-size-value').textContent = `${currentButtonSize}%`;
-    
+
     // Scale the button and image
     const countBtn = document.getElementById('count-btn');
     const btnImg = countBtn.querySelector('img');
-    
+
     // Apply scaling
     countBtn.style.transform = `scale(${currentButtonSize / 100})`;
     if (btnImg) {
         btnImg.style.width = `${currentButtonSize}px`;
         btnImg.style.height = `${currentButtonSize}px`;
     }
-    
+
     // Adjust container padding dynamically
     const basePadding = window.innerWidth <= 768 ? 30 : 20;
     const adjustedPadding = basePadding * (currentButtonSize / 100);
     document.querySelector('.buttons').style.padding = `${adjustedPadding}px 0`;
-    
+
     // Update circle container padding
     adjustCircleContainer();
-    
+
     // Save settings
     vibrationSettings.buttonSize = currentButtonSize;
     saveSettingsToStorage();
@@ -211,19 +211,19 @@ function updateSettingsUI() {
     updateSliderFill(volumeSlider);
     updateSliderFill(countVibrationSlider);
     updateSliderFill(completeVibrationSlider);
-    
+
     // Update display values
     volumeValue.textContent = volumeSlider.value;
     countVibrationValue.textContent = `${countVibrationSlider.value}ms`;
     completeVibrationValue.textContent = `${completeVibrationSlider.value}ms`;
-    
+
     // Update audio settings
     audio.volume = volumeSlider.value / 210;
     audio.muted = !soundToggle.checked;
-    
+
     // Show/hide volume control
     volumeControlContainer.style.display = soundToggle.checked ? 'block' : 'none';
-    
+
     // Handle vibration settings visibility
     const vibrationSettings = document.querySelectorAll('.vibration-setting');
     vibrationSettings.forEach(setting => {
@@ -271,11 +271,11 @@ function updateCounter() {
             round++;
             updateRoundDisplay();
             popup108.style.display = 'block';
-            
+
             if (soundToggle.checked) {
                 audio.play();
             }
-            
+
             if (completeVibrationToggle.checked && navigator.vibrate) {
                 navigator.vibrate(parseInt(completeVibrationSlider.value));
             }
@@ -473,7 +473,7 @@ if (installBtn) {
         e.preventDefault();
         deferredPrompt = e;
         installBtn.style.display = 'block';
-        
+
         installBtn.addEventListener('click', async () => {
             installBtn.style.display = 'none';
             deferredPrompt.prompt();
@@ -534,14 +534,14 @@ function resetToDefaultSettings() {
     countVibrationSlider.value = defaultSettings.countVibrationDuration;
     completeVibrationSlider.value = defaultSettings.completeVibrationDuration;
     volumeSlider.value = defaultSettings.volume;
-    
+
     // Reset button size
     currentButtonSize = defaultSettings.buttonSize;
     updateButtonSize(currentButtonSize);
-    
+
     // Update the UI
     updateSettingsUI();
-    
+
     // Show confirmation
     alert("All settings have been reset to default values.");
 }
@@ -558,14 +558,14 @@ function resetToDefaultSettings() {
         countVibrationSlider.value = defaultSettings.countVibrationDuration;
         completeVibrationSlider.value = defaultSettings.completeVibrationDuration;
         volumeSlider.value = defaultSettings.volume;
-        
+
         // Reset button size
         currentButtonSize = defaultSettings.buttonSize;
         updateButtonSize(currentButtonSize);
-        
+
         // Update the UI
         updateSettingsUI();
-        
+
         // Save the default settings
         vibrationSettings = {...defaultSettings};
         saveSettingsToStorage();
@@ -697,7 +697,6 @@ document.getElementById('count-btn').addEventListener('click', () => {
         updateStreak();
     }
 });
-
 // Also check streak on app load
 window.addEventListener('load', () => {
     // Check if we need to reset streak (missed a day)
