@@ -15,7 +15,7 @@
 }
 
 .popup {
-    top: 480px !important; /* Adds space below toolbar */
+    top: 100px !important; /* Adds space below toolbar */
 }
 
 /* General body styling */
