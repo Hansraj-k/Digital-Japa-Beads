@@ -949,7 +949,7 @@ margin: 0 auto; /* Center the paragraph */
     display: flex;
     flex-direction: column;
     max-height: 80vh; /* Limit height to 80% of viewport */
-        margin-top: 21px;
+        margin-top: 30px;
 }
 
 .popup-scroll-container {
