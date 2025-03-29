@@ -7,7 +7,7 @@ const ASSETS = [
     '/rkhkmclogo.jpg',
     '/rkhkmc.mp3',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css',
-    '/BiskiTrial-Regular.otf',
+    '/Raleway-VariableFont_wght.ttf',
     '/manifest.json',
     '/rkhkmc.jpg',
     '/rkhkmc.png',
