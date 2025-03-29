@@ -995,3 +995,95 @@ margin: 0 auto; /* Center the paragraph */
 #settings-popup > button {
     margin-top: 15px;
 }
+
+/* Remove any existing slider styles and replace with these */
+
+.slider-container {
+    width: 100%;
+    margin: 15px 0;
+    position: relative;
+}
+
+.slider-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+/* Main slider track */
+.slider-controls input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
+    margin: 10px 0;
+    background: transparent;
+    outline: none;
+    position: relative;
+    z-index: 2;
+}
+
+/* Track background */
+.slider-controls input[type="range"]::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: #333;
+    border-radius: 4px;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+/* Filled portion - now perfectly aligned */
+.slider-controls input[type="range"]::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: var(--fill-percent, 0%);
+    height: 8px;
+    background: #00ffd5;
+    border-radius: 4px;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+/* Thumb styling */
+.slider-controls input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #00ffd5;
+    border: 2px solid white;
+    cursor: pointer;
+    position: relative;
+    z-index: 3;
+    margin-top: -5px;
+}
+
+/* Firefox specific styles */
+.slider-controls input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #00ffd5;
+    border: 2px solid white;
+    cursor: pointer;
+    position: relative;
+    z-index: 3;
+}
+
+.slider-controls input[type="range"]::-moz-range-track {
+    background: transparent;
+    border: none;
+}
+
+.slider-controls input[type="range"]::-moz-range-progress {
+    height: 8px;
+    background: #00ffd5;
+    border-radius: 4px;
+}
