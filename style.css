@@ -955,7 +955,7 @@ margin: 0 auto; /* Center the paragraph */
 .popup-scroll-container {
     overflow-y: auto;
     max-height: calc(80vh - 100px); /* Account for buttons and padding */
-    padding-right: 10px; /* Prevent content from being hidden under scrollbar */
+    padding-right: 15px; /* Prevent content from being hidden under scrollbar */
 }
 
 /* Keep the buttons fixed at bottom */
