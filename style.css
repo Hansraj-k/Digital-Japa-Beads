@@ -14,7 +14,9 @@
     font-style: normal;
 }
 
-
+.popup {
+    top: 480px !important; /* Adds space below toolbar */
+}
 
 /* General body styling */
 body {
