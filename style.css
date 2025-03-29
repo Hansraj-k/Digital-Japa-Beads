@@ -1082,27 +1082,14 @@ margin: 0 auto; /* Center the paragraph */
     font-weight: 600;
     cursor: pointer;
 }
-
 @media (max-width: 480px) {
     .streak-day {
         width: 25px;
         height: 25px;
         font-size: 10px;
     }
-    
     .streak-day::after {
         font-size: 8px;
         bottom: -15px;
     }
-}
-
-#streak-popup {
-    /* ... existing styles ... */
-    z-index: 1001; /* Higher than other popups */
-    animation: fadeIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translate(-50%, -45%); }
-    to { opacity: 1; transform: translate(-50%, -50%); }
 }
