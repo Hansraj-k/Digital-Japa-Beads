@@ -51,18 +51,14 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
-    max-width: 1000px; /* Match container width */
-    padding: 10px 20px;
+    width: 99%;
+    padding: 10px;
     background-color: black;
     position: fixed;
     top: 0;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
     z-index: 1000;
-    box-sizing: border-box;
 }
-
 /* Settings section alignment */
 .settings-section {
     display: flex;
@@ -450,10 +446,11 @@ button:hover::after {
     padding-left: 0px;
 }
 
-/* Default styling for the image */
+/* Default styling for the im
+age */
 .rkhkmc {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
 }
 
 .toolbar-logo {
