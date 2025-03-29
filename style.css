@@ -14,10 +14,6 @@
     font-style: normal;
 }
 
-.popup {
-    top: 360px !important; /* Adds space below toolbar */
-}
-
 /* General body styling */
 body {
     background-color: black;
@@ -1025,6 +1021,7 @@ margin: 0 auto; /* Center the paragraph */
     display: flex;
     flex-direction: column;
     max-height: 80vh; /* Limit height to 80% of viewport */
+        margin-top: 15px;
 }
 
 .popup-scroll-container {
