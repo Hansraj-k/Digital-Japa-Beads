@@ -571,3 +571,8 @@ function resetToDefaultSettings() {
         saveSettingsToStorage();
     }
 }
+
+settingsBtn.addEventListener('click', () => {
+    closeAllPopups();
+    settingsPopup.style.display = 'block';
+});
