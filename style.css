@@ -14,8 +14,6 @@
     font-style: normal;
 }
 
-
-
 /* General body styling */
 body {
     background-color: black;
@@ -28,7 +26,7 @@ body {
     font-family: 'Biski', sans-serif;
     font-weight: 600;
     width: 100%;
-    overflow-x: hidden; /* Prevent horizontal scrolling */
+    overflow-x: hidden;
 }
 
 /* Container for the entire app */
@@ -39,10 +37,10 @@ body {
     justify-content: center;
     align-items: center;
     width: 100%;
-    max-width: 1000px; /* Or whatever max width you prefer */
+    max-width: 1000px;
     margin: 0 auto;
     position: relative;
-    padding: 0 20px; /* Add some padding on sides */
+    padding: 0 20px;
     box-sizing: border-box;
 }
 
@@ -59,7 +57,81 @@ body {
     left: 0;
     z-index: 1000;
 }
-/* Settings section alignment */
+
+/* Updated Popup Styling with proper spacing */
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 20px 20px 20px 25px; /* More left padding for balance */
+    border-radius: 10px;
+    text-align: center;
+    z-index: 10;
+    max-height: 80vh;
+    overflow-y: auto;
+    width: calc(100% - 40px);
+    max-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 255, 213, 0.3);
+    border: 1px solid #00ffd5;
+    margin: 10px;
+    box-sizing: border-box;
+}
+
+/* Settings Popup Specific */
+#settings-popup {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px 15px 15px 20px; /* Balanced padding */
+    text-align: left;
+    width: 100%;
+}
+
+/* Settings Content - Scrollable with right space */
+.settings-content {
+    overflow-y: auto;
+    padding-right: 15px; /* Extra space on right */
+    margin-right: -5px;
+    max-height: calc(60vh - 100px);
+    width: calc(100% - 10px);
+}
+
+/* Custom Scrollbar with spacing */
+#settings-popup::-webkit-scrollbar {
+    width: 1px;
+}
+
+#settings-popup::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin: 10px 0;
+}
+
+/* Popup Buttons */
+#save-settings, #close-settings {
+    background-color: #00ffd5;
+    color: black;
+    padding: 12px 0;
+    margin-top: 15px;
+    border-radius: 25px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+}
+
+#close-settings {
+    background-color: #333;
+    color: white;
+    margin-top: 10px;
+}
+
+/* Rest of your original CSS remains unchanged */
 .settings-section {
     display: flex;
     flex-direction: column;
@@ -92,7 +164,7 @@ body {
     font-weight: 600;
 }
 
-/* New Toggle Switch Styles */
+/* Toggle Switch Styles */
 .button-cover {
     height: auto;
     margin: 0;
@@ -388,7 +460,7 @@ button:hover::after {
     max-height: 100%;
 }
 
-/* Count and round display styling - KEPT ORIGINAL WEIGHTS */
+/* Count and round display styling */
 .count-display {
     font-size: 51px;
     margin: 10px 0;
@@ -403,21 +475,7 @@ button:hover::after {
     font-weight: 300;
 }
 
-/* Popup styling */
-.popup {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    z-index: 10;
-}
-
+/* Popup content styling */
 .popup-content {
     margin-bottom: 20px;
 }
@@ -446,8 +504,7 @@ button:hover::after {
     padding-left: 0px;
 }
 
-/* Default styling for the im
-age */
+/* Default styling for the image */
 .rkhkmc {
     width: 120px;
     height: 120px;
@@ -480,6 +537,21 @@ age */
     .counter-container {
         margin-top: 30px;
     }
+    
+    /* Adjust popup for mobile */
+    .popup {
+        width: calc(100% - 30px);
+        margin: 15px;
+        padding: 15px 15px 15px 20px;
+    }
+    
+    #settings-popup {
+        padding: 10px 10px 10px 15px;
+    }
+    
+    .settings-content {
+        padding-right: 10px;
+    }
 }
 
 p {
@@ -502,7 +574,7 @@ html, body {
     text-align: center;
     font-weight: 600;
     width: 100%;
-    max-width: 1000px; /* Match container width */
+    max-width: 1000px;
     margin: 0 auto;
     box-sizing: border-box;
 }
@@ -796,7 +868,7 @@ img, button, .fa , a{
 .slider-container {
     overflow: hidden;
     transition: all 0.3s ease;
-    max-height: 500px; /* Adjust based on your content */
+    max-height: 500px;
 }
 
 .slider-container[style*="display: none"] {
@@ -857,19 +929,19 @@ img, button, .fa , a{
 
 /* Update the reset button styles */
 .reset-default-btn {
-    width: 80%; /* Slightly less than full width for better appearance */
-    max-width: 250px; /* Maximum width for larger screens */
+    width: 80%;
+    max-width: 250px;
     background-color: #ff4444;
     color: white;
     border-radius: 25px;
     padding: 12px 20px;
     font-weight: 600;
-    margin: 10px auto; /* Center horizontally */
+    margin: 10px auto;
     border: none;
     cursor: pointer;
     transition: all 0.3s;
-    display: block; /* Make it a block element for margin:auto to work */
-    text-align: center; /* Center the text */
+    display: block;
+    text-align: center;
     font-size: 15px;
 }
 
@@ -895,7 +967,6 @@ img, button, .fa , a{
 
 .reset-default-btn {
     max-width: 250px;
-    /* rest of the styles remain the same */
 }
 
 .settings-subtext {
@@ -907,7 +978,7 @@ img, button, .fa , a{
     font-style: italic;
     line-height: 1.2;
     max-width: 201px;
-margin: 0 auto; /* Center the paragraph */
+    margin: 0 auto;
 }
 
 .settings-option {
@@ -921,7 +992,6 @@ margin: 0 auto; /* Center the paragraph */
     flex-grow: 1;
     margin-right: 20px;
 }
-
 @media (max-width: 480px) {
     .settings-subtext {
         font-size: 11px;
