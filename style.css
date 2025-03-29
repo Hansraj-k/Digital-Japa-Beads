@@ -14,6 +14,8 @@
     font-style: normal;
 }
 
+
+
 /* General body styling */
 body {
     background-color: black;
@@ -21,10 +23,12 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
     font-family: 'Biski', sans-serif;
     font-weight: 600;
+    width: 100%;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 /* Container for the entire app */
@@ -34,10 +38,12 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: auto;
     width: 100%;
+    max-width: 1000px; /* Or whatever max width you prefer */
+    margin: 0 auto;
     position: relative;
-    flex: 1;
+    padding: 0 20px; /* Add some padding on sides */
+    box-sizing: border-box;
 }
 
 /* Toolbar styling */
@@ -45,13 +51,16 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 99%;
-    padding: 10px;
+    width: 100%;
+    max-width: 1000px; /* Match container width */
+    padding: 10px 20px;
     background-color: black;
     position: fixed;
     top: 0;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 1000;
+    box-sizing: border-box;
 }
 
 /* Settings section alignment */
@@ -495,6 +504,10 @@ html, body {
     color: white;
     text-align: center;
     font-weight: 600;
+    width: 100%;
+    max-width: 1000px; /* Match container width */
+    margin: 0 auto;
+    box-sizing: border-box;
 }
 
 .footer hr {
@@ -907,7 +920,6 @@ margin: 0 auto; /* Center the paragraph */
     margin-bottom: 15px;
     width: 100%;
 }
-
 .settings-option > div:first-child {
     flex-grow: 1;
     margin-right: 20px;
