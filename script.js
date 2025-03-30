@@ -317,12 +317,12 @@ function updateStreak() {
     // If first time or no last activity date, start new streak
     if (!lastActivityDate) {
         streak = 1;
-        showStreakPopup("New streak started! 🔥");
+        showStreakPopup("Today, you planted the seed of devotion. With consistency, it will blossom beautifully! 🌸");
     }
     // If last activity was yesterday, increment streak
     else if (lastActivityDate === yesterdayStr) {
         streak++;
-        showStreakPopup(`Streak continued! 🔥\nNow at ${streak} day${streak > 1 ? 's' : ''}!`);
+        showStreakPopup(`Incredible dedication! 🙌\n\nYou've been chanting consistently for ${streak} days${streak > 1 ? 's' : ''}!`);
     }
     // If last activity was more than 1 day ago, reset streak
     else {
@@ -331,7 +331,7 @@ function updateStreak() {
         
         if (daysDiff > 1) {
             streak = 1;
-            showStreakPopup("New streak started! 🔥");
+            showStreakPopup("A small pause doesn't define your journey. Start fresh today! 🌿");
         }
     }
 
