@@ -1,4 +1,5 @@
 // Initialize count and round 
+let streakPopupToggle = document.getElementById('streak-popup-toggle');
 let count = parseInt(localStorage.getItem('count')) || 0;
 let round = parseInt(localStorage.getItem('round')) || 0;
 let audio = document.getElementById('audio');
@@ -49,7 +50,8 @@ let vibrationSettings = {
     completeVibrationEnabled: true,
     completeVibrationDuration: 1000,
     volume: 210,
-    buttonSize: 100
+    buttonSize: 100,
+    streakPopupEnabled: true  // Add this line
 };
 
 // Streak variables
@@ -145,12 +147,12 @@ function saveSettingsToStorage() {
         completeVibrationEnabled: completeVibrationToggle.checked,
         completeVibrationDuration: parseInt(completeVibrationSlider.value),
         volume: parseInt(volumeSlider.value),
-        buttonSize: currentButtonSize
+        buttonSize: currentButtonSize,
+        streakPopupEnabled: streakPopupToggle.checked  // Add this line
     };
     localStorage.setItem('vibrationSettings', JSON.stringify(vibrationSettings));
 }
 
-// Function to load settings from localStorage
 function loadSettingsFromStorage() {
     const savedSettings = localStorage.getItem('vibrationSettings');
     if (savedSettings) {
@@ -162,6 +164,7 @@ function loadSettingsFromStorage() {
         countVibrationSlider.value = vibrationSettings.countVibrationDuration || 60;
         completeVibrationSlider.value = vibrationSettings.completeVibrationDuration || 1000;
         volumeSlider.value = vibrationSettings.volume !== undefined ? vibrationSettings.volume : 210;
+        streakPopupToggle.checked = vibrationSettings.streakPopupEnabled !== false;  // Add this line
         
         if (vibrationSettings.buttonSize) {
             currentButtonSize = vibrationSettings.buttonSize;
@@ -171,7 +174,6 @@ function loadSettingsFromStorage() {
     
     updateSettingsUI();
 }
-
 // Function to update button size
 function updateButtonSize(newSize) {
     currentButtonSize = Math.max(minButtonSize, Math.min(maxButtonSize, newSize));
@@ -415,6 +417,27 @@ function showStreakPopup(message) {
             streakAudio.play().catch(e => console.log("Audio play failed:", e));
         }
         
+        setTimeout(() => {
+            streakPopup.style.display = 'none';
+        }, 3000);
+    }
+}
+function showStreakPopup(message) {
+    if (!streakPopupToggle.checked) return;
+    
+    const streakPopup = document.getElementById('streak-popup');
+    const streakMessage = document.getElementById('streak-message');
+    
+    if (streakPopup && streakMessage) {
+        streakMessage.textContent = message;
+        streakPopup.style.display = 'block';
+        
+// Play streak sound if sound is enabled
+        if (soundToggle.checked) {
+            streakAudio.currentTime = 0;
+            streakAudio.play().catch(e => console.log("Audio play failed:", e));
+        }
+
         setTimeout(() => {
             streakPopup.style.display = 'none';
         }, 3000);
@@ -700,7 +723,8 @@ const defaultSettings = {
     completeVibrationEnabled: true,
     completeVibrationDuration: 1000,
     volume: 210,
-    buttonSize: 100
+    buttonSize: 100,
+    streakPopupEnabled: true  // Add this line
 };
 
 // Function to reset all settings to default
@@ -784,4 +808,6 @@ streakStyle.textContent = `
     }
 }
 `;
+
 document.head.appendChild(streakStyle);
+streakPopupToggle.addEventListener('change', updateSettingsUI);
