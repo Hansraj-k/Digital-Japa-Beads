@@ -253,6 +253,32 @@ function isSameDay(date1, date2) {
            date1.getDate() === date2.getDate();
 }
 
+// Initialize streak on app load
+function initializeStreak() {
+    const today = new Date();
+    const todayStr = formatDate(today);
+    
+    // If we have last activity date, check if we need to reset streak
+    if (lastActivityDate) {
+        const lastDate = new Date(lastActivityDate);
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        
+        // If last activity was before yesterday, reset streak
+        if (lastDate < yesterday && !isSameDay(lastDate, yesterday)) {
+            streak = 0;
+            localStorage.setItem('streak', streak);
+        }
+        
+        // If last activity was today, ensure chanting history exists
+        if (lastActivityDate === todayStr && !chantingHistory[todayStr]) {
+            chantingHistory[todayStr] = { count: 0, rounds: 0 };
+        }
+    }
+    
+    updateStreakDisplay();
+}
+
 // Function to update streak
 function updateStreak() {
     const today = new Date();
@@ -332,7 +358,7 @@ function renderStreakCalendar() {
         dayElement.className = 'streak-day';
         
         // Check if this day had activity
-        if (chantingHistory[dateStr]) {
+        if (chantingHistory[dateStr] && chantingHistory[dateStr].count > 0) {
             dayElement.classList.add('active');
         }
         
@@ -397,27 +423,8 @@ function updateCounter() {
     }
 }
 
-// Initialize streak on app load
-function initializeStreak() {
-    // Check if we need to reset streak (if last activity was more than 1 day ago)
-    if (lastActivityDate) {
-        const lastDate = new Date(lastActivityDate);
-        const today = new Date();
-        const yesterday = new Date(today);
-        yesterday.setDate(yesterday.getDate() - 1);
-        
-        // If last activity was before yesterday, reset streak
-        if (lastDate < yesterday && !isSameDay(lastDate, yesterday)) {
-            streak = 0;
-            localStorage.setItem('streak', streak);
-        }
-    }
-    
-    updateStreakDisplay();
-}
-
 // Event listeners
-document.getElementById('count-btn').addEventListener('click', () => {
+document.getElementById('count-btn').addEventListener('click', function() {
     if (count === 0) {
         updateStreak();
     }
