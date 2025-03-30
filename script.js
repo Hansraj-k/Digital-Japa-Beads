@@ -57,6 +57,28 @@ let streak = parseInt(localStorage.getItem('streak')) || 0;
 let lastActivityDate = localStorage.getItem('lastActivityDate') || '';
 let chantingHistory = JSON.parse(localStorage.getItem('chantingHistory')) || {};
 
+// Create audio element for streak sound
+const streakAudio = new Audio();
+streakAudio.src = 'streak-sound.mp3'; // Add this file to your project
+streakAudio.volume = 0.6;
+
+// Function to reset counts daily at midnight
+function checkAndResetDaily() {
+    const today = new Date().toDateString();
+    const lastResetDate = localStorage.getItem('lastResetDate');
+    
+    if (lastResetDate !== today) {
+        count = 0;
+        round = 0;
+        localStorage.setItem('count', count);
+        localStorage.setItem('round', round);
+        localStorage.setItem('lastResetDate', today);
+        updateCountDisplay();
+        updateRoundDisplay();
+        updateCircleText();
+    }
+}
+
 // Function to update slider fill color
 function updateSliderFill(slider) {
     const value = slider.value;
@@ -378,7 +400,7 @@ function renderStreakCalendar() {
     }
 }
 
-// Function to show streak popup
+// Function to show streak popup with sound
 function showStreakPopup(message) {
     const streakPopup = document.getElementById('streak-popup');
     const streakMessage = document.getElementById('streak-message');
@@ -387,14 +409,22 @@ function showStreakPopup(message) {
         streakMessage.textContent = message;
         streakPopup.style.display = 'block';
         
+        // Play streak sound if sound is enabled
+        if (soundToggle.checked) {
+            streakAudio.currentTime = 0;
+            streakAudio.play().catch(e => console.log("Audio play failed:", e));
+        }
+        
         setTimeout(() => {
             streakPopup.style.display = 'none';
         }, 3000);
     }
 }
 
-// Function to update the counter
+// Function to update the counter with daily reset check
 function updateCounter() {
+    checkAndResetDaily(); // Check if we need to reset first
+    
     if (count < totalLetters) {
         count++;
         updateCountDisplay();
@@ -530,6 +560,10 @@ updateRoundDisplay();
 updateCircleText();
 loadSettingsFromStorage();
 initializeStreak();
+checkAndResetDaily(); // Initial daily check
+
+// Set up a daily check (every hour to be safe)
+setInterval(checkAndResetDaily, 60 * 60 * 1000);
 
 // Set current year in footer
 const dateInIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
