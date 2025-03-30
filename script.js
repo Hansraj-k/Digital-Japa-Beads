@@ -246,12 +246,11 @@ function formatDate(date) {
     return [year, month, day].join('-');
 }
 
-// Get Sunday of the week for a given date
-function getSunday(date) {
-    date = new Date(date);
-    const day = date.getDay();
-    const diff = date.getDate() - day;
-    return new Date(date.setDate(diff));
+// Helper function to check if two dates are the same day
+function isSameDay(date1, date2) {
+    return date1.getFullYear() === date2.getFullYear() &&
+           date1.getMonth() === date2.getMonth() &&
+           date1.getDate() === date2.getDate();
 }
 
 // Function to update streak
@@ -262,33 +261,30 @@ function updateStreak() {
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayStr = formatDate(yesterday);
 
-    // Get current week's Sunday
-    const currentSunday = getSunday(today);
-    const lastSunday = lastActivityDate ? getSunday(new Date(lastActivityDate)) : null;
+    // Check if we already counted today
+    if (lastActivityDate === todayStr) {
+        return;
+    }
 
-    // If no last activity date, start new streak
+    // If first time or no last activity date, start new streak
     if (!lastActivityDate) {
         streak = 1;
         showStreakPopup("New streak started! 🔥");
-    } 
+    }
     // If last activity was yesterday, increment streak
     else if (lastActivityDate === yesterdayStr) {
         streak++;
         showStreakPopup(`Streak continued! 🔥\nNow at ${streak} day${streak > 1 ? 's' : ''}!`);
     }
-    // If last activity was today, do nothing
-    else if (lastActivityDate === todayStr) {
-        return;
-    }
-    // If last activity was in the same week, maintain streak
-    else if (lastSunday && lastSunday.getTime() === currentSunday.getTime()) {
-        // Streak continues within the same week
-        return;
-    }
-    // Otherwise reset streak (new week or gap of more than 1 day)
+    // If last activity was more than 1 day ago, reset streak
     else {
-        streak = 1;
-        showStreakPopup("New streak started! 🔥");
+        const lastDate = new Date(lastActivityDate);
+        const daysDiff = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
+        
+        if (daysDiff > 1) {
+            streak = 1;
+            showStreakPopup("New streak started! 🔥");
+        }
     }
 
     // Update last activity date
@@ -318,24 +314,18 @@ function updateStreakDisplay() {
     renderStreakCalendar();
 }
 
-// Function to render streak calendar (Sunday to Saturday)
+// Function to render streak calendar (shows last 7 days)
 function renderStreakCalendar() {
     const streakCalendar = document.getElementById('streak-calendar');
     if (!streakCalendar) return;
 
     streakCalendar.innerHTML = '';
     const today = new Date();
-    const currentDay = today.getDay(); // 0 (Sunday) to 6 (Saturday)
     
-    // Get the Sunday of the current week
-    const sunday = new Date(today);
-    sunday.setDate(today.getDate() - currentDay);
-    
-    // Create calendar for Sunday to Saturday
-    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    for (let i = 0; i < 7; i++) {
-        const date = new Date(sunday);
-        date.setDate(sunday.getDate() + i);
+    // Create calendar for the past 7 days
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
         const dateStr = formatDate(date);
         
         const dayElement = document.createElement('div');
@@ -347,15 +337,13 @@ function renderStreakCalendar() {
         }
         
         // Mark today
-        if (i === currentDay) {
+        if (i === 0) {
             dayElement.classList.add('today');
-            if (chantingHistory[dateStr]) {
-                dayElement.style.boxShadow = '0 0 0 2px #ff9900';
-            }
         }
         
         // Add day abbreviation
-        dayElement.setAttribute('data-day', dayNames[i]);
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        dayElement.setAttribute('data-day', dayNames[date.getDay()]);
         
         // Add date number
         dayElement.textContent = date.getDate();
@@ -407,6 +395,25 @@ function updateCounter() {
     } else {
         popup108.style.display = 'block';
     }
+}
+
+// Initialize streak on app load
+function initializeStreak() {
+    // Check if we need to reset streak (if last activity was more than 1 day ago)
+    if (lastActivityDate) {
+        const lastDate = new Date(lastActivityDate);
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        
+        // If last activity was before yesterday, reset streak
+        if (lastDate < yesterday && !isSameDay(lastDate, yesterday)) {
+            streak = 0;
+            localStorage.setItem('streak', streak);
+        }
+    }
+    
+    updateStreakDisplay();
 }
 
 // Event listeners
@@ -515,7 +522,7 @@ updateCountDisplay();
 updateRoundDisplay();
 updateCircleText();
 loadSettingsFromStorage();
-updateStreakDisplay();
+initializeStreak();
 
 // Set current year in footer
 const dateInIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
@@ -679,21 +686,6 @@ document.getElementById('reset-default-settings').addEventListener('click', rese
 // Close streak popup
 document.getElementById('close-streak-popup')?.addEventListener('click', () => {
     document.getElementById('streak-popup').style.display = 'none';
-});
-
-// Check streak on app load
-window.addEventListener('load', () => {
-    if (lastActivityDate) {
-        const lastDate = new Date(lastActivityDate);
-        const today = new Date();
-        
-        // If last activity was from a previous week, reset streak
-        if (getSunday(lastDate).getTime() !== getSunday(today).getTime()) {
-            streak = 0;
-            localStorage.setItem('streak', streak);
-            updateStreakDisplay();
-        }
-    }
 });
 
 // Add streak calendar CSS
