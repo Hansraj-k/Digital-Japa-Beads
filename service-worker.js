@@ -6,6 +6,7 @@ const ASSETS = [
     '/script.js',
     '/rkhkmclogo.jpg',
     '/rkhkmc.mp3',
+    '/streak-sound.mp3',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css',
     '/Raleway-VariableFont_wght.ttf',
     '/manifest.json',
