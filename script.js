@@ -847,3 +847,54 @@ document.querySelector('.round-image').addEventListener('click', function() {
     closeAllPopups();
     document.getElementById('image-change-menu').style.display = 'block';
 });
+
+// Nuclear Reset Functionality
+document.getElementById('nuclear-reset')?.addEventListener('click', function() {
+  // Create confirmation dialog
+  const dialog = document.createElement('div');
+  dialog.className = 'nuclear-confirm';
+  dialog.innerHTML = `
+    <h3>⚠️ Nuclear Reset ⚠️</h3>
+    <p>This will COMPLETELY reset the app:</p>
+    <ul style="text-align: left; margin: 15px 0;">
+      <li>All counters set to 0</li>
+      <li>All settings reset to default</li>
+      <li>All cached data cleared</li>
+    </ul>
+    <p>The app will restart.</p>
+    <div class="nuclear-confirm-buttons">
+      <button id="confirm-nuclear">Reset Everything</button>
+      <button id="cancel-nuclear">Cancel</button>
+    </div>
+  `;
+  
+  document.body.appendChild(dialog);
+  
+  // Handle confirmation
+  document.getElementById('confirm-nuclear').addEventListener('click', async function() {
+    // Clear ALL localStorage data
+    localStorage.clear();
+    
+    // Clear ALL caches
+    if ('caches' in window) {
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+    }
+    
+    // Force unregister service worker
+    if ('serviceWorker' in navigator) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(registrations.map(reg => reg.unregister()));
+    }
+    
+    // Hard reload (bypass cache)
+    setTimeout(() => {
+      window.location.href = window.location.origin + window.location.pathname + '?v=' + Date.now();
+    }, 500);
+  });
+  
+  // Handle cancel
+  document.getElementById('cancel-nuclear').addEventListener('click', function() {
+    document.body.removeChild(dialog);
+  });
+});
