@@ -1149,13 +1149,18 @@ margin: 0 auto; /* Center the paragraph */
   align-items: center;
   justify-content: center;
   gap: 8px;
-  width: 100%;
-  margin-top: 10px;
+  width: 81%; /* Set width to 81% */
+  margin: 10px auto; /* Center horizontally */
+  padding: 12px 0; /* Adjust padding */
+  border-radius: 25px; /* Rounded corners */
+  font-weight: bold;
+  transition: all 0.3s ease;
 }
 
 .danger-btn:hover {
   background-color: #cc0000 !important;
   transform: scale(1.02);
+  box-shadow: 0 2px 8px rgba(255, 0, 0, 0.3);
 }
 
 .reset-dialog {
