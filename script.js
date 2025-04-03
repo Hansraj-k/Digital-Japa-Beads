@@ -217,7 +217,7 @@ function adjustCircleContainer() {
 
     let basePadding;
     if (isMobile) {
-        basePadding = isPWAInstalled ? 315 : 510;
+        basePadding = isPWAInstalled ? 321 : 510;
     } else {
         basePadding = window.innerWidth <= 768 ? 381 : 423;
     }
