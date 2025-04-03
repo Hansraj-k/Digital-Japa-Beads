@@ -82,15 +82,26 @@ function checkAndResetDaily() {
 }
 
 // Function to update slider fill color
+javascript
+Copy
 function updateSliderFill(slider) {
     const value = slider.value;
     const max = slider.max;
-    const percent = (value / max) * 100;
+    const min = slider.min;
+    const percent = ((value - min) / (max - min)) * 100;
     
-    slider.style.background = `linear-gradient(to right, #00ffd5 ${percent}%, #333 ${percent}%)`;
+    // Update CSS variable
     slider.style.setProperty('--fill-percent', `${percent}%`);
+    
+    // Update the displayed value
+    if (slider.id === 'volume-slider') {
+        document.getElementById('volume-value').textContent = value;
+    } else if (slider.id === 'count-vibration-slider') {
+        document.getElementById('count-vibration-value').textContent = `${value}ms`;
+    } else if (slider.id === 'complete-vibration-slider') {
+        document.getElementById('complete-vibration-value').textContent = `${value}ms`;
+    }
 }
-
 // Function to update the displayed count
 function updateCountDisplay() {
     countDisplay.textContent = count;
