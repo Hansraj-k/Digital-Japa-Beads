@@ -117,6 +117,7 @@ function updateCircleText() {
     const radiusIncrement = 30;
     const initialRadius = 100;
     let letterIndex = 0;
+    
 
     circleText.innerHTML = '';
 
@@ -216,7 +217,7 @@ function adjustCircleContainer() {
 
     let basePadding;
     if (isMobile) {
-        basePadding = isPWAInstalled ? 303 : 510;
+        basePadding = isPWAInstalled ? 315 : 510;
     } else {
         basePadding = window.innerWidth <= 768 ? 381 : 423;
     }
