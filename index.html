@@ -91,22 +91,7 @@
         <div id="image-change-menu" class="image-change-menu">
             <p>Select an image</p>
             <input type="file" id="image-upload" accept="image/*">
-           <!-- Inside image-change-menu div -->
-<!-- Add this inside your image-change-menu div -->
-<div class="crop-editor">
-  <div class="crop-area">
-    <img id="source-image" src="" alt="Source Image">
-    <div class="crop-circle" id="crop-circle"></div>
-  </div>
-  <div class="crop-controls">
-    <div class="size-control">
-      <button id="size-down">-</button>
-      <span id="size-value">150px</span>
-      <button id="size-up">+</button>
-    </div>
-    <button id="reset-crop">Reset Crop Size</button>
-  </div>
-</div>
+
             <div id="image-preview-container">
                 <img id="image-preview" src="" alt="Image Preview" />
             </div>
@@ -297,7 +282,7 @@
   if (imageUpload) {
     imageUpload.addEventListener('change', (event) => {});
   }
-  
+
   // Initialize audio with sound on
   document.getElementById('audio').volume = 1;
   document.getElementById('audio').muted = false;
@@ -335,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        
+
         if (!isPWAInstalled()) {
             installBtn.style.display = 'block';
         }
