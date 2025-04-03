@@ -839,3 +839,9 @@ streakStyle.textContent = `
 
 document.head.appendChild(streakStyle);
 streakPopupToggle.addEventListener('change', updateSettingsUI);
+
+// Add this to your existing JavaScript code
+document.querySelector('.round-image').addEventListener('click', function() {
+    closeAllPopups();
+    document.getElementById('image-change-menu').style.display = 'block';
+});
