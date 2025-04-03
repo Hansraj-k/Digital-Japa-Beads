@@ -91,7 +91,20 @@
         <div id="image-change-menu" class="image-change-menu">
             <p>Select an image</p>
             <input type="file" id="image-upload" accept="image/*">
-            <button id="crop-toggle" class="active">Circle Crop</button>
+           <!-- Inside image-change-menu div -->
+<div class="crop-container">
+  <div class="image-container">
+    <img id="source-image" src="" alt="Source Image">
+    <div class="crop-circle"></div>
+  </div>
+  <div class="preview-container">
+    <div class="circle-preview"></div>
+  </div>
+  <div class="crop-controls">
+    <button id="crop-save">Save Crop</button>
+    <button id="crop-cancel">Cancel</button>
+  </div>
+</div>
             <div id="image-preview-container">
                 <img id="image-preview" src="" alt="Image Preview" />
             </div>
