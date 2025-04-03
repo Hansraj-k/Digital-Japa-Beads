@@ -5,6 +5,7 @@
     font-weight: 600;
     font-style: normal;
 }
+
 /* Show scrollbar only when hovering */
 .settings-scroll::-webkit-scrollbar {
     width: 0px; /* Hidden by default */
@@ -1140,6 +1141,7 @@ margin: 0 auto; /* Center the paragraph */
     background-color: #fcebeb;
 }
 
+/* Danger button specific styles */
 .danger-btn {
   background-color: #ff4444 !important;
   color: white !important;
@@ -1148,10 +1150,10 @@ margin: 0 auto; /* Center the paragraph */
   align-items: center;
   justify-content: center;
   gap: 8px;
-  width: 81%; /* Set width to 81% */
-  margin: 10px auto; /* Center horizontally */
-  padding: 12px 0; /* Adjust padding */
-  border-radius: 25px; /* Rounded corners */
+  width: 81%;
+  margin: 10px auto; /* This centers the button */
+  padding: 12px 0;
+  border-radius: 25px;
   font-weight: bold;
   transition: all 0.3s ease;
 }
@@ -1160,6 +1162,15 @@ margin: 0 auto; /* Center the paragraph */
   background-color: #cc0000 !important;
   transform: scale(1.02);
   box-shadow: 0 2px 8px rgba(255, 0, 0, 0.3);
+}
+
+/* Danger button specific subtext */
+.danger-btn + .settings-subtext {
+  width: 81%;
+  margin: 5px auto 0; /* Centers only under danger button */
+  text-align: center;
+  font-size: 0.8em;
+  color: #aaa;
 }
 
 .reset-dialog {
