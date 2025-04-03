@@ -82,8 +82,6 @@ function checkAndResetDaily() {
 }
 
 // Function to update slider fill color
-javascript
-Copy
 function updateSliderFill(slider) {
     const value = slider.value;
     const max = slider.max;
