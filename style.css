@@ -655,28 +655,77 @@ img, button, .fa , a{
     height: 100%;
 }
 
-/* Add crop toggle button */
-#crop-toggle {
-    margin: 10px 0;
-    padding: 8px 15px;
-    background-color: #333;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.3s;
+/* Add these styles */
+.crop-editor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin: 15px 0;
 }
 
-#crop-toggle:hover {
-    background-color: #555;
+.crop-area {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  overflow: hidden;
+  border: 1px solid #00ffd5;
 }
 
-#crop-toggle.active {
-    background-color: #00ffd5;
-    color: black;
+#source-image {
+  display: block;
+  max-width: 100%;
+  user-select: none;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
+.crop-circle {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 2px dashed white;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  cursor: move;
+}
+
+.crop-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.size-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.size-control button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #00ffd5;
+  color: black;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#reset-crop {
+  padding: 8px;
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
 .image-change-menu button {
     padding: 10px 20px;
     background-color: #333;
@@ -1172,67 +1221,4 @@ margin: 0 auto; /* Center the paragraph */
 
 #streak-popup-toggle:checked ~ .layer {
     background-color: #fcebeb;
-}
-
-.crop-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
-
-.image-container {
-  position: relative;
-  width: 300px;
-  height: 300px;
-  overflow: hidden;
-  border: 1px solid #00ffd5;
-  cursor: move;
-}
-
-#source-image {
-  display: block;
-  max-width: 100%;
-  user-select: none;
-}
-
-.crop-circle {
-  position: absolute;
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  border: 2px dashed white;
-  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-}
-
-.preview-container {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 2px solid #00ffd5;
-}
-
-.circle-preview {
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-}
-
-.crop-controls {
-  display: flex;
-  gap: 15px;
-}
-
-.crop-controls button {
-  padding: 8px 20px;
-  background: #00ffd5;
-  color: black;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  font-weight: bold;
 }
