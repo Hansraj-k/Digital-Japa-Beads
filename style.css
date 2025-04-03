@@ -1141,7 +1141,6 @@ margin: 0 auto; /* Center the paragraph */
     background-color: #fcebeb;
 }
 
-/* Add to your CSS */
 .danger-btn {
   background-color: #ff4444 !important;
   color: white !important;
@@ -1150,50 +1149,70 @@ margin: 0 auto; /* Center the paragraph */
   align-items: center;
   justify-content: center;
   gap: 8px;
-  width: 150px;
-margin: 0 auto;
+  width: 100%;
   margin-top: 10px;
 }
 
 .danger-btn:hover {
   background-color: #cc0000 !important;
+  transform: scale(1.02);
 }
 
-.nuclear-confirm {
+.reset-dialog {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background: #111;
   border: 2px solid #ff4444;
-  padding: 20px;
-  border-radius: 10px;
+  padding: 25px;
+  border-radius: 15px;
   z-index: 1001;
-  width: 80%;
+  width: 85%;
   max-width: 400px;
   text-align: center;
+  box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
 }
 
-.nuclear-confirm h3 {
+.reset-dialog h3 {
   color: #ff4444;
   margin-top: 0;
+  font-size: 1.4em;
 }
 
-.nuclear-confirm-buttons {
+.reset-dialog p {
+  margin: 15px 0;
+}
+
+.reset-dialog-buttons {
   display: flex;
   justify-content: center;
   gap: 15px;
   margin-top: 20px;
 }
 
-.nuclear-confirm button {
-  padding: 8px 20px;
-  border-radius: 20px;
+.reset-dialog button {
+  padding: 10px 25px;
+  border-radius: 25px;
   cursor: pointer;
   font-weight: bold;
+  transition: all 0.2s;
 }
 
-#confirm-nuclear {
+#confirm-reset {
   background: #ff4444;
   color: white;
+}
+
+#confirm-reset:hover {
+  background: #ff0000;
+}
+
+#cancel-reset {
+  background: #333;
+  color: white;
+}
+
+#cancel-reset:hover {
+  background: #444;
 }
