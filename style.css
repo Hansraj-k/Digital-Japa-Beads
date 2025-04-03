@@ -1141,7 +1141,14 @@ margin: 0 auto; /* Center the paragraph */
     background-color: #fcebeb;
 }
 
-/* Danger button specific styles */
+/* For the specific danger button section only */
+.settings-section:has(.danger-btn) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
 .danger-btn {
   background-color: #ff4444 !important;
   color: white !important;
@@ -1151,11 +1158,11 @@ margin: 0 auto; /* Center the paragraph */
   justify-content: center;
   gap: 8px;
   width: 81%;
-  margin: 10px auto; /* This centers the button */
   padding: 12px 0;
   border-radius: 25px;
   font-weight: bold;
   transition: all 0.3s ease;
+  margin: 10px 0; /* Remove auto margins */
 }
 
 .danger-btn:hover {
@@ -1164,70 +1171,12 @@ margin: 0 auto; /* Center the paragraph */
   box-shadow: 0 2px 8px rgba(255, 0, 0, 0.3);
 }
 
-/* Danger button specific subtext */
-.danger-btn + .settings-subtext {
+/* For the subtext under danger button only */
+.settings-section:has(.danger-btn) .settings-subtext {
   width: 81%;
-  margin: 5px auto 0; /* Centers only under danger button */
   text-align: center;
+  margin: 5px 0 0;
   font-size: 0.8em;
   color: #aaa;
 }
 
-.reset-dialog {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #111;
-  border: 2px solid #ff4444;
-  padding: 25px;
-  border-radius: 15px;
-  z-index: 1001;
-  width: 85%;
-  max-width: 400px;
-  text-align: center;
-  box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
-}
-
-.reset-dialog h3 {
-  color: #ff4444;
-  margin-top: 0;
-  font-size: 1.4em;
-}
-
-.reset-dialog p {
-  margin: 15px 0;
-}
-
-.reset-dialog-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.reset-dialog button {
-  padding: 10px 25px;
-  border-radius: 25px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.2s;
-}
-
-#confirm-reset {
-  background: #ff4444;
-  color: white;
-}
-
-#confirm-reset:hover {
-  background: #ff0000;
-}
-
-#cancel-reset {
-  background: #333;
-  color: white;
-}
-
-#cancel-reset:hover {
-  background: #444;
-}
