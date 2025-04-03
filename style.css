@@ -1131,4 +1131,3 @@ margin: 0 auto; /* Center the paragraph */
     background-color: #fcebeb;
 }
 
-.buttons { display: flex; justify-content: center; align-items: center; width: 100%; position: relative; z-index: 1; transition: all 0.3s ease; }
