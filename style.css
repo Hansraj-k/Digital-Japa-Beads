@@ -231,13 +231,15 @@ body {
     gap: 10px;
 }
 
+/* Haptics slider CSS */
 .slider-controls input[type="range"] {
     -webkit-appearance: none;
     width: 100%;
     height: 8px;
     border-radius: 4px;
-    background: linear-gradient(to right, #00ffd5 var(--fill-percent, 0%), #333 var(--fill-percent, 0%));
+    background: linear-gradient(to right, #00ffd5 0%, #333 0%);
     outline: none;
+    transition: background 0.3s ease;
 }
 
 .slider-controls input[type="range"]::-webkit-slider-thumb {
@@ -254,7 +256,7 @@ body {
 .slider-controls input[type="range"]::-moz-range-track {
     height: 8px;
     border-radius: 4px;
-    background: linear-gradient(to right, #00ffd5 var(--fill-percent, 0%), #333 var(--fill-percent, 0%));
+    background: linear-gradient(to right, #00ffd5 0%, #333 0%);
 }
 
 .slider-controls input[type="range"]::-moz-range-thumb {
