@@ -1130,3 +1130,14 @@ margin: 0 auto; /* Center the paragraph */
 #streak-popup-toggle:checked ~ .layer {
     background-color: #fcebeb;
 }
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 40px 0; /* Equal padding top and bottom */
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
