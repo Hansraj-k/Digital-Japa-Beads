@@ -216,7 +216,7 @@ function adjustCircleContainer() {
 
     let basePadding;
     if (isMobile) {
-        basePadding = isPWAInstalled ? 303 : 516;
+        basePadding = isPWAInstalled ? 303 : 510;
     } else {
         basePadding = window.innerWidth <= 768 ? 381 : 423;
     }
@@ -624,26 +624,6 @@ closeImageMenuBtn.addEventListener('click', () => {
     imageChangeMenu.style.display = 'none';
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 imageUpload.addEventListener('change', (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -662,38 +642,6 @@ saveImageBtn.addEventListener('click', () => {
     if (newImageSrc) {
         localStorage.setItem('selectedImage', newImageSrc);
         document.querySelector('.round-image').src = newImageSrc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         imageChangeMenu.style.display = 'none';
     }
 });
