@@ -629,6 +629,14 @@ let currentImage = null;
 let cropPosition = { x: 0, y: 0 };
 
 // Image upload handler
+// Add these variables
+let cropSize = 150;
+let isDragging = false;
+let startX, startY;
+let imgX = 0, imgY = 0;
+let currentImage = null;
+
+// Image upload handler
 imageUpload.addEventListener('change', function(e) {
   const file = e.target.files[0];
   if (file) {
@@ -639,118 +647,127 @@ imageUpload.addEventListener('change', function(e) {
       
       img.onload = function() {
         currentImage = img;
-        // Center crop circle initially
-        cropPosition = {
-          x: img.width / 2,
-          y: img.height / 2
-        };
-        updateCropPosition();
-        updatePreview();
+        // Center image initially
+        centerImage();
+        updateCropCircle();
       };
     };
     reader.readAsDataURL(file);
   }
 });
 
-// Drag to position crop
-document.querySelector('.image-container').addEventListener('mousedown', function(e) {
+function centerImage() {
+  if (!currentImage) return;
+  
+  const container = document.querySelector('.crop-area');
+  imgX = (currentImage.width - container.offsetWidth) / 2;
+  imgY = (currentImage.height - container.offsetHeight) / 2;
+  updateImagePosition();
+}
+
+function updateImagePosition() {
+  if (!currentImage) return;
+  
+  const img = document.getElementById('source-image');
+  img.style.transform = `translate(${-imgX}px, ${-imgY}px)`;
+  updateCropCircle();
+}
+
+function updateCropCircle() {
+  const circle = document.getElementById('crop-circle');
+  circle.style.width = `${cropSize}px`;
+  circle.style.height = `${cropSize}px`;
+  document.getElementById('size-value').textContent = `${cropSize}px`;
+  
+  // Keep circle centered
+  const container = document.querySelector('.crop-area');
+  circle.style.left = `${container.offsetWidth / 2}px`;
+  circle.style.top = `${container.offsetHeight / 2}px`;
+}
+
+// Drag image to position
+document.querySelector('.crop-area').addEventListener('mousedown', function(e) {
+  if (!currentImage) return;
+  
   isDragging = true;
-  updateCropPosition(e);
+  startX = e.clientX - imgX;
+  startY = e.clientY - imgY;
+  this.style.cursor = 'grabbing';
 });
 
 document.addEventListener('mousemove', function(e) {
-  if (isDragging && currentImage) {
-    updateCropPosition(e);
-    updatePreview();
-  }
+  if (!isDragging || !currentImage) return;
+  
+  imgX = e.clientX - startX;
+  imgY = e.clientY - startY;
+  updateImagePosition();
 });
 
 document.addEventListener('mouseup', function() {
   isDragging = false;
+  document.querySelector('.crop-area').style.cursor = 'move';
 });
 
-function updateCropPosition(e) {
-  if (!currentImage) return;
-  
-  const container = document.querySelector('.image-container');
-  const rect = container.getBoundingClientRect();
-  
-  if (e) {
-    // Calculate position relative to image
-    cropPosition.x = (e.clientX - rect.left) * (currentImage.naturalWidth / rect.width);
-    cropPosition.y = (e.clientY - rect.top) * (currentImage.naturalHeight / rect.height);
-  }
-  
-  // Position crop circle
-  const circle = document.querySelector('.crop-circle');
-  circle.style.left = (cropPosition.x / currentImage.naturalWidth * 100) + '%';
-  circle.style.top = (cropPosition.y / currentImage.naturalHeight * 100) + '%';
-}
+// Crop size controls
+document.getElementById('size-up').addEventListener('click', function() {
+  cropSize = Math.min(250, cropSize + 10);
+  updateCropCircle();
+});
 
-function updatePreview() {
+document.getElementById('size-down').addEventListener('click', function() {
+  cropSize = Math.max(50, cropSize - 10);
+  updateCropCircle();
+});
+
+document.getElementById('reset-crop').addEventListener('click', function() {
+  cropSize = 150;
+  centerImage();
+});
+
+// Save cropped image (use your existing save-image-btn)
+saveImageBtn.addEventListener('click', function() {
   if (!currentImage) return;
   
-  const preview = document.querySelector('.circle-preview');
-  const circleSize = 150; // Match preview size
-  
-  // Create canvas for cropped image
   const canvas = document.createElement('canvas');
-  canvas.width = circleSize;
-  canvas.height = circleSize;
   const ctx = canvas.getContext('2d');
+  canvas.width = cropSize;
+  canvas.height = cropSize;
   
-  // Create circular clipping path
+  // Create circular path
   ctx.beginPath();
-  ctx.arc(circleSize/2, circleSize/2, circleSize/2, 0, Math.PI*2);
+  ctx.arc(cropSize/2, cropSize/2, cropSize/2, 0, Math.PI*2);
   ctx.closePath();
   ctx.clip();
   
   // Calculate source dimensions
-  const sourceRatio = currentImage.naturalWidth / currentImage.naturalHeight;
-  const previewRatio = 1; // Circle is 1:1
-  
-  let sourceWidth, sourceHeight;
-  if (sourceRatio > previewRatio) {
-    sourceHeight = currentImage.naturalHeight;
-    sourceWidth = sourceHeight * previewRatio;
-  } else {
-    sourceWidth = currentImage.naturalWidth;
-    sourceHeight = sourceWidth / previewRatio;
-  }
+  const container = document.querySelector('.crop-area');
+  const scaleX = currentImage.naturalWidth / currentImage.offsetWidth;
+  const scaleY = currentImage.naturalHeight / currentImage.offsetHeight;
   
   // Draw cropped portion
   ctx.drawImage(
     currentImage,
-    cropPosition.x - sourceWidth/2,
-    cropPosition.y - sourceHeight/2,
-    sourceWidth,
-    sourceHeight,
+    imgX * scaleX,
+    imgY * scaleY,
+    cropSize * scaleX,
+    cropSize * scaleY,
     0,
     0,
-    circleSize,
-    circleSize
+    cropSize,
+    cropSize
   );
   
-  // Update preview
-  preview.style.backgroundImage = `url(${canvas.toDataURL()})`;
-}
-
-// Save cropped image
-document.getElementById('crop-save').addEventListener('click', function() {
-  const preview = document.querySelector('.circle-preview');
-  const imageUrl = preview.style.backgroundImage.slice(4, -1).replace(/"/g, "");
-  
-  if (imageUrl) {
-    localStorage.setItem('selectedImage', imageUrl);
-    document.querySelector('.round-image').src = imageUrl;
-    imageChangeMenu.style.display = 'none';
-  }
+  // Save to localStorage
+  localStorage.setItem('selectedImage', canvas.toDataURL());
+  document.querySelector('.round-image').src = localStorage.getItem('selectedImage');
+  imageChangeMenu.style.display = 'none';
 });
 
-// Cancel crop
-document.getElementById('crop-cancel').addEventListener('click', function() {
-  document.getElementById('source-image').src = '';
-  document.querySelector('.circle-preview').style.backgroundImage = '';
+// Reset to default image (use your existing reset-image-btn)
+resetImageBtn.addEventListener('click', function() {
+  localStorage.removeItem('selectedImage');
+  document.querySelector('.round-image').src = 'rkhkmc.png';
+  imageChangeMenu.style.display = 'none';
 });
 
 resetImageBtn.addEventListener('click', () => {
