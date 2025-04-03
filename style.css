@@ -821,7 +821,7 @@ img, button, .fa , a{
 }
 
 #change-image-btn {
-    width: 100%;
+    width: 90%;
     max-width: 200px;
     background-color: #00ffd5;
     color: black;
