@@ -86,7 +86,7 @@ function updateSliderFill(slider) {
     const value = slider.value;
     const max = slider.max;
     const percent = (value / max) * 100;
-
+    
     slider.style.background = `linear-gradient(to right, #00ffd5 ${percent}%, #333 ${percent}%)`;
     slider.style.setProperty('--fill-percent', `${percent}%`);
 }
