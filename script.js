@@ -770,13 +770,6 @@ resetImageBtn.addEventListener('click', function() {
   imageChangeMenu.style.display = 'none';
 });
 
-resetImageBtn.addEventListener('click', () => {
-    localStorage.removeItem('selectedImage');
-    document.querySelector('.round-image').src = 'rkhkmc.png';
-    imagePreview.src = '';
-    imagePreview.style.display = 'none';
-});
-
 // Check for saved image
 window.onload = function() {
     const savedImage = localStorage.getItem('selectedImage');
