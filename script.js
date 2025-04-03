@@ -703,10 +703,25 @@ if (installBtn) {
 }
 
 // Initialize slider fill colors on load
+// Initialize slider fill on load
 document.addEventListener('DOMContentLoaded', function() {
-    updateSliderFill(volumeSlider);
-    updateSliderFill(countVibrationSlider);
-    updateSliderFill(completeVibrationSlider);
+    updateSliderFill(document.getElementById('volume-slider'));
+    updateSliderFill(document.getElementById('count-vibration-slider'));
+    updateSliderFill(document.getElementById('complete-vibration-slider'));
+});
+
+// Add event listeners for slider input
+document.getElementById('volume-slider').addEventListener('input', function() {
+    updateSliderFill(this);
+    audio.volume = this.value / 210;
+});
+
+document.getElementById('count-vibration-slider').addEventListener('input', function() {
+    updateSliderFill(this);
+});
+
+document.getElementById('complete-vibration-slider').addEventListener('input', function() {
+    updateSliderFill(this);
 });
 
 // Adjust circle container padding on load and resize
