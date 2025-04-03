@@ -43,6 +43,16 @@
     background: rgba(0, 0, 0, 0.1); /* Subtle track */
 }
 
+/* Add this to your existing CSS */
+.round-image {
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.round-image:hover {
+    transform: scale(1.05);
+}
+
 /* General body styling */
 body {
     background-color: black;
