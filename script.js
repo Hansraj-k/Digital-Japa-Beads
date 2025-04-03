@@ -208,7 +208,7 @@ function adjustCircleContainer() {
         basePadding = window.innerWidth <= 768 ? 480 : 423;
     }
 
-    const sizeAdjustment = (currentButtonSize - 100) * 1.5; // 3px per 10%
+    const sizeAdjustment = (currentButtonSize - 100) * 3; // 3px per 10%
     const newPadding = basePadding + sizeAdjustment;
 
     circleContainer.style.setProperty("padding-top", `${newPadding}px`, "important");
