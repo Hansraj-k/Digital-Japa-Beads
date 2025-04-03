@@ -68,7 +68,7 @@ streakAudio.volume = 0.6;
 function checkAndResetDaily() {
     const today = new Date().toDateString();
     const lastResetDate = localStorage.getItem('lastResetDate');
-    
+
     if (lastResetDate !== today) {
         count = 0;
         round = 0;
@@ -86,7 +86,7 @@ function updateSliderFill(slider) {
     const value = slider.value;
     const max = slider.max;
     const percent = (value / max) * 100;
-    
+
     slider.style.background = `linear-gradient(to right, #00ffd5 ${percent}%, #333 ${percent}%)`;
     slider.style.setProperty('--fill-percent', `${percent}%`);
 }
@@ -157,7 +157,7 @@ function loadSettingsFromStorage() {
     const savedSettings = localStorage.getItem('vibrationSettings');
     if (savedSettings) {
         vibrationSettings = JSON.parse(savedSettings);
-        
+
         soundToggle.checked = vibrationSettings.soundEnabled !== false;
         countVibrationToggle.checked = vibrationSettings.countVibrationEnabled || false;
         completeVibrationToggle.checked = vibrationSettings.completeVibrationEnabled !== false;
@@ -165,43 +165,43 @@ function loadSettingsFromStorage() {
         completeVibrationSlider.value = vibrationSettings.completeVibrationDuration || 1000;
         volumeSlider.value = vibrationSettings.volume !== undefined ? vibrationSettings.volume : 210;
         streakPopupToggle.checked = vibrationSettings.streakPopupEnabled !== false;  // Add this line
-        
+
         if (vibrationSettings.buttonSize) {
             currentButtonSize = vibrationSettings.buttonSize;
             updateButtonSize(currentButtonSize);
         }
     }
-    
+
     updateSettingsUI();
 }
 // Function to update button size
 function updateButtonSize(newSize) {
     currentButtonSize = Math.max(minButtonSize, Math.min(maxButtonSize, newSize));
     document.getElementById('button-size-value').textContent = `${currentButtonSize}%`;
-    
+
     const countBtn = document.getElementById('count-btn');
     const btnImg = countBtn.querySelector('img');
-    
-    // Apply scaling
+
+
     countBtn.style.transform = `scale(${currentButtonSize / 100})`;
-    
+
     if (btnImg) {
-        btnImg.style.width = '120px';
-        btnImg.style.height = '120px';
+        btnImg.style.width = `${currentButtonSize}px`;
+        btnImg.style.height = `${currentButtonSize}px`;
     }
-    
-    // Calculate equal spacing adjustment
-    const spacingAdjustment = (currentButtonSize - 100) * 1.5;
-    
-    // Apply equal padding to containers
-    const circleContainer = document.querySelector('.circle-container');
-    const buttonsContainer = document.querySelector('.buttons');
-    
-    circleContainer.style.paddingTop = `${40 + spacingAdjustment}px`;
-    circleContainer.style.paddingBottom = `${40 + spacingAdjustment}px`;
-    
-    buttonsContainer.style.paddingTop = `${40 + spacingAdjustment}px`;
-    buttonsContainer.style.paddingBottom = `${40 + spacingAdjustment}px`;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     adjustCircleContainer();
     vibrationSettings.buttonSize = currentButtonSize;
@@ -234,16 +234,16 @@ function updateSettingsUI() {
     updateSliderFill(volumeSlider);
     updateSliderFill(countVibrationSlider);
     updateSliderFill(completeVibrationSlider);
-    
+
     volumeValue.textContent = volumeSlider.value;
     countVibrationValue.textContent = `${countVibrationSlider.value}ms`;
     completeVibrationValue.textContent = `${completeVibrationSlider.value}ms`;
-    
+
     audio.volume = volumeSlider.value / 210;
     audio.muted = !soundToggle.checked;
-    
+
     volumeControlContainer.style.display = soundToggle.checked ? 'block' : 'none';
-    
+
     const vibrationSettings = document.querySelectorAll('.vibration-setting');
     vibrationSettings.forEach(setting => {
         if (isMobileDevice()) {
@@ -296,25 +296,25 @@ function isSameDay(date1, date2) {
 function initializeStreak() {
     const today = new Date();
     const todayStr = formatDate(today);
-    
+
     // If we have last activity date, check if we need to reset streak
     if (lastActivityDate) {
         const lastDate = new Date(lastActivityDate);
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
-        
+
         // If last activity was before yesterday, reset streak
         if (lastDate < yesterday && !isSameDay(lastDate, yesterday)) {
             streak = 0;
             localStorage.setItem('streak', streak);
         }
-        
+
         // If last activity was today, ensure chanting history exists
         if (lastActivityDate === todayStr && !chantingHistory[todayStr]) {
             chantingHistory[todayStr] = { count: 0, rounds: 0 };
         }
     }
-    
+
     updateStreakDisplay();
 }
 
@@ -345,7 +345,7 @@ function updateStreak() {
     else {
         const lastDate = new Date(lastActivityDate);
         const daysDiff = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
-        
+
         if (daysDiff > 1) {
             streak = 1;
             showStreakPopup("A small pause doesn't define your journey. Start fresh today! 🌿");
@@ -354,7 +354,7 @@ function updateStreak() {
 
     // Update last activity date
     lastActivityDate = todayStr;
-    
+
     // Update chanting history
     if (!chantingHistory[todayStr]) {
         chantingHistory[todayStr] = { count: 0, rounds: 0 };
@@ -386,33 +386,33 @@ function renderStreakCalendar() {
 
     streakCalendar.innerHTML = '';
     const today = new Date();
-    
+
     // Create calendar for the past 7 days
     for (let i = 6; i >= 0; i--) {
         const date = new Date(today);
         date.setDate(today.getDate() - i);
         const dateStr = formatDate(date);
-        
+
         const dayElement = document.createElement('div');
         dayElement.className = 'streak-day';
-        
+
         // Check if this day had activity
         if (chantingHistory[dateStr] && chantingHistory[dateStr].count > 0) {
             dayElement.classList.add('active');
         }
-        
+
         // Mark today
         if (i === 0) {
             dayElement.classList.add('today');
         }
-        
+
         // Add day abbreviation
         const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         dayElement.setAttribute('data-day', dayNames[date.getDay()]);
-        
+
         // Add date number
         dayElement.textContent = date.getDate();
-        
+
         streakCalendar.appendChild(dayElement);
     }
 }
@@ -421,17 +421,17 @@ function renderStreakCalendar() {
 function showStreakPopup(message) {
     const streakPopup = document.getElementById('streak-popup');
     const streakMessage = document.getElementById('streak-message');
-    
+
     if (streakPopup && streakMessage) {
         streakMessage.textContent = message;
         streakPopup.style.display = 'block';
-        
+
         // Play streak sound if sound is enabled
         if (soundToggle.checked) {
             streakAudio.currentTime = 0;
             streakAudio.play().catch(e => console.log("Audio play failed:", e));
         }
-        
+
         setTimeout(() => {
             streakPopup.style.display = 'none';
         }, 3000);
@@ -439,14 +439,14 @@ function showStreakPopup(message) {
 }
 function showStreakPopup(message) {
     if (!streakPopupToggle.checked) return;
-    
+
     const streakPopup = document.getElementById('streak-popup');
     const streakMessage = document.getElementById('streak-message');
-    
+
     if (streakPopup && streakMessage) {
         streakMessage.textContent = message;
         streakPopup.style.display = 'block';
-        
+
 // Play streak sound if sound is enabled
         if (soundToggle.checked) {
             streakAudio.currentTime = 0;
@@ -462,7 +462,7 @@ function showStreakPopup(message) {
 // Function to update the counter with daily reset check
 function updateCounter() {
     checkAndResetDaily(); // Check if we need to reset first
-    
+
     if (count < totalLetters) {
         count++;
         updateCountDisplay();
@@ -477,11 +477,11 @@ function updateCounter() {
             round++;
             updateRoundDisplay();
             popup108.style.display = 'block';
-            
+
             if (soundToggle.checked) {
                 audio.play();
             }
-            
+
             if (completeVibrationToggle.checked && navigator.vibrate) {
                 navigator.vibrate(parseInt(completeVibrationSlider.value));
             }
@@ -689,7 +689,7 @@ if (installBtn) {
         e.preventDefault();
         deferredPrompt = e;
         installBtn.style.display = 'block';
-        
+
         installBtn.addEventListener('click', async () => {
             installBtn.style.display = 'none';
             deferredPrompt.prompt();
@@ -751,10 +751,10 @@ function resetToDefaultSettings() {
         countVibrationSlider.value = defaultSettings.countVibrationDuration;
         completeVibrationSlider.value = defaultSettings.completeVibrationDuration;
         volumeSlider.value = defaultSettings.volume;
-        
+
         currentButtonSize = defaultSettings.buttonSize;
         updateButtonSize(currentButtonSize);
-        
+
         updateSettingsUI();
         vibrationSettings = {...defaultSettings};
         saveSettingsToStorage();
