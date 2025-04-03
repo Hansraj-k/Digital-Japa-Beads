@@ -1152,10 +1152,6 @@ margin: 0 auto; /* Center the paragraph */
   gap: 8px;
 }
 
-.danger-btn:hover {
-  background-color: #cc0000 !important;
-}
-
 .confirm-dialog {
   position: fixed;
   top: 50%;
