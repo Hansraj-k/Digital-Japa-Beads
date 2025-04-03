@@ -848,53 +848,86 @@ document.querySelector('.round-image').addEventListener('click', function() {
     document.getElementById('image-change-menu').style.display = 'block';
 });
 
-// Nuclear Reset Functionality
-document.getElementById('nuclear-reset')?.addEventListener('click', function() {
-  // Create confirmation dialog
-  const dialog = document.createElement('div');
-  dialog.className = 'nuclear-confirm';
-  dialog.innerHTML = `
-    <h3>⚠️ Nuclear Reset ⚠️</h3>
-    <p>This will COMPLETELY reset the app:</p>
-    <ul style="text-align: left; margin: 15px 0;">
-      <li>All counters set to 0</li>
-      <li>All settings reset to default</li>
-      <li>All cached data cleared</li>
-    </ul>
-    <p>The app will restart.</p>
-    <div class="nuclear-confirm-buttons">
-      <button id="confirm-nuclear">Reset Everything</button>
-      <button id="cancel-nuclear">Cancel</button>
-    </div>
-  `;
-  
-  document.body.appendChild(dialog);
-  
-  // Handle confirmation
-  document.getElementById('confirm-nuclear').addEventListener('click', async function() {
-    // Clear ALL localStorage data
+// Nuclear Reset Function
+async function performFactoryReset() {
+  // Show loading state
+  const dialog = document.querySelector('.reset-dialog');
+  if (dialog) {
+    dialog.innerHTML = `<div class="loading-reset">
+      <i class="fas fa-circle-notch fa-spin"></i>
+      <p>Resetting everything...</p>
+    </div>`;
+  }
+
+  try {
+    // 1. Clear all localStorage data
     localStorage.clear();
     
-    // Clear ALL caches
+    // 2. Clear all IndexedDB databases
+    if (window.indexedDB) {
+      const dbs = await window.indexedDB.databases();
+      dbs.forEach(db => {
+        if (db.name) {
+          window.indexedDB.deleteDatabase(db.name);
+        }
+      });
+    }
+    
+    // 3. Clear all caches
     if ('caches' in window) {
       const cacheNames = await caches.keys();
       await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
     }
     
-    // Force unregister service worker
+    // 4. Unregister all service workers
     if ('serviceWorker' in navigator) {
       const registrations = await navigator.serviceWorker.getRegistrations();
       await Promise.all(registrations.map(reg => reg.unregister()));
     }
     
-    // Hard reload (bypass cache)
+    // 5. Clear session storage
+    sessionStorage.clear();
+    
+    // 6. Force complete reload with cache busting
     setTimeout(() => {
-      window.location.href = window.location.origin + window.location.pathname + '?v=' + Date.now();
-    }, 500);
-  });
+      window.location.href = window.location.origin + window.location.pathname + '?reset=' + Date.now();
+    }, 1000);
+    
+  } catch (error) {
+    console.error('Reset failed:', error);
+    if (dialog) {
+      dialog.innerHTML = `<p style="color:#ff4444">Reset failed. Please manually refresh the page.</p>`;
+    }
+  }
+}
+
+// Factory Reset Button Handler
+document.getElementById('factory-reset')?.addEventListener('click', function() {
+  const dialog = document.createElement('div');
+  dialog.className = 'reset-dialog';
+  dialog.innerHTML = `
+    <h3>⚠️ Factory Reset ⚠️</h3>
+    <p>This will <strong>permanently delete</strong>:</p>
+    <ul style="text-align: left; margin: 15px 0; padding-left: 20px;">
+      <li>All counter data</li>
+      <li>All round progress</li>
+      <li>All settings</li>
+      <li>All cached files</li>
+      <li>All offline data</li>
+    </ul>
+    <p>The app will restart completely fresh.</p>
+    <div class="reset-dialog-buttons">
+      <button id="confirm-reset">Reset Everything</button>
+      <button id="cancel-reset">Cancel</button>
+    </div>
+  `;
   
-  // Handle cancel
-  document.getElementById('cancel-nuclear').addEventListener('click', function() {
+  document.body.appendChild(dialog);
+  
+  document.getElementById('confirm-reset').addEventListener('click', performFactoryReset);
+  
+  document.getElementById('cancel-reset').addEventListener('click', function() {
     document.body.removeChild(dialog);
   });
 });
+
