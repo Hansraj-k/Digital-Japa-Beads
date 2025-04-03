@@ -76,3 +76,30 @@ self.addEventListener('push', function(event) {
     })
   );
 });
+
+self.addEventListener('activate', event => {
+  // Clean up old caches when new SW activates
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+});
+
+// Add this to handle reset requests
+self.addEventListener('message', event => {
+  if (event.data === 'reset') {
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => caches.delete(cacheName))
+      );
+    });
+  }
+});
+
