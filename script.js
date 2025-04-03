@@ -178,17 +178,21 @@ function loadSettingsFromStorage() {
 function updateButtonSize(newSize) {
     currentButtonSize = Math.max(minButtonSize, Math.min(maxButtonSize, newSize));
     document.getElementById('button-size-value').textContent = `${currentButtonSize}%`;
-
+    
     const countBtn = document.getElementById('count-btn');
     const btnImg = countBtn.querySelector('img');
-
+    
+    // Scale the button
     countBtn.style.transform = `scale(${currentButtonSize / 100})`;
-    if (btnImg) {
-        btnImg.style.width = `${currentButtonSize}px`;
-        btnImg.style.height = `${currentButtonSize}px`;
-    }
+    
+    // Adjust padding above and below the button equally
+    const paddingAdjustment = (currentButtonSize - 100) * 0.5; // Adjust padding equally
+    countBtn.style.paddingTop = `${paddingAdjustment}px`;
+    countBtn.style.paddingBottom = `${paddingAdjustment}px`;
 
+    // Adjust the circle container padding based on button size
     adjustCircleContainer();
+    
     vibrationSettings.buttonSize = currentButtonSize;
     saveSettingsToStorage();
 }
