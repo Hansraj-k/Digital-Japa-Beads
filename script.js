@@ -216,9 +216,9 @@ function adjustCircleContainer() {
 
     let basePadding;
     if (isMobile) {
-        basePadding = isPWAInstalled ? 375 : 480;
+        basePadding = isPWAInstalled ? 375 : 510;
     } else {
-        basePadding = window.innerWidth <= 768 ? 435 : 423;
+        basePadding = window.innerWidth <= 768 ? 402 : 423;
     }
 
     const sizeAdjustment = (currentButtonSize - 100) * 3; // 3px per 10%
