@@ -633,99 +633,17 @@ img, button, .fa , a{
 }
 
 #image-preview-container {
-    margin: 15px 0;
-    width: 200px;
-    height: 200px;
-    position: relative;
-    overflow: hidden;
-    border-radius: 50%; /* Makes it circular */
-    border: 2px solid #00ffd5;
-    margin: 15px auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(0, 0, 0, 0.3);
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 #image-preview {
     max-width: 100%;
-    max-height: 100%;
-    object-fit: cover; /* Ensures image covers the circle while maintaining aspect ratio */
-    width: 100%;
-    height: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 10px;
 }
 
-/* Add these styles */
-.crop-editor {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-  margin: 15px 0;
-}
-
-.crop-area {
-  position: relative;
-  width: 300px;
-  height: 300px;
-  overflow: hidden;
-  border: 1px solid #00ffd5;
-}
-
-#source-image {
-  display: block;
-  max-width: 100%;
-  user-select: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.crop-circle {
-  position: absolute;
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  border: 2px dashed white;
-  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  cursor: move;
-}
-
-.crop-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-}
-
-.size-control {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-.size-control button {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: #00ffd5;
-  color: black;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-#reset-crop {
-  padding: 8px;
-  background: #333;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-}
 .image-change-menu button {
     padding: 10px 20px;
     background-color: #333;
@@ -1222,3 +1140,4 @@ margin: 0 auto; /* Center the paragraph */
 #streak-popup-toggle:checked ~ .layer {
     background-color: #fcebeb;
 }
+
