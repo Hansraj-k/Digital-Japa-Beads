@@ -847,3 +847,96 @@ document.querySelector('.round-image').addEventListener('click', function() {
     closeAllPopups();
     document.getElementById('image-change-menu').style.display = 'block';
 });
+
+// Improved PWA installation detection
+function isPWAInstalled() {
+  return (window.matchMedia('(display-mode: standalone)').matches) ||
+         (window.navigator.standalone) ||
+         (document.referrer.includes('android-app://')) ||
+         (localStorage.getItem('pwaInstalled') === 'true');
+}
+
+// Install button visibility management
+function updateInstallButton() {
+  const installBtn = document.getElementById('install-btn');
+  if (!installBtn) return;
+  
+  if (isPWAInstalled() || isIOS()) {
+    installBtn.style.display = 'none';
+  } else {
+    installBtn.style.display = 'block';
+  }
+}
+
+// Install button event handler
+function setupInstallButton() {
+  let deferredPrompt;
+  const installBtn = document.getElementById('install-btn');
+  
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    updateInstallButton();
+  });
+
+  window.addEventListener('appinstalled', () => {
+    localStorage.setItem('pwaInstalled', 'true');
+    deferredPrompt = null;
+    updateInstallButton();
+  });
+
+  if (installBtn) {
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      
+      if (outcome === 'accepted') {
+        localStorage.setItem('pwaInstalled', 'true');
+        installBtn.style.display = 'none';
+      }
+      
+      deferredPrompt = null;
+    });
+  }
+}
+
+// Initialize on load
+document.addEventListener('DOMContentLoaded', () => {
+  setupInstallButton();
+  updateInstallButton();
+  
+  // Periodic check (every 3 seconds)
+  setInterval(updateInstallButton, 3000);
+});
+
+// Add this to your reset functionality
+function clearAppCache() {
+  if ('caches' in window) {
+    caches.keys().then((cacheNames) => {
+      cacheNames.forEach((cacheName) => {
+        caches.delete(cacheName);
+      });
+      console.log('All caches cleared');
+      // Don't reset pwaInstalled flag here
+    });
+  }
+}
+
+// Example reset function
+document.getElementById('reset-all-settings')?.addEventListener('click', function() {
+  if (confirm('Reset all settings and clear cache?')) {
+    localStorage.removeItem('count');
+    localStorage.removeItem('round');
+    localStorage.removeItem('streak');
+    localStorage.removeItem('lastActivityDate');
+    localStorage.removeItem('chantingHistory');
+    localStorage.removeItem('vibrationSettings');
+    localStorage.removeItem('selectedImage');
+    clearAppCache();
+    window.location.reload();
+  }
+});
+
+
