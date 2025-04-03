@@ -182,26 +182,11 @@ function updateButtonSize(newSize) {
     const countBtn = document.getElementById('count-btn');
     const btnImg = countBtn.querySelector('img');
 
-
     countBtn.style.transform = `scale(${currentButtonSize / 100})`;
-
     if (btnImg) {
         btnImg.style.width = `${currentButtonSize}px`;
         btnImg.style.height = `${currentButtonSize}px`;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     adjustCircleContainer();
     vibrationSettings.buttonSize = currentButtonSize;
