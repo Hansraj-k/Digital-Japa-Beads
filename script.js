@@ -87,10 +87,10 @@ function updateSliderFill(slider) {
     const max = slider.max;
     const min = slider.min;
     const percent = ((value - min) / (max - min)) * 100;
-    
+
     // Update CSS variable
     slider.style.setProperty('--fill-percent', `${percent}%`);
-    
+
     // Update the displayed value
     if (slider.id === 'volume-slider') {
         document.getElementById('volume-value').textContent = value;
@@ -187,13 +187,13 @@ function loadSettingsFromStorage() {
 function updateButtonSize(newSize) {
     currentButtonSize = Math.max(minButtonSize, Math.min(maxButtonSize, newSize));
     document.getElementById('button-size-value').textContent = `${currentButtonSize}%`;
-    
+
     const countBtn = document.getElementById('count-btn');
     const btnImg = countBtn.querySelector('img');
-    
+
     // Scale the button
     countBtn.style.transform = `scale(${currentButtonSize / 100})`;
-    
+
     // Adjust padding above and below the button equally
     const paddingAdjustment = (currentButtonSize - 100) * 0.5; // Adjust padding equally
     countBtn.style.paddingTop = `${paddingAdjustment}px`;
@@ -201,7 +201,7 @@ function updateButtonSize(newSize) {
 
     // Adjust the circle container padding based on button size
     adjustCircleContainer();
-    
+
     vibrationSettings.buttonSize = currentButtonSize;
     saveSettingsToStorage();
 }
@@ -624,150 +624,85 @@ closeImageMenuBtn.addEventListener('click', () => {
     imageChangeMenu.style.display = 'none';
 });
 
-let isDragging = false;
-let currentImage = null;
-let cropPosition = { x: 0, y: 0 };
 
-// Image upload handler
-// Add these variables
-let cropSize = 150;
-let isDragging = false;
-let startX, startY;
-let imgX = 0, imgY = 0;
-let currentImage = null;
 
-// Image upload handler
-imageUpload.addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function(event) {
-      const img = document.getElementById('source-image');
-      img.src = event.target.result;
-      
-      img.onload = function() {
-        currentImage = img;
-        // Center image initially
-        centerImage();
-        updateCropCircle();
-      };
-    };
-    reader.readAsDataURL(file);
-  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+imageUpload.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            imagePreview.src = e.target.result;
+            imagePreview.style.display = 'block';
+
+        };
+        reader.readAsDataURL(file);
+    }
 });
 
-function centerImage() {
-  if (!currentImage) return;
-  
-  const container = document.querySelector('.crop-area');
-  imgX = (currentImage.width - container.offsetWidth) / 2;
-  imgY = (currentImage.height - container.offsetHeight) / 2;
-  updateImagePosition();
-}
+saveImageBtn.addEventListener('click', () => {
+    const newImageSrc = imagePreview.src;
+    if (newImageSrc) {
+        localStorage.setItem('selectedImage', newImageSrc);
+        document.querySelector('.round-image').src = newImageSrc;
 
-function updateImagePosition() {
-  if (!currentImage) return;
-  
-  const img = document.getElementById('source-image');
-  img.style.transform = `translate(${-imgX}px, ${-imgY}px)`;
-  updateCropCircle();
-}
 
-function updateCropCircle() {
-  const circle = document.getElementById('crop-circle');
-  circle.style.width = `${cropSize}px`;
-  circle.style.height = `${cropSize}px`;
-  document.getElementById('size-value').textContent = `${cropSize}px`;
-  
-  // Keep circle centered
-  const container = document.querySelector('.crop-area');
-  circle.style.left = `${container.offsetWidth / 2}px`;
-  circle.style.top = `${container.offsetHeight / 2}px`;
-}
 
-// Drag image to position
-document.querySelector('.crop-area').addEventListener('mousedown', function(e) {
-  if (!currentImage) return;
-  
-  isDragging = true;
-  startX = e.clientX - imgX;
-  startY = e.clientY - imgY;
-  this.style.cursor = 'grabbing';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        imageChangeMenu.style.display = 'none';
+    }
 });
 
-document.addEventListener('mousemove', function(e) {
-  if (!isDragging || !currentImage) return;
-  
-  imgX = e.clientX - startX;
-  imgY = e.clientY - startY;
-  updateImagePosition();
-});
-
-document.addEventListener('mouseup', function() {
-  isDragging = false;
-  document.querySelector('.crop-area').style.cursor = 'move';
-});
-
-// Crop size controls
-document.getElementById('size-up').addEventListener('click', function() {
-  cropSize = Math.min(250, cropSize + 10);
-  updateCropCircle();
-});
-
-document.getElementById('size-down').addEventListener('click', function() {
-  cropSize = Math.max(50, cropSize - 10);
-  updateCropCircle();
-});
-
-document.getElementById('reset-crop').addEventListener('click', function() {
-  cropSize = 150;
-  centerImage();
-});
-
-// Save cropped image (use your existing save-image-btn)
-saveImageBtn.addEventListener('click', function() {
-  if (!currentImage) return;
-  
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  canvas.width = cropSize;
-  canvas.height = cropSize;
-  
-  // Create circular path
-  ctx.beginPath();
-  ctx.arc(cropSize/2, cropSize/2, cropSize/2, 0, Math.PI*2);
-  ctx.closePath();
-  ctx.clip();
-  
-  // Calculate source dimensions
-  const container = document.querySelector('.crop-area');
-  const scaleX = currentImage.naturalWidth / currentImage.offsetWidth;
-  const scaleY = currentImage.naturalHeight / currentImage.offsetHeight;
-  
-  // Draw cropped portion
-  ctx.drawImage(
-    currentImage,
-    imgX * scaleX,
-    imgY * scaleY,
-    cropSize * scaleX,
-    cropSize * scaleY,
-    0,
-    0,
-    cropSize,
-    cropSize
-  );
-  
-  // Save to localStorage
-  localStorage.setItem('selectedImage', canvas.toDataURL());
-  document.querySelector('.round-image').src = localStorage.getItem('selectedImage');
-  imageChangeMenu.style.display = 'none';
-});
-
-// Reset to default image (use your existing reset-image-btn)
-resetImageBtn.addEventListener('click', function() {
-  localStorage.removeItem('selectedImage');
-  document.querySelector('.round-image').src = 'rkhkmc.png';
-  imageChangeMenu.style.display = 'none';
+resetImageBtn.addEventListener('click', () => {
+    localStorage.removeItem('selectedImage');
+    document.querySelector('.round-image').src = 'rkhkmc.png';
+    imagePreview.src = '';
+    imagePreview.style.display = 'none';
 });
 
 // Check for saved image
