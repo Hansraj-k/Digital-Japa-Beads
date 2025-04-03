@@ -237,9 +237,10 @@ body {
     width: 100%;
     height: 8px;
     border-radius: 4px;
-    background: linear-gradient(to right, #00ffd5 0%, #333 0%);
+    background: #333; /* Default track color */
     outline: none;
-    transition: background 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .slider-controls input[type="range"]::-webkit-slider-thumb {
@@ -251,12 +252,8 @@ body {
     background: #00ffd5;
     border: 2px solid white;
     cursor: pointer;
-}
-
-.slider-controls input[type="range"]::-moz-range-track {
-    height: 8px;
-    border-radius: 4px;
-    background: linear-gradient(to right, #00ffd5 0%, #333 0%);
+    position: relative;
+    z-index: 2;
 }
 
 .slider-controls input[type="range"]::-moz-range-thumb {
@@ -266,6 +263,25 @@ body {
     background: #00ffd5;
     border: 2px solid white;
     cursor: pointer;
+}
+
+/* For WebKit browsers */
+.slider-controls input[type="range"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: var(--fill-percent);
+    background: #00ffd5;
+    z-index: 1;
+}
+
+/* For Firefox */
+.slider-controls input[type="range"]::-moz-range-progress {
+    background: #00ffd5;
+    height: 8px;
+    border-radius: 4px;
 }
 
 .slider-value {
