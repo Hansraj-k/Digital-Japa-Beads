@@ -931,3 +931,66 @@ document.getElementById('factory-reset')?.addEventListener('click', function() {
   });
 });
 
+// Enhanced PWA installation handling
+document.addEventListener('DOMContentLoaded', () => {
+    const installBtn = document.getElementById('install-btn');
+    
+    if (!installBtn) return;
+
+    // Function to check if PWA is installed
+    function isPWAInstalled() {
+        return window.matchMedia('(display-mode: standalone)').matches || 
+               window.navigator.standalone === true ||
+               document.referrer.includes('android-app://');
+    }
+
+    // Function to check if device is mobile
+    function isMobileDevice() {
+        return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    }
+
+    // Hide install button if PWA is already installed or not on mobile
+    if (isPWAInstalled() || !isMobileDevice()) {
+        installBtn.style.display = 'none';
+        return;
+    }
+
+    let deferredPrompt;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        
+        // Only show install button if PWA isn't installed and on mobile
+        if (!isPWAInstalled() && isMobileDevice()) {
+            installBtn.style.display = 'block';
+        }
+
+        installBtn.addEventListener('click', async () => {
+            installBtn.style.display = 'none';
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`User ${outcome} the install prompt`);
+            deferredPrompt = null;
+        });
+    });
+
+    window.addEventListener('appinstalled', () => {
+        console.log('PWA was installed');
+        installBtn.style.display = 'none';
+        
+        // Additional check after installation
+        setTimeout(() => {
+            if (isPWAInstalled()) {
+                installBtn.style.display = 'none';
+            }
+        }, 1000);
+    });
+
+    // Additional check on page load
+    window.addEventListener('load', () => {
+        if (isPWAInstalled()) {
+            installBtn.style.display = 'none';
+        }
+    });
+});
