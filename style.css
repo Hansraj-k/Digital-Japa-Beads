@@ -1367,3 +1367,11 @@ margin: 0 auto; /* Center the paragraph */
 .settings-option .button {
     margin-left: 10px;
 }
+
+#daily-reset-toggle {
+    position: relative;
+    z-index: 10;
+    opacity: 1 !important;
+    width: 74px !important;
+    height: 36px !important;
+}
