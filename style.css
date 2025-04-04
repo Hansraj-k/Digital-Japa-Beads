@@ -118,7 +118,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 3px;
     width: 100%;
 }
 
@@ -954,7 +954,7 @@ margin: 0 auto; /* Center the paragraph */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 3px;
     width: 100%;
 }
 .settings-option > div:first-child {
