@@ -1323,8 +1323,7 @@ margin: 0 auto; /* Center the paragraph */
     font-weight: 600;
 }
 
-#edit-circle-text-btn .settings-option {
+button#edit-circle-text-btn {
     display: flex;
     justify-content: center;
-    width: 100%;
 }
