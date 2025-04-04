@@ -51,7 +51,7 @@ let radius = 120;
 let maxRadius = 180;
 
 // Load saved circle text or use default (with space handling)
-let circleTextContent = (localStorage.getItem('circleText') || 'HAREKRISHNA').replace(/\s+/g, '');
+let circleTextContent = (localStorage.getItem('circleText') || 'HAREKRISHNAHAREKRISHNAKRISHNAKRISHNAHAREHAREHARERAMAHARERAMARAMARAMAHAREHARE').replace(/\s+/g, '');
 
 // Vibration settings with default values
 let vibrationSettings = {
@@ -487,7 +487,7 @@ function resetToDefaultSettings() {
         updateButtonSize(currentButtonSize);
 
         // Reset circle text (with space handling)
-        circleTextContent = 'HAREKRISHNA';
+        circleTextContent = 'HAREKRISHNAHAREKRISHNAKRISHNAKRISHNAHAREHAREHARERAMAHARERAMARAMARAMAHAREHARE';
         localStorage.setItem('circleText', circleTextContent);
         updateCircleText();
 
@@ -660,7 +660,7 @@ clearCircleTextBtn.addEventListener('click', function() {
 
 saveCircleTextBtn.addEventListener('click', () => {
     // Remove all spaces (start, end, and between) when saving
-    circleTextContent = circleTextInput.value.replace(/\s+/g, '') || 'HAREKRISHNA';
+    circleTextContent = circleTextInput.value.replace(/\s+/g, '') || 'HAREKRISHNAHAREKRISHNAKRISHNAKRISHNAHAREHAREHARERAMAHARERAMARAMARAMAHAREHARE';
     localStorage.setItem('circleText', circleTextContent);
     circleTextEditModal.style.display = 'none';
     updateCircleText();
