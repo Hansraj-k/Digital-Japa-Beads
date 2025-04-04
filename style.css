@@ -520,20 +520,6 @@ age */
         margin-top: 30px;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 p {
@@ -1236,4 +1222,14 @@ margin: 0 auto; /* Center the paragraph */
 }
 #cancel-reset:hover {
   background: #444;
+}
+
+#install-btn {
+    display: none; /* Hidden by default */
+    cursor: pointer;
+}
+
+/* Only show if JavaScript determines it should be visible */
+#install-btn.visible {
+    display: block;
 }
