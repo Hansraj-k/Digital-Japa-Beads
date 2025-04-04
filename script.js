@@ -1,4 +1,5 @@
 // Initialize count and round 
+let streakPopupToggle = document.getElementById('streak-popup-toggle');
 let count = parseInt(localStorage.getItem('count')) || 0;
 let round = parseInt(localStorage.getItem('round')) || 0;
 let audio = document.getElementById('audio');
@@ -17,6 +18,9 @@ let cancelResetRoundBtn = document.getElementById('cancel-reset-round');
 let resetCountBtn = document.getElementById('reset-count-btn');
 let resetRoundBtn = document.getElementById('reset-round-btn');
 let settingsBtn = document.getElementById('settings-btn');
+let settingsPopup = document.getElementById('settings-popup');
+let closeSettingsBtn = document.getElementById('close-settings');
+let saveSettingsBtn = document.getElementById('save-settings');
 let soundToggle = document.getElementById('sound-toggle');
 let countVibrationToggle = document.getElementById('count-vibration-toggle');
 let completeVibrationToggle = document.getElementById('complete-vibration-toggle');
@@ -27,7 +31,6 @@ let completeVibrationValue = document.getElementById('complete-vibration-value')
 let volumeSlider = document.getElementById('volume-slider');
 let volumeValue = document.getElementById('volume-value');
 let volumeControlContainer = document.getElementById('volume-control-container');
-let streakPopupToggle = document.getElementById('streak-popup-toggle');
 
 // Circle text edit elements
 let editCircleTextBtn = document.getElementById('edit-circle-text-btn');
@@ -71,11 +74,6 @@ let chantingHistory = JSON.parse(localStorage.getItem('chantingHistory')) || {};
 const streakAudio = new Audio();
 streakAudio.src = 'streak-sound.mp3';
 streakAudio.volume = 0.6;
-
-// Create settings menu overlay
-const settingsOverlay = document.createElement('div');
-settingsOverlay.className = 'menu-overlay';
-document.body.appendChild(settingsOverlay);
 
 // Function to reset counts daily at midnight
 function checkAndResetDaily() {
@@ -123,6 +121,7 @@ function updateRoundDisplay() {
 
 // Function to update the circle text based on the count
 function updateCircleText() {
+    // Ensure no spaces in the circle text content
     circleTextContent = circleTextContent.replace(/\s+/g, '');
 
     const letters = circleTextContent.repeat(Math.ceil(108 / circleTextContent.length)).split('');
@@ -203,12 +202,15 @@ function updateButtonSize(newSize) {
     document.getElementById('button-size-value').textContent = `${currentButtonSize}%`;
 
     const countBtn = document.getElementById('count-btn');
+    const btnImg = countBtn.querySelector('img');
+
     countBtn.style.transform = `scale(${currentButtonSize / 100})`;
     const paddingAdjustment = (currentButtonSize - 100) * 0.5;
     countBtn.style.paddingTop = `${paddingAdjustment}px`;
     countBtn.style.paddingBottom = `${paddingAdjustment}px`;
 
     adjustCircleContainer();
+
     vibrationSettings.buttonSize = currentButtonSize;
     saveSettingsToStorage();
 }
@@ -231,7 +233,7 @@ function adjustCircleContainer() {
     const sizeAdjustment = (currentButtonSize - 100) * 3;
     const newPadding = basePadding + sizeAdjustment;
 
-    circleContainer.style.paddingTop = `${newPadding}px`;
+    circleContainer.style.setProperty("padding-top", `${newPadding}px`, "important");
 }
 
 // Function to update settings UI
@@ -275,29 +277,39 @@ function closeAllPopups() {
     popups.forEach(popup => {
         popup.style.display = 'none';
     });
-    closeSettingsMenu();
 }
 
-// Function to close settings menu
-function closeSettingsMenu() {
-    document.getElementById('settings-menu').classList.remove('open');
-    settingsOverlay.classList.remove('active');
-    saveSettingsToStorage();
+// Helper function to format date as YYYY-MM-DD
+function formatDate(date) {
+    const d = new Date(date);
+    let month = '' + (d.getMonth() + 1);
+    let day = '' + d.getDate();
+    const year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
+// Helper function to check if two dates are the same day
+function isSameDay(date1, date2) {
+    return date1.getFullYear() === date2.getFullYear() &&
+           date1.getMonth() === date2.getMonth() &&
+           date1.getDate() === date2.getDate();
 }
 
 // Initialize streak on app load
 function initializeStreak() {
     const today = new Date();
-    const todayStr = today.toISOString().split('T')[0];
+    const todayStr = formatDate(today);
 
     if (lastActivityDate) {
         const lastDate = new Date(lastActivityDate);
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
 
-        if (lastDate < yesterday && !(lastDate.getDate() === yesterday.getDate() && 
-                                     lastDate.getMonth() === yesterday.getMonth() && 
-                                     lastDate.getFullYear() === yesterday.getFullYear())) {
+        if (lastDate < yesterday && !isSameDay(lastDate, yesterday)) {
             streak = 0;
             localStorage.setItem('streak', streak);
         }
@@ -313,10 +325,10 @@ function initializeStreak() {
 // Function to update streak
 function updateStreak() {
     const today = new Date();
-    const todayStr = today.toISOString().split('T')[0];
+    const todayStr = formatDate(today);
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    const yesterdayStr = formatDate(yesterday);
 
     if (lastActivityDate === todayStr) {
         return;
@@ -328,7 +340,7 @@ function updateStreak() {
     }
     else if (lastActivityDate === yesterdayStr) {
         streak++;
-        showStreakPopup(`Incredible dedication! 🙌\n\nYou've been chanting consistently for ${streak} day${streak > 1 ? 's' : ''}!`);
+        showStreakPopup(`Incredible dedication! 🙌\n\nYou've been chanting consistently for ${streak} days${streak > 1 ? 's' : ''}!`);
     }
     else {
         const lastDate = new Date(lastActivityDate);
@@ -363,19 +375,18 @@ function updateStreakDisplay() {
     renderStreakCalendar();
 }
 
-// Function to render streak calendar
+// Function to render streak calendar (shows last 7 days)
 function renderStreakCalendar() {
     const streakCalendar = document.getElementById('streak-calendar');
     if (!streakCalendar) return;
 
     streakCalendar.innerHTML = '';
     const today = new Date();
-    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     for (let i = 6; i >= 0; i--) {
         const date = new Date(today);
         date.setDate(today.getDate() - i);
-        const dateStr = date.toISOString().split('T')[0];
+        const dateStr = formatDate(date);
 
         const dayElement = document.createElement('div');
         dayElement.className = 'streak-day';
@@ -388,6 +399,7 @@ function renderStreakCalendar() {
             dayElement.classList.add('today');
         }
 
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         dayElement.setAttribute('data-day', dayNames[date.getDay()]);
         dayElement.textContent = date.getDate();
 
@@ -474,6 +486,7 @@ function resetToDefaultSettings() {
         currentButtonSize = defaultSettings.buttonSize;
         updateButtonSize(currentButtonSize);
 
+        // Reset circle text (with space handling)
         circleTextContent = 'HAREKRISHNAHAREKRISHNAKRISHNAKRISHNAHAREHAREHARERAMAHARERAMARAMARAMAHAREHARE';
         localStorage.setItem('circleText', circleTextContent);
         updateCircleText();
@@ -484,7 +497,7 @@ function resetToDefaultSettings() {
     }
 }
 
-// Factory Reset Function
+// Nuclear Reset Function
 async function performFactoryReset() {
     const dialog = document.querySelector('.reset-dialog');
     if (dialog) {
@@ -496,33 +509,30 @@ async function performFactoryReset() {
 
     try {
         localStorage.clear();
-        sessionStorage.clear();
 
         if (window.indexedDB) {
             const dbs = await window.indexedDB.databases();
-            for (const db of dbs) {
+            dbs.forEach(db => {
                 if (db.name) {
-                    await window.indexedDB.deleteDatabase(db.name);
+                    window.indexedDB.deleteDatabase(db.name);
                 }
-            }
+            });
         }
 
         if ('caches' in window) {
             const cacheNames = await caches.keys();
-            for (const cacheName of cacheNames) {
-                await caches.delete(cacheName);
-            }
+            await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
         }
 
         if ('serviceWorker' in navigator) {
             const registrations = await navigator.serviceWorker.getRegistrations();
-            for (const registration of registrations) {
-                await registration.unregister();
-            }
+            await Promise.all(registrations.map(reg => reg.unregister()));
         }
 
+        sessionStorage.clear();
+
         setTimeout(() => {
-            window.location.href = window.location.href.split('?')[0] + '?reset=' + Date.now();
+            window.location.href = window.location.origin + window.location.pathname + '?reset=' + Date.now();
         }, 1000);
 
     } catch (error) {
@@ -586,58 +596,46 @@ cancelResetRoundBtn.addEventListener('click', () => {
     popupRoundReset.style.display = 'none';
 });
 
-// Settings menu toggle
 settingsBtn.addEventListener('click', () => {
     closeAllPopups();
-    document.getElementById('settings-menu').classList.add('open');
-    settingsOverlay.classList.add('active');
-    loadSettingsFromStorage();
+    settingsPopup.style.display = 'block';
 });
 
-// Close settings menu
-document.getElementById('close-settings-menu').addEventListener('click', closeSettingsMenu);
-settingsOverlay.addEventListener('click', closeSettingsMenu);
+closeSettingsBtn.addEventListener('click', () => {
+    settingsPopup.style.display = 'none';
+});
 
-// Auto-save settings when changed
+saveSettingsBtn.addEventListener('click', () => {
+    saveSettingsToStorage();
+    updateSettingsUI();
+    settingsPopup.style.display = 'none';
+});
+
 soundToggle.addEventListener('change', function() {
+    volumeControlContainer.style.display = this.checked ? 'block' : 'none';
     updateSettingsUI();
-    saveSettingsToStorage();
 });
 
-countVibrationToggle.addEventListener('change', function() {
-    updateSettingsUI();
-    saveSettingsToStorage();
-});
-
-completeVibrationToggle.addEventListener('change', function() {
-    updateSettingsUI();
-    saveSettingsToStorage();
-});
-
-streakPopupToggle.addEventListener('change', function() {
-    saveSettingsToStorage();
-});
+countVibrationToggle.addEventListener('change', updateSettingsUI);
+completeVibrationToggle.addEventListener('change', updateSettingsUI);
 
 countVibrationSlider.addEventListener('input', function() {
     updateSliderFill(this);
     countVibrationValue.textContent = `${this.value}ms`;
-    saveSettingsToStorage();
 });
 
 completeVibrationSlider.addEventListener('input', function() {
     updateSliderFill(this);
     completeVibrationValue.textContent = `${this.value}ms`;
-    saveSettingsToStorage();
 });
 
 volumeSlider.addEventListener('input', function() {
     updateSliderFill(this);
     volumeValue.textContent = this.value;
     audio.volume = this.value / 210;
-    saveSettingsToStorage();
 });
 
-// Button size changes
+// Button size controls
 document.getElementById('decrease-btn-size').addEventListener('click', () => {
     updateButtonSize(currentButtonSize - sizeStep);
 });
@@ -646,13 +644,14 @@ document.getElementById('increase-btn-size').addEventListener('click', () => {
     updateButtonSize(currentButtonSize + sizeStep);
 });
 
-// Circle text edit
+// Circle text edit functionality with space handling
 editCircleTextBtn.addEventListener('click', () => {
     closeAllPopups();
     circleTextInput.value = circleTextContent;
     circleTextEditModal.style.display = 'flex';
 });
 
+// Clear text button functionality
 clearCircleTextBtn.addEventListener('click', function() {
     circleTextInput.value = '';
     circleTextInput.classList.add('warning');
@@ -660,17 +659,18 @@ clearCircleTextBtn.addEventListener('click', function() {
 });
 
 saveCircleTextBtn.addEventListener('click', () => {
+    // Remove all spaces (start, end, and between) when saving
     circleTextContent = circleTextInput.value.replace(/\s+/g, '') || 'HAREKRISHNAHAREKRISHNAKRISHNAKRISHNAHAREHAREHARERAMAHARERAMARAMARAMAHAREHARE';
     localStorage.setItem('circleText', circleTextContent);
     circleTextEditModal.style.display = 'none';
     updateCircleText();
-    saveSettingsToStorage();
 });
 
 cancelCircleTextBtn.addEventListener('click', () => {
     circleTextEditModal.style.display = 'none';
 });
 
+// Show warning when spaces are entered in circle text
 circleTextInput.addEventListener('input', function() {
     const warningElement = document.querySelector('.space-warning');
     if (this.value.includes(' ')) {
@@ -683,35 +683,27 @@ circleTextInput.addEventListener('input', function() {
 });
 
 // Initialize the app
-document.addEventListener('DOMContentLoaded', function() {
-    updateCountDisplay();
-    updateRoundDisplay();
-    updateCircleText();
-    loadSettingsFromStorage();
-    initializeStreak();
-    checkAndResetDaily();
-    
-    // Initialize slider fills
-    updateSliderFill(volumeSlider);
-    updateSliderFill(countVibrationSlider);
-    updateSliderFill(completeVibrationSlider);
-    
-    // Set current year in footer
-    const currentYear = new Date().getFullYear();
-    document.getElementById('current-year').textContent = currentYear;
-});
+updateCountDisplay();
+updateRoundDisplay();
+updateCircleText();
+loadSettingsFromStorage();
+initializeStreak();
+checkAndResetDaily();
 
-// Set up a daily check
+// Set up a daily check (every hour to be safe)
 setInterval(checkAndResetDaily, 60 * 60 * 1000);
+
+// Set current year in footer
+const dateInIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
+const currentYear = dateInIST.getFullYear();
+document.getElementById('current-year').textContent = currentYear;
 
 // PWA installation handling
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-            console.log('ServiceWorker registration successful with scope: ', registration.scope);
-        }, function(err) {
-            console.log('ServiceWorker registration failed: ', err);
-        });
+    navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }).catch(function(error) {
+        console.log('ServiceWorker registration failed: ', error);
     });
 }
 
@@ -720,11 +712,28 @@ let deferredPrompt;
 const installBtn = document.getElementById('install-btn');
 
 if (installBtn) {
+    function isPWAInstalled() {
+        return window.matchMedia('(display-mode: standalone)').matches || 
+               window.navigator.standalone === true ||
+               document.referrer.includes('android-app://');
+    }
+
+    function isMobileDevice() {
+        return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    }
+
+    if (isPWAInstalled() || !isMobileDevice()) {
+        installBtn.style.display = 'none';
+    }
+
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        installBtn.style.display = 'block';
-        
+
+        if (!isPWAInstalled() && isMobileDevice()) {
+            installBtn.style.display = 'block';
+        }
+
         installBtn.addEventListener('click', async () => {
             installBtn.style.display = 'none';
             deferredPrompt.prompt();
@@ -737,6 +746,18 @@ if (installBtn) {
     window.addEventListener('appinstalled', () => {
         console.log('PWA was installed');
         installBtn.style.display = 'none';
+
+        setTimeout(() => {
+            if (isPWAInstalled()) {
+                installBtn.style.display = 'none';
+            }
+        }, 1000);
+    });
+
+    window.addEventListener('load', () => {
+        if (isPWAInstalled()) {
+            installBtn.style.display = 'none';
+        }
     });
 }
 
@@ -778,9 +799,31 @@ document.getElementById('factory-reset')?.addEventListener('click', function() {
     });
 });
 
-// Adjust circle container padding on resize
-window.addEventListener('resize', adjustCircleContainer);
+// Initialize slider fill on load
+document.addEventListener('DOMContentLoaded', function() {
+    updateSliderFill(document.getElementById('volume-slider'));
+    updateSliderFill(document.getElementById('count-vibration-slider'));
+    updateSliderFill(document.getElementById('complete-vibration-slider'));
+});
 
+// Adjust circle container padding on load and resize
+window.addEventListener('load', function() {
+    adjustCircleContainer();
+    updateButtonSize(currentButtonSize);
+});
+
+window.addEventListener('resize', function() {
+    adjustCircleContainer();
+    updateButtonSize(currentButtonSize);
+});
+
+// Adjust padding when app is installed
+window.addEventListener('appinstalled', () => {
+    setTimeout(() => {
+        adjustCircleContainer();
+        updateButtonSize(currentButtonSize);
+    }, 500);
+});
 // Show popup notification if first visit
 if (!localStorage.getItem('popupShown')) {
     document.getElementById('popupnotify').style.display = 'flex';
