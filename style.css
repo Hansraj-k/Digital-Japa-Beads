@@ -1288,3 +1288,15 @@ margin: 0 auto; /* Center the paragraph */
     background-color: #333;
     color: white;
 }
+
+#circle-text-input.warning {
+    border-color: #ff9900;
+    box-shadow: 0 0 5px rgba(255, 153, 0, 0.5);
+}
+
+.space-warning {
+    color: #ff9900;
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+}
