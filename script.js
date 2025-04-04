@@ -49,8 +49,8 @@ let totalLetters = 108;
 let radius = 120;
 let maxRadius = 180;
 
-// Load saved circle text or use default
-let circleTextContent = localStorage.getItem('circleText') || 'HAREKRISHNA';
+// Load saved circle text or use default (with space handling)
+let circleTextContent = (localStorage.getItem('circleText') || 'HAREKRISHNA').replace(/\s+/g, '');
 
 // Vibration settings with default values
 let vibrationSettings = {
@@ -120,6 +120,9 @@ function updateRoundDisplay() {
 
 // Function to update the circle text based on the count
 function updateCircleText() {
+    // Ensure no spaces in the circle text content
+    circleTextContent = circleTextContent.replace(/\s+/g, '');
+    
     const letters = circleTextContent.repeat(Math.ceil(108 / circleTextContent.length)).split('');
     const circleDivisions = [33, 36, 39];
     const radiusIncrement = 30;
@@ -482,7 +485,7 @@ function resetToDefaultSettings() {
         currentButtonSize = defaultSettings.buttonSize;
         updateButtonSize(currentButtonSize);
 
-        // Reset circle text
+        // Reset circle text (with space handling)
         circleTextContent = 'HAREKRISHNA';
         localStorage.setItem('circleText', circleTextContent);
         updateCircleText();
@@ -640,7 +643,7 @@ document.getElementById('increase-btn-size').addEventListener('click', () => {
     updateButtonSize(currentButtonSize + sizeStep);
 });
 
-// Circle text edit functionality
+// Circle text edit functionality with space handling
 editCircleTextBtn.addEventListener('click', () => {
     closeAllPopups();
     circleTextInput.value = circleTextContent;
@@ -648,7 +651,8 @@ editCircleTextBtn.addEventListener('click', () => {
 });
 
 saveCircleTextBtn.addEventListener('click', () => {
-    circleTextContent = circleTextInput.value.trim() || 'HAREKRISHNA';
+    // Remove all spaces (start, end, and between) when saving
+    circleTextContent = circleTextInput.value.replace(/\s+/g, '') || 'HAREKRISHNA';
     localStorage.setItem('circleText', circleTextContent);
     circleTextEditModal.style.display = 'none';
     updateCircleText();
@@ -656,6 +660,18 @@ saveCircleTextBtn.addEventListener('click', () => {
 
 cancelCircleTextBtn.addEventListener('click', () => {
     circleTextEditModal.style.display = 'none';
+});
+
+// Show warning when spaces are entered in circle text
+circleTextInput.addEventListener('input', function() {
+    const warningElement = document.querySelector('.space-warning');
+    if (this.value.includes(' ')) {
+        this.classList.add('warning');
+        warningElement.style.display = 'block';
+    } else {
+        this.classList.remove('warning');
+        warningElement.style.display = 'none';
+    }
 });
 
 // Initialize the app
