@@ -1322,3 +1322,9 @@ margin: 0 auto; /* Center the paragraph */
     color: #ff4444;
     font-weight: 600;
 }
+
+.edit-circle-text-btn .settings-option {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
