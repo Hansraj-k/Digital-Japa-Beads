@@ -926,3 +926,8 @@ if (!localStorage.getItem('popupShown')) {
         localStorage.setItem('popupShown', 'true');
     });
 }
+
+document.querySelector('.round-image').addEventListener('click', function() {
+    closeAllPopups();
+    document.getElementById('image-change-menu').style.display = 'block';
+});
