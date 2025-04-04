@@ -24,6 +24,7 @@ let saveSettingsBtn = document.getElementById('save-settings');
 let soundToggle = document.getElementById('sound-toggle');
 let countVibrationToggle = document.getElementById('count-vibration-toggle');
 let completeVibrationToggle = document.getElementById('complete-vibration-toggle');
+let dailyResetToggle = document.getElementById('daily-reset-toggle');
 let countVibrationSlider = document.getElementById('count-vibration-slider');
 let completeVibrationSlider = document.getElementById('complete-vibration-slider');
 let countVibrationValue = document.getElementById('count-vibration-value');
@@ -62,7 +63,8 @@ let vibrationSettings = {
     completeVibrationDuration: 1000,
     volume: 210,
     buttonSize: 100,
-    streakPopupEnabled: true
+    streakPopupEnabled: true,
+    dailyResetEnabled: true
 };
 
 // Streak variables
@@ -75,8 +77,11 @@ const streakAudio = new Audio();
 streakAudio.src = 'streak-sound.mp3';
 streakAudio.volume = 0.6;
 
-// Function to reset counts daily at midnight
+// Function to reset counts daily at midnight (with daily reset option)
 function checkAndResetDaily() {
+    // Only reset if daily reset is enabled
+    if (!vibrationSettings.dailyResetEnabled) return;
+
     const today = new Date().toDateString();
     const lastResetDate = localStorage.getItem('lastResetDate');
 
@@ -169,7 +174,8 @@ function saveSettingsToStorage() {
         completeVibrationDuration: parseInt(completeVibrationSlider.value),
         volume: parseInt(volumeSlider.value),
         buttonSize: currentButtonSize,
-        streakPopupEnabled: streakPopupToggle.checked
+        streakPopupEnabled: streakPopupToggle.checked,
+        dailyResetEnabled: dailyResetToggle.checked
     };
     localStorage.setItem('vibrationSettings', JSON.stringify(vibrationSettings));
 }
@@ -179,9 +185,15 @@ function loadSettingsFromStorage() {
     if (savedSettings) {
         vibrationSettings = JSON.parse(savedSettings);
 
+        // Set default for dailyResetEnabled if it doesn't exist
+        if (vibrationSettings.dailyResetEnabled === undefined) {
+            vibrationSettings.dailyResetEnabled = true;
+        }
+
         soundToggle.checked = vibrationSettings.soundEnabled !== false;
         countVibrationToggle.checked = vibrationSettings.countVibrationEnabled || false;
         completeVibrationToggle.checked = vibrationSettings.completeVibrationEnabled !== false;
+        dailyResetToggle.checked = vibrationSettings.dailyResetEnabled !== false;
         countVibrationSlider.value = vibrationSettings.countVibrationDuration || 60;
         completeVibrationSlider.value = vibrationSettings.completeVibrationDuration || 1000;
         volumeSlider.value = vibrationSettings.volume !== undefined ? vibrationSettings.volume : 210;
@@ -322,7 +334,7 @@ function initializeStreak() {
     updateStreakDisplay();
 }
 
-// Function to update streak
+// Function to update streak with daily reset awareness
 function updateStreak() {
     const today = new Date();
     const todayStr = formatDate(today);
@@ -348,7 +360,12 @@ function updateStreak() {
 
         if (daysDiff > 1) {
             streak = 1;
-            showStreakPopup("A small pause doesn't define your journey. Start fresh today! 🌿");
+            // Show different message if daily reset is disabled
+            if (!vibrationSettings.dailyResetEnabled) {
+                showStreakPopup("Note: Daily reset is disabled. For accurate streaks, chant at least once every day.");
+            } else {
+                showStreakPopup("A small pause doesn't define your journey. Start fresh today! 🌿");
+            }
         }
     }
 
@@ -470,7 +487,8 @@ const defaultSettings = {
     completeVibrationDuration: 1000,
     volume: 210,
     buttonSize: 100,
-    streakPopupEnabled: true
+    streakPopupEnabled: true,
+    dailyResetEnabled: true
 };
 
 // Function to reset all settings to default
@@ -479,6 +497,7 @@ function resetToDefaultSettings() {
         soundToggle.checked = defaultSettings.soundEnabled;
         countVibrationToggle.checked = defaultSettings.countVibrationEnabled;
         completeVibrationToggle.checked = defaultSettings.completeVibrationEnabled;
+        dailyResetToggle.checked = defaultSettings.dailyResetEnabled;
         countVibrationSlider.value = defaultSettings.countVibrationDuration;
         completeVibrationSlider.value = defaultSettings.completeVibrationDuration;
         volumeSlider.value = defaultSettings.volume;
@@ -614,6 +633,23 @@ saveSettingsBtn.addEventListener('click', () => {
 soundToggle.addEventListener('change', function() {
     volumeControlContainer.style.display = this.checked ? 'block' : 'none';
     updateSettingsUI();
+});
+
+// Daily reset toggle with confirmation
+dailyResetToggle.addEventListener('change', function() {
+    if (!this.checked) {
+        if (confirm("Disabling daily reset will keep your counts between days but may make streaks less accurate.\n\nContinue?")) {
+            vibrationSettings.dailyResetEnabled = false;
+            saveSettingsToStorage();
+            showStreakPopup("Daily reset disabled. Counts will persist, but streaks may be less accurate.");
+        } else {
+            this.checked = true;
+        }
+    } else {
+        vibrationSettings.dailyResetEnabled = true;
+        saveSettingsToStorage();
+        showStreakPopup("Daily reset enabled. Counts will reset at midnight.");
+    }
 });
 
 countVibrationToggle.addEventListener('change', updateSettingsUI);
@@ -830,5 +866,5 @@ if (!localStorage.getItem('popupShown')) {
     document.getElementById('close-popupnotify').addEventListener('click', function() {
         document.getElementById('popupnotify').style.display = 'none';
         localStorage.setItem('popupShown', 'true');
-    });
+ });
 }
