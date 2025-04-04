@@ -18,9 +18,6 @@ let cancelResetRoundBtn = document.getElementById('cancel-reset-round');
 let resetCountBtn = document.getElementById('reset-count-btn');
 let resetRoundBtn = document.getElementById('reset-round-btn');
 let settingsBtn = document.getElementById('settings-btn');
-let settingsPopup = document.getElementById('settings-popup');
-let closeSettingsBtn = document.getElementById('close-settings');
-let saveSettingsBtn = document.getElementById('save-settings');
 let soundToggle = document.getElementById('sound-toggle');
 let countVibrationToggle = document.getElementById('count-vibration-toggle');
 let completeVibrationToggle = document.getElementById('complete-vibration-toggle');
@@ -75,6 +72,11 @@ const streakAudio = new Audio();
 streakAudio.src = 'streak-sound.mp3';
 streakAudio.volume = 0.6;
 
+// Create settings menu overlay
+const settingsOverlay = document.createElement('div');
+settingsOverlay.className = 'menu-overlay';
+document.body.appendChild(settingsOverlay);
+
 // Function to reset counts daily at midnight
 function checkAndResetDaily() {
     const today = new Date().toDateString();
@@ -98,7 +100,7 @@ function updateSliderFill(slider) {
     const max = slider.max;
     const min = slider.min;
     const percent = ((value - min) / (max - min)) * 100;
-    slider.style.setProperty('--fill-percent', `${percent}%`);
+    slider.style.setProperty('--fill-percent', `${percent}%');
 
     if (slider.id === 'volume-slider') {
         document.getElementById('volume-value').textContent = value;
@@ -277,6 +279,14 @@ function closeAllPopups() {
     popups.forEach(popup => {
         popup.style.display = 'none';
     });
+    closeSettingsMenu();
+}
+
+// Function to close settings menu
+function closeSettingsMenu() {
+    document.getElementById('settings-menu').classList.remove('open');
+    settingsOverlay.classList.remove('active');
+    saveSettingsToStorage();
 }
 
 // Helper function to format date as YYYY-MM-DD
@@ -596,52 +606,67 @@ cancelResetRoundBtn.addEventListener('click', () => {
     popupRoundReset.style.display = 'none';
 });
 
+// Settings menu toggle
 settingsBtn.addEventListener('click', () => {
     closeAllPopups();
-    settingsPopup.style.display = 'block';
+    document.getElementById('settings-menu').classList.add('open');
+    settingsOverlay.classList.add('active');
+    loadSettingsFromStorage(); // Ensure current settings are shown
 });
 
-closeSettingsBtn.addEventListener('click', () => {
-    settingsPopup.style.display = 'none';
-});
+// Close settings menu
+document.getElementById('close-settings-menu').addEventListener('click', closeSettingsMenu);
+settingsOverlay.addEventListener('click', closeSettingsMenu);
 
-saveSettingsBtn.addEventListener('click', () => {
-    saveSettingsToStorage();
-    updateSettingsUI();
-    settingsPopup.style.display = 'none';
-});
-
+// Auto-save settings when changed
 soundToggle.addEventListener('change', function() {
-    volumeControlContainer.style.display = this.checked ? 'block' : 'none';
     updateSettingsUI();
+    saveSettingsToStorage();
 });
 
-countVibrationToggle.addEventListener('change', updateSettingsUI);
-completeVibrationToggle.addEventListener('change', updateSettingsUI);
+countVibrationToggle.addEventListener('change', function() {
+    updateSettingsUI();
+    saveSettingsToStorage();
+});
 
+completeVibrationToggle.addEventListener('change', function() {
+    updateSettingsUI();
+    saveSettingsToStorage();
+});
+
+streakPopupToggle.addEventListener('change', function() {
+    saveSettingsToStorage();
+});
+
+// All slider inputs should auto-save
 countVibrationSlider.addEventListener('input', function() {
     updateSliderFill(this);
     countVibrationValue.textContent = `${this.value}ms`;
+    saveSettingsToStorage();
 });
 
 completeVibrationSlider.addEventListener('input', function() {
     updateSliderFill(this);
     completeVibrationValue.textContent = `${this.value}ms`;
+    saveSettingsToStorage();
 });
 
 volumeSlider.addEventListener('input', function() {
     updateSliderFill(this);
     volumeValue.textContent = this.value;
     audio.volume = this.value / 210;
+    saveSettingsToStorage();
 });
 
-// Button size controls
+// Button size changes auto-save
 document.getElementById('decrease-btn-size').addEventListener('click', () => {
     updateButtonSize(currentButtonSize - sizeStep);
+    saveSettingsToStorage();
 });
 
 document.getElementById('increase-btn-size').addEventListener('click', () => {
     updateButtonSize(currentButtonSize + sizeStep);
+    saveSettingsToStorage();
 });
 
 // Circle text edit functionality with space handling
@@ -664,6 +689,7 @@ saveCircleTextBtn.addEventListener('click', () => {
     localStorage.setItem('circleText', circleTextContent);
     circleTextEditModal.style.display = 'none';
     updateCircleText();
+    saveSettingsToStorage();
 });
 
 cancelCircleTextBtn.addEventListener('click', () => {
@@ -824,6 +850,7 @@ window.addEventListener('appinstalled', () => {
         updateButtonSize(currentButtonSize);
     }, 500);
 });
+
 // Show popup notification if first visit
 if (!localStorage.getItem('popupShown')) {
     document.getElementById('popupnotify').style.display = 'flex';
