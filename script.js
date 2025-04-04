@@ -75,6 +75,11 @@ const streakAudio = new Audio();
 streakAudio.src = 'streak-sound.mp3';
 streakAudio.volume = 0.6;
 
+
+
+
+
+
 // Function to reset counts daily at midnight
 function checkAndResetDaily() {
     const today = new Date().toDateString();
@@ -277,6 +282,14 @@ function closeAllPopups() {
     popups.forEach(popup => {
         popup.style.display = 'none';
     });
+
+
+
+
+
+
+
+
 }
 
 // Helper function to format date as YYYY-MM-DD
@@ -596,9 +609,12 @@ cancelResetRoundBtn.addEventListener('click', () => {
     popupRoundReset.style.display = 'none';
 });
 
+
 settingsBtn.addEventListener('click', () => {
     closeAllPopups();
     settingsPopup.style.display = 'block';
+
+
 });
 
 closeSettingsBtn.addEventListener('click', () => {
@@ -606,7 +622,12 @@ closeSettingsBtn.addEventListener('click', () => {
 });
 
 saveSettingsBtn.addEventListener('click', () => {
+
+
     saveSettingsToStorage();
+
+
+
     updateSettingsUI();
     settingsPopup.style.display = 'none';
 });
@@ -614,34 +635,42 @@ saveSettingsBtn.addEventListener('click', () => {
 soundToggle.addEventListener('change', function() {
     volumeControlContainer.style.display = this.checked ? 'block' : 'none';
     updateSettingsUI();
+
 });
 
 countVibrationToggle.addEventListener('change', updateSettingsUI);
 completeVibrationToggle.addEventListener('change', updateSettingsUI);
 
+
+
 countVibrationSlider.addEventListener('input', function() {
     updateSliderFill(this);
     countVibrationValue.textContent = `${this.value}ms`;
+
 });
 
 completeVibrationSlider.addEventListener('input', function() {
     updateSliderFill(this);
     completeVibrationValue.textContent = `${this.value}ms`;
+
 });
 
 volumeSlider.addEventListener('input', function() {
     updateSliderFill(this);
     volumeValue.textContent = this.value;
     audio.volume = this.value / 210;
+
 });
 
 // Button size controls
 document.getElementById('decrease-btn-size').addEventListener('click', () => {
     updateButtonSize(currentButtonSize - sizeStep);
+
 });
 
 document.getElementById('increase-btn-size').addEventListener('click', () => {
     updateButtonSize(currentButtonSize + sizeStep);
+
 });
 
 // Circle text edit functionality with space handling
@@ -664,6 +693,7 @@ saveCircleTextBtn.addEventListener('click', () => {
     localStorage.setItem('circleText', circleTextContent);
     circleTextEditModal.style.display = 'none';
     updateCircleText();
+
 });
 
 cancelCircleTextBtn.addEventListener('click', () => {
@@ -824,6 +854,7 @@ window.addEventListener('appinstalled', () => {
         updateButtonSize(currentButtonSize);
     }, 500);
 });
+
 // Show popup notification if first visit
 if (!localStorage.getItem('popupShown')) {
     document.getElementById('popupnotify').style.display = 'flex';
