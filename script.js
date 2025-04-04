@@ -863,3 +863,129 @@ if (!localStorage.getItem('popupShown')) {
         localStorage.setItem('popupShown', 'true');
     });
 }
+
+// Image change functionality
+const changeImageBtn = document.getElementById('change-image-btn');
+const imageChangeMenu = document.getElementById('image-change-menu');
+const imageUpload = document.getElementById('image-upload');
+const imagePreview = document.getElementById('image-preview');
+const saveImageBtn = document.getElementById('save-image-btn');
+const resetImageBtn = document.getElementById('reset-image-btn');
+const closeImageMenuBtn = document.getElementById('close-image-menu');
+const roundImage = document.getElementById('round-image');
+
+// Default image paths
+const defaultImagePath = 'rkhkmc.png';
+const defaultImagePath2 = 'rkhkmc.jpg';
+
+// Open image change menu
+changeImageBtn.addEventListener('click', () => {
+    closeAllPopups();
+    imageChangeMenu.style.display = 'block';
+});
+
+// Close image change menu
+closeImageMenuBtn.addEventListener('click', () => {
+    imageChangeMenu.style.display = 'none';
+    imagePreview.src = '';
+    imageUpload.value = '';
+});
+
+// Handle image upload
+imageUpload.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            imagePreview.src = event.target.result;
+            imagePreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Save selected image
+saveImageBtn.addEventListener('click', () => {
+    if (imagePreview.src && imagePreview.src !== '') {
+        // Save to localStorage as base64
+        localStorage.setItem('customRoundImage', imagePreview.src);
+        roundImage.src = imagePreview.src;
+        
+        // Also save the file reference if needed
+        if (imageUpload.files.length > 0) {
+            localStorage.setItem('customImageFile', JSON.stringify({
+                name: imageUpload.files[0].name,
+                type: imageUpload.files[0].type
+            }));
+        }
+        
+        imageChangeMenu.style.display = 'none';
+        imageUpload.value = '';
+    } else {
+        alert('Please select an image first');
+    }
+});
+
+// Reset to default image
+resetImageBtn.addEventListener('click', () => {
+    // Try both default image paths
+    const img1 = new Image();
+    img1.src = defaultImagePath;
+    img1.onload = () => {
+        localStorage.setItem('customRoundImage', defaultImagePath);
+        roundImage.src = defaultImagePath;
+        imageChangeMenu.style.display = 'none';
+        imageUpload.value = '';
+        imagePreview.src = '';
+    };
+    img1.onerror = () => {
+        const img2 = new Image();
+        img2.src = defaultImagePath2;
+        img2.onload = () => {
+            localStorage.setItem('customRoundImage', defaultImagePath2);
+            roundImage.src = defaultImagePath2;
+            imageChangeMenu.style.display = 'none';
+            imageUpload.value = '';
+            imagePreview.src = '';
+        };
+        img2.onerror = () => {
+            alert('Default image not found');
+        };
+    };
+});
+
+// Load saved image on startup
+function loadSavedImage() {
+    const savedImage = localStorage.getItem('customRoundImage');
+    if (savedImage) {
+        // Check if the saved image exists
+        const img = new Image();
+        img.onload = function() {
+            roundImage.src = savedImage;
+        };
+        img.onerror = function() {
+            // If saved image fails to load, try defaults
+            const img1 = new Image();
+            img1.src = defaultImagePath;
+            img1.onload = () => {
+                roundImage.src = defaultImagePath;
+            };
+            img1.onerror = () => {
+                roundImage.src = defaultImagePath2;
+            };
+        };
+        img.src = savedImage;
+    }
+}
+
+// Initialize the image on load
+document.addEventListener('DOMContentLoaded', function() {
+    loadSavedImage(); 
+    // Also initialize other components
+    updateCountDisplay();
+    updateRoundDisplay();
+    updateCircleText();
+    loadSettingsFromStorage();
+    initializeStreak();
+    checkAndResetDaily();
+});
