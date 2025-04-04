@@ -1323,7 +1323,6 @@ margin: 0 auto; /* Center the paragraph */
     font-weight: 600;
 }
 
-button#edit-circle-text-btn {
-    display: flex;
-    justify-content: center;
+#edit-circle-text-btn {
+    margin: 0 auto;
 }
