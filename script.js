@@ -1,5 +1,4 @@
 // Initialize count and round 
-let streakPopupToggle = document.getElementById('streak-popup-toggle');
 let count = parseInt(localStorage.getItem('count')) || 0;
 let round = parseInt(localStorage.getItem('round')) || 0;
 let audio = document.getElementById('audio');
@@ -28,6 +27,7 @@ let completeVibrationValue = document.getElementById('complete-vibration-value')
 let volumeSlider = document.getElementById('volume-slider');
 let volumeValue = document.getElementById('volume-value');
 let volumeControlContainer = document.getElementById('volume-control-container');
+let streakPopupToggle = document.getElementById('streak-popup-toggle');
 
 // Circle text edit elements
 let editCircleTextBtn = document.getElementById('edit-circle-text-btn');
@@ -100,7 +100,7 @@ function updateSliderFill(slider) {
     const max = slider.max;
     const min = slider.min;
     const percent = ((value - min) / (max - min)) * 100;
-    slider.style.setProperty('--fill-percent', `${percent}%');
+    slider.style.setProperty('--fill-percent', `${percent}%`);
 
     if (slider.id === 'volume-slider') {
         document.getElementById('volume-value').textContent = value;
@@ -123,7 +123,6 @@ function updateRoundDisplay() {
 
 // Function to update the circle text based on the count
 function updateCircleText() {
-    // Ensure no spaces in the circle text content
     circleTextContent = circleTextContent.replace(/\s+/g, '');
 
     const letters = circleTextContent.repeat(Math.ceil(108 / circleTextContent.length)).split('');
@@ -204,15 +203,12 @@ function updateButtonSize(newSize) {
     document.getElementById('button-size-value').textContent = `${currentButtonSize}%`;
 
     const countBtn = document.getElementById('count-btn');
-    const btnImg = countBtn.querySelector('img');
-
     countBtn.style.transform = `scale(${currentButtonSize / 100})`;
     const paddingAdjustment = (currentButtonSize - 100) * 0.5;
     countBtn.style.paddingTop = `${paddingAdjustment}px`;
     countBtn.style.paddingBottom = `${paddingAdjustment}px`;
 
     adjustCircleContainer();
-
     vibrationSettings.buttonSize = currentButtonSize;
     saveSettingsToStorage();
 }
@@ -235,7 +231,7 @@ function adjustCircleContainer() {
     const sizeAdjustment = (currentButtonSize - 100) * 3;
     const newPadding = basePadding + sizeAdjustment;
 
-    circleContainer.style.setProperty("padding-top", `${newPadding}px`, "important");
+    circleContainer.style.paddingTop = `${newPadding}px`;
 }
 
 // Function to update settings UI
@@ -289,37 +285,19 @@ function closeSettingsMenu() {
     saveSettingsToStorage();
 }
 
-// Helper function to format date as YYYY-MM-DD
-function formatDate(date) {
-    const d = new Date(date);
-    let month = '' + (d.getMonth() + 1);
-    let day = '' + d.getDate();
-    const year = d.getFullYear();
-
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
-
-    return [year, month, day].join('-');
-}
-
-// Helper function to check if two dates are the same day
-function isSameDay(date1, date2) {
-    return date1.getFullYear() === date2.getFullYear() &&
-           date1.getMonth() === date2.getMonth() &&
-           date1.getDate() === date2.getDate();
-}
-
 // Initialize streak on app load
 function initializeStreak() {
     const today = new Date();
-    const todayStr = formatDate(today);
+    const todayStr = today.toISOString().split('T')[0];
 
     if (lastActivityDate) {
         const lastDate = new Date(lastActivityDate);
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
 
-        if (lastDate < yesterday && !isSameDay(lastDate, yesterday)) {
+        if (lastDate < yesterday && !(lastDate.getDate() === yesterday.getDate() && 
+                                     lastDate.getMonth() === yesterday.getMonth() && 
+                                     lastDate.getFullYear() === yesterday.getFullYear())) {
             streak = 0;
             localStorage.setItem('streak', streak);
         }
@@ -335,10 +313,10 @@ function initializeStreak() {
 // Function to update streak
 function updateStreak() {
     const today = new Date();
-    const todayStr = formatDate(today);
+    const todayStr = today.toISOString().split('T')[0];
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = formatDate(yesterday);
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
 
     if (lastActivityDate === todayStr) {
         return;
@@ -350,7 +328,7 @@ function updateStreak() {
     }
     else if (lastActivityDate === yesterdayStr) {
         streak++;
-        showStreakPopup(`Incredible dedication! 🙌\n\nYou've been chanting consistently for ${streak} days${streak > 1 ? 's' : ''}!`);
+        showStreakPopup(`Incredible dedication! 🙌\n\nYou've been chanting consistently for ${streak} day${streak > 1 ? 's' : ''}!`);
     }
     else {
         const lastDate = new Date(lastActivityDate);
@@ -385,18 +363,19 @@ function updateStreakDisplay() {
     renderStreakCalendar();
 }
 
-// Function to render streak calendar (shows last 7 days)
+// Function to render streak calendar
 function renderStreakCalendar() {
     const streakCalendar = document.getElementById('streak-calendar');
     if (!streakCalendar) return;
 
     streakCalendar.innerHTML = '';
     const today = new Date();
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     for (let i = 6; i >= 0; i--) {
         const date = new Date(today);
         date.setDate(today.getDate() - i);
-        const dateStr = formatDate(date);
+        const dateStr = date.toISOString().split('T')[0];
 
         const dayElement = document.createElement('div');
         dayElement.className = 'streak-day';
@@ -409,7 +388,6 @@ function renderStreakCalendar() {
             dayElement.classList.add('today');
         }
 
-        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         dayElement.setAttribute('data-day', dayNames[date.getDay()]);
         dayElement.textContent = date.getDate();
 
@@ -496,7 +474,6 @@ function resetToDefaultSettings() {
         currentButtonSize = defaultSettings.buttonSize;
         updateButtonSize(currentButtonSize);
 
-        // Reset circle text (with space handling)
         circleTextContent = 'HAREKRISHNAHAREKRISHNAKRISHNAKRISHNAHAREHAREHARERAMAHARERAMARAMARAMAHAREHARE';
         localStorage.setItem('circleText', circleTextContent);
         updateCircleText();
@@ -507,7 +484,7 @@ function resetToDefaultSettings() {
     }
 }
 
-// Nuclear Reset Function
+// Factory Reset Function
 async function performFactoryReset() {
     const dialog = document.querySelector('.reset-dialog');
     if (dialog) {
@@ -519,30 +496,33 @@ async function performFactoryReset() {
 
     try {
         localStorage.clear();
+        sessionStorage.clear();
 
         if (window.indexedDB) {
             const dbs = await window.indexedDB.databases();
-            dbs.forEach(db => {
+            for (const db of dbs) {
                 if (db.name) {
-                    window.indexedDB.deleteDatabase(db.name);
+                    await window.indexedDB.deleteDatabase(db.name);
                 }
-            });
+            }
         }
 
         if ('caches' in window) {
             const cacheNames = await caches.keys();
-            await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+            for (const cacheName of cacheNames) {
+                await caches.delete(cacheName);
+            }
         }
 
         if ('serviceWorker' in navigator) {
             const registrations = await navigator.serviceWorker.getRegistrations();
-            await Promise.all(registrations.map(reg => reg.unregister()));
+            for (const registration of registrations) {
+                await registration.unregister();
+            }
         }
 
-        sessionStorage.clear();
-
         setTimeout(() => {
-            window.location.href = window.location.origin + window.location.pathname + '?reset=' + Date.now();
+            window.location.href = window.location.href.split('?')[0] + '?reset=' + Date.now();
         }, 1000);
 
     } catch (error) {
@@ -611,7 +591,7 @@ settingsBtn.addEventListener('click', () => {
     closeAllPopups();
     document.getElementById('settings-menu').classList.add('open');
     settingsOverlay.classList.add('active');
-    loadSettingsFromStorage(); // Ensure current settings are shown
+    loadSettingsFromStorage();
 });
 
 // Close settings menu
@@ -638,7 +618,6 @@ streakPopupToggle.addEventListener('change', function() {
     saveSettingsToStorage();
 });
 
-// All slider inputs should auto-save
 countVibrationSlider.addEventListener('input', function() {
     updateSliderFill(this);
     countVibrationValue.textContent = `${this.value}ms`;
@@ -658,25 +637,22 @@ volumeSlider.addEventListener('input', function() {
     saveSettingsToStorage();
 });
 
-// Button size changes auto-save
+// Button size changes
 document.getElementById('decrease-btn-size').addEventListener('click', () => {
     updateButtonSize(currentButtonSize - sizeStep);
-    saveSettingsToStorage();
 });
 
 document.getElementById('increase-btn-size').addEventListener('click', () => {
     updateButtonSize(currentButtonSize + sizeStep);
-    saveSettingsToStorage();
 });
 
-// Circle text edit functionality with space handling
+// Circle text edit
 editCircleTextBtn.addEventListener('click', () => {
     closeAllPopups();
     circleTextInput.value = circleTextContent;
     circleTextEditModal.style.display = 'flex';
 });
 
-// Clear text button functionality
 clearCircleTextBtn.addEventListener('click', function() {
     circleTextInput.value = '';
     circleTextInput.classList.add('warning');
@@ -684,7 +660,6 @@ clearCircleTextBtn.addEventListener('click', function() {
 });
 
 saveCircleTextBtn.addEventListener('click', () => {
-    // Remove all spaces (start, end, and between) when saving
     circleTextContent = circleTextInput.value.replace(/\s+/g, '') || 'HAREKRISHNAHAREKRISHNAKRISHNAKRISHNAHAREHAREHARERAMAHARERAMARAMARAMAHAREHARE';
     localStorage.setItem('circleText', circleTextContent);
     circleTextEditModal.style.display = 'none';
@@ -696,7 +671,6 @@ cancelCircleTextBtn.addEventListener('click', () => {
     circleTextEditModal.style.display = 'none';
 });
 
-// Show warning when spaces are entered in circle text
 circleTextInput.addEventListener('input', function() {
     const warningElement = document.querySelector('.space-warning');
     if (this.value.includes(' ')) {
@@ -709,27 +683,35 @@ circleTextInput.addEventListener('input', function() {
 });
 
 // Initialize the app
-updateCountDisplay();
-updateRoundDisplay();
-updateCircleText();
-loadSettingsFromStorage();
-initializeStreak();
-checkAndResetDaily();
+document.addEventListener('DOMContentLoaded', function() {
+    updateCountDisplay();
+    updateRoundDisplay();
+    updateCircleText();
+    loadSettingsFromStorage();
+    initializeStreak();
+    checkAndResetDaily();
+    
+    // Initialize slider fills
+    updateSliderFill(volumeSlider);
+    updateSliderFill(countVibrationSlider);
+    updateSliderFill(completeVibrationSlider);
+    
+    // Set current year in footer
+    const currentYear = new Date().getFullYear();
+    document.getElementById('current-year').textContent = currentYear;
+});
 
-// Set up a daily check (every hour to be safe)
+// Set up a daily check
 setInterval(checkAndResetDaily, 60 * 60 * 1000);
-
-// Set current year in footer
-const dateInIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
-const currentYear = dateInIST.getFullYear();
-document.getElementById('current-year').textContent = currentYear;
 
 // PWA installation handling
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-    }).catch(function(error) {
-        console.log('ServiceWorker registration failed: ', error);
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, function(err) {
+            console.log('ServiceWorker registration failed: ', err);
+        });
     });
 }
 
@@ -738,28 +720,11 @@ let deferredPrompt;
 const installBtn = document.getElementById('install-btn');
 
 if (installBtn) {
-    function isPWAInstalled() {
-        return window.matchMedia('(display-mode: standalone)').matches || 
-               window.navigator.standalone === true ||
-               document.referrer.includes('android-app://');
-    }
-
-    function isMobileDevice() {
-        return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    }
-
-    if (isPWAInstalled() || !isMobileDevice()) {
-        installBtn.style.display = 'none';
-    }
-
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-
-        if (!isPWAInstalled() && isMobileDevice()) {
-            installBtn.style.display = 'block';
-        }
-
+        installBtn.style.display = 'block';
+        
         installBtn.addEventListener('click', async () => {
             installBtn.style.display = 'none';
             deferredPrompt.prompt();
@@ -772,18 +737,6 @@ if (installBtn) {
     window.addEventListener('appinstalled', () => {
         console.log('PWA was installed');
         installBtn.style.display = 'none';
-
-        setTimeout(() => {
-            if (isPWAInstalled()) {
-                installBtn.style.display = 'none';
-            }
-        }, 1000);
-    });
-
-    window.addEventListener('load', () => {
-        if (isPWAInstalled()) {
-            installBtn.style.display = 'none';
-        }
     });
 }
 
@@ -825,31 +778,8 @@ document.getElementById('factory-reset')?.addEventListener('click', function() {
     });
 });
 
-// Initialize slider fill on load
-document.addEventListener('DOMContentLoaded', function() {
-    updateSliderFill(document.getElementById('volume-slider'));
-    updateSliderFill(document.getElementById('count-vibration-slider'));
-    updateSliderFill(document.getElementById('complete-vibration-slider'));
-});
-
-// Adjust circle container padding on load and resize
-window.addEventListener('load', function() {
-    adjustCircleContainer();
-    updateButtonSize(currentButtonSize);
-});
-
-window.addEventListener('resize', function() {
-    adjustCircleContainer();
-    updateButtonSize(currentButtonSize);
-});
-
-// Adjust padding when app is installed
-window.addEventListener('appinstalled', () => {
-    setTimeout(() => {
-        adjustCircleContainer();
-        updateButtonSize(currentButtonSize);
-    }, 500);
-});
+// Adjust circle container padding on resize
+window.addEventListener('resize', adjustCircleContainer);
 
 // Show popup notification if first visit
 if (!localStorage.getItem('popupShown')) {
