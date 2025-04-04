@@ -994,3 +994,81 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+// Circle text edit functionality
+const editCircleTextBtn = document.getElementById('edit-circle-text-btn');
+const circleTextEditModal = document.getElementById('circle-text-edit-modal');
+const circleTextInput = document.getElementById('circle-text-input');
+const saveCircleTextBtn = document.getElementById('save-circle-text');
+const cancelCircleTextBtn = document.getElementById('cancel-circle-text');
+
+// Load saved circle text or use default
+let circleText = localStorage.getItem('circleText') || 'HAREKRISHNA';
+
+editCircleTextBtn.addEventListener('click', () => {
+    closeAllPopups();
+    circleTextInput.value = circleText;
+    circleTextEditModal.style.display = 'flex';
+});
+
+saveCircleTextBtn.addEventListener('click', () => {
+    circleText = circleTextInput.value.trim() || 'HAREKRISHNA';
+    localStorage.setItem('circleText', circleText);
+    circleTextEditModal.style.display = 'none';
+    updateCircleText();
+});
+
+cancelCircleTextBtn.addEventListener('click', () => {
+    circleTextEditModal.style.display = 'none';
+});
+
+// Modify the updateCircleText function to use the custom text
+function updateCircleText() {
+    const letters = circleText.repeat(Math.ceil(108 / circleText.length)).split('');
+    const circleDivisions = [33, 36, 39];
+    const radiusIncrement = 30;
+    const initialRadius = 100;
+    let letterIndex = 0;
+
+    circleText.innerHTML = '';
+
+    circleDivisions.forEach((lettersInCircle, circleIndex) => {
+        const currentRadius = initialRadius + circleIndex * radiusIncrement;
+        const angleStep = 360 / lettersInCircle;
+
+        for (let i = 0; i < lettersInCircle; i++) {
+            const angle = angleStep * i;
+            const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
+            const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
+
+            const letter = document.createElement('span');
+            letter.className = 'letter';
+            letter.textContent = letters[letterIndex % letters.length];
+            letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+            letter.style.color = letterIndex < count ? 'white' : 'grey';
+
+            circleText.appendChild(letter);
+            letterIndex++;
+        }
+    });
+}
+
+// Update the reset to default function to include circle text
+function resetToDefaultSettings() {
+    if (confirm("Are you sure you want to reset all settings to default values?")) {
+        // Existing reset code...
+        
+        // Reset circle text
+        circleText = 'HAREKRISHNA';
+        localStorage.setItem('circleText', circleText);
+        updateCircleText();
+        
+        // Rest of your reset code...
+    }
+}
+function closeAllPopups() {
+    const popups = document.querySelectorAll('.popup, .popupnotify, #image-change-menu, #circle-text-edit-modal');
+    popups.forEach(popup => {
+        popup.style.display = 'none';
+    });
+}
