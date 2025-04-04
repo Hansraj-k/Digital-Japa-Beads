@@ -103,35 +103,29 @@
                 <img id="made-with-img" src="rkhkmc_mwfet.png" alt="Made With">
             </div>
         </div>
-<div id="settings-menu" class="settings-menu">
-    <div class="settings-header">
-        <h2>Settings</h2>
-        <button id="close-settings-menu" class="close-settings-btn">
-            <i class="fa-solid fa-times"></i>
-        </button>
-    </div>
-    <div class="settings-scroll-container">
-        <p class="settings-subtext" style="color:WHITE; font-size:12.9px">Note: Your counter data saves automatically in your browser.</p>
-        
-        <div class="settings-section">
-            <div class="settings-option">
-                <h3>Notification</h3>
-                <div class="button-cover">
-                    <div class="button r">
-                        <input type="checkbox" id="sound-toggle" class="checkbox" checked>
-                        <div class="knobs"></div>
-                        <div class="layer"></div>
+        <div id="settings-popup" class="popup">
+<div class="popup-scroll-container">
+            <h2>Settings</h2>
+    <p class="settings-subtext" style="color:WHITE; font-size:12.9px">Note: Your counter data saves automatically in your browser, letting you pick up where you left off. Clearing your browser's cache or data will reset it.</p>
+            <div class="settings-section">
+                <div class="settings-option">
+                    <h3>Notification</h3>
+
+                    <div class="button-cover">
+                        <div class="button r">
+                            <input type="checkbox" id="sound-toggle" class="checkbox" checked>
+                            <div class="knobs"></div>
+                            <div class="layer"></div>
+                        </div>
+                    </div>
+                </div><p class="settings-subtext">Plays a musical notification after completing each round</p>
+                <div class="slider-container" id="volume-control-container">
+                    <div class="slider-controls"><h3>Volume</h3>
+                        <input type="range" min="0" max="210" value="210" class="slider" id="volume-slider">
+                        <span class="slider-value" id="volume-value">210</span>
                     </div>
                 </div>
             </div>
-            <p class="settings-subtext">Plays a musical notification after completing each round</p>
-            <div class="slider-container" id="volume-control-container">
-                <div class="slider-controls"><h3>Volume</h3>
-                    <input type="range" min="0" max="210" value="210" class="slider" id="volume-slider">
-                    <span class="slider-value" id="volume-value">210</span>
-                </div>
-            </div>
-        </div>
 
             <div class="settings-section vibration-setting">
     <div class="settings-option">
@@ -216,6 +210,8 @@
   </button>
   <p class="settings-subtext">Completely wipe ALL data and cached files</p>
 </div></div>
+            <button id="save-settings">Save Settings</button>
+            <button id="close-settings">Close</button>
         </div>
         <div class="counter-container">
             <div class="count-display-container">
