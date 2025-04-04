@@ -807,7 +807,7 @@ img, button, .fa , a{
 }
 
 #change-image-btn {
-    width: 90%;
+    width: 51%;
     max-width: 200px;
     background-color: #00ffd5;
     color: black;
@@ -897,7 +897,7 @@ img, button, .fa , a{
 
 /* Update the reset button styles */
 .reset-default-btn {
-    width: 80%; /* Slightly less than full width for better appearance */
+    width: 51%; /* Slightly less than full width for better appearance */
     max-width: 250px; /* Maximum width for larger screens */
     background-color: #ff4444;
     color: white;
@@ -1142,8 +1142,8 @@ margin: 0 auto; /* Center the paragraph */
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  width: 81%;
+  gap: 8.1px;
+  width: 54%;
   padding: 12px 0;
   border-radius: 25px;
   font-weight: bold;
