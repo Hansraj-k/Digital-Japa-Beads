@@ -1267,26 +1267,42 @@ margin: 0 auto; /* Center the paragraph */
     border-radius: 5px;
     font-family: 'Biski', sans-serif;
 }
-
 .circle-text-edit-buttons {
     display: flex;
     justify-content: space-between;
     margin-top: 15px;
+    gap: 10px;
 }
 
 .circle-text-edit-buttons button {
     padding: 8px 15px;
     border-radius: 5px;
     cursor: pointer;
+    flex: 1;
+}
+
+#clear-circle-text {
+    background-color: #ff4444;
+    color: white;
+    border: none;
 }
 
 #save-circle-text {
     background-color: #00ffd5;
     color: black;
 }
+
 #cancel-circle-text {
     background-color: #333;
     color: white;
+}
+
+#clear-circle-text:hover {
+    background-color: #cc0000;
+}
+
+#clear-circle-text:active {
+    transform: scale(0.98);
 }
 
 #circle-text-input.warning {
@@ -1300,7 +1316,6 @@ margin: 0 auto; /* Center the paragraph */
     margin-top: 5px;
     display: none;
 }
-
 .popupclear-highlight {
     margin-top: 10px;
     font-size: 14px;
