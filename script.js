@@ -808,7 +808,6 @@ window.addEventListener('resize', function() {
     adjustCircleContainer();
     updateButtonSize(currentButtonSize);
 });
-
 // Adjust padding when app is installed
 window.addEventListener('appinstalled', () => {
     setTimeout(() => {
@@ -816,7 +815,6 @@ window.addEventListener('appinstalled', () => {
         updateButtonSize(currentButtonSize);
     }, 500);
 });
-
 // Show popup notification if first visit
 if (!localStorage.getItem('popupShown')) {
     document.getElementById('popupnotify').style.display = 'flex';
