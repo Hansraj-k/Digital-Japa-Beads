@@ -994,3 +994,96 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+// Circle text edit elements
+let editCircleTextBtn = document.getElementById('edit-circle-text-btn');
+let circleTextEditModal = document.getElementById('circle-text-edit-modal');
+let circleTextInput = document.getElementById('circle-text-input');
+let clearCircleTextBtn = document.getElementById('clear-circle-text');
+let saveCircleTextBtn = document.getElementById('save-circle-text');
+let cancelCircleTextBtn = document.getElementById('cancel-circle-text');
+
+// Load saved circle text or use default (with space handling)
+let circleTextContent = (localStorage.getItem('circleText') || 'HAREKRISHNAHAREKRISHNAKRISHNAKRISHNAHAREHAREHARERAMAHARERAMARAMARAMAHAREHARE').replace(/\s+/g, '');
+
+// Circle text edit functionality with space handling
+editCircleTextBtn.addEventListener('click', () => {
+    closeAllPopups();
+    circleTextInput.value = circleTextContent;
+    circleTextEditModal.style.display = 'flex';
+});
+
+// Clear text button functionality
+clearCircleTextBtn.addEventListener('click', function() {
+    circleTextInput.value = '';
+    circleTextInput.classList.add('warning');
+    document.querySelector('.space-warning').style.display = 'block';
+});
+
+saveCircleTextBtn.addEventListener('click', () => {
+    // Remove all spaces (start, end, and between) when saving
+    circleTextContent = circleTextInput.value.replace(/\s+/g, '') || 'HAREKRISHNAHAREKRISHNAKRISHNAKRISHNAHAREHAREHARERAMAHARERAMARAMARAMAHAREHARE';
+    localStorage.setItem('circleText', circleTextContent);
+    circleTextEditModal.style.display = 'none';
+    updateCircleText();
+});
+
+cancelCircleTextBtn.addEventListener('click', () => {
+    circleTextEditModal.style.display = 'none';
+});
+
+// Show warning when spaces are entered in circle text
+circleTextInput.addEventListener('input', function() {
+    const warningElement = document.querySelector('.space-warning');
+    if (this.value.includes(' ')) {
+        this.classList.add('warning');
+        warningElement.style.display = 'block';
+    } else {
+        this.classList.remove('warning');
+        warningElement.style.display = 'none';
+    }
+});
+
+// Function to update the circle text based on the count
+function updateCircleText() {
+    // Ensure no spaces in the circle text content
+    circleTextContent = circleTextContent.replace(/\s+/g, '');
+    const letters = circleTextContent.repeat(Math.ceil(108 / circleTextContent.length)).split('');
+    const circleDivisions = [33, 36, 39];
+    const radiusIncrement = 30;
+    const initialRadius = 100;
+    let letterIndex = 0;
+    circleText.innerHTML = '';
+    
+    circleDivisions.forEach((lettersInCircle, circleIndex) => {
+        const currentRadius = initialRadius + circleIndex * radiusIncrement;
+        const angleStep = 360 / lettersInCircle;
+        
+        for (let i = 0; i < lettersInCircle; i++) {
+            const angle = angleStep * i;
+            const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
+            const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
+            const letter = document.createElement('span');
+            letter.className = 'letter';
+            letter.textContent = letters[letterIndex % letters.length];
+            letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+            letter.style.color = letterIndex < count ? 'white' : 'grey';
+            circleText.appendChild(letter);
+            letterIndex++;
+        }
+    });
+}
+
+// Also includes this part from the reset function that resets the circle text
+function resetToDefaultSettings() {
+    if (confirm("Are you sure you want to reset all settings to default values?")) {
+        // ... other reset code ...
+        
+        // Reset circle text (with space handling)
+        circleTextContent = 'HAREKRISHNAHAREKRISHNAKRISHNAKRISHNAHAREHAREHARERAMAHARERAMARAMARAMAHAREHARE';
+        localStorage.setItem('circleText', circleTextContent);
+        updateCircleText();
+        
+        // ... other reset code ...
+    }
+}
