@@ -112,7 +112,7 @@ function updateRoundDisplay() {
 
 // Function to update the circle text based on the count
 function updateCircleText() {
-    const letters = 'HAREKRISHNA'.repeat(9).split('');
+    const letters = 'HAREKRISHNAHAREKRISHNAKRISHNAKRISHNAHAREHAREHARERAMAHARERAMARAMARAMAHAREHARE'.repeat(9).split('');
     const circleDivisions = [33, 36, 39];
     const radiusIncrement = 30;
     const initialRadius = 100;
