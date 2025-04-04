@@ -32,6 +32,13 @@ let volumeSlider = document.getElementById('volume-slider');
 let volumeValue = document.getElementById('volume-value');
 let volumeControlContainer = document.getElementById('volume-control-container');
 
+// Circle text edit elements
+let editCircleTextBtn = document.getElementById('edit-circle-text-btn');
+let circleTextEditModal = document.getElementById('circle-text-edit-modal');
+let circleTextInput = document.getElementById('circle-text-input');
+let saveCircleTextBtn = document.getElementById('save-circle-text');
+let cancelCircleTextBtn = document.getElementById('cancel-circle-text');
+
 // Button size variables
 let currentButtonSize = 100;
 const minButtonSize = 50;
@@ -42,6 +49,9 @@ let totalLetters = 108;
 let radius = 120;
 let maxRadius = 180;
 
+// Load saved circle text or use default
+let circleTextContent = localStorage.getItem('circleText') || 'HAREKRISHNA';
+
 // Vibration settings with default values
 let vibrationSettings = {
     soundEnabled: true,
@@ -51,7 +61,7 @@ let vibrationSettings = {
     completeVibrationDuration: 1000,
     volume: 210,
     buttonSize: 100,
-    streakPopupEnabled: true  // Add this line
+    streakPopupEnabled: true
 };
 
 // Streak variables
@@ -61,7 +71,7 @@ let chantingHistory = JSON.parse(localStorage.getItem('chantingHistory')) || {};
 
 // Create audio element for streak sound
 const streakAudio = new Audio();
-streakAudio.src = 'streak-sound.mp3'; // Add this file to your project
+streakAudio.src = 'streak-sound.mp3';
 streakAudio.volume = 0.6;
 
 // Function to reset counts daily at midnight
@@ -87,11 +97,8 @@ function updateSliderFill(slider) {
     const max = slider.max;
     const min = slider.min;
     const percent = ((value - min) / (max - min)) * 100;
-
-    // Update CSS variable
     slider.style.setProperty('--fill-percent', `${percent}%`);
 
-    // Update the displayed value
     if (slider.id === 'volume-slider') {
         document.getElementById('volume-value').textContent = value;
     } else if (slider.id === 'count-vibration-slider') {
@@ -100,6 +107,7 @@ function updateSliderFill(slider) {
         document.getElementById('complete-vibration-value').textContent = `${value}ms`;
     }
 }
+
 // Function to update the displayed count
 function updateCountDisplay() {
     countDisplay.textContent = count;
@@ -112,12 +120,11 @@ function updateRoundDisplay() {
 
 // Function to update the circle text based on the count
 function updateCircleText() {
-    const letters = 'HAREKRISHNA'.repeat(9).split('');
+    const letters = circleTextContent.repeat(Math.ceil(108 / circleTextContent.length)).split('');
     const circleDivisions = [33, 36, 39];
     const radiusIncrement = 30;
     const initialRadius = 100;
     let letterIndex = 0;
-
 
     circleText.innerHTML = '';
 
@@ -158,7 +165,7 @@ function saveSettingsToStorage() {
         completeVibrationDuration: parseInt(completeVibrationSlider.value),
         volume: parseInt(volumeSlider.value),
         buttonSize: currentButtonSize,
-        streakPopupEnabled: streakPopupToggle.checked  // Add this line
+        streakPopupEnabled: streakPopupToggle.checked
     };
     localStorage.setItem('vibrationSettings', JSON.stringify(vibrationSettings));
 }
@@ -174,7 +181,7 @@ function loadSettingsFromStorage() {
         countVibrationSlider.value = vibrationSettings.countVibrationDuration || 60;
         completeVibrationSlider.value = vibrationSettings.completeVibrationDuration || 1000;
         volumeSlider.value = vibrationSettings.volume !== undefined ? vibrationSettings.volume : 210;
-        streakPopupToggle.checked = vibrationSettings.streakPopupEnabled !== false;  // Add this line
+        streakPopupToggle.checked = vibrationSettings.streakPopupEnabled !== false;
 
         if (vibrationSettings.buttonSize) {
             currentButtonSize = vibrationSettings.buttonSize;
@@ -184,6 +191,7 @@ function loadSettingsFromStorage() {
 
     updateSettingsUI();
 }
+
 // Function to update button size
 function updateButtonSize(newSize) {
     currentButtonSize = Math.max(minButtonSize, Math.min(maxButtonSize, newSize));
@@ -192,15 +200,11 @@ function updateButtonSize(newSize) {
     const countBtn = document.getElementById('count-btn');
     const btnImg = countBtn.querySelector('img');
 
-    // Scale the button
     countBtn.style.transform = `scale(${currentButtonSize / 100})`;
-
-    // Adjust padding above and below the button equally
-    const paddingAdjustment = (currentButtonSize - 100) * 0.5; // Adjust padding equally
+    const paddingAdjustment = (currentButtonSize - 100) * 0.5;
     countBtn.style.paddingTop = `${paddingAdjustment}px`;
     countBtn.style.paddingBottom = `${paddingAdjustment}px`;
 
-    // Adjust the circle container padding based on button size
     adjustCircleContainer();
 
     vibrationSettings.buttonSize = currentButtonSize;
@@ -222,7 +226,7 @@ function adjustCircleContainer() {
         basePadding = window.innerWidth <= 768 ? 381 : 423;
     }
 
-    const sizeAdjustment = (currentButtonSize - 100) * 3; // 3px per 10%
+    const sizeAdjustment = (currentButtonSize - 100) * 3;
     const newPadding = basePadding + sizeAdjustment;
 
     circleContainer.style.setProperty("padding-top", `${newPadding}px`, "important");
@@ -265,7 +269,7 @@ function isMobileDevice() {
 
 // Function to close all popups
 function closeAllPopups() {
-    const popups = document.querySelectorAll('.popup, .popupnotify, #image-change-menu');
+    const popups = document.querySelectorAll('.popup, .popupnotify, #image-change-menu, #circle-text-edit-modal');
     popups.forEach(popup => {
         popup.style.display = 'none';
     });
@@ -296,19 +300,16 @@ function initializeStreak() {
     const today = new Date();
     const todayStr = formatDate(today);
 
-    // If we have last activity date, check if we need to reset streak
     if (lastActivityDate) {
         const lastDate = new Date(lastActivityDate);
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
 
-        // If last activity was before yesterday, reset streak
         if (lastDate < yesterday && !isSameDay(lastDate, yesterday)) {
             streak = 0;
             localStorage.setItem('streak', streak);
         }
 
-        // If last activity was today, ensure chanting history exists
         if (lastActivityDate === todayStr && !chantingHistory[todayStr]) {
             chantingHistory[todayStr] = { count: 0, rounds: 0 };
         }
@@ -325,22 +326,18 @@ function updateStreak() {
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayStr = formatDate(yesterday);
 
-    // Check if we already counted today
     if (lastActivityDate === todayStr) {
         return;
     }
 
-    // If first time or no last activity date, start new streak
     if (!lastActivityDate) {
         streak = 1;
         showStreakPopup("Today, you planted the seed of devotion. With consistency, it will blossom beautifully! 🌸");
     }
-    // If last activity was yesterday, increment streak
     else if (lastActivityDate === yesterdayStr) {
         streak++;
         showStreakPopup(`Incredible dedication! 🙌\n\nYou've been chanting consistently for ${streak} days${streak > 1 ? 's' : ''}!`);
     }
-    // If last activity was more than 1 day ago, reset streak
     else {
         const lastDate = new Date(lastActivityDate);
         const daysDiff = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
@@ -351,21 +348,17 @@ function updateStreak() {
         }
     }
 
-    // Update last activity date
     lastActivityDate = todayStr;
 
-    // Update chanting history
     if (!chantingHistory[todayStr]) {
         chantingHistory[todayStr] = { count: 0, rounds: 0 };
     }
     chantingHistory[todayStr].count++;
 
-    // Save to localStorage
     localStorage.setItem('streak', streak);
     localStorage.setItem('lastActivityDate', lastActivityDate);
     localStorage.setItem('chantingHistory', JSON.stringify(chantingHistory));
 
-    // Update display
     updateStreakDisplay();
 }
 
@@ -386,7 +379,6 @@ function renderStreakCalendar() {
     streakCalendar.innerHTML = '';
     const today = new Date();
 
-    // Create calendar for the past 7 days
     for (let i = 6; i >= 0; i--) {
         const date = new Date(today);
         date.setDate(today.getDate() - i);
@@ -395,21 +387,16 @@ function renderStreakCalendar() {
         const dayElement = document.createElement('div');
         dayElement.className = 'streak-day';
 
-        // Check if this day had activity
         if (chantingHistory[dateStr] && chantingHistory[dateStr].count > 0) {
             dayElement.classList.add('active');
         }
 
-        // Mark today
         if (i === 0) {
             dayElement.classList.add('today');
         }
 
-        // Add day abbreviation
         const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         dayElement.setAttribute('data-day', dayNames[date.getDay()]);
-
-        // Add date number
         dayElement.textContent = date.getDate();
 
         streakCalendar.appendChild(dayElement);
@@ -417,25 +404,6 @@ function renderStreakCalendar() {
 }
 
 // Function to show streak popup with sound
-function showStreakPopup(message) {
-    const streakPopup = document.getElementById('streak-popup');
-    const streakMessage = document.getElementById('streak-message');
-
-    if (streakPopup && streakMessage) {
-        streakMessage.textContent = message;
-        streakPopup.style.display = 'block';
-
-        // Play streak sound if sound is enabled
-        if (soundToggle.checked) {
-            streakAudio.currentTime = 0;
-            streakAudio.play().catch(e => console.log("Audio play failed:", e));
-        }
-
-        setTimeout(() => {
-            streakPopup.style.display = 'none';
-        }, 3000);
-    }
-}
 function showStreakPopup(message) {
     if (!streakPopupToggle.checked) return;
 
@@ -446,7 +414,6 @@ function showStreakPopup(message) {
         streakMessage.textContent = message;
         streakPopup.style.display = 'block';
 
-// Play streak sound if sound is enabled
         if (soundToggle.checked) {
             streakAudio.currentTime = 0;
             streakAudio.play().catch(e => console.log("Audio play failed:", e));
@@ -460,7 +427,7 @@ function showStreakPopup(message) {
 
 // Function to update the counter with daily reset check
 function updateCounter() {
-    checkAndResetDaily(); // Check if we need to reset first
+    checkAndResetDaily();
 
     if (count < totalLetters) {
         count++;
@@ -490,7 +457,89 @@ function updateCounter() {
     }
 }
 
-// Event listeners
+// Default settings values
+const defaultSettings = {
+    soundEnabled: true,
+    countVibrationEnabled: false,
+    countVibrationDuration: 60,
+    completeVibrationEnabled: true,
+    completeVibrationDuration: 1000,
+    volume: 210,
+    buttonSize: 100,
+    streakPopupEnabled: true
+};
+
+// Function to reset all settings to default
+function resetToDefaultSettings() {
+    if (confirm("Are you sure you want to reset all settings to default values?")) {
+        soundToggle.checked = defaultSettings.soundEnabled;
+        countVibrationToggle.checked = defaultSettings.countVibrationEnabled;
+        completeVibrationToggle.checked = defaultSettings.completeVibrationEnabled;
+        countVibrationSlider.value = defaultSettings.countVibrationDuration;
+        completeVibrationSlider.value = defaultSettings.completeVibrationDuration;
+        volumeSlider.value = defaultSettings.volume;
+
+        currentButtonSize = defaultSettings.buttonSize;
+        updateButtonSize(currentButtonSize);
+
+        // Reset circle text
+        circleTextContent = 'HAREKRISHNA';
+        localStorage.setItem('circleText', circleTextContent);
+        updateCircleText();
+
+        updateSettingsUI();
+        vibrationSettings = {...defaultSettings};
+        saveSettingsToStorage();
+    }
+}
+
+// Nuclear Reset Function
+async function performFactoryReset() {
+    const dialog = document.querySelector('.reset-dialog');
+    if (dialog) {
+        dialog.innerHTML = `<div class="loading-reset">
+            <i class="fas fa-circle-notch fa-spin"></i>
+            <p>Resetting everything...</p>
+        </div>`;
+    }
+
+    try {
+        localStorage.clear();
+        
+        if (window.indexedDB) {
+            const dbs = await window.indexedDB.databases();
+            dbs.forEach(db => {
+                if (db.name) {
+                    window.indexedDB.deleteDatabase(db.name);
+                }
+            });
+        }
+        
+        if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+        }
+        
+        if ('serviceWorker' in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(registrations.map(reg => reg.unregister()));
+        }
+        
+        sessionStorage.clear();
+        
+        setTimeout(() => {
+            window.location.href = window.location.origin + window.location.pathname + '?reset=' + Date.now();
+        }, 1000);
+        
+    } catch (error) {
+        console.error('Reset failed:', error);
+        if (dialog) {
+            dialog.innerHTML = `<p style="color:#ff4444">Reset failed. Please manually refresh the page.</p>`;
+        }
+    }
+}
+
+// Event Listeners
 document.getElementById('count-btn').addEventListener('click', function() {
     if (count === 0) {
         updateStreak();
@@ -591,13 +640,31 @@ document.getElementById('increase-btn-size').addEventListener('click', () => {
     updateButtonSize(currentButtonSize + sizeStep);
 });
 
+// Circle text edit functionality
+editCircleTextBtn.addEventListener('click', () => {
+    closeAllPopups();
+    circleTextInput.value = circleTextContent;
+    circleTextEditModal.style.display = 'flex';
+});
+
+saveCircleTextBtn.addEventListener('click', () => {
+    circleTextContent = circleTextInput.value.trim() || 'HAREKRISHNA';
+    localStorage.setItem('circleText', circleTextContent);
+    circleTextEditModal.style.display = 'none';
+    updateCircleText();
+});
+
+cancelCircleTextBtn.addEventListener('click', () => {
+    circleTextEditModal.style.display = 'none';
+});
+
 // Initialize the app
 updateCountDisplay();
 updateRoundDisplay();
 updateCircleText();
 loadSettingsFromStorage();
 initializeStreak();
-checkAndResetDaily(); // Initial daily check
+checkAndResetDaily();
 
 // Set up a daily check (every hour to be safe)
 setInterval(checkAndResetDaily, 60 * 60 * 1000);
@@ -606,70 +673,6 @@ setInterval(checkAndResetDaily, 60 * 60 * 1000);
 const dateInIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
 const currentYear = dateInIST.getFullYear();
 document.getElementById('current-year').textContent = currentYear;
-
-// Image change functionality
-const changeImageBtn = document.getElementById('change-image-btn');
-const imageChangeMenu = document.getElementById('image-change-menu');
-const imageUpload = document.getElementById('image-upload');
-const imagePreview = document.getElementById('image-preview');
-const saveImageBtn = document.getElementById('save-image-btn');
-const resetImageBtn = document.getElementById('reset-image-btn');
-const closeImageMenuBtn = document.getElementById('close-image-menu');
-
-changeImageBtn.addEventListener('click', () => {
-    closeAllPopups();
-    imageChangeMenu.style.display = 'block';
-});
-
-closeImageMenuBtn.addEventListener('click', () => {
-    imageChangeMenu.style.display = 'none';
-});
-
-imageUpload.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            imagePreview.src = e.target.result;
-            imagePreview.style.display = 'block';
-
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
-saveImageBtn.addEventListener('click', () => {
-    const newImageSrc = imagePreview.src;
-    if (newImageSrc) {
-        localStorage.setItem('selectedImage', newImageSrc);
-        document.querySelector('.round-image').src = newImageSrc;
-        imageChangeMenu.style.display = 'none';
-    }
-});
-
-resetImageBtn.addEventListener('click', () => {
-    localStorage.removeItem('selectedImage');
-    document.querySelector('.round-image').src = 'rkhkmc.png';
-    imagePreview.src = '';
-    imagePreview.style.display = 'none';
-});
-
-// Check for saved image
-window.onload = function() {
-    const savedImage = localStorage.getItem('selectedImage');
-    if (savedImage) {
-        document.querySelector('.round-image').src = savedImage;
-    }
-};
-
-// Show popup notification if first visit
-if (!localStorage.getItem('popupShown')) {
-    document.getElementById('popupnotify').style.display = 'flex';
-    document.getElementById('close-popupnotify').addEventListener('click', function() {
-        document.getElementById('popupnotify').style.display = 'none';
-        localStorage.setItem('popupShown', 'true');
-    });
-}
 
 // PWA installation handling
 if ('serviceWorker' in navigator) {
@@ -685,10 +688,27 @@ let deferredPrompt;
 const installBtn = document.getElementById('install-btn');
 
 if (installBtn) {
+    function isPWAInstalled() {
+        return window.matchMedia('(display-mode: standalone)').matches || 
+               window.navigator.standalone === true ||
+               document.referrer.includes('android-app://');
+    }
+
+    function isMobileDevice() {
+        return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    }
+
+    if (isPWAInstalled() || !isMobileDevice()) {
+        installBtn.style.display = 'none';
+    }
+
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        installBtn.style.display = 'block';
+        
+        if (!isPWAInstalled() && isMobileDevice()) {
+            installBtn.style.display = 'block';
+        }
 
         installBtn.addEventListener('click', async () => {
             installBtn.style.display = 'none';
@@ -700,30 +720,66 @@ if (installBtn) {
     });
 
     window.addEventListener('appinstalled', () => {
+        console.log('PWA was installed');
         installBtn.style.display = 'none';
+        
+        setTimeout(() => {
+            if (isPWAInstalled()) {
+                installBtn.style.display = 'none';
+            }
+        }, 1000);
+    });
+
+    window.addEventListener('load', () => {
+        if (isPWAInstalled()) {
+            installBtn.style.display = 'none';
+        }
     });
 }
 
-// Initialize slider fill colors on load
+// Close streak popup
+document.getElementById('close-streak-popup')?.addEventListener('click', () => {
+    document.getElementById('streak-popup').style.display = 'none';
+});
+
+// Reset to default settings
+document.getElementById('reset-default-settings').addEventListener('click', resetToDefaultSettings);
+
+// Factory Reset Button Handler
+document.getElementById('factory-reset')?.addEventListener('click', function() {
+    const dialog = document.createElement('div');
+    dialog.className = 'reset-dialog';
+    dialog.innerHTML = `
+        <h3>⚠️ Factory Reset ⚠️</h3>
+        <p>This will <strong>permanently delete</strong>:</p>
+        <ul style="text-align: left; margin: 15px 0; padding-left: 20px;">
+            <li>All counter data</li>
+            <li>All round progress</li>
+            <li>All settings</li>
+            <li>All cached files</li>
+            <li>All offline data</li>
+        </ul>
+        <p>The app will restart completely fresh.</p>
+        <div class="reset-dialog-buttons">
+            <button id="confirm-reset">Reset Everything</button>
+            <button id="cancel-reset">Cancel</button>
+        </div>
+    `;
+    
+    document.body.appendChild(dialog);
+    
+    document.getElementById('confirm-reset').addEventListener('click', performFactoryReset);
+    
+    document.getElementById('cancel-reset').addEventListener('click', function() {
+        document.body.removeChild(dialog);
+    });
+});
+
 // Initialize slider fill on load
 document.addEventListener('DOMContentLoaded', function() {
     updateSliderFill(document.getElementById('volume-slider'));
     updateSliderFill(document.getElementById('count-vibration-slider'));
     updateSliderFill(document.getElementById('complete-vibration-slider'));
-});
-
-// Add event listeners for slider input
-document.getElementById('volume-slider').addEventListener('input', function() {
-    updateSliderFill(this);
-    audio.volume = this.value / 210;
-});
-
-document.getElementById('count-vibration-slider').addEventListener('input', function() {
-    updateSliderFill(this);
-});
-
-document.getElementById('complete-vibration-slider').addEventListener('input', function() {
-    updateSliderFill(this);
 });
 
 // Adjust circle container padding on load and resize
@@ -745,330 +801,11 @@ window.addEventListener('appinstalled', () => {
     }, 500);
 });
 
-// Default settings values
-const defaultSettings = {
-    soundEnabled: true,
-    countVibrationEnabled: false,
-    countVibrationDuration: 60,
-    completeVibrationEnabled: true,
-    completeVibrationDuration: 1000,
-    volume: 210,
-    buttonSize: 100,
-    streakPopupEnabled: true  // Add this line
-};
-
-// Function to reset all settings to default
-function resetToDefaultSettings() {
-    if (confirm("Are you sure you want to reset all settings to default values?")) {
-        soundToggle.checked = defaultSettings.soundEnabled;
-        countVibrationToggle.checked = defaultSettings.countVibrationEnabled;
-        completeVibrationToggle.checked = defaultSettings.completeVibrationEnabled;
-        countVibrationSlider.value = defaultSettings.countVibrationDuration;
-        completeVibrationSlider.value = defaultSettings.completeVibrationDuration;
-        volumeSlider.value = defaultSettings.volume;
-
-        currentButtonSize = defaultSettings.buttonSize;
-        updateButtonSize(currentButtonSize);
-
-        updateSettingsUI();
-        vibrationSettings = {...defaultSettings};
-        saveSettingsToStorage();
-    }
-}
-
-document.getElementById('reset-default-settings').addEventListener('click', resetToDefaultSettings);
-
-// Close streak popup
-document.getElementById('close-streak-popup')?.addEventListener('click', () => {
-    document.getElementById('streak-popup').style.display = 'none';
-});
-
-// Add streak calendar CSS
-const streakStyle = document.createElement('style');
-streakStyle.textContent = `
-.streak-day {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background-color: #333;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: 600;
-    position: relative;
-    transition: all 0.3s ease;
-}
-
-.streak-day.active {
-    background-color: #ff9900;
-    color: black;
-}
-
-.streak-day.today {
-    box-shadow: 0 0 0 2px #ff9900;
-}
-
-.streak-day::after {
-    content: attr(data-day);
-    position: absolute;
-    bottom: -20px;
-    font-size: 10px;
-    color: #aaa;
-}
-
-.streak-calendar {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 10px;
-    flex-wrap: wrap;
-}
-
-@media (max-width: 480px) {
-    .streak-day {
-        width: 25px;
-        height: 25px;
-        font-size: 10px;
-    }
-    
-    .streak-day::after {
-        font-size: 8px;
-        bottom: -15px;
-    }
-}
-`;
-
-document.head.appendChild(streakStyle);
-streakPopupToggle.addEventListener('change', updateSettingsUI);
-
-// Add this to your existing JavaScript code
-document.querySelector('.round-image').addEventListener('click', function() {
-    closeAllPopups();
-    document.getElementById('image-change-menu').style.display = 'block';
-});
-
-// Nuclear Reset Function
-async function performFactoryReset() {
-  // Show loading state
-  const dialog = document.querySelector('.reset-dialog');
-  if (dialog) {
-    dialog.innerHTML = `<div class="loading-reset">
-      <i class="fas fa-circle-notch fa-spin"></i>
-      <p>Resetting everything...</p>
-    </div>`;
-  }
-
-  try {
-    // 1. Clear all localStorage data
-    localStorage.clear();
-    
-    // 2. Clear all IndexedDB databases
-    if (window.indexedDB) {
-      const dbs = await window.indexedDB.databases();
-      dbs.forEach(db => {
-        if (db.name) {
-          window.indexedDB.deleteDatabase(db.name);
-        }
-      });
-    }
-    
-    // 3. Clear all caches
-    if ('caches' in window) {
-      const cacheNames = await caches.keys();
-      await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
-    }
-    
-    // 4. Unregister all service workers
-    if ('serviceWorker' in navigator) {
-      const registrations = await navigator.serviceWorker.getRegistrations();
-      await Promise.all(registrations.map(reg => reg.unregister()));
-    }
-    
-    // 5. Clear session storage
-    sessionStorage.clear();
-    
-    // 6. Force complete reload with cache busting
-    setTimeout(() => {
-      window.location.href = window.location.origin + window.location.pathname + '?reset=' + Date.now();
-    }, 1000);
-    
-  } catch (error) {
-    console.error('Reset failed:', error);
-    if (dialog) {
-      dialog.innerHTML = `<p style="color:#ff4444">Reset failed. Please manually refresh the page.</p>`;
-    }
-  }
-}
-
-// Factory Reset Button Handler
-document.getElementById('factory-reset')?.addEventListener('click', function() {
-  const dialog = document.createElement('div');
-  dialog.className = 'reset-dialog';
-  dialog.innerHTML = `
-    <h3>⚠️ Factory Reset ⚠️</h3>
-    <p>This will <strong>permanently delete</strong>:</p>
-    <ul style="text-align: left; margin: 15px 0; padding-left: 20px;">
-      <li>All counter data</li>
-      <li>All round progress</li>
-      <li>All settings</li>
-      <li>All cached files</li>
-      <li>All offline data</li>
-    </ul>
-    <p>The app will restart completely fresh.</p>
-    <div class="reset-dialog-buttons">
-      <button id="confirm-reset">Reset Everything</button>
-      <button id="cancel-reset">Cancel</button>
-    </div>
-  `;
-  
-  document.body.appendChild(dialog);
-  
-  document.getElementById('confirm-reset').addEventListener('click', performFactoryReset);
-  
-  document.getElementById('cancel-reset').addEventListener('click', function() {
-    document.body.removeChild(dialog);
-  });
-});
-
-// Enhanced PWA installation handling
-document.addEventListener('DOMContentLoaded', () => {
-    const installBtn = document.getElementById('install-btn');
-    
-    if (!installBtn) return;
-
-    // Function to check if PWA is installed
-    function isPWAInstalled() {
-        return window.matchMedia('(display-mode: standalone)').matches || 
-               window.navigator.standalone === true ||
-               document.referrer.includes('android-app://');
-    }
-
-    // Function to check if device is mobile
-    function isMobileDevice() {
-        return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    }
-
-    // Hide install button if PWA is already installed or not on mobile
-    if (isPWAInstalled() || !isMobileDevice()) {
-        installBtn.style.display = 'none';
-        return;
-    }
-
-    let deferredPrompt;
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        
-        // Only show install button if PWA isn't installed and on mobile
-        if (!isPWAInstalled() && isMobileDevice()) {
-            installBtn.style.display = 'block';
-        }
-
-        installBtn.addEventListener('click', async () => {
-            installBtn.style.display = 'none';
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            console.log(`User ${outcome} the install prompt`);
-            deferredPrompt = null;
-        });
-    });
-
-    window.addEventListener('appinstalled', () => {
-        console.log('PWA was installed');
-        installBtn.style.display = 'none';
-        
-        // Additional check after installation
-        setTimeout(() => {
-            if (isPWAInstalled()) {
-                installBtn.style.display = 'none';
-            }
-        }, 1000);
-    });
-
-    // Additional check on page load
-    window.addEventListener('load', () => {
-        if (isPWAInstalled()) {
-            installBtn.style.display = 'none';
-        }
-    });
-});
-
-// Circle text edit functionality
-const editCircleTextBtn = document.getElementById('edit-circle-text-btn');
-const circleTextEditModal = document.getElementById('circle-text-edit-modal');
-const circleTextInput = document.getElementById('circle-text-input');
-const saveCircleTextBtn = document.getElementById('save-circle-text');
-const cancelCircleTextBtn = document.getElementById('cancel-circle-text');
-
-// Load saved circle text or use default
-let circleText = localStorage.getItem('circleText') || 'HAREKRISHNA';
-
-editCircleTextBtn.addEventListener('click', () => {
-    closeAllPopups();
-    circleTextInput.value = circleText;
-    circleTextEditModal.style.display = 'flex';
-});
-
-saveCircleTextBtn.addEventListener('click', () => {
-    circleText = circleTextInput.value.trim() || 'HAREKRISHNA';
-    localStorage.setItem('circleText', circleText);
-    circleTextEditModal.style.display = 'none';
-    updateCircleText();
-});
-
-cancelCircleTextBtn.addEventListener('click', () => {
-    circleTextEditModal.style.display = 'none';
-});
-
-// Modify the updateCircleText function to use the custom text
-function updateCircleText() {
-    const letters = circleText.repeat(Math.ceil(108 / circleText.length)).split('');
-    const circleDivisions = [33, 36, 39];
-    const radiusIncrement = 30;
-    const initialRadius = 100;
-    let letterIndex = 0;
-
-    circleText.innerHTML = '';
-
-    circleDivisions.forEach((lettersInCircle, circleIndex) => {
-        const currentRadius = initialRadius + circleIndex * radiusIncrement;
-        const angleStep = 360 / lettersInCircle;
-
-        for (let i = 0; i < lettersInCircle; i++) {
-            const angle = angleStep * i;
-            const x = Math.cos((angle * Math.PI) / 180) * currentRadius;
-            const y = Math.sin((angle * Math.PI) / 180) * currentRadius;
-
-            const letter = document.createElement('span');
-            letter.className = 'letter';
-            letter.textContent = letters[letterIndex % letters.length];
-            letter.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
-            letter.style.color = letterIndex < count ? 'white' : 'grey';
-
-            circleText.appendChild(letter);
-            letterIndex++;
-        }
-    });
-}
-
-// Update the reset to default function to include circle text
-function resetToDefaultSettings() {
-    if (confirm("Are you sure you want to reset all settings to default values?")) {
-        // Existing reset code...
-        
-        // Reset circle text
-        circleText = 'HAREKRISHNA';
-        localStorage.setItem('circleText', circleText);
-        updateCircleText();
-        
-        // Rest of your reset code...
-    }
-}
-function closeAllPopups() {
-    const popups = document.querySelectorAll('.popup, .popupnotify, #image-change-menu, #circle-text-edit-modal');
-    popups.forEach(popup => {
-        popup.style.display = 'none';
+// Show popup notification if first visit
+if (!localStorage.getItem('popupShown')) {
+    document.getElementById('popupnotify').style.display = 'flex';
+    document.getElementById('close-popupnotify').addEventListener('click', function() {
+        document.getElementById('popupnotify').style.display = 'none';
+        localStorage.setItem('popupShown', 'true');
     });
 }
