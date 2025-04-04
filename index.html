@@ -382,6 +382,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         basePadding = window.innerWidth <= 768 ? 381 : 423;
     }
+       
     // Adjust padding based on button size (3px per 10% size change)
     const sizeAdjustment = (currentButtonSize - 100) * 3; // 3px per 10%
     const newPadding = basePadding + sizeAdjustment;
@@ -398,6 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(adjustCircleContainer, 500);
     });
 });
+    
 </script>
 </body>
 </html>
