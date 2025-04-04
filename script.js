@@ -878,11 +878,25 @@ const roundImage = document.getElementById('round-image');
 const defaultImagePath = 'rkhkmc.png';
 const defaultImagePath2 = 'rkhkmc.jpg';
 
-// Open image change menu
-changeImageBtn.addEventListener('click', () => {
+// Open image change menu when round image is clicked
+roundImage.addEventListener('click', () => {
+    // Check if settings menu is open - if yes, don't open image menu
+    if (!document.getElementById('settings-menu').classList.contains('open')) {
+        openImageChangeMenu();
+    }
+});
+
+// Open image change menu from button
+changeImageBtn.addEventListener('click', openImageChangeMenu);
+
+function openImageChangeMenu() {
     closeAllPopups();
     imageChangeMenu.style.display = 'block';
-});
+    // Reset the file input and preview when opening
+    imageUpload.value = '';
+    imagePreview.src = '';
+    imagePreview.style.display = 'none';
+}
 
 // Close image change menu
 closeImageMenuBtn.addEventListener('click', () => {
@@ -895,6 +909,18 @@ closeImageMenuBtn.addEventListener('click', () => {
 imageUpload.addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (file) {
+        // Validate image file
+        if (!file.type.match('image.*')) {
+            alert('Please select an image file (JPEG, PNG, etc.)');
+            return;
+        }
+        
+        // Check file size (limit to 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+            alert('Image size should be less than 2MB');
+            return;
+        }
+
         const reader = new FileReader();
         reader.onload = function(event) {
             imagePreview.src = event.target.result;
@@ -911,18 +937,13 @@ saveImageBtn.addEventListener('click', () => {
         localStorage.setItem('customRoundImage', imagePreview.src);
         roundImage.src = imagePreview.src;
         
-        // Also save the file reference if needed
-        if (imageUpload.files.length > 0) {
-            localStorage.setItem('customImageFile', JSON.stringify({
-                name: imageUpload.files[0].name,
-                type: imageUpload.files[0].type
-            }));
-        }
+        // Show success feedback
+        showTemporaryMessage('Image saved successfully!');
         
         imageChangeMenu.style.display = 'none';
         imageUpload.value = '';
     } else {
-        alert('Please select an image first');
+        showTemporaryMessage('Please select an image first', true);
     }
 });
 
@@ -934,6 +955,7 @@ resetImageBtn.addEventListener('click', () => {
     img1.onload = () => {
         localStorage.setItem('customRoundImage', defaultImagePath);
         roundImage.src = defaultImagePath;
+        showTemporaryMessage('Image reset to default');
         imageChangeMenu.style.display = 'none';
         imageUpload.value = '';
         imagePreview.src = '';
@@ -944,15 +966,38 @@ resetImageBtn.addEventListener('click', () => {
         img2.onload = () => {
             localStorage.setItem('customRoundImage', defaultImagePath2);
             roundImage.src = defaultImagePath2;
+            showTemporaryMessage('Image reset to default');
             imageChangeMenu.style.display = 'none';
             imageUpload.value = '';
             imagePreview.src = '';
         };
         img2.onerror = () => {
-            alert('Default image not found');
+            showTemporaryMessage('Default image not found', true);
         };
     };
 });
+
+// Show temporary message (toast)
+function showTemporaryMessage(message, isError = false) {
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.style.position = 'fixed';
+    toast.style.bottom = '20px';
+    toast.style.left = '50%';
+    toast.style.transform = 'translateX(-50%)';
+    toast.style.backgroundColor = isError ? '#ff4444' : '#00aa00';
+    toast.style.color = 'white';
+    toast.style.padding = '10px 20px';
+    toast.style.borderRadius = '5px';
+    toast.style.zIndex = '10000';
+    toast.style.animation = 'fadeInOut 2.5s ease-in-out';
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.remove();
+    }, 2500);
+}
 
 // Load saved image on startup
 function loadSavedImage() {
@@ -978,9 +1023,23 @@ function loadSavedImage() {
     }
 }
 
+// Add CSS for the toast animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeInOut {
+        0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+        10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        100% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    }
+`;
+document.head.appendChild(style);
+
 // Initialize the image on load
 document.addEventListener('DOMContentLoaded', function() {
-    loadSavedImage(); 
+    loadSavedImage();
+    // Make round image cursor pointer to indicate it's clickable
+    roundImage.style.cursor = 'pointer'; 
     // Also initialize other components
     updateCountDisplay();
     updateRoundDisplay();
