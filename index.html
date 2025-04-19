@@ -139,14 +139,21 @@
                 <img id="made-with-img" src="rkhkmc_mwfet.png" alt="Made With">
             </div>
         </div>
-        <div id="settings-popup" class="popup">
-<div class="popup-scroll-container">
-            <h2>Settings</h2>
-    <p class="settings-subtext" style="color:WHITE; font-size:12.9px">Note: Your counter data saves automatically in your browser, letting you pick up where you left off. Clearing your browser's cache or data will reset it.</p>
+<div id="settings-menu" class="settings-menu">
+    <div class="settings-header">
+        <h2>Settings</h2>
+        <button id="close-settings-menu" class="close-settings-btn">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="settings-scroll-container">
+        <div class="settings-content">
+            <p class="settings-subtext">Note: Your counter data saves automatically in your browser.</p>
+            
+            <!-- Move all the existing settings content here -->
             <div class="settings-section">
                 <div class="settings-option">
                     <h3>Notification</h3>
-
                     <div class="button-cover">
                         <div class="button r">
                             <input type="checkbox" id="sound-toggle" class="checkbox" checked>
@@ -154,7 +161,8 @@
                             <div class="layer"></div>
                         </div>
                     </div>
-                </div><p class="settings-subtext">Plays a musical notification after completing each round</p>
+                </div>
+                <p class="settings-subtext">Plays a musical notification after completing each round</p>
                 <div class="slider-container" id="volume-control-container">
                     <div class="slider-controls"><h3>Volume</h3>
                         <input type="range" min="0" max="210" value="210" class="slider" id="volume-slider">
@@ -237,18 +245,17 @@
             <button id="change-image-btn">Change Image</button>
                 </div>
 </div>
-<div class="settings-section reset-default-section">
-    <div class="settings-option">
-        <button id="reset-default-settings" class="reset-default-btn">Reset to Default</button>
-    </div>
-</div><div class="settings-section">
+<div class="settings-section">
   <button id="factory-reset" class="reset-btn danger-btn">
     <i class="fas fa-eraser"></i> Factory Reset
   </button>
   <p class="settings-subtext">Completely wipe ALL data and cached files</p>
 </div></div>
-            <button id="save-settings">Save Settings</button>
-            <button id="close-settings">Close</button>
+            <div class="settings-buttons">
+                <button id="reset-default-settings" class="reset-default-btn">Reset to Default</button>
+                <button id="save-settings" class="save-settings-btn">Save</button>
+            </div></div>
+    </div>
         </div>
         <div class="counter-container">
             <div class="count-display-container">
