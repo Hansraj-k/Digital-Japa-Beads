@@ -1048,3 +1048,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+// Replace the settings button event listener
+settingsBtn.addEventListener('click', () => {
+    document.getElementById('settings-menu').classList.add('active');
+    document.getElementById('settings-overlay').classList.add('active');
+});
+
+// Close settings menu
+document.getElementById('close-settings-menu').addEventListener('click', () => {
+    document.getElementById('settings-menu').classList.remove('active');
+    document.getElementById('settings-overlay').classList.remove('active');
+});
+
+// Close when clicking overlay
+document.getElementById('settings-overlay').addEventListener('click', () => {
+    document.getElementById('settings-menu').classList.remove('active');
+    document.getElementById('settings-overlay').classList.remove('active');
+});
+
+document.getElementById('save-settings').addEventListener('click', () => {
+    saveSettingsToStorage();
+    updateSettingsUI();
+    document.getElementById('settings-menu').classList.remove('active');
+    document.getElementById('settings-overlay').classList.remove('active');
+});
+
+document.body.insertAdjacentHTML('afterbegin', '<div id="settings-overlay" class="settings-overlay"></div>');
