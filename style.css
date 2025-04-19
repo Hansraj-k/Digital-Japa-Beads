@@ -1330,6 +1330,7 @@ margin: 0 auto; /* Center the paragraph */
     transform: scale(0.98);
 }
 
+
 #circle-text-input.warning {
     border-color: #ff9900;
     box-shadow: 0 0 5px rgba(255, 153, 0, 0.5);
@@ -1352,27 +1353,4 @@ margin: 0 auto; /* Center the paragraph */
     margin: 0 auto;
     margin-bottom: 15px;
     margin-top: 15px;
-}
-
-/* Remove focus outline and any unwanted dots */
-button:focus, button:active {
-  outline: none !important;
-}
-
-/* Remove any potential pseudo-elements */
-button::-moz-focus-inner {
-  border: 0 !important;
-}
-
-/* Specifically for Font Awesome icons */
-button .fa, button i {
-  outline: none !important;
-}
-
-.fa, .fas, .far, .fal, .fab {
-  -webkit-tap-highlight-color: transparent;
-}
-
-button {
-  -webkit-tap-highlight-color: transparent;
 }
