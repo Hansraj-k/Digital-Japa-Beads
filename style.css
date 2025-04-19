@@ -1354,3 +1354,108 @@ margin: 0 auto; /* Center the paragraph */
     margin-bottom: 15px;
     margin-top: 15px;
 }
+
+/* Settings Menu Styles */
+.settings-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 85%;
+    max-width: 400px;
+    height: 100vh;
+    background-color: #111;
+    color: white;
+    z-index: 1000;
+    transition: right 0.3s ease-in-out;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid #333;
+}
+
+.settings-menu.active {
+    right: 0;
+}
+
+.settings-header {
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #333;
+}
+
+.settings-header h2 {
+    margin: 0;
+    color: #00ffd5;
+    font-size: 1.5rem;
+}
+
+.close-settings-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.settings-scroll-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+.settings-content {
+    padding-bottom: 20px;
+}
+
+.settings-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.save-settings-btn {
+    background-color: #00ffd5;
+    color: black;
+    border: none;
+    padding: 12px;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.save-settings-btn:hover {
+    background-color: #00e6c4;
+}
+
+/* Overlay for when settings menu is open */
+.settings-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+
+.settings-overlay.active {
+    display: block;
+}
+
+/* Adjust existing settings styles for the menu */
+.settings-section {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #222;
+}
+
+/* Make sure vibration settings are properly displayed */
+.vibration-setting {
+    display: block !important;
+}
