@@ -1,4 +1,4 @@
- // Initialize count and round 
+// Initialize count and round 
 let streakPopupToggle = document.getElementById('streak-popup-toggle');
 let count = parseInt(localStorage.getItem('count')) || 0;
 let round = parseInt(localStorage.getItem('round')) || 0;
@@ -18,7 +18,6 @@ let cancelResetRoundBtn = document.getElementById('cancel-reset-round');
 let resetCountBtn = document.getElementById('reset-count-btn');
 let resetRoundBtn = document.getElementById('reset-round-btn');
 let settingsBtn = document.getElementById('settings-btn');
-let settingsPopup = document.getElementById('settings-popup');
 let closeSettingsBtn = document.getElementById('close-settings');
 let saveSettingsBtn = document.getElementById('save-settings');
 let soundToggle = document.getElementById('sound-toggle');
@@ -62,7 +61,7 @@ let vibrationSettings = {
     completeVibrationDuration: 1000,
     volume: 210,
     buttonSize: 100,
-    streakPopupEnabled: true  // Add this line
+    streakPopupEnabled: true
 };
 
 // Streak variables
@@ -72,8 +71,13 @@ let chantingHistory = JSON.parse(localStorage.getItem('chantingHistory')) || {};
 
 // Create audio element for streak sound
 const streakAudio = new Audio();
-streakAudio.src = 'streak-sound.mp3'; // Add this file to your project
+streakAudio.src = 'streak-sound.mp3';
 streakAudio.volume = 0.6;
+
+// Create settings menu overlay
+const menuOverlay = document.createElement('div');
+menuOverlay.className = 'menu-overlay';
+document.body.appendChild(menuOverlay);
 
 // Function to reset counts daily at midnight
 function checkAndResetDaily() {
@@ -98,11 +102,8 @@ function updateSliderFill(slider) {
     const max = slider.max;
     const min = slider.min;
     const percent = ((value - min) / (max - min)) * 100;
-
-    // Update CSS variable
     slider.style.setProperty('--fill-percent', `${percent}%`);
 
-    // Update the displayed value
     if (slider.id === 'volume-slider') {
         document.getElementById('volume-value').textContent = value;
     } else if (slider.id === 'count-vibration-slider') {
@@ -111,6 +112,7 @@ function updateSliderFill(slider) {
         document.getElementById('complete-vibration-value').textContent = `${value}ms`;
     }
 }
+
 // Function to update the displayed count
 function updateCountDisplay() {
     countDisplay.textContent = count;
@@ -123,7 +125,6 @@ function updateRoundDisplay() {
 
 // Function to update the circle text based on the count
 function updateCircleText() {
-    // Ensure no spaces in the circle text content
     circleTextContent = circleTextContent.replace(/\s+/g, '');
     const letters = circleTextContent.repeat(Math.ceil(108 / circleTextContent.length)).split('');
     const circleDivisions = [33, 36, 39];
@@ -170,7 +171,7 @@ function saveSettingsToStorage() {
         completeVibrationDuration: parseInt(completeVibrationSlider.value),
         volume: parseInt(volumeSlider.value),
         buttonSize: currentButtonSize,
-        streakPopupEnabled: streakPopupToggle.checked  // Add this line
+        streakPopupEnabled: streakPopupToggle.checked
     };
     localStorage.setItem('vibrationSettings', JSON.stringify(vibrationSettings));
 }
@@ -186,7 +187,7 @@ function loadSettingsFromStorage() {
         countVibrationSlider.value = vibrationSettings.countVibrationDuration || 60;
         completeVibrationSlider.value = vibrationSettings.completeVibrationDuration || 1000;
         volumeSlider.value = vibrationSettings.volume !== undefined ? vibrationSettings.volume : 210;
-        streakPopupToggle.checked = vibrationSettings.streakPopupEnabled !== false;  // Add this line
+        streakPopupToggle.checked = vibrationSettings.streakPopupEnabled !== false;
 
         if (vibrationSettings.buttonSize) {
             currentButtonSize = vibrationSettings.buttonSize;
@@ -196,6 +197,7 @@ function loadSettingsFromStorage() {
 
     updateSettingsUI();
 }
+
 // Function to update button size
 function updateButtonSize(newSize) {
     currentButtonSize = Math.max(minButtonSize, Math.min(maxButtonSize, newSize));
@@ -204,15 +206,11 @@ function updateButtonSize(newSize) {
     const countBtn = document.getElementById('count-btn');
     const btnImg = countBtn.querySelector('img');
 
-    // Scale the button
     countBtn.style.transform = `scale(${currentButtonSize / 100})`;
-
-    // Adjust padding above and below the button equally
-    const paddingAdjustment = (currentButtonSize - 100) * 0.5; // Adjust padding equally
+    const paddingAdjustment = (currentButtonSize - 100) * 0.5;
     countBtn.style.paddingTop = `${paddingAdjustment}px`;
     countBtn.style.paddingBottom = `${paddingAdjustment}px`;
 
-    // Adjust the circle container padding based on button size
     adjustCircleContainer();
 
     vibrationSettings.buttonSize = currentButtonSize;
@@ -234,7 +232,7 @@ function adjustCircleContainer() {
         basePadding = window.innerWidth <= 768 ? 381 : 423;
     }
 
-    const sizeAdjustment = (currentButtonSize - 100) * 3; // 3px per 10%
+    const sizeAdjustment = (currentButtonSize - 100) * 3;
     const newPadding = basePadding + sizeAdjustment;
 
     circleContainer.style.setProperty("padding-top", `${newPadding}px`, "important");
@@ -281,6 +279,9 @@ function closeAllPopups() {
     popups.forEach(popup => {
         popup.style.display = 'none';
     });
+    document.getElementById('settings-menu').classList.remove('open');
+    menuOverlay.style.display = 'none';
+    document.body.style.overflow = '';
 }
 
 // Helper function to format date as YYYY-MM-DD
@@ -308,19 +309,16 @@ function initializeStreak() {
     const today = new Date();
     const todayStr = formatDate(today);
 
-    // If we have last activity date, check if we need to reset streak
     if (lastActivityDate) {
         const lastDate = new Date(lastActivityDate);
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
 
-        // If last activity was before yesterday, reset streak
         if (lastDate < yesterday && !isSameDay(lastDate, yesterday)) {
             streak = 0;
             localStorage.setItem('streak', streak);
         }
 
-        // If last activity was today, ensure chanting history exists
         if (lastActivityDate === todayStr && !chantingHistory[todayStr]) {
             chantingHistory[todayStr] = { count: 0, rounds: 0 };
         }
@@ -337,22 +335,18 @@ function updateStreak() {
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayStr = formatDate(yesterday);
 
-    // Check if we already counted today
     if (lastActivityDate === todayStr) {
         return;
     }
 
-    // If first time or no last activity date, start new streak
     if (!lastActivityDate) {
         streak = 1;
         showStreakPopup("Today, you planted the seed of devotion. With consistency, it will blossom beautifully! 🌸");
     }
-    // If last activity was yesterday, increment streak
     else if (lastActivityDate === yesterdayStr) {
         streak++;
         showStreakPopup(`Incredible dedication! 🙌\n\nYou've been chanting consistently for ${streak} days${streak > 1 ? 's' : ''}!`);
     }
-    // If last activity was more than 1 day ago, reset streak
     else {
         const lastDate = new Date(lastActivityDate);
         const daysDiff = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
@@ -363,21 +357,17 @@ function updateStreak() {
         }
     }
 
-    // Update last activity date
     lastActivityDate = todayStr;
 
-    // Update chanting history
     if (!chantingHistory[todayStr]) {
         chantingHistory[todayStr] = { count: 0, rounds: 0 };
     }
     chantingHistory[todayStr].count++;
 
-    // Save to localStorage
     localStorage.setItem('streak', streak);
     localStorage.setItem('lastActivityDate', lastActivityDate);
     localStorage.setItem('chantingHistory', JSON.stringify(chantingHistory));
 
-    // Update display
     updateStreakDisplay();
 }
 
@@ -398,7 +388,6 @@ function renderStreakCalendar() {
     streakCalendar.innerHTML = '';
     const today = new Date();
 
-    // Create calendar for the past 7 days
     for (let i = 6; i >= 0; i--) {
         const date = new Date(today);
         date.setDate(today.getDate() - i);
@@ -407,21 +396,17 @@ function renderStreakCalendar() {
         const dayElement = document.createElement('div');
         dayElement.className = 'streak-day';
 
-        // Check if this day had activity
         if (chantingHistory[dateStr] && chantingHistory[dateStr].count > 0) {
             dayElement.classList.add('active');
         }
 
-        // Mark today
         if (i === 0) {
             dayElement.classList.add('today');
         }
 
-        // Add day abbreviation
         const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         dayElement.setAttribute('data-day', dayNames[date.getDay()]);
 
-        // Add date number
         dayElement.textContent = date.getDate();
 
         streakCalendar.appendChild(dayElement);
@@ -429,25 +414,6 @@ function renderStreakCalendar() {
 }
 
 // Function to show streak popup with sound
-function showStreakPopup(message) {
-    const streakPopup = document.getElementById('streak-popup');
-    const streakMessage = document.getElementById('streak-message');
-
-    if (streakPopup && streakMessage) {
-        streakMessage.textContent = message;
-        streakPopup.style.display = 'block';
-
-        // Play streak sound if sound is enabled
-        if (soundToggle.checked) {
-            streakAudio.currentTime = 0;
-            streakAudio.play().catch(e => console.log("Audio play failed:", e));
-        }
-
-        setTimeout(() => {
-            streakPopup.style.display = 'none';
-        }, 3000);
-    }
-}
 function showStreakPopup(message) {
     if (!streakPopupToggle.checked) return;
 
@@ -458,7 +424,6 @@ function showStreakPopup(message) {
         streakMessage.textContent = message;
         streakPopup.style.display = 'block';
 
-// Play streak sound if sound is enabled
         if (soundToggle.checked) {
             streakAudio.currentTime = 0;
             streakAudio.play().catch(e => console.log("Audio play failed:", e));
@@ -472,7 +437,7 @@ function showStreakPopup(message) {
 
 // Function to update the counter with daily reset check
 function updateCounter() {
-    checkAndResetDaily(); // Check if we need to reset first
+    checkAndResetDaily();
 
     if (count < totalLetters) {
         count++;
@@ -557,17 +522,17 @@ cancelResetRoundBtn.addEventListener('click', () => {
 
 settingsBtn.addEventListener('click', () => {
     closeAllPopups();
-    settingsPopup.style.display = 'block';
+    document.getElementById('settings-menu').classList.add('open');
+    menuOverlay.style.display = 'block';
+    document.body.style.overflow = 'hidden';
 });
 
 closeSettingsBtn.addEventListener('click', () => {
-    settingsPopup.style.display = 'none';
+    closeAllPopups();
 });
 
-saveSettingsBtn.addEventListener('click', () => {
-    saveSettingsToStorage();
-    updateSettingsUI();
-    settingsPopup.style.display = 'none';
+menuOverlay.addEventListener('click', () => {
+    closeAllPopups();
 });
 
 soundToggle.addEventListener('change', function() {
@@ -610,7 +575,6 @@ editCircleTextBtn.addEventListener('click', () => {
     circleTextEditModal.style.display = 'flex';
 });
 
-// Clear text button functionality
 clearCircleTextBtn.addEventListener('click', function() {
     circleTextInput.value = '';
     circleTextInput.classList.add('warning');
@@ -618,7 +582,6 @@ clearCircleTextBtn.addEventListener('click', function() {
 });
 
 saveCircleTextBtn.addEventListener('click', () => {
-    // Remove all spaces (start, end, and between) when saving
     circleTextContent = circleTextInput.value.replace(/\s+/g, '') || 'HAREKRISHNAHAREKRISHNAKRISHNAKRISHNAHAREHAREHARERAMAHARERAMARAMARAMAHAREHARE';
     localStorage.setItem('circleText', circleTextContent);
     circleTextEditModal.style.display = 'none';
@@ -629,7 +592,6 @@ cancelCircleTextBtn.addEventListener('click', () => {
     circleTextEditModal.style.display = 'none';
 });
 
-// Show warning when spaces are entered in circle text
 circleTextInput.addEventListener('input', function() {
     const warningElement = document.querySelector('.space-warning');
     if (this.value.includes(' ')) {
@@ -647,7 +609,7 @@ updateRoundDisplay();
 updateCircleText();
 loadSettingsFromStorage();
 initializeStreak();
-checkAndResetDaily(); // Initial daily check
+checkAndResetDaily();
 
 // Set up a daily check (every hour to be safe)
 setInterval(checkAndResetDaily, 60 * 60 * 1000);
@@ -682,7 +644,6 @@ imageUpload.addEventListener('change', (event) => {
         reader.onload = function(e) {
             imagePreview.src = e.target.result;
             imagePreview.style.display = 'block';
-
         };
         reader.readAsDataURL(file);
     }
@@ -755,25 +716,10 @@ if (installBtn) {
 }
 
 // Initialize slider fill colors on load
-// Initialize slider fill on load
 document.addEventListener('DOMContentLoaded', function() {
     updateSliderFill(document.getElementById('volume-slider'));
     updateSliderFill(document.getElementById('count-vibration-slider'));
     updateSliderFill(document.getElementById('complete-vibration-slider'));
-});
-
-// Add event listeners for slider input
-document.getElementById('volume-slider').addEventListener('input', function() {
-    updateSliderFill(this);
-    audio.volume = this.value / 210;
-});
-
-document.getElementById('count-vibration-slider').addEventListener('input', function() {
-    updateSliderFill(this);
-});
-
-document.getElementById('complete-vibration-slider').addEventListener('input', function() {
-    updateSliderFill(this);
 });
 
 // Adjust circle container padding on load and resize
@@ -804,7 +750,7 @@ const defaultSettings = {
     completeVibrationDuration: 1000,
     volume: 210,
     buttonSize: 100,
-    streakPopupEnabled: true  // Add this line
+    streakPopupEnabled: true
 };
 
 // Function to reset all settings to default
@@ -820,7 +766,6 @@ function resetToDefaultSettings() {
         currentButtonSize = defaultSettings.buttonSize;
         updateButtonSize(currentButtonSize);
 
-        // Reset circle text (with space handling)
         circleTextContent = 'HAREKRISHNAHAREKRISHNAKRISHNAKRISHNAHAREHAREHARERAMAHARERAMARAMARAMAHAREHARE';
         localStorage.setItem('circleText', circleTextContent);
         updateCircleText();
@@ -897,7 +842,7 @@ streakStyle.textContent = `
 document.head.appendChild(streakStyle);
 streakPopupToggle.addEventListener('change', updateSettingsUI);
 
-// Add this to your existing JavaScript code
+// Image click to open change menu
 document.querySelector('.round-image').addEventListener('click', function() {
     closeAllPopups();
     document.getElementById('image-change-menu').style.display = 'block';
@@ -905,7 +850,6 @@ document.querySelector('.round-image').addEventListener('click', function() {
 
 // Nuclear Reset Function
 async function performFactoryReset() {
-  // Show loading state
   const dialog = document.querySelector('.reset-dialog');
   if (dialog) {
     dialog.innerHTML = `<div class="loading-reset">
@@ -915,10 +859,8 @@ async function performFactoryReset() {
   }
 
   try {
-    // 1. Clear all localStorage data
     localStorage.clear();
 
-    // 2. Clear all IndexedDB databases
     if (window.indexedDB) {
       const dbs = await window.indexedDB.databases();
       dbs.forEach(db => {
@@ -928,22 +870,18 @@ async function performFactoryReset() {
       });
     }
 
-    // 3. Clear all caches
     if ('caches' in window) {
       const cacheNames = await caches.keys();
       await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
     }
 
-    // 4. Unregister all service workers
     if ('serviceWorker' in navigator) {
       const registrations = await navigator.serviceWorker.getRegistrations();
       await Promise.all(registrations.map(reg => reg.unregister()));
     }
 
-    // 5. Clear session storage
     sessionStorage.clear();
 
-    // 6. Force complete reload with cache busting
     setTimeout(() => {
       window.location.href = window.location.origin + window.location.pathname + '?reset=' + Date.now();
     }, 1000);
@@ -992,19 +930,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!installBtn) return;
 
-    // Function to check if PWA is installed
     function isPWAInstalled() {
         return window.matchMedia('(display-mode: standalone)').matches || 
                window.navigator.standalone === true ||
                document.referrer.includes('android-app://');
     }
 
-    // Function to check if device is mobile
     function isMobileDevice() {
         return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     }
 
-    // Hide install button if PWA is already installed or not on mobile
     if (isPWAInstalled() || !isMobileDevice()) {
         installBtn.style.display = 'none';
         return;
@@ -1016,7 +951,6 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         deferredPrompt = e;
 
-        // Only show install button if PWA isn't installed and on mobile
         if (!isPWAInstalled() && isMobileDevice()) {
             installBtn.style.display = 'block';
         }
@@ -1034,14 +968,13 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('PWA was installed');
         installBtn.style.display = 'none';
 
-        // Additional check after installation
         setTimeout(() => {
             if (isPWAInstalled()) {
                 installBtn.style.display = 'none';
             }
         }, 1000);
     });
-    // Additional check on page load
+    
     window.addEventListener('load', () => {
         if (isPWAInstalled()) {
             installBtn.style.display = 'none';
