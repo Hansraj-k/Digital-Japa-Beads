@@ -171,11 +171,6 @@ function saveSettingsToStorage() {
     localStorage.setItem('vibrationSettings', JSON.stringify(vibrationSettings));
 }
 
-// Function to check if device is mobile
-function isMobileDevice() {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-}
-
 function loadSettingsFromStorage() {
     const savedSettings = localStorage.getItem('vibrationSettings');
     if (savedSettings) {
@@ -194,13 +189,6 @@ function loadSettingsFromStorage() {
             updateButtonSize(currentButtonSize);
         }
     }
-
-    // Initialize haptics visibility based on device type
-    const isMobile = isMobileDevice();
-    document.querySelectorAll('.vibration-setting').forEach(setting => {
-        setting.style.display = isMobile ? 'block' : 'none';
-    });
-
     updateSettingsUI();
 }
 
@@ -226,7 +214,7 @@ function adjustCircleContainer() {
     const circleContainer = document.querySelector('.circle-container');
     if (!circleContainer) return;
 
-    const isMobile = isMobileDevice();
+    const isMobile = /Android|iPhone|iPad|iPod/.test(navigator.userAgent);
     const isPWAInstalled = isMobile && (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true);
 
     let basePadding;
@@ -257,12 +245,12 @@ function updateSettingsUI() {
 
     volumeControlContainer.style.display = soundToggle.checked ? 'block' : 'none';
 
-    // Show/hide vibration settings based on device type
+
     const vibrationSettings = document.querySelectorAll('.vibration-setting');
-    const isMobile = isMobileDevice();
-    
+
+
     vibrationSettings.forEach(setting => {
-        if (isMobile) {
+        if (isMobileDevice()) {
             setting.style.display = 'block';
             const sliderContainer = setting.querySelector('.slider-container');
             if (sliderContainer) {
@@ -270,10 +258,15 @@ function updateSettingsUI() {
                 sliderContainer.style.display = toggle.checked ? 'block' : 'none';
             }
         } else {
-            // Hide vibration settings completely on desktop
+
             setting.style.display = 'none';
         }
     });
+}
+
+// Function to check if device is mobile
+function isMobileDevice() {
+    return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
 
 // Function to close all popups
@@ -444,7 +437,7 @@ function updateCounter() {
         updateCircleText();
         saveData();
 
-        if (countVibrationToggle.checked && navigator.vibrate && isMobileDevice()) {
+        if (countVibrationToggle.checked && navigator.vibrate) {
             navigator.vibrate(parseInt(countVibrationSlider.value));
         }
 
@@ -457,7 +450,7 @@ function updateCounter() {
                 audio.play();
             }
 
-            if (completeVibrationToggle.checked && navigator.vibrate && isMobileDevice()) {
+            if (completeVibrationToggle.checked && navigator.vibrate) {
                 navigator.vibrate(parseInt(completeVibrationSlider.value));
             }
         }
@@ -843,7 +836,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function isMobileDevice() {
-        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     }
 
     if (isPWAInstalled() || !isMobileDevice()) {
