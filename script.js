@@ -189,6 +189,7 @@ function loadSettingsFromStorage() {
             updateButtonSize(currentButtonSize);
         }
     }
+
     updateSettingsUI();
 }
 
@@ -245,10 +246,7 @@ function updateSettingsUI() {
 
     volumeControlContainer.style.display = soundToggle.checked ? 'block' : 'none';
 
-
     const vibrationSettings = document.querySelectorAll('.vibration-setting');
-
-
     vibrationSettings.forEach(setting => {
         if (isMobileDevice()) {
             setting.style.display = 'block';
@@ -258,7 +256,6 @@ function updateSettingsUI() {
                 sliderContainer.style.display = toggle.checked ? 'block' : 'none';
             }
         } else {
-
             setting.style.display = 'none';
         }
     });
