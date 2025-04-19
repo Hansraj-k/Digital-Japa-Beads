@@ -1110,6 +1110,7 @@ margin: 0 auto; /* Center the paragraph */
         height: 25px;
         font-size: 10px;
     }
+    
     .streak-day::after {
         font-size: 8px;
         bottom: -15px;
@@ -1343,6 +1344,7 @@ margin: 0 auto; /* Center the paragraph */
     margin-top: 5px;
     display: none;
 }
+
 .popupclear-highlight {
     margin-top: 10px;
     font-size: 14px;
