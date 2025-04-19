@@ -347,9 +347,10 @@ button:hover {
     position: relative;
 }
 
+/* Fix for the black dot issue on button hover */
 button:hover::after {
     content: attr(data-tooltip);
-    position: centre;
+    position: absolute; /* Fixed "centre" to proper CSS value "absolute" */
     bottom: -35px;
     left: 50%;
     transform: translateX(-50%);
@@ -361,6 +362,30 @@ button:hover::after {
     white-space: pre-wrap;
     text-align: center;
     line-height: 1.2;
+    /* Only display if data-tooltip has content */
+    display: attr(data-tooltip) '' ? 'block' : 'none';
+}
+
+/* Alternative fix - more reliable across browsers */
+button[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px;
+    background-color: black;
+    color: white;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: pre-wrap;
+    text-align: center;
+    line-height: 1.2;
+}
+
+/* For buttons without data-tooltip */
+button:not([data-tooltip]):hover::after {
+    display: none;
 }
 
 /* Counter container styling */
