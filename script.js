@@ -1,4 +1,4 @@
-// Initialize count and round 
+ // Initialize count and round 
 let streakPopupToggle = document.getElementById('streak-popup-toggle');
 let count = parseInt(localStorage.getItem('count')) || 0;
 let round = parseInt(localStorage.getItem('round')) || 0;
