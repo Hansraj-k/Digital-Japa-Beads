@@ -1329,19 +1329,25 @@ margin: 0 auto; /* Center the paragraph */
     margin-top: 15px;
 }
 
-/* Remove black dot/outline on buttons */
+/* Remove focus outline and any unwanted dots */
 button:focus, button:active {
   outline: none !important;
-  -webkit-tap-highlight-color: transparent !important;
 }
 
-/* For iOS specifically */
-button {
+/* Remove any potential pseudo-elements */
+button::-moz-focus-inner {
+  border: 0 !important;
+}
+
+/* Specifically for Font Awesome icons */
+button .fa, button i {
+  outline: none !important;
+}
+
+.fa, .fas, .far, .fal, .fab {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* If you want to add a custom focus style instead of removing it completely */
-button:focus-visible {
-  outline: 2px solid #00ffd5;
-  outline-offset: 2px;
+button {
+  -webkit-tap-highlight-color: transparent;
 }
