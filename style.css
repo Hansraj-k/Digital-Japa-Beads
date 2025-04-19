@@ -1328,3 +1328,20 @@ margin: 0 auto; /* Center the paragraph */
     margin-bottom: 15px;
     margin-top: 15px;
 }
+
+/* Remove black dot/outline on buttons */
+button:focus, button:active {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+/* For iOS specifically */
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* If you want to add a custom focus style instead of removing it completely */
+button:focus-visible {
+  outline: 2px solid #00ffd5;
+  outline-offset: 2px;
+}
