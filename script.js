@@ -1088,3 +1088,19 @@ function incrementCounter() {
     }
     updateCounter();
 }
+
+// Detect volume changes indirectly (hacky but works)
+let lastVolume = 0;
+const audio = new Audio();
+audio.volume = 0.5;
+
+setInterval(() => {
+  if (audio.volume > lastVolume) {
+    updateCounter(); // Volume was increased
+  }
+  lastVolume = audio.volume;
+}, 100);
+
+// Hide the audio element
+audio.style.display = 'none';
+document.body.appendChild(audio);
