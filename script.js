@@ -1048,3 +1048,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+
+// Listen for keydown events
+document.addEventListener('keydown', function(event) {
+    // Check for volume up key (different browsers may use different key codes)
+    // Common key codes for volume up:
+    // - 447 (some browsers)
+    // - 175 (some browsers)
+    // - "VolumeUp" (key)
+    if (event.keyCode === 447 || event.keyCode === 175 || event.key === "VolumeUp") {
+        // Prevent default behavior (like actually changing the volume)
+        event.preventDefault();
+        
+        // Update the counter
+        if (count === 0) {
+            updateStreak();
+        }
+        updateCounter();
+    }
+});
