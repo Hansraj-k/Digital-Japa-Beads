@@ -1068,3 +1068,23 @@ document.addEventListener('keydown', function(event) {
         updateCounter();
     }
 });
+
+document.addEventListener('keydown', function(event) {
+    // Volume up keys (may work on some mobile devices)
+    if (event.keyCode === 447 || event.keyCode === 175 || event.key === "VolumeUp") {
+        event.preventDefault();
+        incrementCounter();
+    }
+    // Spacebar (for desktop users)
+    else if (event.keyCode === 32 || event.key === " ") {
+        event.preventDefault();
+        incrementCounter();
+    }
+});
+
+function incrementCounter() {
+    if (count === 0) {
+        updateStreak();
+    }
+    updateCounter();
+}
