@@ -50,6 +50,15 @@ const sizeStep = 10;
 let imageSize = 100;
 let imageOffsetX = 0;
 let imageOffsetY = 0;
+let currentRotation = 0;
+let isDragging = false;
+let isResizing = false;
+let startX, startY;
+let initialSize, initialAngle;
+
+// Constants for resize handle
+const RESIZE_HANDLE_SIZE = 20;
+const ROTATE_HANDLE_DISTANCE = 60;
 
 let totalLetters = 108;
 let radius = 120;
@@ -468,15 +477,165 @@ function updateCounter() {
 function updateImagePreview() {
     const preview = document.getElementById('image-preview');
     if (preview.src) {
-        preview.style.transform = `scale(${imageSize / 100}) translate(${imageOffsetX}px, ${imageOffsetY}px)`;
+        preview.style.transform = `rotate(${currentRotation}deg) scale(${imageSize / 100})`;
+        preview.style.left = `${imageOffsetX}px`;
+        preview.style.top = `${imageOffsetY}px`;
     }
+    updateResizeHandle();
+}
+
+function updateResizeHandle() {
+    const handle = document.querySelector('.resize-handle');
+    if (!handle) return;
+    
+    const angle = currentRotation * Math.PI / 180;
+    const handleX = Math.cos(angle) * ROTATE_HANDLE_DISTANCE;
+    const handleY = Math.sin(angle) * ROTATE_HANDLE_DISTANCE;
+    
+    handle.style.left = `calc(50% + ${handleX - RESIZE_HANDLE_SIZE/2}px)`;
+    handle.style.top = `calc(50% + ${handleY - RESIZE_HANDLE_SIZE/2}px)`;
+    handle.style.transform = `rotate(${currentRotation}deg)`;
+}
+
+function startDrag(e) {
+    if (e.target.classList.contains('resize-handle')) return;
+    
+    isDragging = true;
+    const clientX = e.clientX || e.touches[0].clientX;
+    const clientY = e.clientY || e.touches[0].clientY;
+    
+    startX = clientX - imageOffsetX;
+    startY = clientY - imageOffsetY;
+    
+    e.preventDefault();
+}
+
+function handleDrag(e) {
+    if (!isDragging) return;
+    
+    const clientX = e.clientX || e.touches[0].clientX;
+    const clientY = e.clientY || e.touches[0].clientY;
+    
+    imageOffsetX = clientX - startX;
+    imageOffsetY = clientY - startY;
+    
+    updateImagePreview();
+    e.preventDefault();
+}
+
+function endDrag() {
+    isDragging = false;
+}
+
+function startResize(e) {
+    isResizing = true;
+    const clientX = e.clientX || e.touches[0].clientX;
+    const clientY = e.clientY || e.touches[0].clientY;
+    
+    const rect = document.getElementById('image-preview-container').getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    const angle = Math.atan2(clientY - centerY, clientX - centerX) * 180 / Math.PI;
+    initialAngle = angle - currentRotation;
+    initialSize = imageSize;
+    
+    e.preventDefault();
+    e.stopPropagation();
+}
+
+function handleResize(e) {
+    if (!isResizing) return;
+    
+    const clientX = e.clientX || e.touches[0].clientX;
+    const clientY = e.clientY || e.touches[0].clientY;
+    
+    const rect = document.getElementById('image-preview-container').getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    const angle = Math.atan2(clientY - centerY, clientX - centerX) * 180 / Math.PI;
+    currentRotation = angle - initialAngle;
+    
+    const distance = Math.sqrt(
+        Math.pow(clientX - centerX, 2) + 
+        Math.pow(clientY - centerY, 2)
+    );
+    
+    const baseDistance = ROTATE_HANDLE_DISTANCE * (initialSize / 100);
+    imageSize = Math.max(30, Math.min(200, Math.round((distance / baseDistance) * initialSize)));
+    
+    document.getElementById('image-size').value = imageSize;
+    document.getElementById('image-size-value').textContent = `${imageSize}%`;
+    
+    updateImagePreview();
+    e.preventDefault();
+}
+
+function endResize() {
+    isResizing = false;
+}
+
+function setupImageEditing() {
+    const previewContainer = document.getElementById('image-preview-container');
+    const preview = document.getElementById('image-preview');
+    const resizeHandle = document.createElement('div');
+    resizeHandle.className = 'resize-handle';
+    previewContainer.appendChild(resizeHandle);
+
+    // Mouse down handlers
+    preview.addEventListener('mousedown', startDrag);
+    preview.addEventListener('touchstart', startDrag);
+    resizeHandle.addEventListener('mousedown', startResize);
+    resizeHandle.addEventListener('touchstart', startResize);
+
+    // Mouse move handlers
+    document.addEventListener('mousemove', handleDrag);
+    document.addEventListener('touchmove', handleDrag);
+    document.addEventListener('mousemove', handleResize);
+    document.addEventListener('touchmove', handleResize);
+
+    // Mouse up handlers
+    document.addEventListener('mouseup', endDrag);
+    document.addEventListener('touchend', endDrag);
+    document.addEventListener('mouseup', endResize);
+    document.addEventListener('touchend', endResize);
+
+    updateResizeHandle();
+}
+
+function addRotationControls() {
+    const controls = document.createElement('div');
+    controls.className = 'rotate-buttons';
+    controls.innerHTML = `
+        <button class="rotate-btn" id="rotate-left">↺</button>
+        <button class="rotate-btn" id="rotate-right">↻</button>
+    `;
+    document.querySelector('#image-change-menu .control-group').appendChild(controls);
+    
+    document.getElementById('rotate-left').addEventListener('click', () => {
+        currentRotation -= 15;
+        updateImagePreview();
+    });
+    
+    document.getElementById('rotate-right').addEventListener('click', () => {
+        currentRotation += 15;
+        updateImagePreview();
+    });
 }
 
 function applyImageSettings(imageElement, settings) {
     if (!imageElement || !settings) return;
     
     imageElement.src = settings.src;
-    imageElement.style.transform = `scale(${settings.size / 100}) translate(${settings.offsetX}px, ${settings.offsetY}px)`;
+    imageElement.style.transform = `rotate(${settings.rotation || 0}deg) scale(${settings.size / 100})`;
+    imageElement.style.left = `${settings.offsetX || 0}px`;
+    imageElement.style.top = `${settings.offsetY || 0}px`;
+    
+    if (settings.size) imageSize = settings.size;
+    if (settings.offsetX) imageOffsetX = settings.offsetX;
+    if (settings.offsetY) imageOffsetY = settings.offsetY;
+    if (settings.rotation) currentRotation = settings.rotation;
 }
 
 // Event listeners
@@ -615,23 +774,6 @@ circleTextInput.addEventListener('input', function() {
     }
 });
 
-// Image editing controls
-document.getElementById('image-size').addEventListener('input', function() {
-    imageSize = this.value;
-    document.getElementById('image-size-value').textContent = `${imageSize}%`;
-    updateImagePreview();
-});
-
-document.getElementById('image-offset-x').addEventListener('input', function() {
-    imageOffsetX = parseInt(this.value);
-    updateImagePreview();
-});
-
-document.getElementById('image-offset-y').addEventListener('input', function() {
-    imageOffsetY = parseInt(this.value);
-    updateImagePreview();
-});
-
 // Image change functionality
 const changeImageBtn = document.getElementById('change-image-btn');
 const imageChangeMenu = document.getElementById('image-change-menu');
@@ -670,7 +812,8 @@ saveImageBtn.addEventListener('click', () => {
             src: newImageSrc,
             size: imageSize,
             offsetX: imageOffsetX,
-            offsetY: imageOffsetY
+            offsetY: imageOffsetY,
+            rotation: currentRotation
         };
         localStorage.setItem('selectedImage', JSON.stringify(imageSettings));
         
@@ -685,7 +828,9 @@ resetImageBtn.addEventListener('click', () => {
     localStorage.removeItem('selectedImage');
     const roundImage = document.querySelector('.round-image');
     roundImage.src = 'rkhkmc.png';
-    roundImage.style.transform = 'scale(1) translate(0, 0)';
+    roundImage.style.transform = 'rotate(0deg) scale(1)';
+    roundImage.style.left = '0px';
+    roundImage.style.top = '0px';
     
     imagePreview.src = '';
     imagePreview.style.display = 'none';
@@ -693,10 +838,9 @@ resetImageBtn.addEventListener('click', () => {
     imageSize = 100;
     imageOffsetX = 0;
     imageOffsetY = 0;
+    currentRotation = 0;
     document.getElementById('image-size').value = 100;
     document.getElementById('image-size-value').textContent = '100%';
-    document.getElementById('image-offset-x').value = 0;
-    document.getElementById('image-offset-y').value = 0;
 });
 
 // Initialize the app
@@ -730,11 +874,10 @@ window.onload = function() {
                 imageSize = imageSettings.size || 100;
                 imageOffsetX = imageSettings.offsetX || 0;
                 imageOffsetY = imageSettings.offsetY || 0;
+                currentRotation = imageSettings.rotation || 0;
                 
                 document.getElementById('image-size').value = imageSize;
                 document.getElementById('image-size-value').textContent = `${imageSize}%`;
-                document.getElementById('image-offset-x').value = imageOffsetX;
-                document.getElementById('image-offset-y').value = imageOffsetY;
                 
                 updateImagePreview();
             }
@@ -742,6 +885,9 @@ window.onload = function() {
             document.querySelector('.round-image').src = savedImage;
         }
     }
+    
+    setupImageEditing();
+    addRotationControls();
 };
 
 // Show popup notification if first visit
