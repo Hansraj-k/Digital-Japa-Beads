@@ -46,11 +46,6 @@ const minButtonSize = 50;
 const maxButtonSize = 150;
 const sizeStep = 10;
 
-
-
-
-
-
 let totalLetters = 108;
 let radius = 120;
 let maxRadius = 180;
@@ -116,7 +111,6 @@ function updateSliderFill(slider) {
         document.getElementById('complete-vibration-value').textContent = `${value}ms`;
     }
 }
-
 // Function to update the displayed count
 function updateCountDisplay() {
     countDisplay.textContent = count;
@@ -202,7 +196,6 @@ function loadSettingsFromStorage() {
 
     updateSettingsUI();
 }
-
 // Function to update button size
 function updateButtonSize(newSize) {
     currentButtonSize = Math.max(minButtonSize, Math.min(maxButtonSize, newSize));
@@ -213,8 +206,6 @@ function updateButtonSize(newSize) {
 
     // Scale the button
     countBtn.style.transform = `scale(${currentButtonSize / 100})`;
-
-
 
     // Adjust padding above and below the button equally
     const paddingAdjustment = (currentButtonSize - 100) * 0.5; // Adjust padding equally
@@ -511,21 +502,6 @@ function updateCounter() {
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Event listeners
 document.getElementById('count-btn').addEventListener('click', function() {
     if (count === 0) {
@@ -676,8 +652,6 @@ checkAndResetDaily(); // Initial daily check
 // Set up a daily check (every hour to be safe)
 setInterval(checkAndResetDaily, 60 * 60 * 1000);
 
-
-
 // Set current year in footer
 const dateInIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
 const currentYear = dateInIST.getFullYear();
@@ -719,15 +693,6 @@ saveImageBtn.addEventListener('click', () => {
     if (newImageSrc) {
         localStorage.setItem('selectedImage', newImageSrc);
         document.querySelector('.round-image').src = newImageSrc;
-
-
-
-
-
-
-
-
-
         imageChangeMenu.style.display = 'none';
     }
 });
@@ -735,44 +700,15 @@ saveImageBtn.addEventListener('click', () => {
 resetImageBtn.addEventListener('click', () => {
     localStorage.removeItem('selectedImage');
     document.querySelector('.round-image').src = 'rkhkmc.png';
-
-
-
     imagePreview.src = '';
     imagePreview.style.display = 'none';
-
-
-
-
-
-
-
-
 });
 
 // Check for saved image
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 window.onload = function() {
     const savedImage = localStorage.getItem('selectedImage');
     if (savedImage) {
         document.querySelector('.round-image').src = savedImage;
-
-
     }
 };
 
@@ -804,9 +740,6 @@ if (installBtn) {
         deferredPrompt = e;
         installBtn.style.display = 'block';
 
-
-
-
         installBtn.addEventListener('click', async () => {
             installBtn.style.display = 'none';
             deferredPrompt.prompt();
@@ -817,14 +750,7 @@ if (installBtn) {
     });
 
     window.addEventListener('appinstalled', () => {
-
         installBtn.style.display = 'none';
-
-
-
-
-
-
     });
 }
 
@@ -1134,7 +1060,7 @@ document.addEventListener('keydown', function(event) {
     if (event.keyCode === 447 || event.keyCode === 175 || event.key === "VolumeUp") {
         // Prevent default behavior (like actually changing the volume)
         event.preventDefault();
-
+        
         // Update the counter
         if (count === 0) {
             updateStreak();
