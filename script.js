@@ -40,6 +40,13 @@ let clearCircleTextBtn = document.getElementById('clear-circle-text');
 let saveCircleTextBtn = document.getElementById('save-circle-text');
 let cancelCircleTextBtn = document.getElementById('cancel-circle-text');
 
+let cropper;
+let isDragging = false;
+let startX, startY;
+let translateX = 0, translateY = 0;
+let currentScale = 1;
+let currentImage = null;
+
 // Button size variables
 let currentButtonSize = 100;
 const minButtonSize = 50;
@@ -682,10 +689,136 @@ imageUpload.addEventListener('change', (event) => {
         reader.onload = function(e) {
             imagePreview.src = e.target.result;
             imagePreview.style.display = 'block';
-
+            
+            // Initialize cropping
+            initCropping(e.target.result);
         };
         reader.readAsDataURL(file);
     }
+});
+
+function initCropping(imageSrc) {
+    document.querySelector('.cropping-container').style.display = 'block';
+    const cropPreview = document.getElementById('crop-preview');
+    cropPreview.src = imageSrc;
+    currentImage = imageSrc;
+    
+    // Reset transformations
+    translateX = 0;
+    translateY = 0;
+    currentScale = 1;
+    updateCropTransform();
+    
+    // Set up event listeners for dragging
+    cropPreview.addEventListener('mousedown', startDrag);
+    cropPreview.addEventListener('touchstart', startDrag);
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('touchmove', drag);
+    document.addEventListener('mouseup', endDrag);
+    document.addEventListener('touchend', endDrag);
+    
+    // Zoom controls
+    document.getElementById('zoom-in-btn').addEventListener('click', () => {
+        currentScale = Math.min(3, currentScale + 0.1);
+        updateCropTransform();
+        document.getElementById('zoom-slider').value = currentScale * 100;
+    });
+    
+    document.getElementById('zoom-out-btn').addEventListener('click', () => {
+        currentScale = Math.max(1, currentScale - 0.1);
+        updateCropTransform();
+        document.getElementById('zoom-slider').value = currentScale * 100;
+    });
+    
+    document.getElementById('zoom-slider').addEventListener('input', function() {
+        currentScale = this.value / 100;
+        updateCropTransform();
+    });
+    
+    // Crop button
+    document.getElementById('crop-image-btn').addEventListener('click', cropAndSaveImage);
+}
+
+function startDrag(e) {
+    isDragging = true;
+    const clientX = e.clientX || e.touches[0].clientX;
+    const clientY = e.clientY || e.touches[0].clientY;
+    startX = clientX - translateX;
+    startY = clientY - translateY;
+    e.preventDefault();
+}
+
+function drag(e) {
+    if (!isDragging) return;
+    const clientX = e.clientX || e.touches[0].clientX;
+    const clientY = e.clientY || e.touches[0].clientY;
+    translateX = clientX - startX;
+    translateY = clientY - startY;
+    updateCropTransform();
+    e.preventDefault();
+}
+
+function endDrag() {
+    isDragging = false;
+}
+
+function updateCropTransform() {
+    const cropPreview = document.getElementById('crop-preview');
+    cropPreview.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
+}
+
+function cropAndSaveImage() {
+    const cropArea = document.querySelector('.crop-area');
+    const cropPreview = document.getElementById('crop-preview');
+    
+    // Create a canvas to draw the cropped image
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const size = cropArea.offsetWidth;
+    
+    canvas.width = size;
+    canvas.height = size;
+    
+    // Calculate the position and scale for cropping
+    const img = new Image();
+    img.onload = function() {
+        // Calculate the scaled dimensions
+        const scaledWidth = img.width * currentScale;
+        const scaledHeight = img.height * currentScale;
+        
+        // Calculate the source rectangle
+        const sourceX = (img.width - (img.width / currentScale)) / 2 - (translateX / currentScale);
+        const sourceY = (img.height - (img.height / currentScale)) / 2 - (translateY / currentScale);
+        const sourceWidth = img.width / currentScale;
+        const sourceHeight = img.height / currentScale;
+        
+        // Draw the cropped image
+        ctx.beginPath();
+        ctx.arc(size/2, size/2, size/2, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+        
+        ctx.drawImage(
+            img,
+            sourceX, sourceY, sourceWidth, sourceHeight,
+            0, 0, size, size
+        );
+        
+        // Save the cropped image
+        const croppedImage = canvas.toDataURL('image/png');
+        localStorage.setItem('selectedImage', croppedImage);
+        document.querySelector('.round-image').src = croppedImage;
+        
+        // Hide cropping interface
+        document.querySelector('.cropping-container').style.display = 'none';
+    };
+    
+    img.src = currentImage;
+}
+
+// Reset cropping when closing the image menu
+closeImageMenuBtn.addEventListener('click', () => {
+    document.querySelector('.cropping-container').style.display = 'none';
 });
 
 saveImageBtn.addEventListener('click', () => {
