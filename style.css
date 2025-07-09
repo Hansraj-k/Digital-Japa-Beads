@@ -1357,3 +1357,41 @@ margin: 0 auto; /* Center the paragraph */
     margin-bottom: 15px;
     margin-top: 15px;
 }
+
+.image-controls {
+    margin: 15px 0;
+}
+
+.control-group {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.control-group label {
+    width: 80px;
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+.control-group input[type="range"] {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+#image-preview-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #00ffd5;
+}
+
+#image-preview {
+    position: absolute;
+    max-width: none;
+    height: auto;
+    transform-origin: center;
+}
