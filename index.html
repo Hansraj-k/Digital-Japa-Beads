@@ -133,6 +133,18 @@
             <div id="image-preview-container">
                 <img id="image-preview" src="" alt="Image Preview" />
             </div>
+            <div class="cropping-container">
+    <div class="crop-area">
+        <img id="crop-preview" src="" alt="Crop Preview">
+        <div class="crop-overlay"></div>
+    </div>
+    <div class="crop-controls">
+        <button id="zoom-in-btn"><i class="fas fa-search-plus"></i></button>
+        <input type="range" id="zoom-slider" min="100" max="300" value="100">
+        <button id="zoom-out-btn"><i class="fas fa-search-minus"></i></button>
+    </div>
+    <button id="crop-image-btn">Crop & Save</button>
+</div>
             <button id="save-image-btn">Save Image</button>
             <button id="reset-image-btn">Reset Image</button>
             <button id="close-image-menu">Close</button>
