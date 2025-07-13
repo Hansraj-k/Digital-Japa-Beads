@@ -676,7 +676,7 @@ updateRoundDisplay();
 updateCircleText();
 loadSettingsFromStorage();
 initializeStreak();
-checkAndResetDaily(); // Initial daily check
+ // Initial daily check
 
 // Set up a daily check (every hour to be safe)
 setInterval(checkAndResetDaily, 60 * 60 * 1000);
