@@ -1357,10 +1357,9 @@ margin: 0 auto; /* Center the paragraph */
     margin-top: 15px;
 }
 
-/* Add this to your existing CSS */
-#daily-reset-toggle + .knobs:before,
-#daily-reset-toggle + .knobs:after {
-    content: '';
+/* Update the toggle switch styles */
+#daily-reset-toggle + .knobs:before {
+    content: "OFF";
     position: absolute;
     top: 4px;
     left: 4px;
@@ -1368,7 +1367,7 @@ margin: 0 auto; /* Center the paragraph */
     height: 10px;
     color: #000;
     font-size: 10px;
-    font-weight: bold;
+    font-weight: 600;
     text-align: center;
     line-height: 1;
     padding: 9px 4px;
@@ -1377,14 +1376,17 @@ margin: 0 auto; /* Center the paragraph */
     transition: 0.3s ease all, left 0.3s cubic-bezier(0.18, 0.89, 0.35, 1.15);
 }
 
-#daily-reset-toggle:active + .knobs:before,
-#daily-reset-toggle:active + .knobs:after {
+#daily-reset-toggle:active + .knobs:before {
     width: 46px;
     border-radius: 100px;
 }
 
+#daily-reset-toggle:checked:active + .knobs:before {
+    margin-left: -26px;
+}
+
 #daily-reset-toggle:checked + .knobs:before {
-    content: 'ON';
+    content: "ON";
     left: 30px;
     background-color: #00ffd5;
 }
@@ -1392,16 +1394,3 @@ margin: 0 auto; /* Center the paragraph */
 #daily-reset-toggle:checked ~ .layer {
     background-color: #fcebeb;
 }
-
-#daily-reset-toggle + .knobs:before {
-    content: 'OFF';
-}
-
-#daily-reset-toggle + .knobs:after {
-    content: '';
-}
-
-#daily-reset-toggle:checked:active + .knobs:before {
-    margin-left: -26px;
-}
-
