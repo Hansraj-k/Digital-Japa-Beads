@@ -1,4 +1,4 @@
-// Initialize count and round 
+ // Initialize count and round 
 let streakPopupToggle = document.getElementById('streak-popup-toggle');
 let count = parseInt(localStorage.getItem('count')) || 0;
 let round = parseInt(localStorage.getItem('round')) || 0;
@@ -40,24 +40,6 @@ let clearCircleTextBtn = document.getElementById('clear-circle-text');
 let saveCircleTextBtn = document.getElementById('save-circle-text');
 let cancelCircleTextBtn = document.getElementById('cancel-circle-text');
 
-// Image change elements
-let changeImageBtn = document.getElementById('change-image-btn');
-let imageChangeMenu = document.getElementById('image-change-menu');
-let imageUpload = document.getElementById('image-upload');
-let imagePreview = document.getElementById('image-preview');
-let saveImageBtn = document.getElementById('save-image-btn');
-let resetImageBtn = document.getElementById('reset-image-btn');
-let closeImageMenuBtn = document.getElementById('close-image-menu');
-
-// Image cropping variables
-let isDragging = false;
-let startX, startY;
-let translateX = 0, translateY = 0;
-let scale = 1;
-let rotation = 0;
-let currentImage = null;
-let initialDistance = null;
-
 // Button size variables
 let currentButtonSize = 100;
 const minButtonSize = 50;
@@ -80,7 +62,7 @@ let vibrationSettings = {
     completeVibrationDuration: 1000,
     volume: 210,
     buttonSize: 100,
-    streakPopupEnabled: true
+    streakPopupEnabled: true  // Add this line
 };
 
 // Streak variables
@@ -90,7 +72,7 @@ let chantingHistory = JSON.parse(localStorage.getItem('chantingHistory')) || {};
 
 // Create audio element for streak sound
 const streakAudio = new Audio();
-streakAudio.src = 'streak-sound.mp3';
+streakAudio.src = 'streak-sound.mp3'; // Add this file to your project
 streakAudio.volume = 0.6;
 
 // Function to reset counts daily at midnight
@@ -117,8 +99,10 @@ function updateSliderFill(slider) {
     const min = slider.min;
     const percent = ((value - min) / (max - min)) * 100;
 
+    // Update CSS variable
     slider.style.setProperty('--fill-percent', `${percent}%`);
 
+    // Update the displayed value
     if (slider.id === 'volume-slider') {
         document.getElementById('volume-value').textContent = value;
     } else if (slider.id === 'count-vibration-slider') {
@@ -127,7 +111,6 @@ function updateSliderFill(slider) {
         document.getElementById('complete-vibration-value').textContent = `${value}ms`;
     }
 }
-
 // Function to update the displayed count
 function updateCountDisplay() {
     countDisplay.textContent = count;
@@ -140,6 +123,7 @@ function updateRoundDisplay() {
 
 // Function to update the circle text based on the count
 function updateCircleText() {
+    // Ensure no spaces in the circle text content
     circleTextContent = circleTextContent.replace(/\s+/g, '');
     const letters = circleTextContent.repeat(Math.ceil(108 / circleTextContent.length)).split('');
     const circleDivisions = [33, 36, 39];
@@ -186,7 +170,7 @@ function saveSettingsToStorage() {
         completeVibrationDuration: parseInt(completeVibrationSlider.value),
         volume: parseInt(volumeSlider.value),
         buttonSize: currentButtonSize,
-        streakPopupEnabled: streakPopupToggle.checked
+        streakPopupEnabled: streakPopupToggle.checked  // Add this line
     };
     localStorage.setItem('vibrationSettings', JSON.stringify(vibrationSettings));
 }
@@ -202,7 +186,7 @@ function loadSettingsFromStorage() {
         countVibrationSlider.value = vibrationSettings.countVibrationDuration || 60;
         completeVibrationSlider.value = vibrationSettings.completeVibrationDuration || 1000;
         volumeSlider.value = vibrationSettings.volume !== undefined ? vibrationSettings.volume : 210;
-        streakPopupToggle.checked = vibrationSettings.streakPopupEnabled !== false;
+        streakPopupToggle.checked = vibrationSettings.streakPopupEnabled !== false;  // Add this line
 
         if (vibrationSettings.buttonSize) {
             currentButtonSize = vibrationSettings.buttonSize;
@@ -212,7 +196,6 @@ function loadSettingsFromStorage() {
 
     updateSettingsUI();
 }
-
 // Function to update button size
 function updateButtonSize(newSize) {
     currentButtonSize = Math.max(minButtonSize, Math.min(maxButtonSize, newSize));
@@ -221,10 +204,15 @@ function updateButtonSize(newSize) {
     const countBtn = document.getElementById('count-btn');
     const btnImg = countBtn.querySelector('img');
 
+    // Scale the button
     countBtn.style.transform = `scale(${currentButtonSize / 100})`;
-    countBtn.style.paddingTop = `${(currentButtonSize - 100) * 0.5}px`;
-    countBtn.style.paddingBottom = `${(currentButtonSize - 100) * 0.5}px`;
 
+    // Adjust padding above and below the button equally
+    const paddingAdjustment = (currentButtonSize - 100) * 0.5; // Adjust padding equally
+    countBtn.style.paddingTop = `${paddingAdjustment}px`;
+    countBtn.style.paddingBottom = `${paddingAdjustment}px`;
+
+    // Adjust the circle container padding based on button size
     adjustCircleContainer();
 
     vibrationSettings.buttonSize = currentButtonSize;
@@ -246,7 +234,7 @@ function adjustCircleContainer() {
         basePadding = window.innerWidth <= 768 ? 381 : 423;
     }
 
-    const sizeAdjustment = (currentButtonSize - 100) * 3;
+    const sizeAdjustment = (currentButtonSize - 100) * 3; // 3px per 10%
     const newPadding = basePadding + sizeAdjustment;
 
     circleContainer.style.setProperty("padding-top", `${newPadding}px`, "important");
@@ -320,16 +308,19 @@ function initializeStreak() {
     const today = new Date();
     const todayStr = formatDate(today);
 
+    // If we have last activity date, check if we need to reset streak
     if (lastActivityDate) {
         const lastDate = new Date(lastActivityDate);
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
 
+        // If last activity was before yesterday, reset streak
         if (lastDate < yesterday && !isSameDay(lastDate, yesterday)) {
             streak = 0;
             localStorage.setItem('streak', streak);
         }
 
+        // If last activity was today, ensure chanting history exists
         if (lastActivityDate === todayStr && !chantingHistory[todayStr]) {
             chantingHistory[todayStr] = { count: 0, rounds: 0 };
         }
@@ -346,18 +337,22 @@ function updateStreak() {
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayStr = formatDate(yesterday);
 
+    // Check if we already counted today
     if (lastActivityDate === todayStr) {
         return;
     }
 
+    // If first time or no last activity date, start new streak
     if (!lastActivityDate) {
         streak = 1;
         showStreakPopup("Today, you planted the seed of devotion. With consistency, it will blossom beautifully! 🌸");
     }
+    // If last activity was yesterday, increment streak
     else if (lastActivityDate === yesterdayStr) {
         streak++;
         showStreakPopup(`Incredible dedication! 🙌\n\nYou've been chanting consistently for ${streak} days${streak > 1 ? 's' : ''}!`);
     }
+    // If last activity was more than 1 day ago, reset streak
     else {
         const lastDate = new Date(lastActivityDate);
         const daysDiff = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
@@ -368,17 +363,21 @@ function updateStreak() {
         }
     }
 
+    // Update last activity date
     lastActivityDate = todayStr;
 
+    // Update chanting history
     if (!chantingHistory[todayStr]) {
         chantingHistory[todayStr] = { count: 0, rounds: 0 };
     }
     chantingHistory[todayStr].count++;
 
+    // Save to localStorage
     localStorage.setItem('streak', streak);
     localStorage.setItem('lastActivityDate', lastActivityDate);
     localStorage.setItem('chantingHistory', JSON.stringify(chantingHistory));
 
+    // Update display
     updateStreakDisplay();
 }
 
@@ -399,6 +398,7 @@ function renderStreakCalendar() {
     streakCalendar.innerHTML = '';
     const today = new Date();
 
+    // Create calendar for the past 7 days
     for (let i = 6; i >= 0; i--) {
         const date = new Date(today);
         date.setDate(today.getDate() - i);
@@ -407,16 +407,21 @@ function renderStreakCalendar() {
         const dayElement = document.createElement('div');
         dayElement.className = 'streak-day';
 
+        // Check if this day had activity
         if (chantingHistory[dateStr] && chantingHistory[dateStr].count > 0) {
             dayElement.classList.add('active');
         }
 
+        // Mark today
         if (i === 0) {
             dayElement.classList.add('today');
         }
 
+        // Add day abbreviation
         const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         dayElement.setAttribute('data-day', dayNames[date.getDay()]);
+
+        // Add date number
         dayElement.textContent = date.getDate();
 
         streakCalendar.appendChild(dayElement);
@@ -424,6 +429,25 @@ function renderStreakCalendar() {
 }
 
 // Function to show streak popup with sound
+function showStreakPopup(message) {
+    const streakPopup = document.getElementById('streak-popup');
+    const streakMessage = document.getElementById('streak-message');
+
+    if (streakPopup && streakMessage) {
+        streakMessage.textContent = message;
+        streakPopup.style.display = 'block';
+
+        // Play streak sound if sound is enabled
+        if (soundToggle.checked) {
+            streakAudio.currentTime = 0;
+            streakAudio.play().catch(e => console.log("Audio play failed:", e));
+        }
+
+        setTimeout(() => {
+            streakPopup.style.display = 'none';
+        }, 3000);
+    }
+}
 function showStreakPopup(message) {
     if (!streakPopupToggle.checked) return;
 
@@ -434,6 +458,7 @@ function showStreakPopup(message) {
         streakMessage.textContent = message;
         streakPopup.style.display = 'block';
 
+// Play streak sound if sound is enabled
         if (soundToggle.checked) {
             streakAudio.currentTime = 0;
             streakAudio.play().catch(e => console.log("Audio play failed:", e));
@@ -447,7 +472,7 @@ function showStreakPopup(message) {
 
 // Function to update the counter with daily reset check
 function updateCounter() {
-    checkAndResetDaily();
+    checkAndResetDaily(); // Check if we need to reset first
 
     if (count < totalLetters) {
         count++;
@@ -475,177 +500,6 @@ function updateCounter() {
     } else {
         popup108.style.display = 'block';
     }
-}
-
-// Image Cropping Functions
-function initCropper(image) {
-    translateX = 0;
-    translateY = 0;
-    scale = 1;
-    rotation = 0;
-    
-    const container = document.getElementById('image-cropper');
-    const containerWidth = container.offsetWidth;
-    const containerHeight = container.offsetHeight;
-    
-    image.onload = function() {
-        const imgWidth = this.naturalWidth;
-        const imgHeight = this.naturalHeight;
-        
-        const scaleX = containerWidth / imgWidth;
-        const scaleY = containerHeight / imgHeight;
-        scale = Math.max(scaleX, scaleY);
-        
-        translateX = (containerWidth - imgWidth * scale) / 2;
-        translateY = (containerHeight - imgHeight * scale) / 2;
-        
-        applyTransform();
-    };
-    
-    // Mouse events
-    image.addEventListener('mousedown', startDrag);
-    document.addEventListener('mousemove', drag);
-    document.addEventListener('mouseup', endDrag);
-    
-    // Touch events
-    image.addEventListener('touchstart', handleTouchStart);
-    document.addEventListener('touchmove', handleTouchMove);
-    document.addEventListener('touchend', handleTouchEnd);
-    
-    // Zoom buttons
-    document.getElementById('zoom-in-btn').addEventListener('click', () => {
-        scale *= 1.1;
-        applyTransform();
-    });
-    
-    document.getElementById('zoom-out-btn').addEventListener('click', () => {
-        scale /= 1.1;
-        applyTransform();
-    });
-    
-    document.getElementById('rotate-btn').addEventListener('click', () => {
-        rotation += 90;
-        if (rotation >= 360) rotation = 0;
-        applyTransform();
-    });
-}
-
-function startDrag(e) {
-    isDragging = true;
-    if (e.type === 'mousedown') {
-        startX = e.clientX - translateX;
-        startY = e.clientY - translateY;
-    } else {
-        startX = e.touches[0].clientX - translateX;
-        startY = e.touches[0].clientY - translateY;
-    }
-    e.preventDefault();
-}
-
-function drag(e) {
-    if (!isDragging) return;
-    
-    if (e.type === 'mousemove') {
-        translateX = e.clientX - startX;
-        translateY = e.clientY - startY;
-    } else {
-        translateX = e.touches[0].clientX - startX;
-        translateY = e.touches[0].clientY - startY;
-    }
-    
-    applyTransform();
-    e.preventDefault();
-}
-
-function endDrag() {
-    isDragging = false;
-}
-
-function handleTouchStart(e) {
-    if (e.touches.length === 1) {
-        startX = e.touches[0].clientX - translateX;
-        startY = e.touches[0].clientY - translateY;
-        isDragging = true;
-    } else if (e.touches.length === 2) {
-        initialDistance = getDistance(e.touches[0], e.touches[1]);
-    }
-}
-
-function handleTouchMove(e) {
-    if (e.touches.length === 1 && isDragging) {
-        translateX = e.touches[0].clientX - startX;
-        translateY = e.touches[0].clientY - startY;
-        applyTransform();
-    } else if (e.touches.length === 2 && initialDistance !== null) {
-        const currentDistance = getDistance(e.touches[0], e.touches[1]);
-        const scaleFactor = currentDistance / initialDistance;
-        scale *= scaleFactor;
-        scale = Math.max(0.5, Math.min(scale, 3));
-        initialDistance = currentDistance;
-        applyTransform();
-    }
-    e.preventDefault();
-}
-
-function handleTouchEnd() {
-    isDragging = false;
-    initialDistance = null;
-}
-
-function getDistance(touch1, touch2) {
-    return Math.hypot(
-        touch2.clientX - touch1.clientX,
-        touch2.clientY - touch1.clientY
-    );
-}
-
-function applyTransform() {
-    if (!currentImage) return;
-    
-    currentImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale}) rotate(${rotation}deg)`;
-}
-
-function cropAndSaveImage() {
-    if (!currentImage) return;
-    
-    const container = document.getElementById('image-cropper');
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    
-    canvas.width = container.offsetWidth;
-    canvas.height = container.offsetHeight;
-    
-    // Draw the image with current transformations
-    ctx.save();
-    ctx.translate(canvas.width / 2, canvas.height / 2);
-    ctx.rotate(rotation * Math.PI / 180);
-    ctx.scale(scale, scale);
-    ctx.drawImage(
-        currentImage,
-        -currentImage.naturalWidth / 2 + translateX / scale,
-        -currentImage.naturalHeight / 2 + translateY / scale,
-        currentImage.naturalWidth,
-        currentImage.naturalHeight
-    );
-    ctx.restore();
-    
-    // Create a circular mask
-    ctx.globalCompositeOperation = 'destination-in';
-    ctx.beginPath();
-    ctx.arc(canvas.width / 2, canvas.height / 2, canvas.width / 2, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Convert to data URL and save
-    const croppedImageUrl = canvas.toDataURL('image/png');
-    localStorage.setItem('selectedImage', croppedImageUrl);
-    document.querySelector('.round-image').src = croppedImageUrl;
-    
-    // Hide editor and show preview
-    document.getElementById('image-editor-container').style.display = 'none';
-    imagePreview.src = croppedImageUrl;
-    imagePreview.style.display = 'block';
-    
-    imageChangeMenu.style.display = 'none';
 }
 
 // Event listeners
@@ -749,13 +603,14 @@ document.getElementById('increase-btn-size').addEventListener('click', () => {
     updateButtonSize(currentButtonSize + sizeStep);
 });
 
-// Circle text edit functionality
+// Circle text edit functionality with space handling
 editCircleTextBtn.addEventListener('click', () => {
     closeAllPopups();
     circleTextInput.value = circleTextContent;
     circleTextEditModal.style.display = 'flex';
 });
 
+// Clear text button functionality
 clearCircleTextBtn.addEventListener('click', function() {
     circleTextInput.value = '';
     circleTextInput.classList.add('warning');
@@ -763,6 +618,7 @@ clearCircleTextBtn.addEventListener('click', function() {
 });
 
 saveCircleTextBtn.addEventListener('click', () => {
+    // Remove all spaces (start, end, and between) when saving
     circleTextContent = circleTextInput.value.replace(/\s+/g, '') || 'HAREKRISHNAHAREKRISHNAKRISHNAKRISHNAHAREHAREHARERAMAHARERAMARAMARAMAHAREHARE';
     localStorage.setItem('circleText', circleTextContent);
     circleTextEditModal.style.display = 'none';
@@ -773,6 +629,7 @@ cancelCircleTextBtn.addEventListener('click', () => {
     circleTextEditModal.style.display = 'none';
 });
 
+// Show warning when spaces are entered in circle text
 circleTextInput.addEventListener('input', function() {
     const warningElement = document.querySelector('.space-warning');
     if (this.value.includes(' ')) {
@@ -784,72 +641,60 @@ circleTextInput.addEventListener('input', function() {
     }
 });
 
-// Image upload and cropping functionality
+// Initialize the app
+updateCountDisplay();
+updateRoundDisplay();
+updateCircleText();
+loadSettingsFromStorage();
+initializeStreak();
+checkAndResetDaily(); // Initial daily check
+
+// Set up a daily check (every hour to be safe)
+setInterval(checkAndResetDaily, 60 * 60 * 1000);
+
+// Set current year in footer
+const dateInIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
+const currentYear = dateInIST.getFullYear();
+document.getElementById('current-year').textContent = currentYear;
+
+// Image change functionality
+const changeImageBtn = document.getElementById('change-image-btn');
+const imageChangeMenu = document.getElementById('image-change-menu');
+const imageUpload = document.getElementById('image-upload');
+const imagePreview = document.getElementById('image-preview');
+const saveImageBtn = document.getElementById('save-image-btn');
+const resetImageBtn = document.getElementById('reset-image-btn');
+const closeImageMenuBtn = document.getElementById('close-image-menu');
+
+changeImageBtn.addEventListener('click', () => {
+    closeAllPopups();
+    imageChangeMenu.style.display = 'block';
+});
+
+closeImageMenuBtn.addEventListener('click', () => {
+    imageChangeMenu.style.display = 'none';
+});
+
 imageUpload.addEventListener('change', (event) => {
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            imagePreview.style.display = 'none';
-            document.getElementById('image-editor-container').style.display = 'block';
-            
-            const imageToCrop = document.getElementById('image-to-crop');
-            imageToCrop.src = e.target.result;
-            currentImage = imageToCrop;
-            
-            initCropper(imageToCrop);
+            imagePreview.src = e.target.result;
+            imagePreview.style.display = 'block';
+
         };
         reader.readAsDataURL(file);
     }
 });
 
-// Update the save image button functionality
-saveImageBtn.addEventListener('click', function() {
-    if (!currentImage) return;
-    
-    // Create a canvas to crop the image
-    const container = document.getElementById('image-cropper');
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    
-    // Set canvas size to match the container
-    canvas.width = container.offsetWidth;
-    canvas.height = container.offsetHeight;
-    
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Draw the image with current transformations
-    ctx.save();
-    ctx.translate(canvas.width / 2, canvas.height / 2);
-    ctx.rotate(rotation * Math.PI / 180);
-    ctx.scale(scale, scale);
-    ctx.drawImage(
-        currentImage,
-        -currentImage.naturalWidth / 2,
-        -currentImage.naturalHeight / 2,
-        currentImage.naturalWidth,
-        currentImage.naturalHeight
-    );
-    ctx.restore();
-    
-    // Create a circular mask
-    ctx.globalCompositeOperation = 'destination-in';
-    ctx.beginPath();
-    ctx.arc(canvas.width / 2, canvas.height / 2, canvas.width / 2, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Convert to data URL and save
-    const croppedImageUrl = canvas.toDataURL('image/png');
-    localStorage.setItem('selectedImage', croppedImageUrl);
-    document.querySelector('.round-image').src = croppedImageUrl;
-    
-    // Hide editor and show preview
-    document.getElementById('image-editor-container').style.display = 'none';
-    imagePreview.src = croppedImageUrl;
-    imagePreview.style.display = 'block';
-    
-    imageChangeMenu.style.display = 'none';
+saveImageBtn.addEventListener('click', () => {
+    const newImageSrc = imagePreview.src;
+    if (newImageSrc) {
+        localStorage.setItem('selectedImage', newImageSrc);
+        document.querySelector('.round-image').src = newImageSrc;
+        imageChangeMenu.style.display = 'none';
+    }
 });
 
 resetImageBtn.addEventListener('click', () => {
@@ -857,31 +702,15 @@ resetImageBtn.addEventListener('click', () => {
     document.querySelector('.round-image').src = 'rkhkmc.png';
     imagePreview.src = '';
     imagePreview.style.display = 'none';
-    document.getElementById('image-editor-container').style.display = 'none';
-    if (currentImage) {
-        currentImage.style.transform = '';
+});
+
+// Check for saved image
+window.onload = function() {
+    const savedImage = localStorage.getItem('selectedImage');
+    if (savedImage) {
+        document.querySelector('.round-image').src = savedImage;
     }
-});
-
-closeImageMenuBtn.addEventListener('click', () => {
-    imageChangeMenu.style.display = 'none';
-});
-
-// Initialize the app
-updateCountDisplay();
-updateRoundDisplay();
-updateCircleText();
-loadSettingsFromStorage();
-initializeStreak();
-checkAndResetDaily();
-
-// Set up a daily check
-setInterval(checkAndResetDaily, 60 * 60 * 1000);
-
-// Set current year in footer
-const dateInIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
-const currentYear = dateInIST.getFullYear();
-document.getElementById('current-year').textContent = currentYear;
+};
 
 // Show popup notification if first visit
 if (!localStorage.getItem('popupShown')) {
@@ -892,19 +721,59 @@ if (!localStorage.getItem('popupShown')) {
     });
 }
 
-// Check for saved image
-window.onload = function() {
-    const savedImage = localStorage.getItem('selectedImage');
-    if (savedImage) {
-        document.querySelector('.round-image').src = savedImage;
-    }
-};
+// PWA installation handling
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }).catch(function(error) {
+        console.log('ServiceWorker registration failed: ', error);
+    });
+}
+
+// Install button handling
+let deferredPrompt;
+const installBtn = document.getElementById('install-btn');
+
+if (installBtn) {
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installBtn.style.display = 'block';
+
+        installBtn.addEventListener('click', async () => {
+            installBtn.style.display = 'none';
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`User ${outcome} the install prompt`);
+            deferredPrompt = null;
+        });
+    });
+
+    window.addEventListener('appinstalled', () => {
+        installBtn.style.display = 'none';
+    });
+}
 
 // Initialize slider fill colors on load
+// Initialize slider fill on load
 document.addEventListener('DOMContentLoaded', function() {
     updateSliderFill(document.getElementById('volume-slider'));
     updateSliderFill(document.getElementById('count-vibration-slider'));
     updateSliderFill(document.getElementById('complete-vibration-slider'));
+});
+
+// Add event listeners for slider input
+document.getElementById('volume-slider').addEventListener('input', function() {
+    updateSliderFill(this);
+    audio.volume = this.value / 210;
+});
+
+document.getElementById('count-vibration-slider').addEventListener('input', function() {
+    updateSliderFill(this);
+});
+
+document.getElementById('complete-vibration-slider').addEventListener('input', function() {
+    updateSliderFill(this);
 });
 
 // Adjust circle container padding on load and resize
@@ -935,7 +804,7 @@ const defaultSettings = {
     completeVibrationDuration: 1000,
     volume: 210,
     buttonSize: 100,
-    streakPopupEnabled: true
+    streakPopupEnabled: true  // Add this line
 };
 
 // Function to reset all settings to default
@@ -951,6 +820,7 @@ function resetToDefaultSettings() {
         currentButtonSize = defaultSettings.buttonSize;
         updateButtonSize(currentButtonSize);
 
+        // Reset circle text (with space handling)
         circleTextContent = 'HAREKRISHNAHAREKRISHNAKRISHNAKRISHNAHAREHAREHARERAMAHARERAMARAMARAMAHAREHARE';
         localStorage.setItem('circleText', circleTextContent);
         updateCircleText();
@@ -968,166 +838,71 @@ document.getElementById('close-streak-popup')?.addEventListener('click', () => {
     document.getElementById('streak-popup').style.display = 'none';
 });
 
-// Nuclear Reset Function
-async function performFactoryReset() {
-    const dialog = document.querySelector('.reset-dialog');
-    if (dialog) {
-        dialog.innerHTML = `<div class="loading-reset">
-            <i class="fas fa-circle-notch fa-spin"></i>
-            <p>Resetting everything...</p>
-        </div>`;
-    }
-
-    try {
-        localStorage.clear();
-
-        if (window.indexedDB) {
-            const dbs = await window.indexedDB.databases();
-            dbs.forEach(db => {
-                if (db.name) {
-                    window.indexedDB.deleteDatabase(db.name);
-                }
-            });
-        }
-
-        if ('caches' in window) {
-            const cacheNames = await caches.keys();
-            await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
-        }
-
-        if ('serviceWorker' in navigator) {
-            const registrations = await navigator.serviceWorker.getRegistrations();
-            await Promise.all(registrations.map(reg => reg.unregister()));
-        }
-
-        sessionStorage.clear();
-
-        setTimeout(() => {
-            window.location.href = window.location.origin + window.location.pathname + '?reset=' + Date.now();
-        }, 1000);
-
-    } catch (error) {
-        console.error('Reset failed:', error);
-        if (dialog) {
-            dialog.innerHTML = `<p style="color:#ff4444">Reset failed. Please manually refresh the page.</p>`;
-        }
-    }
+// Add streak calendar CSS
+const streakStyle = document.createElement('style');
+streakStyle.textContent = `
+.streak-day {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    position: relative;
+    transition: all 0.3s ease;
 }
 
-// Factory Reset Button Handler
-document.getElementById('factory-reset')?.addEventListener('click', function() {
-    const dialog = document.createElement('div');
-    dialog.className = 'reset-dialog';
-    dialog.innerHTML = `
-        <h3>⚠️ Factory Reset ⚠️</h3>
-        <p>This will <strong>permanently delete</strong>:</p>
-        <ul style="text-align: left; margin: 15px 0; padding-left: 20px;">
-            <li>All counter data</li>
-            <li>All round progress</li>
-            <li>All settings</li>
-            <li>All cached files</li>
-            <li>All offline data</li>
-        </ul>
-        <p>The app will restart completely fresh.</p>
-        <div class="reset-dialog-buttons">
-            <button id="confirm-reset">Reset Everything</button>
-            <button id="cancel-reset">Cancel</button>
-        </div>
-    `;
-
-    document.body.appendChild(dialog);
-
-    document.getElementById('confirm-reset').addEventListener('click', performFactoryReset);
-
-    document.getElementById('cancel-reset').addEventListener('click', function() {
-        document.body.removeChild(dialog);
-    });
-});
-
-// PWA installation handling
-document.addEventListener('DOMContentLoaded', () => {
-    const installBtn = document.getElementById('install-btn');
-
-    if (!installBtn) return;
-
-    function isPWAInstalled() {
-        return window.matchMedia('(display-mode: standalone)').matches || 
-               window.navigator.standalone === true ||
-               document.referrer.includes('android-app://');
-    }
-
-    function isMobileDevice() {
-        return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    }
-
-    if (isPWAInstalled() || !isMobileDevice()) {
-        installBtn.style.display = 'none';
-        return;
-    }
-
-    let deferredPrompt;
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-
-        if (!isPWAInstalled() && isMobileDevice()) {
-            installBtn.style.display = 'block';
-        }
-
-        installBtn.addEventListener('click', async () => {
-            installBtn.style.display = 'none';
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            console.log(`User ${outcome} the install prompt`);
-            deferredPrompt = null;
-        });
-    });
-
-    window.addEventListener('appinstalled', () => {
-        console.log('PWA was installed');
-        installBtn.style.display = 'none';
-
-        setTimeout(() => {
-            if (isPWAInstalled()) {
-                installBtn.style.display = 'none';
-            }
-        }, 1000);
-    });
-
-    window.addEventListener('load', () => {
-        if (isPWAInstalled()) {
-            installBtn.style.display = 'none';
-        }
-    });
-});
-
-// Keyboard and volume button support
-document.addEventListener('keydown', function(event) {
-    // Volume up keys (may work on some mobile devices)
-    if (event.keyCode === 447 || event.keyCode === 175 || event.key === "VolumeUp") {
-        event.preventDefault();
-        incrementCounter();
-    }
-    // Spacebar (for desktop users)
-    else if (event.keyCode === 32 || event.key === " ") {
-        event.preventDefault();
-        incrementCounter();
-    }
-});
-
-function incrementCounter() {
-    if (count === 0) {
-        updateStreak();
-    }
-    updateCounter();
+.streak-day.active {
+    background-color: #ff9900;
+    color: black;
 }
 
-// Click on round image to open image editor
+.streak-day.today {
+    box-shadow: 0 0 0 2px #ff9900;
+}
+
+.streak-day::after {
+    content: attr(data-day);
+    position: absolute;
+    bottom: -20px;
+    font-size: 10px;
+    color: #aaa;
+}
+
+.streak-calendar {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+    .streak-day {
+        width: 25px;
+        height: 25px;
+        font-size: 10px;
+    }
+    
+    .streak-day::after {
+        font-size: 8px;
+        bottom: -15px;
+    }
+}
+`;
+
+document.head.appendChild(streakStyle);
+streakPopupToggle.addEventListener('change', updateSettingsUI);
+
+// Add this to your existing JavaScript code
 document.querySelector('.round-image').addEventListener('click', function() {
     closeAllPopups();
     document.getElementById('image-change-menu').style.display = 'block';
 });
+
 // Nuclear Reset Function
 async function performFactoryReset() {
   // Show loading state
@@ -1183,89 +958,33 @@ async function performFactoryReset() {
 
 // Factory Reset Button Handler
 document.getElementById('factory-reset')?.addEventListener('click', function() {
-    const dialog = document.createElement('div');
-    dialog.className = 'reset-dialog';
-    dialog.innerHTML = `
-        <h3>⚠️ Factory Reset ⚠️</h3>
-        <p>This will <strong>permanently delete</strong>:</p>
-        <ul style="text-align: left; margin: 15px 0; padding-left: 20px;">
-            <li>All counter data</li>
-            <li>All round progress</li>
-            <li>All settings</li>
-            <li>All cached files</li>
-            <li>All offline data</li>
-        </ul>
-        <p>The app will restart completely fresh.</p>
-        <div class="reset-dialog-buttons">
-            <button id="confirm-reset">Reset Everything</button>
-            <button id="cancel-reset">Cancel</button>
-        </div>
-    `;
+  const dialog = document.createElement('div');
+  dialog.className = 'reset-dialog';
+  dialog.innerHTML = `
+    <h3>⚠️ Factory Reset ⚠️</h3>
+    <p>This will <strong>permanently delete</strong>:</p>
+    <ul style="text-align: left; margin: 15px 0; padding-left: 20px;">
+      <li>All counter data</li>
+      <li>All round progress</li>
+      <li>All settings</li>
+      <li>All cached files</li>
+      <li>All offline data</li>
+    </ul>
+    <p>The app will restart completely fresh.</p>
+    <div class="reset-dialog-buttons">
+      <button id="confirm-reset">Reset Everything</button>
+      <button id="cancel-reset">Cancel</button>
+    </div>
+  `;
 
-    document.body.appendChild(dialog);
+  document.body.appendChild(dialog);
 
-    // Use event delegation for dynamically created buttons
-    dialog.addEventListener('click', function(e) {
-        if (e.target.id === 'confirm-reset') {
-            performFactoryReset();
-        } else if (e.target.id === 'cancel-reset') {
-            document.body.removeChild(dialog);
-        }
-    });
+  document.getElementById('confirm-reset').addEventListener('click', performFactoryReset);
+
+  document.getElementById('cancel-reset').addEventListener('click', function() {
+    document.body.removeChild(dialog);
+  });
 });
-
-// Nuclear Reset Function (updated)
-async function performFactoryReset() {
-    const dialog = document.querySelector('.reset-dialog');
-    if (dialog) {
-        dialog.innerHTML = `<div class="loading-reset">
-            <i class="fas fa-circle-notch fa-spin"></i>
-            <p>Resetting everything...</p>
-        </div>`;
-    }
-
-    try {
-        // Clear all app data
-        localStorage.clear();
-        sessionStorage.clear();
-
-        // Clear IndexedDB databases
-        if (window.indexedDB) {
-            const databases = await window.indexedDB.databases();
-            databases.forEach(db => {
-                if (db.name) {
-                    window.indexedDB.deleteDatabase(db.name);
-                }
-            });
-        }
-
-        // Clear caches
-        if ('caches' in window) {
-            const cacheNames = await caches.keys();
-            await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
-        }
-
-        // Unregister service workers
-        if ('serviceWorker' in navigator) {
-            const registrations = await navigator.serviceWorker.getRegistrations();
-            await Promise.all(registrations.map(reg => reg.unregister()));
-        }
-
-        // Force reload with cache busting
-        setTimeout(() => {
-            window.location.href = window.location.href.split('?')[0] + '?reset=' + Date.now();
-        }, 1000);
-
-    } catch (error) {
-        console.error('Reset failed:', error);
-        if (dialog) {
-            dialog.innerHTML = `
-                <p style="color:#ff4444">Reset failed. Please manually refresh the page.</p>
-                <button onclick="window.location.reload(true)">Refresh Now</button>
-            `;
-        }
-    }
-}
 
 // Enhanced PWA installation handling
 document.addEventListener('DOMContentLoaded', () => {
@@ -1368,4 +1087,4 @@ function incrementCounter() {
         updateStreak();
     }
     updateCounter();
-}
+} 
