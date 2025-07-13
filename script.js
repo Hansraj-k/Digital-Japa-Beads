@@ -803,7 +803,54 @@ imageUpload.addEventListener('change', (event) => {
     }
 });
 
-saveImageBtn.addEventListener('click', cropAndSaveImage);
+// Update the save image button functionality
+saveImageBtn.addEventListener('click', function() {
+    if (!currentImage) return;
+    
+    // Create a canvas to crop the image
+    const container = document.getElementById('image-cropper');
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Set canvas size to match the container
+    canvas.width = container.offsetWidth;
+    canvas.height = container.offsetHeight;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw the image with current transformations
+    ctx.save();
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.rotate(rotation * Math.PI / 180);
+    ctx.scale(scale, scale);
+    ctx.drawImage(
+        currentImage,
+        -currentImage.naturalWidth / 2,
+        -currentImage.naturalHeight / 2,
+        currentImage.naturalWidth,
+        currentImage.naturalHeight
+    );
+    ctx.restore();
+    
+    // Create a circular mask
+    ctx.globalCompositeOperation = 'destination-in';
+    ctx.beginPath();
+    ctx.arc(canvas.width / 2, canvas.height / 2, canvas.width / 2, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Convert to data URL and save
+    const croppedImageUrl = canvas.toDataURL('image/png');
+    localStorage.setItem('selectedImage', croppedImageUrl);
+    document.querySelector('.round-image').src = croppedImageUrl;
+    
+    // Hide editor and show preview
+    document.getElementById('image-editor-container').style.display = 'none';
+    imagePreview.src = croppedImageUrl;
+    imagePreview.style.display = 'block';
+    
+    imageChangeMenu.style.display = 'none';
+});
 
 resetImageBtn.addEventListener('click', () => {
     localStorage.removeItem('selectedImage');
