@@ -1357,3 +1357,54 @@ margin: 0 auto; /* Center the paragraph */
     margin-top: 15px;
 }
 
+/* Image Cropper Styles */
+#image-editor-container {
+    margin: 15px 0;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+#image-cropper {
+    width: 300px;
+    height: 300px;
+    overflow: hidden;
+    position: relative;
+    margin: 0 auto;
+    border-radius: 50%;
+    border: 2px dashed #00ffd5;
+}
+
+#image-to-crop {
+    position: absolute;
+    max-width: none;
+    max-height: none;
+    cursor: move;
+}
+
+.crop-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.crop-controls button {
+    background: #333;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.crop-controls button:hover {
+    background: #00ffd5;
+    color: black;
+    transform: scale(1.1);
+}
