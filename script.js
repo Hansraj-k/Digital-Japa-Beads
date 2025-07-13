@@ -1,4 +1,4 @@
-JS  // Initialize count and round  
+// Initialize count and round 
 let streakPopupToggle = document.getElementById('streak-popup-toggle');
 let count = parseInt(localStorage.getItem('count')) || 0;
 let round = parseInt(localStorage.getItem('round')) || 0;
@@ -24,6 +24,7 @@ let saveSettingsBtn = document.getElementById('save-settings');
 let soundToggle = document.getElementById('sound-toggle');
 let countVibrationToggle = document.getElementById('count-vibration-toggle');
 let completeVibrationToggle = document.getElementById('complete-vibration-toggle');
+let dailyResetToggle = document.getElementById('daily-reset-toggle');
 let countVibrationSlider = document.getElementById('count-vibration-slider');
 let completeVibrationSlider = document.getElementById('complete-vibration-slider');
 let countVibrationValue = document.getElementById('count-vibration-value');
@@ -62,8 +63,29 @@ let vibrationSettings = {
     completeVibrationDuration: 1000,
     volume: 210,
     buttonSize: 100,
-    streakPopupEnabled: true  // Add this line
+    streakPopupEnabled: true,
+    dailyResetEnabled: true  // Add this line
 };
+
+// Function to reset counts daily at midnight
+function checkAndResetDaily() {
+    // Only reset if daily reset is enabled in settings
+    if (!vibrationSettings.dailyResetEnabled) return;
+
+    const today = new Date().toDateString();
+    const lastResetDate = localStorage.getItem('lastResetDate');
+
+    if (lastResetDate !== today) {
+        count = 0;
+        round = 0;
+        localStorage.setItem('count', count);
+        localStorage.setItem('round', round);
+        localStorage.setItem('lastResetDate', today);
+        updateCountDisplay();
+        updateRoundDisplay();
+        updateCircleText();
+    }
+}
 
 // Streak variables
 let streak = parseInt(localStorage.getItem('streak')) || 0;
@@ -170,7 +192,8 @@ function saveSettingsToStorage() {
         completeVibrationDuration: parseInt(completeVibrationSlider.value),
         volume: parseInt(volumeSlider.value),
         buttonSize: currentButtonSize,
-        streakPopupEnabled: streakPopupToggle.checked  // Add this line
+        streakPopupEnabled: streakPopupToggle.checked,
+        dailyResetEnabled: dailyResetToggle.checked  // Add this line
     };
     localStorage.setItem('vibrationSettings', JSON.stringify(vibrationSettings));
 }
@@ -183,10 +206,11 @@ function loadSettingsFromStorage() {
         soundToggle.checked = vibrationSettings.soundEnabled !== false;
         countVibrationToggle.checked = vibrationSettings.countVibrationEnabled || false;
         completeVibrationToggle.checked = vibrationSettings.completeVibrationEnabled !== false;
+        dailyResetToggle.checked = vibrationSettings.dailyResetEnabled !== false;  // Add this line
         countVibrationSlider.value = vibrationSettings.countVibrationDuration || 60;
         completeVibrationSlider.value = vibrationSettings.completeVibrationDuration || 1000;
         volumeSlider.value = vibrationSettings.volume !== undefined ? vibrationSettings.volume : 210;
-        streakPopupToggle.checked = vibrationSettings.streakPopupEnabled !== false;  // Add this line
+        streakPopupToggle.checked = vibrationSettings.streakPopupEnabled !== false;
 
         if (vibrationSettings.buttonSize) {
             currentButtonSize = vibrationSettings.buttonSize;
@@ -575,6 +599,11 @@ soundToggle.addEventListener('change', function() {
     updateSettingsUI();
 });
 
+dailyResetToggle.addEventListener('change', function() {
+    vibrationSettings.dailyResetEnabled = this.checked;
+    saveSettingsToStorage();
+});
+
 countVibrationToggle.addEventListener('change', updateSettingsUI);
 completeVibrationToggle.addEventListener('change', updateSettingsUI);
 
@@ -804,15 +833,16 @@ const defaultSettings = {
     completeVibrationDuration: 1000,
     volume: 210,
     buttonSize: 100,
-    streakPopupEnabled: true  // Add this line
+    streakPopupEnabled: true,
+    dailyResetEnabled: true  // Add this line
 };
-
 // Function to reset all settings to default
 function resetToDefaultSettings() {
     if (confirm("Are you sure you want to reset all settings to default values?")) {
         soundToggle.checked = defaultSettings.soundEnabled;
         countVibrationToggle.checked = defaultSettings.countVibrationEnabled;
         completeVibrationToggle.checked = defaultSettings.completeVibrationEnabled;
+        dailyResetToggle.checked = defaultSettings.dailyResetEnabled;  // Add this line
         countVibrationSlider.value = defaultSettings.countVibrationDuration;
         completeVibrationSlider.value = defaultSettings.completeVibrationDuration;
         volumeSlider.value = defaultSettings.volume;
