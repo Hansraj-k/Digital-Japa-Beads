@@ -62,7 +62,8 @@ let vibrationSettings = {
     completeVibrationDuration: 1000,
     volume: 210,
     buttonSize: 100,
-    streakPopupEnabled: true  // Add this line
+    streakPopupEnabled: true,
+    dailyResetEnabled: true 
 };
 
 // Streak variables
@@ -77,6 +78,9 @@ streakAudio.volume = 0.6;
 
 // Function to reset counts daily at midnight
 function checkAndResetDaily() {
+    // Only reset if daily reset is enabled
+    if (!vibrationSettings.dailyResetEnabled) return;
+
     const today = new Date().toDateString();
     const lastResetDate = localStorage.getItem('lastResetDate');
 
@@ -91,7 +95,6 @@ function checkAndResetDaily() {
         updateCircleText();
     }
 }
-
 // Function to update slider fill color
 function updateSliderFill(slider) {
     const value = slider.value;
@@ -171,6 +174,7 @@ function saveSettingsToStorage() {
         volume: parseInt(volumeSlider.value),
         buttonSize: currentButtonSize,
         streakPopupEnabled: streakPopupToggle.checked  // Add this line
+       
     };
     localStorage.setItem('vibrationSettings', JSON.stringify(vibrationSettings));
 }
@@ -187,7 +191,7 @@ function loadSettingsFromStorage() {
         completeVibrationSlider.value = vibrationSettings.completeVibrationDuration || 1000;
         volumeSlider.value = vibrationSettings.volume !== undefined ? vibrationSettings.volume : 210;
         streakPopupToggle.checked = vibrationSettings.streakPopupEnabled !== false;  // Add this line
-
+        document.getElementById('daily-reset-toggle').checked = vibrationSettings.dailyResetEnabled !== false;
         if (vibrationSettings.buttonSize) {
             currentButtonSize = vibrationSettings.buttonSize;
             updateButtonSize(currentButtonSize);
@@ -246,6 +250,7 @@ function updateSettingsUI() {
     updateSliderFill(countVibrationSlider);
     updateSliderFill(completeVibrationSlider);
 
+    vibrationSettings.dailyResetEnabled = document.getElementById('daily-reset-toggle').checked;
     volumeValue.textContent = volumeSlider.value;
     countVibrationValue.textContent = `${countVibrationSlider.value}ms`;
     completeVibrationValue.textContent = `${completeVibrationSlider.value}ms`;
@@ -575,6 +580,11 @@ soundToggle.addEventListener('change', function() {
     updateSettingsUI();
 });
 
+document.getElementById('daily-reset-toggle').addEventListener('change', function() {
+    vibrationSettings.dailyResetEnabled = this.checked;
+    saveSettingsToStorage();
+});
+
 countVibrationToggle.addEventListener('change', updateSettingsUI);
 completeVibrationToggle.addEventListener('change', updateSettingsUI);
 
@@ -804,7 +814,8 @@ const defaultSettings = {
     completeVibrationDuration: 1000,
     volume: 210,
     buttonSize: 100,
-    streakPopupEnabled: true  // Add this line
+    streakPopupEnabled: true,  // Add this line
+    dailyResetEnabled: true
 };
 
 // Function to reset all settings to default
