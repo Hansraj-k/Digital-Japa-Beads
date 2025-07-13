@@ -127,19 +127,31 @@
             <img src="rkhkmc.png" alt="Round Image" class="round-image" id="round-image">
             <div class="circle-text"></div></div>
         <div id="image-change-menu" class="image-change-menu">
-            <p>Select an image</p>
-            <input type="file" id="image-upload" accept="image/*">
-
-            <div id="image-preview-container">
-                <img id="image-preview" src="" alt="Image Preview" />
-            </div>
-            <button id="save-image-btn">Save Image</button>
-            <button id="reset-image-btn">Reset Image</button>
-            <button id="close-image-menu">Close</button>
-            <div id="made-with-container">
-                <img id="made-with-img" src="rkhkmc_mwfet.png" alt="Made With">
-            </div>
+    <p>Select an image</p>
+    <input type="file" id="image-upload" accept="image/*">
+    
+    <div id="image-editor-container" style="display: none;">
+        <div id="image-cropper">
+            <img id="image-to-crop" src="" alt="Image to crop">
         </div>
+        <div class="crop-controls">
+            <button id="zoom-in-btn"><i class="fas fa-search-plus"></i></button>
+            <button id="zoom-out-btn"><i class="fas fa-search-minus"></i></button>
+            <button id="rotate-btn"><i class="fas fa-redo"></i></button>
+        </div>
+    </div>
+    
+    <div id="image-preview-container">
+        <img id="image-preview" src="" alt="Image Preview" />
+    </div>
+    
+    <button id="save-image-btn">Save Image</button>
+    <button id="reset-image-btn">Reset Image</button>
+    <button id="close-image-menu">Close</button>
+    <div id="made-with-container">
+        <img id="made-with-img" src="rkhkmc_mwfet.png" alt="Made With">
+    </div>
+</div>
         <div id="settings-popup" class="popup">
 <div class="popup-scroll-container">
             <h2>Settings</h2>
