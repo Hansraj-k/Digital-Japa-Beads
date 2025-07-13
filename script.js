@@ -1183,33 +1183,89 @@ async function performFactoryReset() {
 
 // Factory Reset Button Handler
 document.getElementById('factory-reset')?.addEventListener('click', function() {
-  const dialog = document.createElement('div');
-  dialog.className = 'reset-dialog';
-  dialog.innerHTML = `
-    <h3>⚠️ Factory Reset ⚠️</h3>
-    <p>This will <strong>permanently delete</strong>:</p>
-    <ul style="text-align: left; margin: 15px 0; padding-left: 20px;">
-      <li>All counter data</li>
-      <li>All round progress</li>
-      <li>All settings</li>
-      <li>All cached files</li>
-      <li>All offline data</li>
-    </ul>
-    <p>The app will restart completely fresh.</p>
-    <div class="reset-dialog-buttons">
-      <button id="confirm-reset">Reset Everything</button>
-      <button id="cancel-reset">Cancel</button>
-    </div>
-  `;
+    const dialog = document.createElement('div');
+    dialog.className = 'reset-dialog';
+    dialog.innerHTML = `
+        <h3>⚠️ Factory Reset ⚠️</h3>
+        <p>This will <strong>permanently delete</strong>:</p>
+        <ul style="text-align: left; margin: 15px 0; padding-left: 20px;">
+            <li>All counter data</li>
+            <li>All round progress</li>
+            <li>All settings</li>
+            <li>All cached files</li>
+            <li>All offline data</li>
+        </ul>
+        <p>The app will restart completely fresh.</p>
+        <div class="reset-dialog-buttons">
+            <button id="confirm-reset">Reset Everything</button>
+            <button id="cancel-reset">Cancel</button>
+        </div>
+    `;
 
-  document.body.appendChild(dialog);
+    document.body.appendChild(dialog);
 
-  document.getElementById('confirm-reset').addEventListener('click', performFactoryReset);
-
-  document.getElementById('cancel-reset').addEventListener('click', function() {
-    document.body.removeChild(dialog);
-  });
+    // Use event delegation for dynamically created buttons
+    dialog.addEventListener('click', function(e) {
+        if (e.target.id === 'confirm-reset') {
+            performFactoryReset();
+        } else if (e.target.id === 'cancel-reset') {
+            document.body.removeChild(dialog);
+        }
+    });
 });
+
+// Nuclear Reset Function (updated)
+async function performFactoryReset() {
+    const dialog = document.querySelector('.reset-dialog');
+    if (dialog) {
+        dialog.innerHTML = `<div class="loading-reset">
+            <i class="fas fa-circle-notch fa-spin"></i>
+            <p>Resetting everything...</p>
+        </div>`;
+    }
+
+    try {
+        // Clear all app data
+        localStorage.clear();
+        sessionStorage.clear();
+
+        // Clear IndexedDB databases
+        if (window.indexedDB) {
+            const databases = await window.indexedDB.databases();
+            databases.forEach(db => {
+                if (db.name) {
+                    window.indexedDB.deleteDatabase(db.name);
+                }
+            });
+        }
+
+        // Clear caches
+        if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+        }
+
+        // Unregister service workers
+        if ('serviceWorker' in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(registrations.map(reg => reg.unregister()));
+        }
+
+        // Force reload with cache busting
+        setTimeout(() => {
+            window.location.href = window.location.href.split('?')[0] + '?reset=' + Date.now();
+        }, 1000);
+
+    } catch (error) {
+        console.error('Reset failed:', error);
+        if (dialog) {
+            dialog.innerHTML = `
+                <p style="color:#ff4444">Reset failed. Please manually refresh the page.</p>
+                <button onclick="window.location.reload(true)">Refresh Now</button>
+            `;
+        }
+    }
+}
 
 // Enhanced PWA installation handling
 document.addEventListener('DOMContentLoaded', () => {
