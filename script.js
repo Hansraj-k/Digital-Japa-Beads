@@ -69,13 +69,18 @@ let vibrationSettings = {
 
 // Function to reset counts daily at midnight
 function checkAndResetDaily() {
-    // Only reset if daily reset is enabled in settings
-    if (!vibrationSettings.dailyResetEnabled) return;
-
+    // Double-check the setting from localStorage to ensure no race conditions
+    const settings = JSON.parse(localStorage.getItem('vibrationSettings') || '{}');
+    if (!settings.dailyResetEnabled) {
+        console.log('Daily reset is disabled - skipping reset');
+        return;
+    }
+    
     const today = new Date().toDateString();
     const lastResetDate = localStorage.getItem('lastResetDate');
-
+    
     if (lastResetDate !== today) {
+        console.log('Performing daily reset');
         count = 0;
         round = 0;
         localStorage.setItem('count', count);
@@ -584,6 +589,25 @@ settingsBtn.addEventListener('click', () => {
     settingsPopup.style.display = 'block';
 });
 
+function resetCounter() {
+    // First check if daily reset is enabled
+    if (!vibrationSettings.dailyResetEnabled) {
+        console.warn('Prevented reset - daily reset is disabled');
+        return false; // Return false to indicate reset was blocked
+    }
+    
+    // Proceed with reset logic
+    count = 0;
+    round = 0;
+    localStorage.setItem('count', count);
+    localStorage.setItem('round', round);
+    localStorage.setItem('lastResetDate', new Date().toDateString());
+    updateCountDisplay();
+    updateRoundDisplay();
+    updateCircleText();
+    return true; // Return true to indicate reset occurred
+}
+
 closeSettingsBtn.addEventListener('click', () => {
     settingsPopup.style.display = 'none';
 });
@@ -600,8 +624,15 @@ soundToggle.addEventListener('change', function() {
 });
 
 dailyResetToggle.addEventListener('change', function() {
+    // Immediately update both the UI and storage
     vibrationSettings.dailyResetEnabled = this.checked;
-    saveSettingsToStorage();
+    localStorage.setItem('vibrationSettings', JSON.stringify(vibrationSettings));
+    
+    // Force reload settings to ensure consistency
+    loadSettingsFromStorage();
+    
+    console.log('Daily reset toggled to:', this.checked, 
+               'Current setting:', vibrationSettings.dailyResetEnabled);
 });
 
 countVibrationToggle.addEventListener('change', updateSettingsUI);
