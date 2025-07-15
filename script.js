@@ -67,31 +67,6 @@ let vibrationSettings = {
     dailyResetEnabled: true  // Add this line
 };
 
-// Function to reset counts daily at midnight
-function checkAndResetDaily() {
-    // Double-check the setting from localStorage to ensure no race conditions
-    const settings = JSON.parse(localStorage.getItem('vibrationSettings') || '{}');
-    if (!settings.dailyResetEnabled) {
-        console.log('Daily reset is disabled - skipping reset');
-        return;
-    }
-    
-    const today = new Date().toDateString();
-    const lastResetDate = localStorage.getItem('lastResetDate');
-    
-    if (lastResetDate !== today) {
-        console.log('Performing daily reset');
-        count = 0;
-        round = 0;
-        localStorage.setItem('count', count);
-        localStorage.setItem('round', round);
-        localStorage.setItem('lastResetDate', today);
-        updateCountDisplay();
-        updateRoundDisplay();
-        updateCircleText();
-    }
-}
-
 // Streak variables
 let streak = parseInt(localStorage.getItem('streak')) || 0;
 let lastActivityDate = localStorage.getItem('lastActivityDate') || '';
@@ -101,23 +76,6 @@ let chantingHistory = JSON.parse(localStorage.getItem('chantingHistory')) || {};
 const streakAudio = new Audio();
 streakAudio.src = 'streak-sound.mp3'; // Add this file to your project
 streakAudio.volume = 0.6;
-
-// Function to reset counts daily at midnight
-function checkAndResetDaily() {
-    const today = new Date().toDateString();
-    const lastResetDate = localStorage.getItem('lastResetDate');
-
-    if (lastResetDate !== today) {
-        count = 0;
-        round = 0;
-        localStorage.setItem('count', count);
-        localStorage.setItem('round', round);
-        localStorage.setItem('lastResetDate', today);
-        updateCountDisplay();
-        updateRoundDisplay();
-        updateCircleText();
-    }
-}
 
 // Function to update slider fill color
 function updateSliderFill(slider) {
@@ -539,12 +497,14 @@ document.getElementById('count-btn').addEventListener('click', function() {
     updateCounter();
 });
 
+// UPDATED RESET HANDLERS:
 confirmReset108Btn.addEventListener('click', () => {
-    count = 0;
-    updateCountDisplay();
-    updateCircleText();
-    popup108.style.display = 'none';
-    saveData();
+    if (resetCounter()) {  // Only proceeds if reset enabled
+        popup108.style.display = 'none';
+    } else {
+        // Optional: Show message that reset was prevented
+        alert("Daily reset is currently disabled in settings");
+    }
 });
 
 cancelReset108Btn.addEventListener('click', () => {
@@ -557,11 +517,11 @@ resetCountBtn.addEventListener('click', () => {
 });
 
 confirmResetCountBtn.addEventListener('click', () => {
-    count = 0;
-    updateCountDisplay();
-    updateCircleText();
-    popupCountReset.style.display = 'none';
-    saveData();
+    if (resetCounter()) {
+        popupCountReset.style.display = 'none';
+    } else {
+        alert("Daily reset is currently disabled in settings");
+    }
 });
 
 cancelResetCountBtn.addEventListener('click', () => {
@@ -574,10 +534,11 @@ resetRoundBtn.addEventListener('click', () => {
 });
 
 confirmResetRoundBtn.addEventListener('click', () => {
-    round = 0;
-    updateRoundDisplay();
-    popupRoundReset.style.display = 'none';
-    saveData();
+    if (resetCounter()) {
+        popupRoundReset.style.display = 'none';
+    } else {
+        alert("Daily reset is currently disabled in settings");
+    }
 });
 
 cancelResetRoundBtn.addEventListener('click', () => {
@@ -591,12 +552,13 @@ settingsBtn.addEventListener('click', () => {
 
 function resetCounter() {
     // First check if daily reset is enabled
-    if (!vibrationSettings.dailyResetEnabled) {
+    const settings = JSON.parse(localStorage.getItem('vibrationSettings') || '{}');
+    if (!settings.dailyResetEnabled) {
         console.warn('Prevented reset - daily reset is disabled');
-        return false; // Return false to indicate reset was blocked
+        return false;
     }
     
-    // Proceed with reset logic
+    // Proceed with reset
     count = 0;
     round = 0;
     localStorage.setItem('count', count);
@@ -605,7 +567,7 @@ function resetCounter() {
     updateCountDisplay();
     updateRoundDisplay();
     updateCircleText();
-    return true; // Return true to indicate reset occurred
+    return true;
 }
 
 closeSettingsBtn.addEventListener('click', () => {
@@ -710,7 +672,13 @@ initializeStreak();
 checkAndResetDaily(); // Initial daily check
 
 // Set up a daily check (every hour to be safe)
-setInterval(checkAndResetDaily, 60 * 60 * 1000);
+setInterval(() => {
+    const today = new Date().toDateString();
+    const lastResetDate = localStorage.getItem('lastResetDate');
+    if (lastResetDate !== today) {
+        resetCounter(); // This will check the setting
+    }
+}, 60 * 60 * 1000);
 
 // Set current year in footer
 const dateInIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
