@@ -1,4 +1,4 @@
-// Initialize count and round 
+ // Initialize count and round 
 let streakPopupToggle = document.getElementById('streak-popup-toggle');
 let count = parseInt(localStorage.getItem('count')) || 0;
 let round = parseInt(localStorage.getItem('round')) || 0;
@@ -24,7 +24,6 @@ let saveSettingsBtn = document.getElementById('save-settings');
 let soundToggle = document.getElementById('sound-toggle');
 let countVibrationToggle = document.getElementById('count-vibration-toggle');
 let completeVibrationToggle = document.getElementById('complete-vibration-toggle');
-let dailyResetToggle = document.getElementById('daily-reset-toggle');
 let countVibrationSlider = document.getElementById('count-vibration-slider');
 let completeVibrationSlider = document.getElementById('complete-vibration-slider');
 let countVibrationValue = document.getElementById('count-vibration-value');
@@ -63,8 +62,7 @@ let vibrationSettings = {
     completeVibrationDuration: 1000,
     volume: 210,
     buttonSize: 100,
-    streakPopupEnabled: true,
-    dailyResetEnabled: true
+    streakPopupEnabled: true  // Add this line
 };
 
 // Streak variables
@@ -74,23 +72,15 @@ let chantingHistory = JSON.parse(localStorage.getItem('chantingHistory')) || {};
 
 // Create audio element for streak sound
 const streakAudio = new Audio();
-streakAudio.src = 'streak-sound.mp3';
+streakAudio.src = 'streak-sound.mp3'; // Add this file to your project
 streakAudio.volume = 0.6;
 
 // Function to reset counts daily at midnight
 function checkAndResetDaily() {
-    // First check if daily reset is enabled
-    const settings = JSON.parse(localStorage.getItem('vibrationSettings') || '{}');
-    if (!settings.dailyResetEnabled) {
-        console.log('Daily reset is disabled - skipping reset check');
-        return;
-    }
-
     const today = new Date().toDateString();
     const lastResetDate = localStorage.getItem('lastResetDate');
 
     if (lastResetDate !== today) {
-        console.log('Performing daily reset');
         count = 0;
         round = 0;
         localStorage.setItem('count', count);
@@ -109,8 +99,10 @@ function updateSliderFill(slider) {
     const min = slider.min;
     const percent = ((value - min) / (max - min)) * 100;
 
+    // Update CSS variable
     slider.style.setProperty('--fill-percent', `${percent}%`);
 
+    // Update the displayed value
     if (slider.id === 'volume-slider') {
         document.getElementById('volume-value').textContent = value;
     } else if (slider.id === 'count-vibration-slider') {
@@ -119,7 +111,6 @@ function updateSliderFill(slider) {
         document.getElementById('complete-vibration-value').textContent = `${value}ms`;
     }
 }
-
 // Function to update the displayed count
 function updateCountDisplay() {
     countDisplay.textContent = count;
@@ -132,6 +123,7 @@ function updateRoundDisplay() {
 
 // Function to update the circle text based on the count
 function updateCircleText() {
+    // Ensure no spaces in the circle text content
     circleTextContent = circleTextContent.replace(/\s+/g, '');
     const letters = circleTextContent.repeat(Math.ceil(108 / circleTextContent.length)).split('');
     const circleDivisions = [33, 36, 39];
@@ -178,8 +170,7 @@ function saveSettingsToStorage() {
         completeVibrationDuration: parseInt(completeVibrationSlider.value),
         volume: parseInt(volumeSlider.value),
         buttonSize: currentButtonSize,
-        streakPopupEnabled: streakPopupToggle.checked,
-        dailyResetEnabled: dailyResetToggle.checked
+        streakPopupEnabled: streakPopupToggle.checked  // Add this line
     };
     localStorage.setItem('vibrationSettings', JSON.stringify(vibrationSettings));
 }
@@ -192,11 +183,10 @@ function loadSettingsFromStorage() {
         soundToggle.checked = vibrationSettings.soundEnabled !== false;
         countVibrationToggle.checked = vibrationSettings.countVibrationEnabled || false;
         completeVibrationToggle.checked = vibrationSettings.completeVibrationEnabled !== false;
-        dailyResetToggle.checked = vibrationSettings.dailyResetEnabled !== false;
         countVibrationSlider.value = vibrationSettings.countVibrationDuration || 60;
         completeVibrationSlider.value = vibrationSettings.completeVibrationDuration || 1000;
         volumeSlider.value = vibrationSettings.volume !== undefined ? vibrationSettings.volume : 210;
-        streakPopupToggle.checked = vibrationSettings.streakPopupEnabled !== false;
+        streakPopupToggle.checked = vibrationSettings.streakPopupEnabled !== false;  // Add this line
 
         if (vibrationSettings.buttonSize) {
             currentButtonSize = vibrationSettings.buttonSize;
@@ -206,19 +196,25 @@ function loadSettingsFromStorage() {
 
     updateSettingsUI();
 }
-
 // Function to update button size
 function updateButtonSize(newSize) {
     currentButtonSize = Math.max(minButtonSize, Math.min(maxButtonSize, newSize));
     document.getElementById('button-size-value').textContent = `${currentButtonSize}%`;
 
     const countBtn = document.getElementById('count-btn');
+    const btnImg = countBtn.querySelector('img');
+
+    // Scale the button
     countBtn.style.transform = `scale(${currentButtonSize / 100})`;
-    const paddingAdjustment = (currentButtonSize - 100) * 0.5;
+
+    // Adjust padding above and below the button equally
+    const paddingAdjustment = (currentButtonSize - 100) * 0.5; // Adjust padding equally
     countBtn.style.paddingTop = `${paddingAdjustment}px`;
     countBtn.style.paddingBottom = `${paddingAdjustment}px`;
 
+    // Adjust the circle container padding based on button size
     adjustCircleContainer();
+
     vibrationSettings.buttonSize = currentButtonSize;
     saveSettingsToStorage();
 }
@@ -231,8 +227,14 @@ function adjustCircleContainer() {
     const isMobile = /Android|iPhone|iPad|iPod/.test(navigator.userAgent);
     const isPWAInstalled = isMobile && (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true);
 
-    let basePadding = isMobile ? (isPWAInstalled ? 321 : 460) : (window.innerWidth <= 768 ? 381 : 423);
-    const sizeAdjustment = (currentButtonSize - 100) * 3;
+    let basePadding;
+    if (isMobile) {
+        basePadding = isPWAInstalled ? 321 : 460;
+    } else {
+        basePadding = window.innerWidth <= 768 ? 381 : 423;
+    }
+
+    const sizeAdjustment = (currentButtonSize - 100) * 3; // 3px per 10%
     const newPadding = basePadding + sizeAdjustment;
 
     circleContainer.style.setProperty("padding-top", `${newPadding}px`, "important");
@@ -253,8 +255,18 @@ function updateSettingsUI() {
 
     volumeControlContainer.style.display = soundToggle.checked ? 'block' : 'none';
 
-    document.querySelectorAll('.vibration-setting').forEach(setting => {
-        setting.style.display = isMobileDevice() ? 'block' : 'none';
+    const vibrationSettings = document.querySelectorAll('.vibration-setting');
+    vibrationSettings.forEach(setting => {
+        if (isMobileDevice()) {
+            setting.style.display = 'block';
+            const sliderContainer = setting.querySelector('.slider-container');
+            if (sliderContainer) {
+                const toggle = setting.querySelector('.checkbox');
+                sliderContainer.style.display = toggle.checked ? 'block' : 'none';
+            }
+        } else {
+            setting.style.display = 'none';
+        }
     });
 }
 
@@ -265,12 +277,13 @@ function isMobileDevice() {
 
 // Function to close all popups
 function closeAllPopups() {
-    document.querySelectorAll('.popup, .popupnotify, #image-change-menu, #circle-text-edit-modal').forEach(popup => {
+    const popups = document.querySelectorAll('.popup, .popupnotify, #image-change-menu, #circle-text-edit-modal');
+    popups.forEach(popup => {
         popup.style.display = 'none';
     });
 }
 
-// Helper functions for date handling
+// Helper function to format date as YYYY-MM-DD
 function formatDate(date) {
     const d = new Date(date);
     let month = '' + (d.getMonth() + 1);
@@ -283,6 +296,7 @@ function formatDate(date) {
     return [year, month, day].join('-');
 }
 
+// Helper function to check if two dates are the same day
 function isSameDay(date1, date2) {
     return date1.getFullYear() === date2.getFullYear() &&
            date1.getMonth() === date2.getMonth() &&
@@ -294,16 +308,19 @@ function initializeStreak() {
     const today = new Date();
     const todayStr = formatDate(today);
 
+    // If we have last activity date, check if we need to reset streak
     if (lastActivityDate) {
         const lastDate = new Date(lastActivityDate);
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
 
+        // If last activity was before yesterday, reset streak
         if (lastDate < yesterday && !isSameDay(lastDate, yesterday)) {
             streak = 0;
             localStorage.setItem('streak', streak);
         }
 
+        // If last activity was today, ensure chanting history exists
         if (lastActivityDate === todayStr && !chantingHistory[todayStr]) {
             chantingHistory[todayStr] = { count: 0, rounds: 0 };
         }
@@ -320,18 +337,22 @@ function updateStreak() {
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayStr = formatDate(yesterday);
 
+    // Check if we already counted today
     if (lastActivityDate === todayStr) {
         return;
     }
 
+    // If first time or no last activity date, start new streak
     if (!lastActivityDate) {
         streak = 1;
         showStreakPopup("Today, you planted the seed of devotion. With consistency, it will blossom beautifully! 🌸");
     }
+    // If last activity was yesterday, increment streak
     else if (lastActivityDate === yesterdayStr) {
         streak++;
         showStreakPopup(`Incredible dedication! 🙌\n\nYou've been chanting consistently for ${streak} days${streak > 1 ? 's' : ''}!`);
     }
+    // If last activity was more than 1 day ago, reset streak
     else {
         const lastDate = new Date(lastActivityDate);
         const daysDiff = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
@@ -342,16 +363,21 @@ function updateStreak() {
         }
     }
 
+    // Update last activity date
     lastActivityDate = todayStr;
 
+    // Update chanting history
     if (!chantingHistory[todayStr]) {
         chantingHistory[todayStr] = { count: 0, rounds: 0 };
     }
     chantingHistory[todayStr].count++;
 
+    // Save to localStorage
     localStorage.setItem('streak', streak);
     localStorage.setItem('lastActivityDate', lastActivityDate);
     localStorage.setItem('chantingHistory', JSON.stringify(chantingHistory));
+
+    // Update display
     updateStreakDisplay();
 }
 
@@ -372,6 +398,7 @@ function renderStreakCalendar() {
     streakCalendar.innerHTML = '';
     const today = new Date();
 
+    // Create calendar for the past 7 days
     for (let i = 6; i >= 0; i--) {
         const date = new Date(today);
         date.setDate(today.getDate() - i);
@@ -380,16 +407,21 @@ function renderStreakCalendar() {
         const dayElement = document.createElement('div');
         dayElement.className = 'streak-day';
 
+        // Check if this day had activity
         if (chantingHistory[dateStr] && chantingHistory[dateStr].count > 0) {
             dayElement.classList.add('active');
         }
 
+        // Mark today
         if (i === 0) {
             dayElement.classList.add('today');
         }
 
+        // Add day abbreviation
         const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         dayElement.setAttribute('data-day', dayNames[date.getDay()]);
+
+        // Add date number
         dayElement.textContent = date.getDate();
 
         streakCalendar.appendChild(dayElement);
@@ -397,6 +429,25 @@ function renderStreakCalendar() {
 }
 
 // Function to show streak popup with sound
+function showStreakPopup(message) {
+    const streakPopup = document.getElementById('streak-popup');
+    const streakMessage = document.getElementById('streak-message');
+
+    if (streakPopup && streakMessage) {
+        streakMessage.textContent = message;
+        streakPopup.style.display = 'block';
+
+        // Play streak sound if sound is enabled
+        if (soundToggle.checked) {
+            streakAudio.currentTime = 0;
+            streakAudio.play().catch(e => console.log("Audio play failed:", e));
+        }
+
+        setTimeout(() => {
+            streakPopup.style.display = 'none';
+        }, 3000);
+    }
+}
 function showStreakPopup(message) {
     if (!streakPopupToggle.checked) return;
 
@@ -407,6 +458,7 @@ function showStreakPopup(message) {
         streakMessage.textContent = message;
         streakPopup.style.display = 'block';
 
+// Play streak sound if sound is enabled
         if (soundToggle.checked) {
             streakAudio.currentTime = 0;
             streakAudio.play().catch(e => console.log("Audio play failed:", e));
@@ -418,8 +470,10 @@ function showStreakPopup(message) {
     }
 }
 
-// Function to update the counter
+// Function to update the counter with daily reset check
 function updateCounter() {
+    checkAndResetDaily(); // Check if we need to reset first
+
     if (count < totalLetters) {
         count++;
         updateCountDisplay();
@@ -448,25 +502,6 @@ function updateCounter() {
     }
 }
 
-// Function to handle counter reset with settings check
-function resetCounter() {
-    const settings = JSON.parse(localStorage.getItem('vibrationSettings') || '{}');
-    if (!settings.dailyResetEnabled) {
-        console.warn('Prevented reset - daily reset is disabled');
-        return false;
-    }
-    
-    count = 0;
-    round = 0;
-    localStorage.setItem('count', count);
-    localStorage.setItem('round', round);
-    localStorage.setItem('lastResetDate', new Date().toDateString());
-    updateCountDisplay();
-    updateRoundDisplay();
-    updateCircleText();
-    return true;
-}
-
 // Event listeners
 document.getElementById('count-btn').addEventListener('click', function() {
     if (count === 0) {
@@ -475,13 +510,12 @@ document.getElementById('count-btn').addEventListener('click', function() {
     updateCounter();
 });
 
-// Updated reset handlers
 confirmReset108Btn.addEventListener('click', () => {
-    if (resetCounter()) {
-        popup108.style.display = 'none';
-    } else {
-        alert("Daily reset is currently disabled in settings");
-    }
+    count = 0;
+    updateCountDisplay();
+    updateCircleText();
+    popup108.style.display = 'none';
+    saveData();
 });
 
 cancelReset108Btn.addEventListener('click', () => {
@@ -494,11 +528,11 @@ resetCountBtn.addEventListener('click', () => {
 });
 
 confirmResetCountBtn.addEventListener('click', () => {
-    if (resetCounter()) {
-        popupCountReset.style.display = 'none';
-    } else {
-        alert("Daily reset is currently disabled in settings");
-    }
+    count = 0;
+    updateCountDisplay();
+    updateCircleText();
+    popupCountReset.style.display = 'none';
+    saveData();
 });
 
 cancelResetCountBtn.addEventListener('click', () => {
@@ -511,11 +545,10 @@ resetRoundBtn.addEventListener('click', () => {
 });
 
 confirmResetRoundBtn.addEventListener('click', () => {
-    if (resetCounter()) {
-        popupRoundReset.style.display = 'none';
-    } else {
-        alert("Daily reset is currently disabled in settings");
-    }
+    round = 0;
+    updateRoundDisplay();
+    popupRoundReset.style.display = 'none';
+    saveData();
 });
 
 cancelResetRoundBtn.addEventListener('click', () => {
@@ -540,13 +573,6 @@ saveSettingsBtn.addEventListener('click', () => {
 soundToggle.addEventListener('change', function() {
     volumeControlContainer.style.display = this.checked ? 'block' : 'none';
     updateSettingsUI();
-});
-
-dailyResetToggle.addEventListener('change', function() {
-    vibrationSettings.dailyResetEnabled = this.checked;
-    localStorage.setItem('vibrationSettings', JSON.stringify(vibrationSettings));
-    loadSettingsFromStorage();
-    console.log('Daily reset toggled to:', this.checked);
 });
 
 countVibrationToggle.addEventListener('change', updateSettingsUI);
@@ -577,13 +603,14 @@ document.getElementById('increase-btn-size').addEventListener('click', () => {
     updateButtonSize(currentButtonSize + sizeStep);
 });
 
-// Circle text edit functionality
+// Circle text edit functionality with space handling
 editCircleTextBtn.addEventListener('click', () => {
     closeAllPopups();
     circleTextInput.value = circleTextContent;
     circleTextEditModal.style.display = 'flex';
 });
 
+// Clear text button functionality
 clearCircleTextBtn.addEventListener('click', function() {
     circleTextInput.value = '';
     circleTextInput.classList.add('warning');
@@ -591,6 +618,7 @@ clearCircleTextBtn.addEventListener('click', function() {
 });
 
 saveCircleTextBtn.addEventListener('click', () => {
+    // Remove all spaces (start, end, and between) when saving
     circleTextContent = circleTextInput.value.replace(/\s+/g, '') || 'HAREKRISHNAHAREKRISHNAKRISHNAKRISHNAHAREHAREHARERAMAHARERAMARAMARAMAHAREHARE';
     localStorage.setItem('circleText', circleTextContent);
     circleTextEditModal.style.display = 'none';
@@ -601,6 +629,7 @@ cancelCircleTextBtn.addEventListener('click', () => {
     circleTextEditModal.style.display = 'none';
 });
 
+// Show warning when spaces are entered in circle text
 circleTextInput.addEventListener('input', function() {
     const warningElement = document.querySelector('.space-warning');
     if (this.value.includes(' ')) {
@@ -618,16 +647,10 @@ updateRoundDisplay();
 updateCircleText();
 loadSettingsFromStorage();
 initializeStreak();
-checkAndResetDaily();
+checkAndResetDaily(); // Initial daily check
 
 // Set up a daily check (every hour to be safe)
-setInterval(() => {
-    const today = new Date().toDateString();
-    const lastResetDate = localStorage.getItem('lastResetDate');
-    if (lastResetDate !== today) {
-        checkAndResetDaily();
-    }
-}, 60 * 60 * 1000);
+setInterval(checkAndResetDaily, 60 * 60 * 1000);
 
 // Set current year in footer
 const dateInIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
@@ -659,6 +682,7 @@ imageUpload.addEventListener('change', (event) => {
         reader.onload = function(e) {
             imagePreview.src = e.target.result;
             imagePreview.style.display = 'block';
+
         };
         reader.readAsDataURL(file);
     }
@@ -731,10 +755,25 @@ if (installBtn) {
 }
 
 // Initialize slider fill colors on load
+// Initialize slider fill on load
 document.addEventListener('DOMContentLoaded', function() {
     updateSliderFill(document.getElementById('volume-slider'));
     updateSliderFill(document.getElementById('count-vibration-slider'));
     updateSliderFill(document.getElementById('complete-vibration-slider'));
+});
+
+// Add event listeners for slider input
+document.getElementById('volume-slider').addEventListener('input', function() {
+    updateSliderFill(this);
+    audio.volume = this.value / 210;
+});
+
+document.getElementById('count-vibration-slider').addEventListener('input', function() {
+    updateSliderFill(this);
+});
+
+document.getElementById('complete-vibration-slider').addEventListener('input', function() {
+    updateSliderFill(this);
 });
 
 // Adjust circle container padding on load and resize
@@ -765,8 +804,7 @@ const defaultSettings = {
     completeVibrationDuration: 1000,
     volume: 210,
     buttonSize: 100,
-    streakPopupEnabled: true,
-    dailyResetEnabled: true
+    streakPopupEnabled: true  // Add this line
 };
 
 // Function to reset all settings to default
@@ -775,7 +813,6 @@ function resetToDefaultSettings() {
         soundToggle.checked = defaultSettings.soundEnabled;
         countVibrationToggle.checked = defaultSettings.countVibrationEnabled;
         completeVibrationToggle.checked = defaultSettings.completeVibrationEnabled;
-        dailyResetToggle.checked = defaultSettings.dailyResetEnabled;
         countVibrationSlider.value = defaultSettings.countVibrationDuration;
         completeVibrationSlider.value = defaultSettings.completeVibrationDuration;
         volumeSlider.value = defaultSettings.volume;
@@ -783,6 +820,7 @@ function resetToDefaultSettings() {
         currentButtonSize = defaultSettings.buttonSize;
         updateButtonSize(currentButtonSize);
 
+        // Reset circle text (with space handling)
         circleTextContent = 'HAREKRISHNAHAREKRISHNAKRISHNAKRISHNAHAREHAREHARERAMAHARERAMARAMARAMAHAREHARE';
         localStorage.setItem('circleText', circleTextContent);
         updateCircleText();
@@ -867,6 +905,7 @@ document.querySelector('.round-image').addEventListener('click', function() {
 
 // Nuclear Reset Function
 async function performFactoryReset() {
+  // Show loading state
   const dialog = document.querySelector('.reset-dialog');
   if (dialog) {
     dialog.innerHTML = `<div class="loading-reset">
@@ -876,8 +915,10 @@ async function performFactoryReset() {
   }
 
   try {
+    // 1. Clear all localStorage data
     localStorage.clear();
 
+    // 2. Clear all IndexedDB databases
     if (window.indexedDB) {
       const dbs = await window.indexedDB.databases();
       dbs.forEach(db => {
@@ -887,18 +928,22 @@ async function performFactoryReset() {
       });
     }
 
+    // 3. Clear all caches
     if ('caches' in window) {
       const cacheNames = await caches.keys();
       await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
     }
 
+    // 4. Unregister all service workers
     if ('serviceWorker' in navigator) {
       const registrations = await navigator.serviceWorker.getRegistrations();
       await Promise.all(registrations.map(reg => reg.unregister()));
     }
 
+    // 5. Clear session storage
     sessionStorage.clear();
 
+    // 6. Force complete reload with cache busting
     setTimeout(() => {
       window.location.href = window.location.origin + window.location.pathname + '?reset=' + Date.now();
     }, 1000);
@@ -941,20 +986,105 @@ document.getElementById('factory-reset')?.addEventListener('click', function() {
   });
 });
 
-// Keydown events for volume buttons and spacebar
-document.addEventListener('keydown', function(event) {
-    if (event.keyCode === 447 || event.keyCode === 175 || event.key === "VolumeUp") {
-        event.preventDefault();
-        if (count === 0) {
-            updateStreak();
-        }
-        updateCounter();
+// Enhanced PWA installation handling
+document.addEventListener('DOMContentLoaded', () => {
+    const installBtn = document.getElementById('install-btn');
+
+    if (!installBtn) return;
+
+    // Function to check if PWA is installed
+    function isPWAInstalled() {
+        return window.matchMedia('(display-mode: standalone)').matches || 
+               window.navigator.standalone === true ||
+               document.referrer.includes('android-app://');
     }
-    else if (event.keyCode === 32 || event.key === " ") {
+
+    // Function to check if device is mobile
+    function isMobileDevice() {
+        return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    }
+
+    // Hide install button if PWA is already installed or not on mobile
+    if (isPWAInstalled() || !isMobileDevice()) {
+        installBtn.style.display = 'none';
+        return;
+    }
+
+    let deferredPrompt;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+
+        // Only show install button if PWA isn't installed and on mobile
+        if (!isPWAInstalled() && isMobileDevice()) {
+            installBtn.style.display = 'block';
+        }
+
+        installBtn.addEventListener('click', async () => {
+            installBtn.style.display = 'none';
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`User ${outcome} the install prompt`);
+            deferredPrompt = null;
+        });
+    });
+
+    window.addEventListener('appinstalled', () => {
+        console.log('PWA was installed');
+        installBtn.style.display = 'none';
+
+        // Additional check after installation
+        setTimeout(() => {
+            if (isPWAInstalled()) {
+                installBtn.style.display = 'none';
+            }
+        }, 1000);
+    });
+    // Additional check on page load
+    window.addEventListener('load', () => {
+        if (isPWAInstalled()) {
+            installBtn.style.display = 'none';
+        }
+    });
+});
+
+
+// Listen for keydown events
+document.addEventListener('keydown', function(event) {
+    // Check for volume up key (different browsers may use different key codes)
+    // Common key codes for volume up:
+    // - 447 (some browsers)
+    // - 175 (some browsers)
+    // - "VolumeUp" (key)
+    if (event.keyCode === 447 || event.keyCode === 175 || event.key === "VolumeUp") {
+        // Prevent default behavior (like actually changing the volume)
         event.preventDefault();
+        
+        // Update the counter
         if (count === 0) {
             updateStreak();
         }
         updateCounter();
     }
 });
+
+document.addEventListener('keydown', function(event) {
+    // Volume up keys (may work on some mobile devices)
+    if (event.keyCode === 447 || event.keyCode === 175 || event.key === "VolumeUp") {
+        event.preventDefault();
+        incrementCounter();
+    }
+    // Spacebar (for desktop users)
+    else if (event.keyCode === 32 || event.key === " ") {
+        event.preventDefault();
+        incrementCounter();
+    }
+});
+
+function incrementCounter() {
+    if (count === 0) {
+        updateStreak();
+    }
+    updateCounter();
+} 
