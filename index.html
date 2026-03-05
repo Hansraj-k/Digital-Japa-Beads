@@ -100,18 +100,20 @@
       margin-top: 10px;
     }
 
-    /* Fixed-size crop frame — never changes regardless of image size */
+    /* Fixed-size crop frame — size set dynamically by JS (min of img dimensions, max 240px) */
     #crop-frame {
       position: relative;
-      width: 240px;
-      height: 240px;
+      width: 240px;   /* default, overridden by JS */
+      height: 240px;  /* default, overridden by JS */
+      max-width: 240px;
+      max-height: 240px;
       overflow: hidden;
       background: #111;
-      border: 2px solid #444;
-      border-radius: 8px;
+      border: 2px solid #555;
+      border-radius: 50%; /* circular frame = no confusing second ring needed */
       cursor: grab;
       user-select: none;
-      touch-action: none; /* prevent scroll interference on mobile */
+      touch-action: none;
       flex-shrink: 0;
     }
 
@@ -129,27 +131,9 @@
       will-change: transform;
     }
 
-    /* Circle overlay — clips to show only the circular region */
+    /* Circle overlay — hidden, frame itself is now circular */
     #crop-circle-overlay {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      /* Dark shadow outside the circle */
-      background: radial-gradient(circle at 50% 50%, transparent 49%, rgba(0,0,0,0.65) 50%);
-      border-radius: 8px;
-    }
-
-    /* Thin circle guide border */
-    #crop-circle-guide {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 210px;
-      height: 210px;
-      transform: translate(-50%, -50%);
-      border: 2px dashed rgba(255,255,255,0.5);
-      border-radius: 50%;
-      pointer-events: none;
+      display: none;
     }
 
     /* Zoom slider row */
@@ -241,7 +225,6 @@
               <div id="crop-frame">
                 <img id="crop-img" src="" alt="Crop Preview">
                 <div id="crop-circle-overlay"></div>
-                <div id="crop-circle-guide"></div>
               </div>
               <div id="crop-zoom-row">
                 <label for="crop-zoom-slider">Zoom</label>
@@ -249,8 +232,8 @@
                 <span id="crop-zoom-value">1.0×</span>
               </div>
               <div id="crop-action-row">
+                <button id="crop-reset-btn">Reset Changes</button>
                 <button id="crop-apply-btn">Apply Crop ✓</button>
-                <button id="crop-cancel-btn">Cancel ✗</button>
               </div>
             </div>
             <!-- ───── END CROP UI ───── -->
@@ -571,53 +554,64 @@ document.addEventListener('DOMContentLoaded', () => {
   'use strict';
 
   /* ── References ── */
-  const imageUpload       = document.getElementById('image-upload');
-  const previewContainer  = document.getElementById('image-preview-container');
-  const previewImg        = document.getElementById('image-preview');
-  const cropWrapper       = document.getElementById('crop-wrapper');
-  const cropFrame         = document.getElementById('crop-frame');
-  const cropImg           = document.getElementById('crop-img');
-  const zoomSlider        = document.getElementById('crop-zoom-slider');
-  const zoomValue         = document.getElementById('crop-zoom-value');
-  const applyBtn          = document.getElementById('crop-apply-btn');
-  const cancelBtn         = document.getElementById('crop-cancel-btn');
+  const imageUpload      = document.getElementById('image-upload');
+  const previewContainer = document.getElementById('image-preview-container');
+  const previewImg       = document.getElementById('image-preview');
+  const cropWrapper      = document.getElementById('crop-wrapper');
+  const cropFrame        = document.getElementById('crop-frame');
+  const cropImg          = document.getElementById('crop-img');
+  const zoomSlider       = document.getElementById('crop-zoom-slider');
+  const zoomValue        = document.getElementById('crop-zoom-value');
+  const applyBtn         = document.getElementById('crop-apply-btn');
+  const resetBtn         = document.getElementById('crop-reset-btn');
 
   /* ── Crop state ── */
-  const FRAME_SIZE = 240;   // px — fixed, matches CSS
-  let scale        = 1;     // current zoom
-  let imgW         = 0;     // natural image width scaled to fit frame
-  let imgH         = 0;     // natural image height scaled to fit frame
-  let offsetX      = 0;     // image left offset inside frame
-  let offsetY      = 0;     // image top offset inside frame
-  let dragStartX   = 0;
-  let dragStartY   = 0;
-  let isDragging   = false;
-  let baseOffsetX  = 0;
-  let baseOffsetY  = 0;
-  let naturalSrc   = '';    // original data-URL for re-scaling on zoom
+  let FRAME_SIZE = 240;  // dynamic — set per image based on min(w,h), max 240
+  let scale      = 1;
+  let imgW       = 0;    // base image width at scale=1 inside frame
+  let imgH       = 0;    // base image height at scale=1 inside frame
+  let offsetX    = 0;
+  let offsetY    = 0;
+  let initOffsetX = 0;   // initial centered offsets for reset
+  let initOffsetY = 0;
+  let isDragging  = false;
+  let dragStartX  = 0;
+  let dragStartY  = 0;
+  let baseOffsetX = 0;
+  let baseOffsetY = 0;
+  let naturalSrc  = '';
 
-  /* ── Clamp helpers ── */
+  /* ── Clamp so image always covers the entire frame square ── */
   function clampX(x) {
     const scaledW = imgW * scale;
-    // Image must cover at least the frame width if larger, or stay within frame if smaller
-    const minX = scaledW >= FRAME_SIZE ? -(scaledW - FRAME_SIZE) : 0;
-    const maxX = scaledW >= FRAME_SIZE ? 0 : (FRAME_SIZE - scaledW);
-    return Math.min(maxX, Math.max(minX, x));
+    const minX = Math.min(0, FRAME_SIZE - scaledW);
+    const maxX = Math.max(0, FRAME_SIZE - scaledW);
+    if (scaledW >= FRAME_SIZE) return Math.min(0, Math.max(FRAME_SIZE - scaledW, x));
+    return Math.min(FRAME_SIZE - scaledW, Math.max(0, x));
   }
 
   function clampY(y) {
     const scaledH = imgH * scale;
-    const minY = scaledH >= FRAME_SIZE ? -(scaledH - FRAME_SIZE) : 0;
-    const maxY = scaledH >= FRAME_SIZE ? 0 : (FRAME_SIZE - scaledH);
-    return Math.min(maxY, Math.max(minY, y));
+    if (scaledH >= FRAME_SIZE) return Math.min(0, Math.max(FRAME_SIZE - scaledH, y));
+    return Math.min(FRAME_SIZE - scaledH, Math.max(0, y));
   }
 
-  /* ── Apply current transform to DOM image ── */
+  /* ── Apply transform to DOM image ── */
   function applyTransform() {
     cropImg.style.width  = (imgW * scale) + 'px';
     cropImg.style.height = (imgH * scale) + 'px';
     cropImg.style.left   = offsetX + 'px';
     cropImg.style.top    = offsetY + 'px';
+  }
+
+  /* ── Reset position & zoom to initial state ── */
+  function resetToInitial() {
+    scale    = 1;
+    offsetX  = initOffsetX;
+    offsetY  = initOffsetY;
+    zoomSlider.value      = 1;
+    zoomValue.textContent = '1.0×';
+    applyTransform();
   }
 
   /* ── Open cropper when file is chosen ── */
@@ -630,18 +624,37 @@ document.addEventListener('DOMContentLoaded', () => {
       naturalSrc = ev.target.result;
       const tempImg = new Image();
       tempImg.onload = function () {
-        /* Scale image so it fits inside the fixed frame (cover strategy) */
-        const ratio = Math.max(FRAME_SIZE / tempImg.naturalWidth, FRAME_SIZE / tempImg.naturalHeight);
-        imgW = tempImg.naturalWidth  * ratio;
-        imgH = tempImg.naturalHeight * ratio;
+        const nw = tempImg.naturalWidth;
+        const nh = tempImg.naturalHeight;
+
+        /* Frame size = min dimension of image, capped at 240px.
+           This prevents the frame from ever exceeding the image's
+           shorter side, so no dead space on either axis. */
+        FRAME_SIZE = Math.min(240, nw, nh);
+
+        /* Apply frame size to DOM */
+        cropFrame.style.width  = FRAME_SIZE + 'px';
+        cropFrame.style.height = FRAME_SIZE + 'px';
+
+        /* Update zoom row width to match */
+        document.getElementById('crop-zoom-row').style.width = FRAME_SIZE + 'px';
+
+        /* Update radial gradient overlay to match new frame (it's always square so this is automatic) */
+
+        /* Scale image so it fills the frame (cover: larger side fills, smaller side overflows) */
+        const ratio = Math.max(FRAME_SIZE / nw, FRAME_SIZE / nh);
+        imgW = nw * ratio;
+        imgH = nh * ratio;
 
         /* Center image inside frame */
-        offsetX = (FRAME_SIZE - imgW) / 2;
-        offsetY = (FRAME_SIZE - imgH) / 2;
+        initOffsetX = (FRAME_SIZE - imgW) / 2;
+        initOffsetY = (FRAME_SIZE - imgH) / 2;
+        offsetX = initOffsetX;
+        offsetY = initOffsetY;
 
         /* Reset zoom */
         scale = 1;
-        zoomSlider.value = 1;
+        zoomSlider.value      = 1;
         zoomValue.textContent = '1.0×';
 
         cropImg.src = naturalSrc;
@@ -658,22 +671,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ── Zoom slider ── */
   zoomSlider.addEventListener('input', function () {
-    const newScale  = parseFloat(this.value);
-    /* Zoom toward the center of the frame */
-    const cx        = FRAME_SIZE / 2;
-    const cy        = FRAME_SIZE / 2;
-    const imgCX     = (cx - offsetX) / scale;
-    const imgCY     = (cy - offsetY) / scale;
-    scale           = newScale;
-    offsetX         = clampX(cx - imgCX * scale);
-    offsetY         = clampY(cy - imgCY * scale);
+    const newScale = parseFloat(this.value);
+    /* Zoom toward center of frame */
+    const cx   = FRAME_SIZE / 2;
+    const cy   = FRAME_SIZE / 2;
+    const imgCX = (cx - offsetX) / scale;
+    const imgCY = (cy - offsetY) / scale;
+    scale   = newScale;
+    offsetX = clampX(cx - imgCX * scale);
+    offsetY = clampY(cy - imgCY * scale);
     zoomValue.textContent = newScale.toFixed(1) + '×';
     applyTransform();
   });
 
-  /* ════════════════════════════════
+  /* ── Reset Changes ── */
+  resetBtn.addEventListener('click', resetToInitial);
+
+  /* ════════════
      DRAG — Mouse
-  ════════════════════════════════ */
+  ════════════ */
   cropFrame.addEventListener('mousedown', function (e) {
     isDragging  = true;
     dragStartX  = e.clientX;
@@ -690,13 +706,11 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTransform();
   });
 
-  document.addEventListener('mouseup', function () {
-    isDragging = false;
-  });
+  document.addEventListener('mouseup', function () { isDragging = false; });
 
-  /* ════════════════════════════════
+  /* ════════════
      DRAG — Touch
-  ════════════════════════════════ */
+  ════════════ */
   cropFrame.addEventListener('touchstart', function (e) {
     if (e.touches.length !== 1) return;
     isDragging  = true;
@@ -715,40 +729,31 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
   }, { passive: false });
 
-  document.addEventListener('touchend', function () {
-    isDragging = false;
-  });
+  document.addEventListener('touchend', function () { isDragging = false; });
 
   /* ════════════════════════════════
      APPLY — render circular crop to canvas → data-URL
   ════════════════════════════════ */
   applyBtn.addEventListener('click', function () {
     const canvas  = document.createElement('canvas');
-    const OUTPUT  = 240; // output image size in px
+    const OUTPUT  = FRAME_SIZE; // output matches the frame size
     canvas.width  = OUTPUT;
     canvas.height = OUTPUT;
     const ctx     = canvas.getContext('2d');
 
-    /* Clip to circle */
+    /* Clip to perfect circle */
     ctx.beginPath();
     ctx.arc(OUTPUT / 2, OUTPUT / 2, OUTPUT / 2, 0, Math.PI * 2);
     ctx.closePath();
     ctx.clip();
 
-    /* Draw the image at the position/scale the user chose */
-    const scaleRatio = OUTPUT / FRAME_SIZE; // map frame coords → output coords
-    const drawW      = imgW * scale * scaleRatio;
-    const drawH      = imgH * scale * scaleRatio;
-    const drawX      = offsetX * scaleRatio;
-    const drawY      = offsetY * scaleRatio;
-
-    const sourceImg  = new Image();
+    /* Map frame coords → output coords (1:1 since OUTPUT === FRAME_SIZE) */
+    const sourceImg = new Image();
     sourceImg.onload = function () {
-      ctx.drawImage(sourceImg, drawX, drawY, drawW, drawH);
+      ctx.drawImage(sourceImg, offsetX, offsetY, imgW * scale, imgH * scale);
       const croppedDataURL = canvas.toDataURL('image/png');
 
-      /* Put result into the existing preview so the rest of the app's
-         "Save Image" button works exactly as before */
+      /* Feed into existing preview so "Save Image" works unchanged */
       previewImg.src = croppedDataURL;
       previewContainer.classList.remove('hidden-by-crop');
       previewContainer.style.display = 'block';
@@ -756,21 +761,11 @@ document.addEventListener('DOMContentLoaded', () => {
       /* Hide cropper */
       cropWrapper.style.display = 'none';
 
-      /* Also update the round-image immediately (same as if user tapped Save Image) */
+      /* Update the main round-image immediately */
       const roundImage = document.getElementById('round-image');
       if (roundImage) roundImage.src = croppedDataURL;
     };
     sourceImg.src = naturalSrc;
-  });
-
-  /* ════════════════════════════════
-     CANCEL — discard crop, restore state
-  ════════════════════════════════ */
-  cancelBtn.addEventListener('click', function () {
-    cropWrapper.style.display = 'none';
-    previewContainer.classList.remove('hidden-by-crop');
-    /* Reset the file input so choosing the same file again fires change */
-    imageUpload.value = '';
   });
 
 })();
