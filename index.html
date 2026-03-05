@@ -126,7 +126,7 @@
         <div class="circle-container">
             <img src="rkhkmc.png" alt="Round Image" class="round-image" id="round-image">
             <div class="circle-text"></div></div>
-        <!-- IMAGE CROP MENU with 1x initial scale and exact preview matching -->
+        <!-- IMAGE CROP MENU with fixed frame + precise preview matching -->
         <div id="image-change-menu" class="image-change-menu crop-menu-fixed">
             <p>Select an image</p>
             <input type="file" id="image-upload" accept="image/*">
@@ -134,7 +134,7 @@
             <!-- Fixed-size crop container with circular overlay guide -->
             <div id="crop-container" class="crop-container-fixed">
                 <div class="crop-area-square">
-                    <img id="crop-preview-img" src="" alt="Crop Preview" style="display: none;">
+                    <img id="crop-preview-img" src="" alt="Crop Preview" crossorigin="anonymous">
                     <!-- Circular overlay inside square -->
                     <div class="crop-circle-overlay"></div>
                 </div>
@@ -143,7 +143,7 @@
             <!-- Zoom slider and drag hint -->
             <div class="crop-controls">
                 <label for="zoom-slider">Zoom: <span id="zoom-value">1x</span></label>
-                <input type="range" id="zoom-slider" min="0.5" max="3" step="0.01" value="1">
+                <input type="range" id="zoom-slider" min="0.1" max="5" step="0.01" value="1">
                 <p class="drag-hint"><i class="fa fa-hand-pointer"></i> Drag image to reposition</p>
             </div>
 
@@ -458,230 +458,211 @@ document.addEventListener('DOMContentLoaded', () => {
 });
     
 </script>
-<!-- Fixed cropping script with 1x initial scale and exact preview matching -->
+<!-- Fixed cropping script with exact preview matching and 1x initial scale -->
 <script>
 (function() {
     // DOM elements
     const imageUpload = document.getElementById('image-upload');
-    const cropContainer = document.getElementById('crop-container');
     const cropImg = document.getElementById('crop-preview-img');
     const zoomSlider = document.getElementById('zoom-slider');
     const zoomSpan = document.getElementById('zoom-value');
     const saveImageBtn = document.getElementById('save-image-btn');
     const resetImageBtn = document.getElementById('reset-image-btn');
     const resetChangesBtn = document.getElementById('reset-crop-changes');
-    const roundImage = document.getElementById('round-image'); // main display
+    const roundImage = document.getElementById('round-image');
 
-    // State variables
-    let currentFile = null;
+    // State
     let scale = 1;
     let translateX = 0, translateY = 0;
     let naturalWidth = 0, naturalHeight = 0;
-    const cropSize = 240; // fixed crop square size in px
+    const cropSize = 240;
     
-    // Saved initial values for reset (set after each image load)
     let initialScale = 1;
     let initialTranslateX = 0;
     let initialTranslateY = 0;
 
-    // Helper: clamp translation based on current scale and image dimensions
+    // Flag to track if image is loaded
+    let imageLoaded = false;
+
+    // Clamp translation to keep circle fully covered
     function clampTranslate() {
-        if (!cropImg.src || naturalWidth === 0) return;
+        if (!imageLoaded) return;
         
         const scaledW = naturalWidth * scale;
         const scaledH = naturalHeight * scale;
         
-        // Boundaries: we want the crop circle to be fully covered.
-        // The visible circle is centered in the crop area. The image must extend
-        // at least to the circle edge in all directions.
-        // Circle radius = cropSize/2. So we need at least cropSize/2 from center to edge.
+        // Allow movement so that the circle (radius cropSize/2) stays within image bounds
         const minX = cropSize/2 - scaledW/2;
         const maxX = scaledW/2 - cropSize/2;
         const minY = cropSize/2 - scaledH/2;
         const maxY = scaledH/2 - cropSize/2;
         
-        // If scaled dimensions are smaller than cropSize, we set to center (shouldn't happen with min scale 0.5)
         translateX = Math.max(minX, Math.min(maxX, translateX));
         translateY = Math.max(minY, Math.min(maxY, translateY));
     }
 
-    // Update transform of crop image
-    function updateCropTransform() {
+    // Apply transform to image
+    function updateTransform() {
         cropImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
     }
 
-    // Reset changes to initial loaded state (centered, default zoom)
+    // Reset to initial state
     function resetToInitial() {
         scale = initialScale;
         translateX = initialTranslateX;
         translateY = initialTranslateY;
         zoomSlider.value = scale;
         zoomSpan.textContent = scale.toFixed(2) + 'x';
-        updateCropTransform();
+        updateTransform();
     }
 
-    // Drag state variables
+    // Drag logic
     let isDragging = false;
-    let startDragX, startDragY;
+    let startX, startY;
 
-    // Drag start (mouse)
-    cropImg.addEventListener('mousedown', (e) => {
-        if (!cropImg.src || cropImg.style.display === 'none') return;
-        e.preventDefault();
+    function startDrag(clientX, clientY) {
+        if (!imageLoaded) return;
         isDragging = true;
-        startDragX = e.clientX - translateX;
-        startDragY = e.clientY - translateY;
+        startX = clientX - translateX;
+        startY = clientY - translateY;
         cropImg.style.cursor = 'grabbing';
-    });
+    }
 
-    window.addEventListener('mousemove', (e) => {
+    function onDrag(clientX, clientY) {
         if (!isDragging) return;
-        e.preventDefault();
-        translateX = e.clientX - startDragX;
-        translateY = e.clientY - startDragY;
+        translateX = clientX - startX;
+        translateY = clientY - startY;
         clampTranslate();
-        updateCropTransform();
-    });
+        updateTransform();
+    }
 
-    window.addEventListener('mouseup', () => {
+    function stopDrag() {
         if (isDragging) {
             isDragging = false;
             cropImg.style.cursor = 'grab';
         }
+    }
+
+    // Mouse events
+    cropImg.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        startDrag(e.clientX, e.clientY);
     });
+
+    window.addEventListener('mousemove', (e) => {
+        onDrag(e.clientX, e.clientY);
+    });
+
+    window.addEventListener('mouseup', stopDrag);
 
     // Touch events
     cropImg.addEventListener('touchstart', (e) => {
-        if (!cropImg.src || cropImg.style.display === 'none') return;
         e.preventDefault();
         const touch = e.touches[0];
-        isDragging = true;
-        startDragX = touch.clientX - translateX;
-        startDragY = touch.clientY - translateY;
+        startDrag(touch.clientX, touch.clientY);
     }, { passive: false });
 
     window.addEventListener('touchmove', (e) => {
-        if (!isDragging) return;
-        e.preventDefault();
         const touch = e.touches[0];
-        translateX = touch.clientX - startDragX;
-        translateY = touch.clientY - startDragY;
-        clampTranslate();
-        updateCropTransform();
+        onDrag(touch.clientX, touch.clientY);
     }, { passive: false });
 
-    window.addEventListener('touchend', () => {
-        isDragging = false;
-    });
+    window.addEventListener('touchend', stopDrag);
 
-    // Zoom slider with smooth update and proper clamping
+    // Zoom slider
     zoomSlider.addEventListener('input', (e) => {
         scale = parseFloat(e.target.value);
         zoomSpan.textContent = scale.toFixed(2) + 'x';
-        clampTranslate(); // ensure within bounds after scale change
-        updateCropTransform();
+        clampTranslate();
+        updateTransform();
     });
 
-    // When file selected - IMPORTANT: set initial scale to 1 (no zoom)
+    // File selection
     imageUpload.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        currentFile = file;
+
         const reader = new FileReader();
         reader.onload = (event) => {
             cropImg.src = event.target.result;
             cropImg.style.display = 'block';
             cropImg.style.cursor = 'grab';
             
-            // Wait for image to load to get dimensions
             cropImg.onload = () => {
                 naturalWidth = cropImg.naturalWidth;
                 naturalHeight = cropImg.naturalHeight;
+                imageLoaded = true;
                 
-                // INITIAL SCALE IS 1x (no zoom) - exactly as requested
+                // Set scale to 1 (no zoom)
                 scale = 1.0;
-                
-                // Center the image initially
                 translateX = 0;
                 translateY = 0;
                 
-                // Save as initial state for reset
+                // Save initial state
                 initialScale = 1.0;
                 initialTranslateX = 0;
                 initialTranslateY = 0;
                 
                 zoomSlider.value = scale;
                 zoomSpan.textContent = scale.toFixed(2) + 'x';
-                updateCropTransform();
+                updateTransform();
             };
         };
         reader.readAsDataURL(file);
     });
 
-    // Reset Changes button: revert to initial scale (1x) and centered position
+    // Reset changes button
     resetChangesBtn.addEventListener('click', () => {
-        if (!cropImg.src) return;
+        if (!imageLoaded) return;
         resetToInitial();
     });
 
-    // Save cropped image: EXACT preview match with precise coordinate calculation
+    // Save image - EXACT preview match
     function saveCroppedImage() {
-        if (!cropImg.src || naturalWidth === 0) return;
+        if (!imageLoaded) return;
 
-        // Create canvas with cropSize dimensions
         const canvas = document.createElement('canvas');
         canvas.width = cropSize;
         canvas.height = cropSize;
         const ctx = canvas.getContext('2d');
 
-        // The visible circle is centered in the crop container.
-        // We need to find the source rectangle from original image that corresponds
-        // to the visible circle area after applying current transform.
-        
-        // The transform is: image moved by (translateX, translateY) then scaled.
-        // So a point (px, py) in container maps to original image:
-        // ( (px - translateX) / scale, (py - translateY) / scale )
-        
-        // Center of circle is at (cropSize/2, cropSize/2)
+        // Calculate the source rectangle that exactly matches what's inside the circular preview
         const centerX = cropSize / 2;
         const centerY = cropSize / 2;
         
+        // Map preview center to original image coordinates
         const origCenterX = (centerX - translateX) / scale;
         const origCenterY = (centerY - translateY) / scale;
         
-        // The source size in original image that will cover the cropSize after scaling:
-        // cropSize pixels on canvas correspond to (cropSize / scale) original pixels.
+        // Source size in original image that maps to cropSize after scaling
         const srcSize = cropSize / scale;
         
         const srcX = origCenterX - srcSize / 2;
         const srcY = origCenterY - srcSize / 2;
-        
-        // Clear canvas and draw circular clip
-        ctx.clearRect(0, 0, cropSize, cropSize);
+
+        // Draw circular crop
         ctx.beginPath();
-        ctx.arc(cropSize/2, cropSize/2, cropSize/2, 0, 2 * Math.PI);
+        ctx.arc(centerX, centerY, centerX, 0, 2 * Math.PI);
         ctx.closePath();
         ctx.clip();
 
-        // Draw the image portion onto canvas
+        // Draw the exact visible portion
         ctx.drawImage(cropImg, srcX, srcY, srcSize, srcSize, 0, 0, cropSize, cropSize);
 
-        // Get data URL and set to round-image
+        // Save to round image
         const dataURL = canvas.toDataURL('image/png');
         roundImage.src = dataURL;
         
-        // Save to localStorage
         try {
             localStorage.setItem('customRoundImage', dataURL);
         } catch (e) {}
         
-        // Close menu after save
         document.getElementById('image-change-menu').style.display = 'none';
     }
 
     saveImageBtn.addEventListener('click', saveCroppedImage);
 
-    // Reset to default image (factory reset)
+    // Reset to default
     resetImageBtn.addEventListener('click', () => {
         roundImage.src = 'rkhkmc.png';
         localStorage.removeItem('customRoundImage');
@@ -693,10 +674,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('image-change-menu').style.display = 'none';
     });
 
-    // Load saved image on startup if exists
+    // Load saved image
     const saved = localStorage.getItem('customRoundImage');
     if (saved) roundImage.src = saved;
-
 })();
 </script>
 <!-- Additional CSS for fixed crop container and circular overlay -->
@@ -735,7 +715,6 @@ document.addEventListener('DOMContentLoaded', () => {
         cursor: grab;
         user-select: none;
         -webkit-user-drag: none;
-        display: none; /* shown when image loaded */
         will-change: transform;
     }
     .crop-circle-overlay {
