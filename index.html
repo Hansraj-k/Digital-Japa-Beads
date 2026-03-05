@@ -309,16 +309,53 @@
 </div>
 
 <!-- ───── DAILY RESET TOGGLE (NEW) ───── -->
+<style>
+  #daily-reset-switch {
+    position: relative;
+    display: inline-block;
+    width: 56px;
+    height: 28px;
+    flex-shrink: 0;
+  }
+  #daily-reset-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+  }
+  #daily-reset-switch .djb-slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: #555;
+    border-radius: 28px;
+    transition: background-color 0.3s;
+  }
+  #daily-reset-switch .djb-slider:before {
+    content: "";
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s;
+  }
+  #daily-reset-switch input:checked + .djb-slider {
+    background-color: #4caf50;
+  }
+  #daily-reset-switch input:checked + .djb-slider:before {
+    transform: translateX(28px);
+  }
+</style>
 <div class="settings-section">
     <div class="settings-option">
         <h3>Daily Reset</h3>
-        <div class="button-cover">
-            <div class="button r">
-                <input type="checkbox" id="daily-reset-toggle" class="checkbox" checked>
-                <div class="knobs"></div>
-                <div class="layer"></div>
-            </div>
-        </div>
+        <label id="daily-reset-switch">
+            <input type="checkbox" id="daily-reset-toggle" checked>
+            <span class="djb-slider"></span>
+        </label>
     </div>
     <p class="settings-subtext">When enabled, count and rounds reset automatically each day. Turn off to keep your count and rounds running continuously across days.</p>
 </div>
