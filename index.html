@@ -17,29 +17,19 @@
     <meta property="og:description" content="Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere.">
     <meta property="og:url" content="https://digitaljapabeads.netlify.app">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="https://digitaljapabeads.netlify.app/rkhkmclogosm.png"> <!-- Replace with actual image URL -->
+    <meta property="og:image" content="https://digitaljapabeads.netlify.app/rkhkmclogosm.png">
 
     <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Digital Japa Beads | Chant Your Mantra Anytime, Anywhere">
-<meta name="twitter:description" content="Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere.">
-<meta name="twitter:image" content="https://digitaljapabeads.netlify.app/rkhkmclogosm.png">
-<meta name="twitter:url" content="https://digitaljapabeads.netlify.app">
+    <meta name="twitter:title" content="Digital Japa Beads | Chant Your Mantra Anytime, Anywhere">
+    <meta name="twitter:description" content="Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere.">
+    <meta name="twitter:image" content="https://digitaljapabeads.netlify.app/rkhkmclogosm.png">
+    <meta name="twitter:url" content="https://digitaljapabeads.netlify.app">
 
     <!-- Favicon -->
     <link rel="icon" href="rkhkmclogo.jpg" type="image/x-icon">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://digitaljapabeads.netlify.app">
-    <!-- Structured Data (Optional for better visibility) -->
-   <!-- <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "url": "https://digitaljapabeads.netlify.app",
-        "name": "Digital Japa Beads",
-        "description": "Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere."
-    }
-    </script> -->
 
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
@@ -89,98 +79,6 @@
       background: white; 
     }
   </style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </head>
 <body>
     <div style="display: none;"> Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere. </div>
@@ -218,14 +116,32 @@
         <div class="circle-container">
             <img src="rkhkmc.png" alt="Round Image" class="round-image" id="round-image">
             <div class="circle-text"></div></div>
-        <div id="image-change-menu" class="image-change-menu">
+        <!-- IMAGE CROP MENU -->
+        <div id="image-change-menu" class="image-change-menu crop-menu-fixed">
             <p>Select an image</p>
             <input type="file" id="image-upload" accept="image/*">
 
-            <div id="image-preview-container">
+            <!-- Fixed-size crop container with circular overlay guide -->
+            <div id="crop-container" class="crop-container-fixed">
+                <div class="crop-area-square">
+                    <img id="crop-preview-img" src="" alt="Crop Preview" style="display: none;">
+                    <!-- Circular overlay inside square -->
+                    <div class="crop-circle-overlay"></div>
+                </div>
+            </div>
+            
+            <!-- Zoom slider and drag hint -->
+            <div class="crop-controls">
+                <label for="zoom-slider">Zoom: <span id="zoom-value">1x</span></label>
+                <input type="range" id="zoom-slider" min="0.5" max="3" step="0.01" value="1">
+                <p class="drag-hint"><i class="fa fa-hand-pointer"></i> Drag image to reposition</p>
+            </div>
+
+            <div id="image-preview-container" style="display: none;">
                 <img id="image-preview" src="" alt="Image Preview" />
             </div>
             <button id="save-image-btn">Save Image</button>
+            <button id="reset-changes-btn">Reset Changes</button>
             <button id="reset-image-btn">Reset Image</button>
             <button id="close-image-menu">Close</button>
             <div id="made-with-container">
@@ -254,7 +170,6 @@
                         <span class="slider-value" id="volume-value">210</span>
                     </div>
                 </div>
-
             </div>
 
             <div class="settings-section vibration-setting">
@@ -370,9 +285,6 @@
             <p>Are you sure you want to reset the count only?</p>
             <button id="confirm-reset-count">Yes</button>
             <button id="cancel-reset-count">No</button>
-
-
-
         </div>
     </div>
     <div id="popup-round-reset" class="popup">
@@ -422,13 +334,8 @@
             <button id="save-circle-text">Save</button>
             <button id="cancel-circle-text">Cancel</button>
         </div>
-
-
-
-
     </div>
 </div>
-
 
     <audio id="audio" src="rkhkmc.mp3" preload="auto"></audio>
     <script src="script.js"></script>
@@ -489,235 +396,12 @@ document.addEventListener('DOMContentLoaded', () => {
             installBtn.style.display = 'block';
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         installBtn.addEventListener('click', async () => {
             installBtn.style.display = 'none';
             deferredPrompt.prompt();
             const choiceResult = await deferredPrompt.userChoice;
             console.log(choiceResult.outcome === 'accepted' ? 'User installed PWA' : 'User dismissed PWA install');
             deferredPrompt = null;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         });
     });
 
@@ -745,7 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
        
     // Adjust padding based on button size (3px per 10% size change)
-    const sizeAdjustment = (currentButtonSize - 100) * 3; // 3px per 10%
+    const sizeAdjustment = (currentButtonSize - 100) * 3;
     const newPadding = basePadding + sizeAdjustment;
 
     circleContainer.style.setProperty("padding-top", `${newPadding}px`, "important");
@@ -762,5 +446,363 @@ document.addEventListener('DOMContentLoaded', () => {
 });
     
 </script>
+
+<!-- ============================================================
+     FIXED cropping script — exact preview-to-save match + Reset Changes
+     ============================================================ -->
+<script>
+(function () {
+    // ── DOM refs ────────────────────────────────────────────────
+    const imageUpload      = document.getElementById('image-upload');
+    const cropImg          = document.getElementById('crop-preview-img');
+    const zoomSlider       = document.getElementById('zoom-slider');
+    const zoomSpan         = document.getElementById('zoom-value');
+    const saveImageBtn     = document.getElementById('save-image-btn');
+    const resetChangesBtn  = document.getElementById('reset-changes-btn');
+    const resetImageBtn    = document.getElementById('reset-image-btn');
+    const roundImage       = document.getElementById('round-image');
+
+    // Size of the square crop container in CSS pixels (must match .crop-container-fixed)
+    const CROP_SIZE = 240;
+
+    // ── State ───────────────────────────────────────────────────
+    let scale        = 1;
+    let translateX   = 0;
+    let translateY   = 0;
+    let isDragging   = false;
+    let startDragX   = 0;
+    let startDragY   = 0;
+    let naturalWidth  = 0;
+    let naturalHeight = 0;
+    let loadedSrc    = ''; // remember the src for Reset Changes
+
+    // ── Transform helpers ───────────────────────────────────────
+    function applyTransform() {
+        // transform-origin is "center center" (CSS default).
+        // translate() moves the image; scale() zooms from its own centre.
+        cropImg.style.transform =
+            `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    }
+
+    /**
+     * Clamp translate so the image always fully covers the crop circle.
+     *
+     * After scale(), the rendered image dimensions are:
+     *   renderedW = naturalWidth  * scale
+     *   renderedH = naturalHeight * scale
+     *
+     * The image is anchored at its centre inside the CROP_SIZE×CROP_SIZE box,
+     * so its rendered left-edge is at:   CROP_SIZE/2 - renderedW/2 + translateX
+     * To keep it covering the box we need:
+     *   left-edge  ≤ 0   →  translateX ≤  renderedW/2 - CROP_SIZE/2
+     *   right-edge ≥ CROP_SIZE  →  translateX ≥ -(renderedW/2 - CROP_SIZE/2)
+     */
+    function clampTranslate() {
+        if (naturalWidth === 0) return;
+        const halfExtraW = (naturalWidth  * scale - CROP_SIZE) / 2;
+        const halfExtraH = (naturalHeight * scale - CROP_SIZE) / 2;
+        const maxX = Math.max(0, halfExtraW);
+        const maxY = Math.max(0, halfExtraH);
+        translateX = Math.max(-maxX, Math.min(maxX, translateX));
+        translateY = Math.max(-maxY, Math.min(maxY, translateY));
+    }
+
+    /** Set initial scale so the image just covers the crop circle. */
+    function fitScale() {
+        if (naturalWidth === 0 || naturalHeight === 0) return 1;
+        return Math.max(CROP_SIZE / naturalWidth, CROP_SIZE / naturalHeight);
+    }
+
+    function resetToFit() {
+        scale      = fitScale();
+        translateX = 0;
+        translateY = 0;
+        // clamp slider to valid range
+        const sliderMin = parseFloat(zoomSlider.min);
+        const sliderMax = parseFloat(zoomSlider.max);
+        zoomSlider.value = Math.max(sliderMin, Math.min(sliderMax, scale));
+        zoomSpan.textContent = scale.toFixed(2) + 'x';
+        applyTransform();
+    }
+
+    // ── File input ──────────────────────────────────────────────
+    imageUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            loadedSrc    = evt.target.result;
+            cropImg.src  = loadedSrc;
+            cropImg.style.display = 'block';
+            cropImg.style.cursor  = 'grab';
+
+            cropImg.onload = () => {
+                naturalWidth  = cropImg.naturalWidth;
+                naturalHeight = cropImg.naturalHeight;
+                resetToFit();
+            };
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // ── Zoom slider ─────────────────────────────────────────────
+    zoomSlider.addEventListener('input', (e) => {
+        scale = parseFloat(e.target.value);
+        zoomSpan.textContent = scale.toFixed(2) + 'x';
+        clampTranslate();
+        applyTransform();
+    });
+
+    // ── Mouse drag ──────────────────────────────────────────────
+    cropImg.addEventListener('mousedown', (e) => {
+        if (cropImg.style.display === 'none') return;
+        e.preventDefault();
+        isDragging = true;
+        startDragX = e.clientX - translateX;
+        startDragY = e.clientY - translateY;
+        cropImg.style.cursor = 'grabbing';
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        translateX = e.clientX - startDragX;
+        translateY = e.clientY - startDragY;
+        clampTranslate();
+        applyTransform();
+    });
+
+    window.addEventListener('mouseup', () => {
+        if (isDragging) {
+            isDragging = false;
+            cropImg.style.cursor = 'grab';
+        }
+    });
+
+    // ── Touch drag ──────────────────────────────────────────────
+    cropImg.addEventListener('touchstart', (e) => {
+        if (cropImg.style.display === 'none') return;
+        e.preventDefault();
+        const t = e.touches[0];
+        isDragging = true;
+        startDragX = t.clientX - translateX;
+        startDragY = t.clientY - translateY;
+    }, { passive: false });
+
+    window.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const t = e.touches[0];
+        translateX = t.clientX - startDragX;
+        translateY = t.clientY - startDragY;
+        clampTranslate();
+        applyTransform();
+    }, { passive: false });
+
+    window.addEventListener('touchend', () => { isDragging = false; });
+
+    // ── Save (THE FIX) ──────────────────────────────────────────
+    //
+    // CSS transform: translate(tx, ty) scale(s)  with transform-origin: center center
+    //
+    // The crop box is CROP_SIZE × CROP_SIZE px.
+    // The image is centred in that box, so its rendered centre is at
+    //   (CROP_SIZE/2 + tx,  CROP_SIZE/2 + ty)  in container space.
+    //
+    // To convert a container pixel (cx, cy) → original image pixel (ix, iy):
+    //   ix = (cx - (CROP_SIZE/2 + tx)) / s  +  naturalWidth/2
+    //   iy = (cy - (CROP_SIZE/2 + ty)) / s  +  naturalHeight/2
+    //
+    // The visible crop window runs from (0,0) to (CROP_SIZE, CROP_SIZE).
+    // Its top-left in image coords:
+    //   srcX = (0 - CROP_SIZE/2 - tx) / s + naturalWidth/2
+    //   srcY = (0 - CROP_SIZE/2 - ty) / s + naturalHeight/2
+    // and the source side length that maps to CROP_SIZE pixels:
+    //   srcSide = CROP_SIZE / s
+    //
+    saveImageBtn.addEventListener('click', () => {
+        if (!cropImg.src || naturalWidth === 0) return;
+
+        const half = CROP_SIZE / 2;
+        const srcSide = CROP_SIZE / scale;
+        const srcX = (-half - translateX) / scale + naturalWidth  / 2;
+        const srcY = (-half - translateY) / scale + naturalHeight / 2;
+
+        const canvas = document.createElement('canvas');
+        canvas.width  = CROP_SIZE;
+        canvas.height = CROP_SIZE;
+        const ctx = canvas.getContext('2d');
+
+        // Clip to circle
+        ctx.beginPath();
+        ctx.arc(half, half, half, 0, 2 * Math.PI);
+        ctx.closePath();
+        ctx.clip();
+
+        // Draw exactly what the preview shows
+        ctx.drawImage(cropImg, srcX, srcY, srcSide, srcSide, 0, 0, CROP_SIZE, CROP_SIZE);
+
+        const dataURL = canvas.toDataURL('image/png');
+        roundImage.src = dataURL;
+        try { localStorage.setItem('customRoundImage', dataURL); } catch (e) {}
+
+        document.getElementById('image-change-menu').style.display = 'none';
+    });
+
+    // ── Reset Changes (restore zoom/position, keep same image) ──
+    resetChangesBtn.addEventListener('click', () => {
+        if (naturalWidth === 0) return; // no image loaded yet
+        resetToFit();
+    });
+
+    // ── Reset Image (back to default) ───────────────────────────
+    resetImageBtn.addEventListener('click', () => {
+        roundImage.src = 'rkhkmc.png';
+        localStorage.removeItem('customRoundImage');
+        // Also clear the preview
+        cropImg.src = '';
+        cropImg.style.display = 'none';
+        naturalWidth = naturalHeight = 0;
+        loadedSrc = '';
+        document.getElementById('image-upload').value = '';
+        document.getElementById('image-change-menu').style.display = 'none';
+    });
+
+    // ── Close menu ───────────────────────────────────────────────
+    document.getElementById('close-image-menu').addEventListener('click', () => {
+        document.getElementById('image-change-menu').style.display = 'none';
+    });
+
+    // ── FIX: Restore saved image on page load and ensure it works with crop menu ──
+    const saved = localStorage.getItem('customRoundImage');
+    if (saved) {
+        roundImage.src = saved;
+        
+        // Also store the saved image data for the crop menu when opened
+        const tempImg = new Image();
+        tempImg.onload = function() {
+            // Store the dimensions for when crop menu is opened
+            const savedNaturalWidth = this.naturalWidth;
+            const savedNaturalHeight = this.naturalHeight;
+            
+            // When the crop menu is opened, if we have a saved image, show it
+            const originalChangeImageBtnClick = document.getElementById('change-image-btn').onclick;
+            document.getElementById('change-image-btn').addEventListener('click', function() {
+                if (saved && cropImg.style.display === 'none') {
+                    cropImg.src = saved;
+                    cropImg.style.display = 'block';
+                    cropImg.style.cursor = 'grab';
+                    
+                    cropImg.onload = () => {
+                        naturalWidth = cropImg.naturalWidth;
+                        naturalHeight = cropImg.naturalHeight;
+                        loadedSrc = saved;
+                        resetToFit();
+                    };
+                }
+            });
+        };
+        tempImg.src = saved;
+    }
+})();
+</script>
+
+<!-- CSS for fixed crop container and circular overlay -->
+<style>
+    .image-change-menu.crop-menu-fixed {
+        width: 320px;
+        max-width: 90%;
+    }
+    .crop-container-fixed {
+        width: 240px;
+        height: 240px;
+        margin: 15px auto;
+        position: relative;
+        overflow: hidden;
+        border: 2px solid #ffb347;
+        border-radius: 8px;
+        background: #222;
+        box-shadow: 0 0 0 1px #fff3;
+    }
+    .crop-area-square {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background: #1a1a1a;
+    }
+    #crop-preview-img {
+        max-width: none;
+        position: absolute;
+        width: auto;
+        height: auto;
+        transform-origin: center center;
+        cursor: grab;
+        user-select: none;
+        -webkit-user-drag: none;
+        display: none;
+        will-change: transform;
+    }
+    .crop-circle-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        box-shadow: 0 0 0 999px rgba(0, 0, 0, 0.6);
+        pointer-events: none;
+        border: 2px solid #ffb347;
+        box-sizing: border-box;
+    }
+    .crop-controls {
+        padding: 10px 0;
+        color: white;
+    }
+    .crop-controls label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 14px;
+    }
+    #zoom-slider {
+        width: 100%;
+        margin: 5px 0;
+    }
+    .drag-hint {
+        font-size: 13px;
+        color: #ccc;
+        margin: 5px 0;
+    }
+    .image-change-menu {
+        background: #2c2c2c;
+        color: white;
+    }
+    .image-change-menu button {
+        background: #ffb347;
+        border: none;
+        padding: 8px 16px;
+        margin: 5px;
+        border-radius: 20px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .image-change-menu button:hover {
+        background: #ffa01e;
+    }
+    /* Style Reset Changes differently so it stands out */
+    #reset-changes-btn {
+        background: #5c9bd6 !important;
+    }
+    #reset-changes-btn:hover {
+        background: #3a7fc1 !important;
+    }
+    #image-preview-container {
+        display: none;
+    }
+</style>
 </body>
 </html>
