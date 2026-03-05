@@ -17,19 +17,29 @@
     <meta property="og:description" content="Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere.">
     <meta property="og:url" content="https://digitaljapabeads.netlify.app">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="https://digitaljapabeads.netlify.app/rkhkmclogosm.png">
+    <meta property="og:image" content="https://digitaljapabeads.netlify.app/rkhkmclogosm.png"> <!-- Replace with actual image URL -->
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Digital Japa Beads | Chant Your Mantra Anytime, Anywhere">
-    <meta name="twitter:description" content="Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere.">
-    <meta name="twitter:image" content="https://digitaljapabeads.netlify.app/rkhkmclogosm.png">
-    <meta name="twitter:url" content="https://digitaljapabeads.netlify.app">
+<meta name="twitter:title" content="Digital Japa Beads | Chant Your Mantra Anytime, Anywhere">
+<meta name="twitter:description" content="Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere.">
+<meta name="twitter:image" content="https://digitaljapabeads.netlify.app/rkhkmclogosm.png">
+<meta name="twitter:url" content="https://digitaljapabeads.netlify.app">
 
     <!-- Favicon -->
     <link rel="icon" href="rkhkmclogo.jpg" type="image/x-icon">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://digitaljapabeads.netlify.app">
+    <!-- Structured Data (Optional for better visibility) -->
+   <!-- <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "url": "https://digitaljapabeads.netlify.app",
+        "name": "Digital Japa Beads",
+        "description": "Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere."
+    }
+    </script> -->
 
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
@@ -80,6 +90,8 @@
     }
 
     /* ───── IMAGE CROP FEATURE STYLES ───── */
+
+    /* Crop wrapper shown after image is selected */
     #crop-wrapper {
       display: none;
       flex-direction: column;
@@ -88,16 +100,17 @@
       margin-top: 10px;
     }
 
+    /* Fixed-size crop frame — size set dynamically by JS (min of img dimensions, max 240px) */
     #crop-frame {
       position: relative;
-      width: 240px;
-      height: 240px;
+      width: 240px;   /* default, overridden by JS */
+      height: 240px;  /* default, overridden by JS */
       max-width: 240px;
       max-height: 240px;
       overflow: hidden;
       background: #111;
       border: 2px solid #555;
-      border-radius: 50%;
+      border-radius: 50%; /* circular frame = no confusing second ring needed */
       cursor: grab;
       user-select: none;
       touch-action: none;
@@ -108,6 +121,7 @@
       cursor: grabbing;
     }
 
+    /* The actual image inside the crop frame — draggable */
     #crop-img {
       position: absolute;
       top: 0;
@@ -117,10 +131,12 @@
       will-change: transform;
     }
 
+    /* Circle overlay — hidden, frame itself is now circular */
     #crop-circle-overlay {
       display: none;
     }
 
+    /* Zoom slider row */
     #crop-zoom-row {
       display: flex;
       align-items: center;
@@ -147,57 +163,241 @@
       text-align: right;
     }
 
+    /* Crop action buttons */
     #crop-action-row {
       display: flex;
       gap: 8px;
     }
 
+    /* Keep existing image-preview-container hidden when cropper is active */
     #image-preview-container.hidden-by-crop {
       display: none !important;
     }
     /* ───── END CROP STYLES ───── */
 
-    /* ───── BUTTON SIZE / EDIT MODE STYLES ───── */
-
-    /* Edit Mode toggle button — sits just above the count button */
-    #edit-mode-btn {
-      display: block;
-      margin: 0 auto 8px auto;
-      padding: 6px 18px;
-      background: transparent;
-      color: #aaa;
-      border: 1px solid #444;
-      border-radius: 20px;
-      font-size: 12px;
-      cursor: pointer;
-      letter-spacing: 0.5px;
-      transition: color 0.2s, border-color 0.2s, background 0.2s;
-      touch-action: manipulation;
+    /* ═══════════════════════════════════════════════════
+       HISTORY FEATURE STYLES
+       ═══════════════════════════════════════════════════ */
+    #history-popup {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0,0,0,0.82);
+      justify-content: center;
+      align-items: flex-start;
+      overflow-y: auto;
+      padding: 14px 0 30px;
     }
-
-    #edit-mode-btn.active {
+    #history-popup.open {
+      display: flex;
+    }
+    #history-popup-inner {
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 16px;
+      width: min(96vw, 440px);
+      padding: 20px 16px 24px;
+      position: relative;
+      box-sizing: border-box;
+      margin: auto;
+    }
+    #history-popup-inner h2 {
       color: #fff;
-      border-color: #fff;
-      background: rgba(255,255,255,0.08);
+      font-size: 18px;
+      margin: 0 0 4px;
+      text-align: center;
+      letter-spacing: 1px;
     }
-
-    /* Pulsing ring shown around count-btn while in edit mode */
-    #count-btn.edit-mode-active {
-      outline: 2px dashed rgba(255,255,255,0.55);
-      outline-offset: 6px;
-      animation: editPulse 1.6s ease-in-out infinite;
+    #history-popup-inner .hist-subtitle {
+      color: #aaa;
+      font-size: 11px;
+      text-align: center;
+      margin: 0 0 14px;
     }
-
-    @keyframes editPulse {
-      0%,100% { outline-color: rgba(255,255,255,0.55); }
-      50%      { outline-color: rgba(255,255,255,0.15); }
+    /* Month navigation */
+    .hist-month-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
     }
-
-    /* Smooth size transition when using +/- buttons */
-    #count-btn {
-      transition: width 0.18s ease, height 0.18s ease;
+    .hist-month-nav button {
+      background: #222;
+      border: 1px solid #444;
+      color: #fff;
+      border-radius: 8px;
+      padding: 5px 13px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.15s;
     }
-    /* ───── END BUTTON SIZE STYLES ───── */
+    .hist-month-nav button:hover { background: #333; }
+    .hist-month-nav button:disabled { opacity: 0.3; cursor: default; }
+    #hist-month-label {
+      color: #fff;
+      font-size: 14px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+    /* Summary bar */
+    .hist-month-summary {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .hist-summary-card {
+      flex: 1;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 8px 6px;
+      text-align: center;
+    }
+    .hist-summary-card .hsc-val {
+      color: #fff;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .hist-summary-card .hsc-lbl {
+      color: #888;
+      font-size: 10px;
+      margin-top: 2px;
+    }
+    /* Calendar grid */
+    .hist-cal-header {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+      margin-bottom: 4px;
+    }
+    .hist-cal-header span {
+      color: #666;
+      font-size: 10px;
+      text-align: center;
+    }
+    .hist-cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+    }
+    .hist-day {
+      aspect-ratio: 1;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      cursor: default;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      min-height: 34px;
+      position: relative;
+      transition: border-color 0.15s;
+    }
+    .hist-day.empty { background: transparent; border-color: transparent; }
+    .hist-day.today { border-color: #fff !important; }
+    .hist-day.has-data {
+      background: #1c2e1c;
+      border-color: #2e5e2e;
+      cursor: pointer;
+    }
+    .hist-day.has-data:hover { border-color: #5a5; }
+    .hist-day .hd-num {
+      color: #777;
+      font-size: 9px;
+      line-height: 1;
+    }
+    .hist-day.has-data .hd-num { color: #aaa; }
+    .hist-day.today .hd-num { color: #fff; font-weight: bold; }
+    .hist-day .hd-rounds {
+      color: #7c7;
+      font-size: 10px;
+      font-weight: bold;
+      line-height: 1.1;
+    }
+    .hist-day .hd-counts {
+      color: #5a9;
+      font-size: 8px;
+      line-height: 1;
+    }
+    /* Day detail tooltip / panel */
+    #hist-day-detail {
+      margin-top: 14px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: none;
+    }
+    #hist-day-detail.visible { display: block; }
+    #hist-day-detail h4 {
+      color: #fff;
+      font-size: 13px;
+      margin: 0 0 8px;
+    }
+    .hist-detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .hist-detail-row:last-child { border-bottom: none; }
+    .hist-detail-row span:first-child { color: #888; font-size: 12px; }
+    .hist-detail-row span:last-child  { color: #fff; font-size: 12px; font-weight: bold; }
+    /* All-time totals */
+    .hist-alltime {
+      margin-top: 14px;
+      background: #0d1a0d;
+      border: 1px solid #2e4e2e;
+      border-radius: 10px;
+      padding: 10px 14px;
+    }
+    .hist-alltime h4 {
+      color: #7c7;
+      font-size: 12px;
+      margin: 0 0 8px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .hist-alltime-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .hat-card {
+      text-align: center;
+    }
+    .hat-card .hat-val {
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .hat-card .hat-lbl {
+      color: #666;
+      font-size: 9px;
+      margin-top: 2px;
+    }
+    /* Close button */
+    #close-history-popup {
+      display: block;
+      margin: 16px auto 0;
+      background: #222;
+      border: 1px solid #444;
+      color: #fff;
+      border-radius: 10px;
+      padding: 9px 32px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    #close-history-popup:hover { background: #333; }
+    /* History button in toolbar */
+    #history-btn {
+      /* inherits toolbar button styles */
+    }
+    /* ═══ END HISTORY STYLES ═══ */
     </style>
 </head>
 <body>
@@ -229,6 +429,10 @@
                 <button id="reset-round-btn" data-tooltip="Reset Round">
                     <i class="fa-solid fa-arrows-rotate"></i>
                 </button>
+                <!-- ── HISTORY BUTTON (new) ── -->
+                <button id="history-btn" data-tooltip="History">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                </button>
                 <button id="settings-btn" data-tooltip="Settings">
                     <i class="fa-solid fa-gear"></i>
                 </button>
@@ -244,7 +448,7 @@
                 <img id="image-preview" src="" alt="Image Preview" />
             </div>
 
-            <!-- ───── CROP UI ───── -->
+            <!-- ───── CROP UI (injected here, same visual flow) ───── -->
             <div id="crop-wrapper">
               <div id="crop-frame">
                 <img id="crop-img" src="" alt="Crop Preview">
@@ -298,6 +502,7 @@
         <h3>Vibration on Count</h3>
         <div class="button-cover">
             <div class="button r">
+                <!-- CHANGED: added "checked" to enable vibration on count by default -->
                 <input type="checkbox" id="count-vibration-toggle" class="checkbox" checked>
                 <div class="knobs"></div>
                 <div class="layer"></div>
@@ -331,7 +536,7 @@
     </div>
 </div>
 
-<!-- ───── DAILY RESET TOGGLE ───── -->
+<!-- ───── DAILY RESET TOGGLE (NEW) ───── -->
 <style>
   #daily-reset-switch {
     position: relative;
@@ -384,7 +589,6 @@
 </div>
 <!-- ───── END DAILY RESET TOGGLE ───── -->
 
-<!-- ───── BUTTON SIZE SETTING ───── -->
 <div class="settings-section">
     <div class="settings-option">
         <h3>Button Size</h3>
@@ -394,10 +598,7 @@
             <button id="increase-btn-size" class="size-btn">+</button>
         </div>
     </div>
-    <p class="settings-subtext">You can also pinch the button directly — tap <strong>Edit Mode</strong> below the button to resize with two fingers</p>
 </div>
-<!-- ───── END BUTTON SIZE SETTING ───── -->
-
 <div class="settings-section">
     <div class="settings-option">
         <h3>Streak Popup Notifications</h3>
@@ -413,12 +614,14 @@
 </div>
     <div class="settings-section">
     <div class="settings-option">
+
         <button id="edit-circle-text-btn">Change Mantra</button>
     </div>
     <p class="settings-subtext">Customize the mantra displayed around the center image</p>
 </div>
 <div class="settings-section">
                 <div class="settings-option change-image-btn">
+              <!-- Image Change Button -->
             <button id="change-image-btn">Change Image</button>
                 </div>
 </div>
@@ -443,14 +646,11 @@
                 </button>
             </div>
         </div>
-        <!-- ───── EDIT MODE TOGGLE + COUNT BUTTON ───── -->
         <div class="buttons">
-            <button id="edit-mode-btn" title="Enter Edit Mode to resize button with pinch gesture">✏️ Edit Mode</button>
             <button id="count-btn">
                 <img src="rkhkmc.jpg" alt="Plus Icon" class="rkhkmc">
             </button>
         </div>
-        <!-- ───── END ───── -->
     </div>
     <div id="popup-108" class="popup">
         <div class="popup-content">
@@ -487,7 +687,88 @@
         <p id="streak-message"></p>
         <button id="close-streak-popup">Awesome!</button>
     </div>
-</div><br>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     HISTORY POPUP MODAL (new)
+     ═══════════════════════════════════════════════════ -->
+<div id="history-popup">
+  <div id="history-popup-inner">
+    <h2>📿 Japa History</h2>
+    <p class="hist-subtitle">Up to 18 months of counting activity</p>
+
+    <!-- Month navigation -->
+    <div class="hist-month-nav">
+      <button id="hist-prev-month">&#8249;</button>
+      <span id="hist-month-label">—</span>
+      <button id="hist-next-month">&#8250;</button>
+    </div>
+
+    <!-- Monthly summary cards -->
+    <div class="hist-month-summary">
+      <div class="hist-summary-card">
+        <div class="hsc-val" id="hist-month-active-days">0</div>
+        <div class="hsc-lbl">Active Days</div>
+      </div>
+      <div class="hist-summary-card">
+        <div class="hsc-val" id="hist-month-rounds">0</div>
+        <div class="hsc-lbl">Rounds</div>
+      </div>
+      <div class="hist-summary-card">
+        <div class="hsc-val" id="hist-month-counts">0</div>
+        <div class="hsc-lbl">Total Counts</div>
+      </div>
+    </div>
+
+    <!-- Calendar day-of-week headers -->
+    <div class="hist-cal-header">
+      <span>Su</span><span>Mo</span><span>Tu</span>
+      <span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+    </div>
+
+    <!-- Calendar grid (filled by JS) -->
+    <div class="hist-cal-grid" id="hist-cal-grid"></div>
+
+    <!-- Clicked-day detail panel -->
+    <div id="hist-day-detail">
+      <h4 id="hist-detail-date"></h4>
+      <div class="hist-detail-row">
+        <span>Rounds completed</span>
+        <span id="hist-detail-rounds">—</span>
+      </div>
+      <div class="hist-detail-row">
+        <span>Total counts</span>
+        <span id="hist-detail-counts">—</span>
+      </div>
+    </div>
+
+    <!-- All-time totals -->
+    <div class="hist-alltime">
+      <h4>🌿 All-Time Totals</h4>
+      <div class="hist-alltime-grid">
+        <div class="hat-card">
+          <div class="hat-val" id="hat-total-days">0</div>
+          <div class="hat-lbl">Active Days</div>
+        </div>
+        <div class="hat-card">
+          <div class="hat-val" id="hat-total-rounds">0</div>
+          <div class="hat-lbl">Total Rounds</div>
+        </div>
+        <div class="hat-card">
+          <div class="hat-val" id="hat-total-counts">0</div>
+          <div class="hat-lbl">Total Counts</div>
+        </div>
+      </div>
+    </div>
+
+    <button id="close-history-popup">Close</button>
+  </div>
+</div>
+<!-- ═══════════════════════════════════════════════════
+     END HISTORY POPUP MODAL
+     ═══════════════════════════════════════════════════ -->
+
+<br>
             <div class="install-container">
               <button id="install-btn">
                 <img src="rkhkmc-app .png" alt="Install PWA">
@@ -540,7 +821,12 @@
 </script>
 
 <!-- ═══════════════════════════════════════════════════
-     DAILY RESET FEATURE
+     DAILY RESET FEATURE — reads/writes localStorage key
+     'dailyResetEnabled' (default: true).
+     On page load, if enabled and the saved date differs
+     from today, count and round are reset automatically.
+     The toggle in Settings saves the preference and
+     triggers an immediate daily-reset check when turned on.
      ═══════════════════════════════════════════════════ -->
 <script>
 (function () {
@@ -549,6 +835,7 @@
   const STORAGE_KEY_DAILY_RESET  = 'dailyResetEnabled';
   const STORAGE_KEY_LAST_DATE    = 'lastResetDate';
 
+  /* ── Helpers ── */
   function getTodayStr() {
     const d = new Date();
     return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
@@ -556,21 +843,28 @@
 
   function isDailyResetEnabled() {
     const val = localStorage.getItem(STORAGE_KEY_DAILY_RESET);
+    // Default is true (enabled) if key not yet stored
     return val === null ? true : val === 'true';
   }
 
+  /* ── Perform the daily reset of count + round ── */
   function performDailyReset() {
+    // Reset count
     localStorage.setItem('count', '0');
+    // Reset round — key name may vary; covering common variants
     localStorage.setItem('round', '0');
     localStorage.setItem('rounds', '0');
+    // Update last reset date
     localStorage.setItem(STORAGE_KEY_LAST_DATE, getTodayStr());
 
+    // Update the visible DOM elements if they already exist
     const countDisplay = document.getElementById('count-display');
     const roundDisplay = document.getElementById('round-display');
     if (countDisplay) countDisplay.textContent = '0';
     if (roundDisplay) roundDisplay.textContent = 'Round: 0';
   }
 
+  /* ── Check on page load whether a daily reset is due ── */
   function checkDailyReset() {
     if (!isDailyResetEnabled()) return;
     const lastDate = localStorage.getItem(STORAGE_KEY_LAST_DATE);
@@ -580,11 +874,13 @@
     }
   }
 
+  /* ── Sync the toggle UI state from localStorage ── */
   function syncToggleUI() {
     const toggle = document.getElementById('daily-reset-toggle');
     if (toggle) toggle.checked = isDailyResetEnabled();
   }
 
+  /* ── Wire up the toggle after DOM is ready ── */
   document.addEventListener('DOMContentLoaded', function () {
     syncToggleUI();
     checkDailyReset();
@@ -594,12 +890,14 @@
 
     toggle.addEventListener('change', function () {
       localStorage.setItem(STORAGE_KEY_DAILY_RESET, toggle.checked ? 'true' : 'false');
+      // If user just turned it ON, run a reset check immediately
       if (toggle.checked) {
         checkDailyReset();
       }
     });
   });
 
+  /* Also expose globally so script.js "Save Settings" can persist if needed */
   window.djbDailyReset = {
     check: checkDailyReset,
     isEnabled: isDailyResetEnabled
@@ -608,207 +906,6 @@
 </script>
 <!-- ═══════════════════════════════════════════════════
      END DAILY RESET FEATURE
-     ═══════════════════════════════════════════════════ -->
-
-<!-- ═══════════════════════════════════════════════════
-     BUTTON SIZE FEATURE
-     - +/- controls in Settings
-     - Pinch-to-resize in Edit Mode
-     - Size persisted in localStorage ('countBtnSize')
-     - Step: 10% per tap, range: 60%–200%
-     ═══════════════════════════════════════════════════ -->
-<script>
-(function () {
-  'use strict';
-
-  /* ── Constants ── */
-  const STORAGE_KEY   = 'countBtnSize';
-  const SIZE_MIN      = 60;    // percent
-  const SIZE_MAX      = 200;   // percent
-  const SIZE_STEP     = 10;    // percent per +/- tap
-  const SIZE_DEFAULT  = 100;   // percent
-
-  /* ── State ── */
-  let currentSize   = SIZE_DEFAULT;
-  let editModeOn    = false;
-
-  /* Pinch state */
-  let pinchActive       = false;
-  let pinchStartDist    = 0;
-  let pinchStartSize    = SIZE_DEFAULT;
-
-  /* ── Helpers ── */
-  function clamp(v, lo, hi) { return Math.min(hi, Math.max(lo, v)); }
-
-  function getPinchDist(touches) {
-    const dx = touches[0].clientX - touches[1].clientX;
-    const dy = touches[0].clientY - touches[1].clientY;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
-
-  /* ── Apply size to DOM ── */
-  function applySize(pct) {
-    const btn = document.getElementById('count-btn');
-    if (!btn) return;
-    const factor = pct / 100;
-    btn.style.width  = '';   // let CSS/script.js set base; we use transform
-    btn.style.height = '';
-    btn.style.transform = 'scale(' + factor + ')';
-    btn.style.transformOrigin = 'center bottom';
-
-    /* Sync settings display */
-    const display = document.getElementById('button-size-value');
-    if (display) display.textContent = pct + '%';
-  }
-
-  /* ── Load from localStorage ── */
-  function loadSize() {
-    const saved = parseInt(localStorage.getItem(STORAGE_KEY), 10);
-    currentSize = isNaN(saved) ? SIZE_DEFAULT : clamp(saved, SIZE_MIN, SIZE_MAX);
-  }
-
-  /* ── Save to localStorage ── */
-  function saveSize() {
-    localStorage.setItem(STORAGE_KEY, String(currentSize));
-    /* Also keep the global used by adjustCircleContainer in the existing script */
-    if (typeof window.currentButtonSize !== 'undefined') {
-      window.currentButtonSize = currentSize;
-    }
-  }
-
-  /* ── Set size and persist ── */
-  function setSize(pct) {
-    currentSize = clamp(Math.round(pct), SIZE_MIN, SIZE_MAX);
-    applySize(currentSize);
-    saveSize();
-  }
-
-  /* ── Edit Mode toggle ── */
-  function setEditMode(on) {
-    editModeOn = on;
-    const editBtn  = document.getElementById('edit-mode-btn');
-    const countBtn = document.getElementById('count-btn');
-    if (!editBtn || !countBtn) return;
-
-    if (on) {
-      editBtn.textContent = '✅ Done';
-      editBtn.classList.add('active');
-      countBtn.classList.add('edit-mode-active');
-      /* Disable counting while in edit mode */
-      countBtn.dataset.editMode = '1';
-    } else {
-      editBtn.textContent = '✏️ Edit Mode';
-      editBtn.classList.remove('active');
-      countBtn.classList.remove('edit-mode-active');
-      delete countBtn.dataset.editMode;
-      pinchActive = false;
-    }
-  }
-
-  /* ── Wire up after DOM ready ── */
-  document.addEventListener('DOMContentLoaded', function () {
-    loadSize();
-    applySize(currentSize);
-
-    /* +/- buttons in Settings */
-    const increaseBtn = document.getElementById('increase-btn-size');
-    const decreaseBtn = document.getElementById('decrease-btn-size');
-
-    if (increaseBtn) {
-      increaseBtn.addEventListener('click', function () {
-        setSize(currentSize + SIZE_STEP);
-      });
-    }
-
-    if (decreaseBtn) {
-      decreaseBtn.addEventListener('click', function () {
-        setSize(currentSize - SIZE_STEP);
-      });
-    }
-
-    /* Edit Mode button */
-    const editModeBtn = document.getElementById('edit-mode-btn');
-    if (editModeBtn) {
-      editModeBtn.addEventListener('click', function () {
-        setEditMode(!editModeOn);
-      });
-    }
-
-    /* Block count tap while in edit mode */
-    const countBtn = document.getElementById('count-btn');
-    if (countBtn) {
-      countBtn.addEventListener('click', function (e) {
-        if (countBtn.dataset.editMode === '1') {
-          e.stopImmediatePropagation();
-          e.preventDefault();
-        }
-      }, true /* capture so it runs before script.js handler */);
-    }
-
-    /* ── Pinch-to-resize on count-btn (touch) ── */
-    if (countBtn) {
-
-      countBtn.addEventListener('touchstart', function (e) {
-        if (!editModeOn) return;
-        if (e.touches.length === 2) {
-          pinchActive    = true;
-          pinchStartDist = getPinchDist(e.touches);
-          pinchStartSize = currentSize;
-          e.preventDefault();
-        }
-      }, { passive: false });
-
-      /* Use document so the gesture keeps working if fingers drift off button */
-      document.addEventListener('touchmove', function (e) {
-        if (!pinchActive || !editModeOn) return;
-        if (e.touches.length === 2) {
-          const dist    = getPinchDist(e.touches);
-          const ratio   = dist / pinchStartDist;
-          const newSize = clamp(Math.round(pinchStartSize * ratio), SIZE_MIN, SIZE_MAX);
-          currentSize   = newSize;
-          applySize(currentSize);
-
-          /* Keep settings label in sync while pinching */
-          const display = document.getElementById('button-size-value');
-          if (display) display.textContent = currentSize + '%';
-
-          e.preventDefault();
-        }
-      }, { passive: false });
-
-      document.addEventListener('touchend', function (e) {
-        if (!pinchActive) return;
-        if (e.touches.length < 2) {
-          pinchActive = false;
-          saveSize();   /* persist once fingers lift */
-        }
-      });
-    }
-
-    /* ── Reset to Default should also reset size ── */
-    const resetDefaultBtn = document.getElementById('reset-default-settings');
-    if (resetDefaultBtn) {
-      resetDefaultBtn.addEventListener('click', function () {
-        setSize(SIZE_DEFAULT);
-      });
-    }
-
-    /* ── Factory Reset should also reset size ── */
-    const factoryResetBtn = document.getElementById('factory-reset');
-    if (factoryResetBtn) {
-      factoryResetBtn.addEventListener('click', function () {
-        setSize(SIZE_DEFAULT);
-      });
-    }
-
-    /* Expose for external use (adjustCircleContainer etc.) */
-    window.currentButtonSize = currentSize;
-  });
-
-})();
-</script>
-<!-- ═══════════════════════════════════════════════════
-     END BUTTON SIZE FEATURE
      ═══════════════════════════════════════════════════ -->
 
 <script>
@@ -900,12 +997,15 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <!-- ═══════════════════════════════════════════════════
-     IMAGE CROP FEATURE
+     IMAGE CROP FEATURE — Self-contained, no dependencies
+     Intercepts the existing image-upload input and shows
+     a fixed-size crop UI before the image is committed.
      ═══════════════════════════════════════════════════ -->
 <script>
 (function () {
   'use strict';
 
+  /* ── References ── */
   const imageUpload      = document.getElementById('image-upload');
   const previewContainer = document.getElementById('image-preview-container');
   const previewImg       = document.getElementById('image-preview');
@@ -917,13 +1017,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const applyBtn         = document.getElementById('crop-apply-btn');
   const resetBtn         = document.getElementById('crop-reset-btn');
 
-  let FRAME_SIZE = 240;
+  /* ── Crop state ── */
+  let FRAME_SIZE = 240;  // dynamic — set per image based on min(w,h), max 240
   let scale      = 1;
-  let imgW       = 0;
-  let imgH       = 0;
+  let imgW       = 0;    // base image width at scale=1 inside frame
+  let imgH       = 0;    // base image height at scale=1 inside frame
   let offsetX    = 0;
   let offsetY    = 0;
-  let initOffsetX = 0;
+  let initOffsetX = 0;   // initial centered offsets for reset
   let initOffsetY = 0;
   let isDragging  = false;
   let dragStartX  = 0;
@@ -932,8 +1033,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let baseOffsetY = 0;
   let naturalSrc  = '';
 
+  /* ── Clamp so image always covers the entire frame square ── */
   function clampX(x) {
     const scaledW = imgW * scale;
+    const minX = Math.min(0, FRAME_SIZE - scaledW);
+    const maxX = Math.max(0, FRAME_SIZE - scaledW);
     if (scaledW >= FRAME_SIZE) return Math.min(0, Math.max(FRAME_SIZE - scaledW, x));
     return Math.min(FRAME_SIZE - scaledW, Math.max(0, x));
   }
@@ -944,6 +1048,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return Math.min(FRAME_SIZE - scaledH, Math.max(0, y));
   }
 
+  /* ── Apply transform to DOM image ── */
   function applyTransform() {
     cropImg.style.width  = (imgW * scale) + 'px';
     cropImg.style.height = (imgH * scale) + 'px';
@@ -951,6 +1056,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cropImg.style.top    = offsetY + 'px';
   }
 
+  /* ── Reset position & zoom to initial state ── */
   function resetToInitial() {
     scale    = 1;
     offsetX  = initOffsetX;
@@ -960,6 +1066,7 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTransform();
   }
 
+  /* ── Open cropper when file is chosen ── */
   imageUpload.addEventListener('change', function (e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -972,20 +1079,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const nw = tempImg.naturalWidth;
         const nh = tempImg.naturalHeight;
 
+        /* Frame size = min dimension of image, capped at 240px.
+           This prevents the frame from ever exceeding the image's
+           shorter side, so no dead space on either axis. */
         FRAME_SIZE = Math.min(240, nw, nh);
+
+        /* Apply frame size to DOM */
         cropFrame.style.width  = FRAME_SIZE + 'px';
         cropFrame.style.height = FRAME_SIZE + 'px';
+
+        /* Update zoom row width to match */
         document.getElementById('crop-zoom-row').style.width = FRAME_SIZE + 'px';
 
+        /* Update radial gradient overlay to match new frame (it's always square so this is automatic) */
+
+        /* Scale image so it fills the frame (cover: larger side fills, smaller side overflows) */
         const ratio = Math.max(FRAME_SIZE / nw, FRAME_SIZE / nh);
         imgW = nw * ratio;
         imgH = nh * ratio;
 
+        /* Center image inside frame */
         initOffsetX = (FRAME_SIZE - imgW) / 2;
         initOffsetY = (FRAME_SIZE - imgH) / 2;
         offsetX = initOffsetX;
         offsetY = initOffsetY;
 
+        /* Reset zoom */
         scale = 1;
         zoomSlider.value      = 1;
         zoomValue.textContent = '1.0×';
@@ -993,6 +1112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cropImg.src = naturalSrc;
         applyTransform();
 
+        /* Show cropper, hide old preview, hide Save Image until crop applied */
         previewContainer.classList.add('hidden-by-crop');
         cropWrapper.style.display = 'flex';
         document.getElementById('save-image-btn').style.display = 'none';
@@ -1002,8 +1122,10 @@ document.addEventListener('DOMContentLoaded', () => {
     reader.readAsDataURL(file);
   });
 
+  /* ── Zoom slider ── */
   zoomSlider.addEventListener('input', function () {
     const newScale = parseFloat(this.value);
+    /* Zoom toward center of frame */
     const cx   = FRAME_SIZE / 2;
     const cy   = FRAME_SIZE / 2;
     const imgCX = (cx - offsetX) / scale;
@@ -1015,8 +1137,12 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTransform();
   });
 
+  /* ── Reset Changes ── */
   resetBtn.addEventListener('click', resetToInitial);
 
+  /* ════════════
+     DRAG — Mouse
+  ════════════ */
   cropFrame.addEventListener('mousedown', function (e) {
     isDragging  = true;
     dragStartX  = e.clientX;
@@ -1035,6 +1161,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('mouseup', function () { isDragging = false; });
 
+  /* ════════════
+     DRAG — Touch (1 finger) + Pinch Zoom (2 fingers)
+  ════════════ */
   let pinchStartDist  = 0;
   let pinchStartScale = 1;
 
@@ -1046,12 +1175,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   cropFrame.addEventListener('touchstart', function (e) {
     if (e.touches.length === 1) {
+      /* Single finger — drag */
       isDragging  = true;
       dragStartX  = e.touches[0].clientX;
       dragStartY  = e.touches[0].clientY;
       baseOffsetX = offsetX;
       baseOffsetY = offsetY;
     } else if (e.touches.length === 2) {
+      /* Two fingers — pinch zoom */
       isDragging      = false;
       pinchStartDist  = getTouchDist(e.touches);
       pinchStartScale = scale;
@@ -1061,14 +1192,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('touchmove', function (e) {
     if (e.touches.length === 1 && isDragging) {
+      /* Single finger drag */
       offsetX = clampX(baseOffsetX + (e.touches[0].clientX - dragStartX));
       offsetY = clampY(baseOffsetY + (e.touches[0].clientY - dragStartY));
       applyTransform();
     } else if (e.touches.length === 2) {
+      /* Pinch zoom */
       const dist     = getTouchDist(e.touches);
       let newScale   = pinchStartScale * (dist / pinchStartDist);
-      newScale       = Math.min(3, Math.max(1, newScale));
+      newScale       = Math.min(3, Math.max(1, newScale)); // clamp 1–3×
 
+      /* Zoom toward midpoint of the two fingers */
       const midX  = (e.touches[0].clientX + e.touches[1].clientX) / 2;
       const midY  = (e.touches[0].clientY + e.touches[1].clientY) / 2;
       const rect  = cropFrame.getBoundingClientRect();
@@ -1080,6 +1214,7 @@ document.addEventListener('DOMContentLoaded', () => {
       offsetX     = clampX(cx - imgCX * scale);
       offsetY     = clampY(cy - imgCY * scale);
 
+      /* Sync slider */
       zoomSlider.value      = scale;
       zoomValue.textContent = scale.toFixed(1) + '×';
 
@@ -1091,6 +1226,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('touchend', function (e) {
     if (e.touches.length === 0) isDragging = false;
     if (e.touches.length === 1) {
+      /* One finger lifted during pinch — switch back to drag mode */
       isDragging  = true;
       dragStartX  = e.touches[0].clientX;
       dragStartY  = e.touches[0].clientY;
@@ -1099,6 +1235,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  /* ════════════════════════════════
+     APPLY — render circular crop to canvas → data-URL
+  ════════════════════════════════ */
   applyBtn.addEventListener('click', function () {
     const canvas  = document.createElement('canvas');
     const OUTPUT  = FRAME_SIZE;
@@ -1106,6 +1245,7 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.height = OUTPUT;
     const ctx     = canvas.getContext('2d');
 
+    /* Clip to perfect circle */
     ctx.beginPath();
     ctx.arc(OUTPUT / 2, OUTPUT / 2, OUTPUT / 2, 0, Math.PI * 2);
     ctx.closePath();
@@ -1116,14 +1256,18 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.drawImage(sourceImg, offsetX, offsetY, imgW * scale, imgH * scale);
       const croppedDataURL = canvas.toDataURL('image/png');
 
+      /* Feed into existing preview so "Save Image" works unchanged */
       previewImg.src = croppedDataURL;
       previewContainer.classList.remove('hidden-by-crop');
       previewContainer.style.display = 'block';
 
+      /* Hide cropper */
       cropWrapper.style.display = 'none';
 
+      /* Show Save Image button now that crop is applied */
       document.getElementById('save-image-btn').style.display = '';
 
+      /* Update the main round-image immediately */
       const roundImage = document.getElementById('round-image');
       if (roundImage) roundImage.src = croppedDataURL;
     };
@@ -1134,6 +1278,326 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 <!-- ═══════════════════════════════════════════════════
      END IMAGE CROP FEATURE
+     ═══════════════════════════════════════════════════ -->
+
+<!-- ═══════════════════════════════════════════════════
+     HISTORY FEATURE
+     ─────────────────────────────────────────────────
+     Storage key: 'djb_history'
+     Format: JSON object  { "YYYY-MM-DD": { rounds: N, counts: N }, ... }
+     Retention: 18 months rolling — entries older than 548 days are pruned.
+
+     How it hooks into existing data:
+       • On every page load (DOMContentLoaded) it reads the current
+         localStorage 'count' and 'round'/'rounds' values and, if
+         today's entry is missing or lower, upserts it.
+       • It also observes the count-display and round-display DOM nodes
+         via MutationObserver so any change made by script.js is
+         captured automatically in real-time — no changes needed to
+         script.js whatsoever.
+       • Total counts = rounds_completed × 108 + current_partial_count
+         (i.e., every single bead press is counted).
+     ═══════════════════════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  /* ════════════════════════
+     CONSTANTS & HELPERS
+  ════════════════════════ */
+  const HIST_KEY       = 'djb_history';
+  const MAX_DAYS       = 548;   // 18 months ≈ 548 days
+  const MONTH_NAMES    = ['January','February','March','April','May','June',
+                          'July','August','September','October','November','December'];
+
+  function todayKey() {
+    const d = new Date();
+    return d.getFullYear() + '-'
+      + String(d.getMonth() + 1).padStart(2, '0') + '-'
+      + String(d.getDate()).padStart(2, '0');
+  }
+
+  function dateKey(year, month1, day) { // month1 = 1-based
+    return year + '-'
+      + String(month1).padStart(2, '0') + '-'
+      + String(day).padStart(2, '0');
+  }
+
+  /* Load history object from localStorage */
+  function loadHistory() {
+    try {
+      const raw = localStorage.getItem(HIST_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) { return {}; }
+  }
+
+  /* Save history object, pruning entries older than MAX_DAYS */
+  function saveHistory(hist) {
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - MAX_DAYS);
+    const cutoffStr = cutoff.getFullYear() + '-'
+      + String(cutoff.getMonth() + 1).padStart(2, '0') + '-'
+      + String(cutoff.getDate()).padStart(2, '0');
+    // Prune old keys
+    Object.keys(hist).forEach(k => { if (k < cutoffStr) delete hist[k]; });
+    try { localStorage.setItem(HIST_KEY, JSON.stringify(hist)); } catch (e) {}
+  }
+
+  /* Read current live counts from DOM or localStorage */
+  function getLiveValues() {
+    const countEl = document.getElementById('count-display');
+    const roundEl = document.getElementById('round-display');
+    let count  = parseInt((countEl ? countEl.textContent : '') || localStorage.getItem('count') || '0', 10) || 0;
+    let rounds = 0;
+    if (roundEl) {
+      const m = roundEl.textContent.match(/\d+/);
+      rounds = m ? parseInt(m[0], 10) : 0;
+    }
+    if (!rounds) {
+      rounds = parseInt(localStorage.getItem('round') || localStorage.getItem('rounds') || '0', 10) || 0;
+    }
+    return { count, rounds };
+  }
+
+  /* Upsert today's entry — always keep the highest values seen today */
+  function upsertToday() {
+    const hist  = loadHistory();
+    const key   = todayKey();
+    const { count, rounds } = getLiveValues();
+    // total counts = all completed rounds × 108 + current partial count
+    const totalCounts = rounds * 108 + count;
+
+    const existing = hist[key] || { rounds: 0, counts: 0 };
+    // Only update if new values are higher (guard against daily reset
+    // wiping out data that was already stored for today)
+    const newRounds = Math.max(existing.rounds, rounds);
+    const newCounts = Math.max(existing.counts, totalCounts);
+
+    if (newRounds !== existing.rounds || newCounts !== existing.counts) {
+      hist[key] = { rounds: newRounds, counts: newCounts };
+      saveHistory(hist);
+    }
+  }
+
+  /* ════════════════════════
+     MUTATION OBSERVER
+     Watches count-display & round-display for any text change,
+     then upserts today's snapshot after a short debounce.
+  ════════════════════════ */
+  let upsertTimer = null;
+  function scheduleUpsert() {
+    clearTimeout(upsertTimer);
+    upsertTimer = setTimeout(upsertToday, 400);
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    // Initial snapshot
+    upsertToday();
+
+    // Observe DOM changes
+    const observer = new MutationObserver(scheduleUpsert);
+    const config   = { childList: true, characterData: true, subtree: true };
+
+    const countEl = document.getElementById('count-display');
+    const roundEl = document.getElementById('round-display');
+    if (countEl) observer.observe(countEl, config);
+    if (roundEl) observer.observe(roundEl, config);
+
+    // Also snapshot on page-hide (tab close / background)
+    window.addEventListener('pagehide',  upsertToday);
+    window.addEventListener('blur',      upsertToday);
+    window.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') upsertToday();
+    });
+  });
+
+  /* ════════════════════════
+     HISTORY UI
+  ════════════════════════ */
+  let currentYear  = new Date().getFullYear();
+  let currentMonth = new Date().getMonth(); // 0-based
+
+  /* Compute earliest allowed month (18 months back) */
+  function getEarliestYM() {
+    const d = new Date();
+    d.setDate(1);
+    d.setMonth(d.getMonth() - 17); // 18 months including current = 17 back
+    return { year: d.getFullYear(), month: d.getMonth() };
+  }
+
+  /* Render the calendar for currentYear / currentMonth */
+  function renderCalendar() {
+    const hist        = loadHistory();
+    const grid        = document.getElementById('hist-cal-grid');
+    const monthLabel  = document.getElementById('hist-month-label');
+    const prevBtn     = document.getElementById('hist-prev-month');
+    const nextBtn     = document.getElementById('hist-next-month');
+    const today       = new Date();
+    const todayY      = today.getFullYear();
+    const todayM      = today.getMonth();
+    const todayD      = today.getDate();
+    const earliest    = getEarliestYM();
+
+    if (!grid) return;
+
+    monthLabel.textContent = MONTH_NAMES[currentMonth] + ' ' + currentYear;
+
+    // Navigation limits
+    prevBtn.disabled = (currentYear < earliest.year) ||
+                       (currentYear === earliest.year && currentMonth <= earliest.month);
+    nextBtn.disabled = (currentYear > todayY) ||
+                       (currentYear === todayY && currentMonth >= todayM);
+
+    // Monthly stats
+    let monthActiveDays = 0, monthRounds = 0, monthCounts = 0;
+
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const firstDow    = new Date(currentYear, currentMonth, 1).getDay(); // 0=Sun
+
+    grid.innerHTML = '';
+
+    // Empty cells before first day
+    for (let i = 0; i < firstDow; i++) {
+      const empty = document.createElement('div');
+      empty.className = 'hist-day empty';
+      grid.appendChild(empty);
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const key  = dateKey(currentYear, currentMonth + 1, d);
+      const data = hist[key];
+      const cell = document.createElement('div');
+      cell.className = 'hist-day';
+
+      const numSpan = document.createElement('div');
+      numSpan.className = 'hd-num';
+      numSpan.textContent = d;
+      cell.appendChild(numSpan);
+
+      if (currentYear === todayY && currentMonth === todayM && d === todayD) {
+        cell.classList.add('today');
+      }
+
+      if (data && (data.rounds > 0 || data.counts > 0)) {
+        cell.classList.add('has-data');
+        monthActiveDays++;
+        monthRounds += data.rounds;
+        monthCounts += data.counts;
+
+        const rSpan = document.createElement('div');
+        rSpan.className = 'hd-rounds';
+        rSpan.textContent = data.rounds + 'R';
+        cell.appendChild(rSpan);
+
+        const cSpan = document.createElement('div');
+        cSpan.className = 'hd-counts';
+        cSpan.textContent = data.counts;
+        cell.appendChild(cSpan);
+
+        // Click for detail
+        cell.addEventListener('click', function () {
+          showDayDetail(key, data);
+        });
+      }
+
+      grid.appendChild(cell);
+    }
+
+    // Update monthly summary
+    document.getElementById('hist-month-active-days').textContent = monthActiveDays;
+    document.getElementById('hist-month-rounds').textContent      = monthRounds;
+    document.getElementById('hist-month-counts').textContent      = monthCounts;
+
+    // Update all-time totals
+    let totalDays = 0, totalRounds = 0, totalCounts = 0;
+    Object.values(hist).forEach(function (entry) {
+      if (entry.rounds > 0 || entry.counts > 0) {
+        totalDays++;
+        totalRounds += entry.rounds;
+        totalCounts += entry.counts;
+      }
+    });
+    document.getElementById('hat-total-days').textContent   = totalDays;
+    document.getElementById('hat-total-rounds').textContent = totalRounds;
+    document.getElementById('hat-total-counts').textContent = totalCounts;
+
+    // Hide day detail panel when re-rendering
+    hideDayDetail();
+  }
+
+  function showDayDetail(key, data) {
+    const panel = document.getElementById('hist-day-detail');
+    const parts = key.split('-');
+    const label = MONTH_NAMES[parseInt(parts[1], 10) - 1] + ' ' + parseInt(parts[2], 10) + ', ' + parts[0];
+    document.getElementById('hist-detail-date').textContent   = label;
+    document.getElementById('hist-detail-rounds').textContent = data.rounds;
+    document.getElementById('hist-detail-counts').textContent = data.counts;
+    panel.classList.add('visible');
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function hideDayDetail() {
+    const panel = document.getElementById('hist-day-detail');
+    if (panel) panel.classList.remove('visible');
+  }
+
+  /* ════════════════════════
+     OPEN / CLOSE POPUP
+  ════════════════════════ */
+  document.addEventListener('DOMContentLoaded', function () {
+    const histBtn   = document.getElementById('history-btn');
+    const histPopup = document.getElementById('history-popup');
+    const closeBtn  = document.getElementById('close-history-popup');
+    const prevBtn   = document.getElementById('hist-prev-month');
+    const nextBtn   = document.getElementById('hist-next-month');
+
+    if (!histBtn || !histPopup) return;
+
+    histBtn.addEventListener('click', function () {
+      // Snapshot before opening so today shows up-to-date
+      upsertToday();
+      // Reset to current month on open
+      currentYear  = new Date().getFullYear();
+      currentMonth = new Date().getMonth();
+      renderCalendar();
+      histPopup.classList.add('open');
+    });
+
+    closeBtn.addEventListener('click', function () {
+      histPopup.classList.remove('open');
+    });
+
+    // Close on backdrop click
+    histPopup.addEventListener('click', function (e) {
+      if (e.target === histPopup) histPopup.classList.remove('open');
+    });
+
+    prevBtn.addEventListener('click', function () {
+      currentMonth--;
+      if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+      renderCalendar();
+    });
+
+    nextBtn.addEventListener('click', function () {
+      currentMonth++;
+      if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+      renderCalendar();
+    });
+  });
+
+  /* Expose for external use (e.g. factory reset can call djbHistory.clear()) */
+  window.djbHistory = {
+    upsertToday: upsertToday,
+    loadHistory: loadHistory,
+    clear: function () {
+      localStorage.removeItem(HIST_KEY);
+    }
+  };
+
+})();
+</script>
+<!-- ═══════════════════════════════════════════════════
+     END HISTORY FEATURE
      ═══════════════════════════════════════════════════ -->
 
 </body>
