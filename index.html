@@ -126,7 +126,7 @@
         <div class="circle-container">
             <img src="rkhkmc.png" alt="Round Image" class="round-image" id="round-image">
             <div class="circle-text"></div></div>
-        <!-- IMAGE CROP MENU with fixed frame + reset changes + precise zoom -->
+        <!-- IMAGE CROP MENU with 1x initial scale and exact preview matching -->
         <div id="image-change-menu" class="image-change-menu crop-menu-fixed">
             <p>Select an image</p>
             <input type="file" id="image-upload" accept="image/*">
@@ -458,7 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
     
 </script>
-<!-- Fixed cropping script with exact preview matching, smooth zoom reset, and Reset Changes -->
+<!-- Fixed cropping script with 1x initial scale and exact preview matching -->
 <script>
 (function() {
     // DOM elements
@@ -500,7 +500,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const minY = cropSize/2 - scaledH/2;
         const maxY = scaledH/2 - cropSize/2;
         
-        // If scaled dimensions are smaller than cropSize (shouldn't happen with proper min scale), we still clamp
+        // If scaled dimensions are smaller than cropSize, we set to center (shouldn't happen with min scale 0.5)
         translateX = Math.max(minX, Math.min(maxX, translateX));
         translateY = Math.max(minY, Math.min(maxY, translateY));
     }
@@ -582,7 +582,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCropTransform();
     });
 
-    // When file selected
+    // When file selected - IMPORTANT: set initial scale to 1 (no zoom)
     imageUpload.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -598,22 +598,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 naturalWidth = cropImg.naturalWidth;
                 naturalHeight = cropImg.naturalHeight;
                 
-                // Calculate initial scale to cover the circle (cropSize diameter)
-                // We want the smaller dimension to cover the circle after scale.
-                const scaleX = cropSize / naturalWidth;
-                const scaleY = cropSize / naturalHeight;
-                // Use max so that both dimensions >= cropSize (cover circle)
-                let initialScaleVal = Math.max(scaleX, scaleY);
-                // Ensure minimum scale is 0.5 (allow zoom out a bit)
-                initialScaleVal = Math.max(0.5, initialScaleVal);
+                // INITIAL SCALE IS 1x (no zoom) - exactly as requested
+                scale = 1.0;
                 
-                // Center image initially
-                scale = initialScaleVal;
+                // Center the image initially
                 translateX = 0;
                 translateY = 0;
                 
                 // Save as initial state for reset
-                initialScale = initialScaleVal;
+                initialScale = 1.0;
                 initialTranslateX = 0;
                 initialTranslateY = 0;
                 
@@ -625,7 +618,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsDataURL(file);
     });
 
-    // Reset Changes button: revert to initial scale and centered position
+    // Reset Changes button: revert to initial scale (1x) and centered position
     resetChangesBtn.addEventListener('click', () => {
         if (!cropImg.src) return;
         resetToInitial();
@@ -645,9 +638,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // We need to find the source rectangle from original image that corresponds
         // to the visible circle area after applying current transform.
         
-        // The center of the crop container in original image coordinates:
         // The transform is: image moved by (translateX, translateY) then scaled.
-        // So a point (px, py) in container (relative to container top-left) maps to original image:
+        // So a point (px, py) in container maps to original image:
         // ( (px - translateX) / scale, (py - translateY) / scale )
         
         // Center of circle is at (cropSize/2, cropSize/2)
@@ -664,7 +656,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const srcX = origCenterX - srcSize / 2;
         const srcY = origCenterY - srcSize / 2;
         
-        // Draw circular clip
+        // Clear canvas and draw circular clip
+        ctx.clearRect(0, 0, cropSize, cropSize);
         ctx.beginPath();
         ctx.arc(cropSize/2, cropSize/2, cropSize/2, 0, 2 * Math.PI);
         ctx.closePath();
