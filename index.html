@@ -393,11 +393,83 @@
       transition: background 0.15s;
     }
     #close-history-popup:hover { background: #333; }
-    /* History button in toolbar */
-    #history-btn {
-      /* inherits toolbar button styles */
-    }
+    /* History button in toolbar — removed; now in Settings */
     /* ═══ END HISTORY STYLES ═══ */
+    /* History tracking toggle switch (reuses djb-slider pattern) */
+    #history-tracking-switch {
+      position: relative;
+      display: inline-block;
+      width: 56px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+    #history-tracking-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+    #history-tracking-switch .djb-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #555;
+      border-radius: 28px;
+      transition: background-color 0.3s;
+    }
+    #history-tracking-switch .djb-slider:before {
+      content: "";
+      position: absolute;
+      height: 20px;
+      width: 20px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      border-radius: 50%;
+      transition: transform 0.3s;
+    }
+    #history-tracking-switch input:checked + .djb-slider { background-color: #4caf50; }
+    #history-tracking-switch input:checked + .djb-slider:before { transform: translateX(28px); }
+    /* Dropdown navigation for history */
+    .hist-month-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .hist-nav-dropdowns {
+      display: flex;
+      gap: 6px;
+      flex: 1;
+      justify-content: center;
+    }
+    .hist-nav-select {
+      background: #1e1e1e;
+      border: 1px solid #444;
+      color: #fff;
+      border-radius: 8px;
+      padding: 5px 8px;
+      font-size: 13px;
+      cursor: pointer;
+      outline: none;
+      appearance: auto;
+    }
+    .hist-nav-select:focus { border-color: #666; }
+    .hist-month-nav button {
+      background: #222;
+      border: 1px solid #444;
+      color: #fff;
+      border-radius: 8px;
+      padding: 5px 11px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+    .hist-month-nav button:hover { background: #333; }
+    .hist-month-nav button:disabled { opacity: 0.3; cursor: default; }
     </style>
 </head>
 <body>
@@ -428,10 +500,6 @@
             <div class="toolbar-right">
                 <button id="reset-round-btn" data-tooltip="Reset Round">
                     <i class="fa-solid fa-arrows-rotate"></i>
-                </button>
-                <!-- ── HISTORY BUTTON (new) ── -->
-                <button id="history-btn" data-tooltip="History">
-                    <i class="fa-solid fa-clock-rotate-left"></i>
                 </button>
                 <button id="settings-btn" data-tooltip="Settings">
                     <i class="fa-solid fa-gear"></i>
@@ -625,6 +693,24 @@
             <button id="change-image-btn">Change Image</button>
                 </div>
 </div>
+<!-- ───── HISTORY TRACKING TOGGLE (new) ───── -->
+<div class="settings-section">
+    <div class="settings-option">
+        <h3>History Tracking</h3>
+        <label id="history-tracking-switch">
+            <input type="checkbox" id="history-tracking-toggle" checked>
+            <span class="djb-slider"></span>
+        </label>
+    </div>
+    <p class="settings-subtext">Save your daily japa data for up to 18 months</p>
+</div>
+<div class="settings-section">
+    <div class="settings-option">
+        <button id="view-history-btn">View History 📿</button>
+    </div>
+    <p class="settings-subtext">Browse your past counting activity by month and year</p>
+</div>
+<!-- ───── END HISTORY TRACKING TOGGLE ───── -->
 <div class="settings-section reset-default-section">
     <div class="settings-option">
         <button id="reset-default-settings" class="reset-default-btn">Reset to Default</button>
@@ -697,10 +783,13 @@
     <h2>📿 Japa History</h2>
     <p class="hist-subtitle">Up to 18 months of counting activity</p>
 
-    <!-- Month navigation -->
+    <!-- Month/Year navigation with dropdowns -->
     <div class="hist-month-nav">
       <button id="hist-prev-month">&#8249;</button>
-      <span id="hist-month-label">—</span>
+      <div class="hist-nav-dropdowns">
+        <select id="hist-month-select" class="hist-nav-select"></select>
+        <select id="hist-year-select" class="hist-nav-select"></select>
+      </div>
       <button id="hist-next-month">&#8250;</button>
     </div>
 
@@ -716,7 +805,7 @@
       </div>
       <div class="hist-summary-card">
         <div class="hsc-val" id="hist-month-counts">0</div>
-        <div class="hsc-lbl">Total Counts</div>
+        <div class="hsc-lbl">Leftover Counts</div>
       </div>
     </div>
 
@@ -737,7 +826,7 @@
         <span id="hist-detail-rounds">—</span>
       </div>
       <div class="hist-detail-row">
-        <span>Total counts</span>
+        <span>Leftover counts</span>
         <span id="hist-detail-counts">—</span>
       </div>
     </div>
@@ -756,7 +845,7 @@
         </div>
         <div class="hat-card">
           <div class="hat-val" id="hat-total-counts">0</div>
-          <div class="hat-lbl">Total Counts</div>
+          <div class="hat-lbl">Leftover Counts</div>
         </div>
       </div>
     </div>
@@ -836,39 +925,46 @@
   const STORAGE_KEY_LAST_DATE    = 'lastResetDate';
 
   /* ── Helpers ── */
+  /* Returns today as YYYY-MM-DD (zero-padded) so string comparison is reliable */
   function getTodayStr() {
     const d = new Date();
-    return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+    return d.getFullYear() + '-'
+      + String(d.getMonth() + 1).padStart(2, '0') + '-'
+      + String(d.getDate()).padStart(2, '0');
   }
 
   function isDailyResetEnabled() {
     const val = localStorage.getItem(STORAGE_KEY_DAILY_RESET);
-    // Default is true (enabled) if key not yet stored
     return val === null ? true : val === 'true';
   }
 
   /* ── Perform the daily reset of count + round ── */
   function performDailyReset() {
-    // Reset count
     localStorage.setItem('count', '0');
-    // Reset round — key name may vary; covering common variants
     localStorage.setItem('round', '0');
     localStorage.setItem('rounds', '0');
-    // Update last reset date
     localStorage.setItem(STORAGE_KEY_LAST_DATE, getTodayStr());
 
-    // Update the visible DOM elements if they already exist
     const countDisplay = document.getElementById('count-display');
     const roundDisplay = document.getElementById('round-display');
     if (countDisplay) countDisplay.textContent = '0';
     if (roundDisplay) roundDisplay.textContent = 'Round: 0';
   }
 
-  /* ── Check on page load whether a daily reset is due ── */
+  /* ── Check on page load whether a daily reset is due ──
+     ONLY resets if the stored date is a DIFFERENT calendar day.
+     A plain page refresh on the same day does NOT trigger a reset. */
   function checkDailyReset() {
     if (!isDailyResetEnabled()) return;
     const lastDate = localStorage.getItem(STORAGE_KEY_LAST_DATE);
     const today    = getTodayStr();
+    /* If lastResetDate has never been set, record today WITHOUT resetting
+       (first-ever load — don't wipe a count the user may have just started) */
+    if (!lastDate) {
+      localStorage.setItem(STORAGE_KEY_LAST_DATE, today);
+      return;
+    }
+    /* Only reset when the stored date is genuinely a past day */
     if (lastDate !== today) {
       performDailyReset();
     }
@@ -890,14 +986,12 @@
 
     toggle.addEventListener('change', function () {
       localStorage.setItem(STORAGE_KEY_DAILY_RESET, toggle.checked ? 'true' : 'false');
-      // If user just turned it ON, run a reset check immediately
       if (toggle.checked) {
         checkDailyReset();
       }
     });
   });
 
-  /* Also expose globally so script.js "Save Settings" can persist if needed */
   window.djbDailyReset = {
     check: checkDailyReset,
     isEnabled: isDailyResetEnabled
@@ -1281,35 +1375,50 @@ document.addEventListener('DOMContentLoaded', () => {
      ═══════════════════════════════════════════════════ -->
 
 <!-- ═══════════════════════════════════════════════════
-     HISTORY FEATURE
+     HISTORY FEATURE  (v2)
      ─────────────────────────────────────────────────
-     Storage key: 'djb_history'
-     Format: JSON object  { "YYYY-MM-DD": { rounds: N, counts: N }, ... }
-     Retention: 18 months rolling — entries older than 548 days are pruned.
+     Storage key : 'djb_history'
+     Format      : { "YYYY-MM-DD": { rounds: N, counts: N }, ... }
+                   counts = leftover/partial counts (NOT rounds×108)
+     Retention   : 18 months rolling (≈548 days), pruned on save.
 
-     How it hooks into existing data:
-       • On every page load (DOMContentLoaded) it reads the current
-         localStorage 'count' and 'round'/'rounds' values and, if
-         today's entry is missing or lower, upserts it.
-       • It also observes the count-display and round-display DOM nodes
-         via MutationObserver so any change made by script.js is
-         captured automatically in real-time — no changes needed to
-         script.js whatsoever.
-       • Total counts = rounds_completed × 108 + current_partial_count
-         (i.e., every single bead press is counted).
+     Fixes in v2:
+       • History tracking can be toggled on/off via Settings.
+       • Navigation uses Month + Year dropdowns (+ arrow buttons).
+       • counts stored = raw partial count only (not rounds×108+count).
+       • Page refresh no longer resets count/round — daily-reset only
+         fires when the calendar date has genuinely changed.
      ═══════════════════════════════════════════════════ -->
 <script>
 (function () {
   'use strict';
 
   /* ════════════════════════
-     CONSTANTS & HELPERS
+     CONSTANTS
   ════════════════════════ */
-  const HIST_KEY       = 'djb_history';
-  const MAX_DAYS       = 548;   // 18 months ≈ 548 days
-  const MONTH_NAMES    = ['January','February','March','April','May','June',
-                          'July','August','September','October','November','December'];
+  const HIST_KEY        = 'djb_history';
+  const HIST_ENABLED_KEY = 'djbHistoryEnabled';
+  const MAX_DAYS        = 548;   // 18 months ≈ 548 days
+  const MONTH_NAMES     = ['January','February','March','April','May','June',
+                           'July','August','September','October','November','December'];
+  const MONTH_SHORT     = ['Jan','Feb','Mar','Apr','May','Jun',
+                           'Jul','Aug','Sep','Oct','Nov','Dec'];
 
+  /* ════════════════════════
+     TOGGLE HELPERS
+  ════════════════════════ */
+  function isHistoryEnabled() {
+    const v = localStorage.getItem(HIST_ENABLED_KEY);
+    return v === null ? true : v === 'true'; // default ON
+  }
+
+  function setHistoryEnabled(val) {
+    localStorage.setItem(HIST_ENABLED_KEY, val ? 'true' : 'false');
+  }
+
+  /* ════════════════════════
+     DATE HELPERS
+  ════════════════════════ */
   function todayKey() {
     const d = new Date();
     return d.getFullYear() + '-'
@@ -1317,13 +1426,23 @@ document.addEventListener('DOMContentLoaded', () => {
       + String(d.getDate()).padStart(2, '0');
   }
 
-  function dateKey(year, month1, day) { // month1 = 1-based
+  function dateKey(year, month1, day) {
     return year + '-'
       + String(month1).padStart(2, '0') + '-'
       + String(day).padStart(2, '0');
   }
 
-  /* Load history object from localStorage */
+  /* Earliest month allowed (18 months back, inclusive) */
+  function getEarliestYM() {
+    const d = new Date();
+    d.setDate(1);
+    d.setMonth(d.getMonth() - 17);
+    return { year: d.getFullYear(), month: d.getMonth() }; // month 0-based
+  }
+
+  /* ════════════════════════
+     STORAGE HELPERS
+  ════════════════════════ */
   function loadHistory() {
     try {
       const raw = localStorage.getItem(HIST_KEY);
@@ -1331,23 +1450,33 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) { return {}; }
   }
 
-  /* Save history object, pruning entries older than MAX_DAYS */
   function saveHistory(hist) {
+    // Prune entries older than MAX_DAYS
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - MAX_DAYS);
     const cutoffStr = cutoff.getFullYear() + '-'
       + String(cutoff.getMonth() + 1).padStart(2, '0') + '-'
       + String(cutoff.getDate()).padStart(2, '0');
-    // Prune old keys
     Object.keys(hist).forEach(k => { if (k < cutoffStr) delete hist[k]; });
     try { localStorage.setItem(HIST_KEY, JSON.stringify(hist)); } catch (e) {}
   }
 
-  /* Read current live counts from DOM or localStorage */
+  /* ════════════════════════
+     READ LIVE VALUES
+     counts = the current partial count shown in the counter
+              (does NOT include completed rounds — those are separate)
+  ════════════════════════ */
   function getLiveValues() {
     const countEl = document.getElementById('count-display');
     const roundEl = document.getElementById('round-display');
-    let count  = parseInt((countEl ? countEl.textContent : '') || localStorage.getItem('count') || '0', 10) || 0;
+
+    let count = 0;
+    if (countEl && countEl.textContent.trim() !== '') {
+      count = parseInt(countEl.textContent, 10) || 0;
+    } else {
+      count = parseInt(localStorage.getItem('count') || '0', 10) || 0;
+    }
+
     let rounds = 0;
     if (roundEl) {
       const m = roundEl.textContent.match(/\d+/);
@@ -1356,22 +1485,26 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!rounds) {
       rounds = parseInt(localStorage.getItem('round') || localStorage.getItem('rounds') || '0', 10) || 0;
     }
+
     return { count, rounds };
   }
 
-  /* Upsert today's entry — always keep the highest values seen today */
+  /* ════════════════════════
+     UPSERT TODAY
+     Stores: rounds = completed rounds today
+             counts = leftover partial count (NOT converted to 108s)
+     Uses Math.max so daily-reset zeroing doesn't erase today's peak.
+  ════════════════════════ */
   function upsertToday() {
-    const hist  = loadHistory();
-    const key   = todayKey();
-    const { count, rounds } = getLiveValues();
-    // total counts = all completed rounds × 108 + current partial count
-    const totalCounts = rounds * 108 + count;
+    if (!isHistoryEnabled()) return;
 
-    const existing = hist[key] || { rounds: 0, counts: 0 };
-    // Only update if new values are higher (guard against daily reset
-    // wiping out data that was already stored for today)
+    const hist = loadHistory();
+    const key  = todayKey();
+    const { count, rounds } = getLiveValues();
+
+    const existing  = hist[key] || { rounds: 0, counts: 0 };
     const newRounds = Math.max(existing.rounds, rounds);
-    const newCounts = Math.max(existing.counts, totalCounts);
+    const newCounts = Math.max(existing.counts, count);  // ← leftover only
 
     if (newRounds !== existing.rounds || newCounts !== existing.counts) {
       hist[key] = { rounds: newRounds, counts: newCounts };
@@ -1381,8 +1514,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ════════════════════════
      MUTATION OBSERVER
-     Watches count-display & round-display for any text change,
-     then upserts today's snapshot after a short debounce.
+     Watches the live counter DOM; debounces upsert by 400ms.
   ════════════════════════ */
   let upsertTimer = null;
   function scheduleUpsert() {
@@ -1391,64 +1523,107 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    // Initial snapshot
-    upsertToday();
+    upsertToday(); // initial snapshot
 
-    // Observe DOM changes
     const observer = new MutationObserver(scheduleUpsert);
-    const config   = { childList: true, characterData: true, subtree: true };
+    const cfg      = { childList: true, characterData: true, subtree: true };
+    const countEl  = document.getElementById('count-display');
+    const roundEl  = document.getElementById('round-display');
+    if (countEl) observer.observe(countEl, cfg);
+    if (roundEl) observer.observe(roundEl, cfg);
 
-    const countEl = document.getElementById('count-display');
-    const roundEl = document.getElementById('round-display');
-    if (countEl) observer.observe(countEl, config);
-    if (roundEl) observer.observe(roundEl, config);
-
-    // Also snapshot on page-hide (tab close / background)
-    window.addEventListener('pagehide',  upsertToday);
-    window.addEventListener('blur',      upsertToday);
+    window.addEventListener('pagehide',         upsertToday);
+    window.addEventListener('blur',             upsertToday);
     window.addEventListener('visibilitychange', function () {
       if (document.visibilityState === 'hidden') upsertToday();
     });
   });
 
   /* ════════════════════════
-     HISTORY UI
+     CALENDAR NAVIGATION STATE
   ════════════════════════ */
   let currentYear  = new Date().getFullYear();
   let currentMonth = new Date().getMonth(); // 0-based
 
-  /* Compute earliest allowed month (18 months back) */
-  function getEarliestYM() {
-    const d = new Date();
-    d.setDate(1);
-    d.setMonth(d.getMonth() - 17); // 18 months including current = 17 back
-    return { year: d.getFullYear(), month: d.getMonth() };
+  /* ────────────────────────
+     Populate dropdown options
+  ──────────────────────── */
+  function buildDropdowns() {
+    const monthSel = document.getElementById('hist-month-select');
+    const yearSel  = document.getElementById('hist-year-select');
+    if (!monthSel || !yearSel) return;
+
+    const today    = new Date();
+    const earliest = getEarliestYM();
+
+    // Month dropdown (always all 12, we disable invalid in sync)
+    monthSel.innerHTML = '';
+    MONTH_SHORT.forEach(function (name, idx) {
+      const opt = document.createElement('option');
+      opt.value = idx;
+      opt.textContent = name;
+      monthSel.appendChild(opt);
+    });
+
+    // Year dropdown — from earliest year up to current year
+    yearSel.innerHTML = '';
+    for (let y = earliest.year; y <= today.getFullYear(); y++) {
+      const opt = document.createElement('option');
+      opt.value = y;
+      opt.textContent = y;
+      yearSel.appendChild(opt);
+    }
   }
 
-  /* Render the calendar for currentYear / currentMonth */
+  /* Sync dropdown selected values + disable out-of-range months */
+  function syncDropdowns() {
+    const monthSel = document.getElementById('hist-month-select');
+    const yearSel  = document.getElementById('hist-year-select');
+    if (!monthSel || !yearSel) return;
+
+    monthSel.value = currentMonth;
+    yearSel.value  = currentYear;
+
+    const today    = new Date();
+    const earliest = getEarliestYM();
+
+    // Disable months out of allowed range for the selected year
+    Array.from(monthSel.options).forEach(function (opt) {
+      const m = parseInt(opt.value, 10);
+      let disabled = false;
+      if (currentYear === earliest.year && m < earliest.month) disabled = true;
+      if (currentYear === today.getFullYear() && m > today.getMonth()) disabled = true;
+      opt.disabled = disabled;
+    });
+  }
+
+  /* ════════════════════════
+     RENDER CALENDAR
+  ════════════════════════ */
   function renderCalendar() {
-    const hist        = loadHistory();
-    const grid        = document.getElementById('hist-cal-grid');
-    const monthLabel  = document.getElementById('hist-month-label');
-    const prevBtn     = document.getElementById('hist-prev-month');
-    const nextBtn     = document.getElementById('hist-next-month');
-    const today       = new Date();
-    const todayY      = today.getFullYear();
-    const todayM      = today.getMonth();
-    const todayD      = today.getDate();
-    const earliest    = getEarliestYM();
+    const hist    = loadHistory();
+    const grid    = document.getElementById('hist-cal-grid');
+    const prevBtn = document.getElementById('hist-prev-month');
+    const nextBtn = document.getElementById('hist-next-month');
+    const today   = new Date();
+    const todayY  = today.getFullYear();
+    const todayM  = today.getMonth();
+    const todayD  = today.getDate();
+    const earliest = getEarliestYM();
 
     if (!grid) return;
 
-    monthLabel.textContent = MONTH_NAMES[currentMonth] + ' ' + currentYear;
+    syncDropdowns();
 
-    // Navigation limits
-    prevBtn.disabled = (currentYear < earliest.year) ||
+    // Arrow button limits
+    const atEarliest = (currentYear < earliest.year) ||
                        (currentYear === earliest.year && currentMonth <= earliest.month);
-    nextBtn.disabled = (currentYear > todayY) ||
+    const atLatest   = (currentYear > todayY) ||
                        (currentYear === todayY && currentMonth >= todayM);
+    if (prevBtn) prevBtn.disabled = atEarliest;
+    if (nextBtn) nextBtn.disabled = atLatest;
 
-    // Monthly stats
+    // Monthly totals
     let monthActiveDays = 0, monthRounds = 0, monthCounts = 0;
 
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
@@ -1456,7 +1631,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     grid.innerHTML = '';
 
-    // Empty cells before first day
+    // Empty leading cells
     for (let i = 0; i < firstDow; i++) {
       const empty = document.createElement('div');
       empty.className = 'hist-day empty';
@@ -1489,26 +1664,28 @@ document.addEventListener('DOMContentLoaded', () => {
         rSpan.textContent = data.rounds + 'R';
         cell.appendChild(rSpan);
 
-        const cSpan = document.createElement('div');
-        cSpan.className = 'hd-counts';
-        cSpan.textContent = data.counts;
-        cell.appendChild(cSpan);
+        if (data.counts > 0) {
+          const cSpan = document.createElement('div');
+          cSpan.className = 'hd-counts';
+          cSpan.textContent = '+' + data.counts;
+          cell.appendChild(cSpan);
+        }
 
-        // Click for detail
-        cell.addEventListener('click', function () {
-          showDayDetail(key, data);
-        });
+        // Click for detail panel
+        (function (k, entry) {
+          cell.addEventListener('click', function () { showDayDetail(k, entry); });
+        })(key, data);
       }
 
       grid.appendChild(cell);
     }
 
-    // Update monthly summary
+    // Monthly summary
     document.getElementById('hist-month-active-days').textContent = monthActiveDays;
     document.getElementById('hist-month-rounds').textContent      = monthRounds;
     document.getElementById('hist-month-counts').textContent      = monthCounts;
 
-    // Update all-time totals
+    // All-time totals
     let totalDays = 0, totalRounds = 0, totalCounts = 0;
     Object.values(hist).forEach(function (entry) {
       if (entry.rounds > 0 || entry.counts > 0) {
@@ -1521,14 +1698,18 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('hat-total-rounds').textContent = totalRounds;
     document.getElementById('hat-total-counts').textContent = totalCounts;
 
-    // Hide day detail panel when re-rendering
     hideDayDetail();
   }
 
+  /* ════════════════════════
+     DAY DETAIL PANEL
+  ════════════════════════ */
   function showDayDetail(key, data) {
     const panel = document.getElementById('hist-day-detail');
+    if (!panel) return;
     const parts = key.split('-');
-    const label = MONTH_NAMES[parseInt(parts[1], 10) - 1] + ' ' + parseInt(parts[2], 10) + ', ' + parts[0];
+    const label = MONTH_NAMES[parseInt(parts[1], 10) - 1] + ' '
+                + parseInt(parts[2], 10) + ', ' + parts[0];
     document.getElementById('hist-detail-date').textContent   = label;
     document.getElementById('hist-detail-rounds').textContent = data.rounds;
     document.getElementById('hist-detail-counts').textContent = data.counts;
@@ -1542,56 +1723,107 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ════════════════════════
-     OPEN / CLOSE POPUP
+     OPEN / CLOSE + NAVIGATION
   ════════════════════════ */
   document.addEventListener('DOMContentLoaded', function () {
-    const histBtn   = document.getElementById('history-btn');
-    const histPopup = document.getElementById('history-popup');
-    const closeBtn  = document.getElementById('close-history-popup');
-    const prevBtn   = document.getElementById('hist-prev-month');
-    const nextBtn   = document.getElementById('hist-next-month');
+    const histPopup  = document.getElementById('history-popup');
+    const closeBtn   = document.getElementById('close-history-popup');
+    const prevBtn    = document.getElementById('hist-prev-month');
+    const nextBtn    = document.getElementById('hist-next-month');
+    const monthSel   = document.getElementById('hist-month-select');
+    const yearSel    = document.getElementById('hist-year-select');
+    const viewBtn    = document.getElementById('view-history-btn');
+    const trackToggle= document.getElementById('history-tracking-toggle');
 
-    if (!histBtn || !histPopup) return;
+    /* ── Sync tracking toggle from storage ── */
+    if (trackToggle) {
+      trackToggle.checked = isHistoryEnabled();
+      trackToggle.addEventListener('change', function () {
+        setHistoryEnabled(trackToggle.checked);
+      });
+    }
 
-    histBtn.addEventListener('click', function () {
-      // Snapshot before opening so today shows up-to-date
-      upsertToday();
-      // Reset to current month on open
-      currentYear  = new Date().getFullYear();
-      currentMonth = new Date().getMonth();
-      renderCalendar();
-      histPopup.classList.add('open');
-    });
+    /* ── Open via "View History" button in Settings ── */
+    if (viewBtn && histPopup) {
+      viewBtn.addEventListener('click', function () {
+        // Close settings popup first
+        const settingsPopup = document.getElementById('settings-popup');
+        if (settingsPopup) settingsPopup.style.display = 'none';
 
-    closeBtn.addEventListener('click', function () {
-      histPopup.classList.remove('open');
-    });
+        upsertToday();
+        currentYear  = new Date().getFullYear();
+        currentMonth = new Date().getMonth();
+        buildDropdowns();
+        renderCalendar();
+        histPopup.classList.add('open');
+      });
+    }
+
+    /* ── Close ── */
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function () {
+        histPopup.classList.remove('open');
+      });
+    }
 
     // Close on backdrop click
-    histPopup.addEventListener('click', function (e) {
-      if (e.target === histPopup) histPopup.classList.remove('open');
-    });
+    if (histPopup) {
+      histPopup.addEventListener('click', function (e) {
+        if (e.target === histPopup) histPopup.classList.remove('open');
+      });
+    }
 
-    prevBtn.addEventListener('click', function () {
-      currentMonth--;
-      if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-      renderCalendar();
-    });
+    /* ── Arrow navigation ── */
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function () {
+        currentMonth--;
+        if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+        renderCalendar();
+      });
+    }
 
-    nextBtn.addEventListener('click', function () {
-      currentMonth++;
-      if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-      renderCalendar();
-    });
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function () {
+        currentMonth++;
+        if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+        renderCalendar();
+      });
+    }
+
+    /* ── Dropdown navigation ── */
+    if (monthSel) {
+      monthSel.addEventListener('change', function () {
+        currentMonth = parseInt(this.value, 10);
+        renderCalendar();
+      });
+    }
+
+    if (yearSel) {
+      yearSel.addEventListener('change', function () {
+        currentYear = parseInt(this.value, 10);
+        // If the selected month is now out of range, clamp it
+        const today    = new Date();
+        const earliest = getEarliestYM();
+        if (currentYear === today.getFullYear() && currentMonth > today.getMonth()) {
+          currentMonth = today.getMonth();
+        }
+        if (currentYear === earliest.year && currentMonth < earliest.month) {
+          currentMonth = earliest.month;
+        }
+        renderCalendar();
+      });
+    }
   });
 
-  /* Expose for external use (e.g. factory reset can call djbHistory.clear()) */
+  /* ════════════════════════
+     GLOBAL EXPOSURE
+  ════════════════════════ */
   window.djbHistory = {
-    upsertToday: upsertToday,
-    loadHistory: loadHistory,
-    clear: function () {
-      localStorage.removeItem(HIST_KEY);
-    }
+    upsertToday : upsertToday,
+    loadHistory : loadHistory,
+    isEnabled   : isHistoryEnabled,
+    setEnabled  : setHistoryEnabled,
+    clear: function () { localStorage.removeItem(HIST_KEY); }
   };
 
 })();
