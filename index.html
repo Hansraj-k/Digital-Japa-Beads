@@ -30,16 +30,6 @@
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://digitaljapabeads.netlify.app">
-    <!-- Structured Data (Optional for better visibility) -->
-   <!-- <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "url": "https://digitaljapabeads.netlify.app",
-        "name": "Digital Japa Beads",
-        "description": "Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere."
-    }
-    </script> -->
 
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
@@ -91,7 +81,6 @@
 
     /* ───── IMAGE CROP FEATURE STYLES ───── */
 
-    /* Crop wrapper shown after image is selected */
     #crop-wrapper {
       display: none;
       flex-direction: column;
@@ -100,17 +89,16 @@
       margin-top: 10px;
     }
 
-    /* Fixed-size crop frame — size set dynamically by JS (min of img dimensions, max 240px) */
     #crop-frame {
       position: relative;
-      width: 240px;   /* default, overridden by JS */
-      height: 240px;  /* default, overridden by JS */
+      width: 240px;
+      height: 240px;
       max-width: 240px;
       max-height: 240px;
       overflow: hidden;
       background: #111;
       border: 2px solid #555;
-      border-radius: 50%; /* circular frame = no confusing second ring needed */
+      border-radius: 50%;
       cursor: grab;
       user-select: none;
       touch-action: none;
@@ -121,7 +109,6 @@
       cursor: grabbing;
     }
 
-    /* The actual image inside the crop frame — draggable */
     #crop-img {
       position: absolute;
       top: 0;
@@ -131,12 +118,10 @@
       will-change: transform;
     }
 
-    /* Circle overlay — hidden, frame itself is now circular */
     #crop-circle-overlay {
       display: none;
     }
 
-    /* Zoom slider row */
     #crop-zoom-row {
       display: flex;
       align-items: center;
@@ -163,253 +148,163 @@
       text-align: right;
     }
 
-    /* Crop action buttons */
     #crop-action-row {
       display: flex;
       gap: 8px;
     }
 
-    /* Keep existing image-preview-container hidden when cropper is active */
     #image-preview-container.hidden-by-crop {
       display: none !important;
     }
     /* ───── END CROP STYLES ───── */
 
-    /* ═══════════════════════════════════════════════════
-       HISTORY FEATURE STYLES
-       ═══════════════════════════════════════════════════ */
-    #history-popup {
+    /* ───── HISTORY FEATURE STYLES ───── */
+    #history-modal {
       display: none;
       position: fixed;
       inset: 0;
+      background: rgba(0,0,0,0.85);
       z-index: 9999;
-      background: rgba(0,0,0,0.82);
-      justify-content: center;
-      align-items: flex-start;
       overflow-y: auto;
-      padding: 14px 0 30px;
+      padding: 20px;
+      box-sizing: border-box;
     }
-    #history-popup.open {
-      display: flex;
-    }
-    #history-popup-inner {
+    #history-modal.open { display: block; }
+
+    #history-modal-inner {
       background: #111;
       border: 1px solid #333;
       border-radius: 16px;
-      width: min(96vw, 440px);
-      padding: 20px 16px 24px;
-      position: relative;
-      box-sizing: border-box;
-      margin: auto;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 20px;
+      color: white;
     }
-    #history-popup-inner h2 {
-      color: #fff;
+
+    #history-modal-inner h2 {
+      margin: 0 0 6px;
       font-size: 18px;
-      margin: 0 0 4px;
       text-align: center;
-      letter-spacing: 1px;
     }
-    #history-popup-inner .hist-subtitle {
-      color: #aaa;
-      font-size: 11px;
-      text-align: center;
-      margin: 0 0 14px;
-    }
-    /* Month navigation */
-    .hist-month-nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-    .hist-month-nav button {
-      background: #222;
-      border: 1px solid #444;
-      color: #fff;
-      border-radius: 8px;
-      padding: 5px 13px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    .hist-month-nav button:hover { background: #333; }
-    .hist-month-nav button:disabled { opacity: 0.3; cursor: default; }
-    #hist-month-label {
-      color: #fff;
-      font-size: 14px;
-      font-weight: bold;
-      letter-spacing: 0.5px;
-    }
-    /* Summary bar */
-    .hist-month-summary {
+
+    #history-summary-bar {
       display: flex;
       gap: 8px;
-      margin-bottom: 12px;
+      flex-wrap: wrap;
+      margin: 12px 0;
     }
-    .hist-summary-card {
+
+    .hist-stat-box {
       flex: 1;
-      background: #1a1a1a;
+      min-width: 90px;
+      background: #1e1e1e;
       border: 1px solid #333;
       border-radius: 10px;
-      padding: 8px 6px;
+      padding: 10px 8px;
       text-align: center;
     }
-    .hist-summary-card .hsc-val {
-      color: #fff;
-      font-size: 20px;
+
+    .hist-stat-box .hist-stat-val {
+      font-size: 22px;
       font-weight: bold;
+      color: #fff;
     }
-    .hist-summary-card .hsc-lbl {
-      color: #888;
+
+    .hist-stat-box .hist-stat-lbl {
       font-size: 10px;
+      color: #aaa;
       margin-top: 2px;
     }
-    /* Calendar grid */
-    .hist-cal-header {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 3px;
-      margin-bottom: 4px;
-    }
-    .hist-cal-header span {
-      color: #666;
-      font-size: 10px;
-      text-align: center;
-    }
-    .hist-cal-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 3px;
-    }
-    .hist-day {
-      aspect-ratio: 1;
-      border-radius: 6px;
+
+    #history-filter-row {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      cursor: default;
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      min-height: 34px;
-      position: relative;
-      transition: border-color 0.15s;
+      gap: 6px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
     }
-    .hist-day.empty { background: transparent; border-color: transparent; }
-    .hist-day.today { border-color: #fff !important; }
-    .hist-day.has-data {
-      background: #1c2e1c;
-      border-color: #2e5e2e;
-      cursor: pointer;
-    }
-    .hist-day.has-data:hover { border-color: #5a5; }
-    .hist-day .hd-num {
-      color: #777;
-      font-size: 9px;
-      line-height: 1;
-    }
-    .hist-day.has-data .hd-num { color: #aaa; }
-    .hist-day.today .hd-num { color: #fff; font-weight: bold; }
-    .hist-day .hd-rounds {
-      color: #7c7;
-      font-size: 10px;
-      font-weight: bold;
-      line-height: 1.1;
-    }
-    .hist-day .hd-counts {
-      color: #5a9;
-      font-size: 8px;
-      line-height: 1;
-    }
-    /* Day detail tooltip / panel */
-    #hist-day-detail {
-      margin-top: 14px;
-      background: #1a1a1a;
-      border: 1px solid #333;
-      border-radius: 10px;
-      padding: 12px 14px;
-      display: none;
-    }
-    #hist-day-detail.visible { display: block; }
-    #hist-day-detail h4 {
-      color: #fff;
-      font-size: 13px;
-      margin: 0 0 8px;
-    }
-    .hist-detail-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 4px 0;
-      border-bottom: 1px solid #2a2a2a;
-    }
-    .hist-detail-row:last-child { border-bottom: none; }
-    .hist-detail-row span:first-child { color: #888; font-size: 12px; }
-    .hist-detail-row span:last-child  { color: #fff; font-size: 12px; font-weight: bold; }
-    /* All-time totals */
-    .hist-alltime {
-      margin-top: 14px;
-      background: #0d1a0d;
-      border: 1px solid #2e4e2e;
-      border-radius: 10px;
-      padding: 10px 14px;
-    }
-    .hist-alltime h4 {
-      color: #7c7;
-      font-size: 12px;
-      margin: 0 0 8px;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-    }
-    .hist-alltime-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-    }
-    .hat-card {
-      text-align: center;
-    }
-    .hat-card .hat-val {
-      color: #fff;
-      font-size: 16px;
-      font-weight: bold;
-    }
-    .hat-card .hat-lbl {
-      color: #666;
-      font-size: 9px;
-      margin-top: 2px;
-    }
-    /* Close button */
-    #close-history-popup {
-      display: block;
-      margin: 16px auto 0;
+
+    #history-filter-row button {
+      flex: 1;
+      padding: 6px 4px;
       background: #222;
       border: 1px solid #444;
-      color: #fff;
-      border-radius: 10px;
-      padding: 9px 32px;
-      font-size: 14px;
+      border-radius: 8px;
+      color: #ccc;
+      font-size: 12px;
       cursor: pointer;
-      transition: background 0.15s;
     }
-    #close-history-popup:hover { background: #333; }
-    /* History button in toolbar — removed; now in Settings */
-    /* ═══ END HISTORY STYLES ═══ */
-    /* History tracking toggle switch (reuses djb-slider pattern) */
-    #history-tracking-switch {
+
+    #history-filter-row button.active {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+
+    #history-table-wrap {
+      max-height: 340px;
+      overflow-y: auto;
+    }
+
+    #history-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    #history-table th {
+      position: sticky;
+      top: 0;
+      background: #1a1a1a;
+      color: #aaa;
+      padding: 8px 6px;
+      text-align: left;
+      border-bottom: 1px solid #333;
+    }
+
+    #history-table td {
+      padding: 7px 6px;
+      border-bottom: 1px solid #222;
+      color: #eee;
+    }
+
+    #history-table tr.missed td {
+      color: #e05555;
+      font-style: italic;
+    }
+
+    #history-table tr.counted td {
+      color: #cfffcf;
+    }
+
+    #close-history-modal {
+      display: block;
+      width: 100%;
+      margin-top: 14px;
+      padding: 10px;
+      background: #fff;
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* History toggle switch — reuse daily-reset style */
+    #history-switch {
       position: relative;
       display: inline-block;
       width: 56px;
       height: 28px;
       flex-shrink: 0;
     }
-    #history-tracking-switch input {
+    #history-switch input {
       opacity: 0;
       width: 0;
       height: 0;
       position: absolute;
     }
-    #history-tracking-switch .djb-slider {
+    #history-switch .djb-slider {
       position: absolute;
       cursor: pointer;
       inset: 0;
@@ -417,7 +312,7 @@
       border-radius: 28px;
       transition: background-color 0.3s;
     }
-    #history-tracking-switch .djb-slider:before {
+    #history-switch .djb-slider:before {
       content: "";
       position: absolute;
       height: 20px;
@@ -428,48 +323,22 @@
       border-radius: 50%;
       transition: transform 0.3s;
     }
-    #history-tracking-switch input:checked + .djb-slider { background-color: #4caf50; }
-    #history-tracking-switch input:checked + .djb-slider:before { transform: translateX(28px); }
-    /* Dropdown navigation for history */
-    .hist-month-nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
-    .hist-nav-dropdowns {
-      display: flex;
-      gap: 6px;
-      flex: 1;
-      justify-content: center;
-    }
-    .hist-nav-select {
-      background: #1e1e1e;
-      border: 1px solid #444;
-      color: #fff;
+    #history-switch input:checked + .djb-slider { background-color: #4caf50; }
+    #history-switch input:checked + .djb-slider:before { transform: translateX(28px); }
+
+    #view-history-btn {
+      margin-top: 6px;
+      padding: 8px 14px;
+      background: #222;
+      border: 1px solid #555;
       border-radius: 8px;
-      padding: 5px 8px;
+      color: #fff;
       font-size: 13px;
       cursor: pointer;
-      outline: none;
-      appearance: auto;
+      width: 100%;
     }
-    .hist-nav-select:focus { border-color: #666; }
-    .hist-month-nav button {
-      background: #222;
-      border: 1px solid #444;
-      color: #fff;
-      border-radius: 8px;
-      padding: 5px 11px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.15s;
-      flex-shrink: 0;
-    }
-    .hist-month-nav button:hover { background: #333; }
-    .hist-month-nav button:disabled { opacity: 0.3; cursor: default; }
+    #view-history-btn:hover { background: #333; }
+    /* ───── END HISTORY STYLES ───── */
     </style>
 </head>
 <body>
@@ -516,7 +385,7 @@
                 <img id="image-preview" src="" alt="Image Preview" />
             </div>
 
-            <!-- ───── CROP UI (injected here, same visual flow) ───── -->
+            <!-- ───── CROP UI ───── -->
             <div id="crop-wrapper">
               <div id="crop-frame">
                 <img id="crop-img" src="" alt="Crop Preview">
@@ -570,7 +439,6 @@
         <h3>Vibration on Count</h3>
         <div class="button-cover">
             <div class="button r">
-                <!-- CHANGED: added "checked" to enable vibration on count by default -->
                 <input type="checkbox" id="count-vibration-toggle" class="checkbox" checked>
                 <div class="knobs"></div>
                 <div class="layer"></div>
@@ -604,7 +472,7 @@
     </div>
 </div>
 
-<!-- ───── DAILY RESET TOGGLE (NEW) ───── -->
+<!-- ───── DAILY RESET TOGGLE ───── -->
 <style>
   #daily-reset-switch {
     position: relative;
@@ -657,6 +525,24 @@
 </div>
 <!-- ───── END DAILY RESET TOGGLE ───── -->
 
+<!-- ═══════════════════════════════════════════════════
+     HISTORY SETTINGS SECTION (NEW)
+     ═══════════════════════════════════════════════════ -->
+<div class="settings-section">
+    <div class="settings-option">
+        <h3>Counting History</h3>
+        <label id="history-switch">
+            <input type="checkbox" id="history-toggle" checked>
+            <span class="djb-slider"></span>
+        </label>
+    </div>
+    <p class="settings-subtext">Store up to 18 months of counting history including total counts, rounds, and missed days</p>
+    <button id="view-history-btn"><i class="fas fa-history"></i> View History</button>
+</div>
+<!-- ═══════════════════════════════════════════════════
+     END HISTORY SETTINGS SECTION
+     ═══════════════════════════════════════════════════ -->
+
 <div class="settings-section">
     <div class="settings-option">
         <h3>Button Size</h3>
@@ -693,24 +579,6 @@
             <button id="change-image-btn">Change Image</button>
                 </div>
 </div>
-<!-- ───── HISTORY TRACKING TOGGLE (new) ───── -->
-<div class="settings-section">
-    <div class="settings-option">
-        <h3>History Tracking</h3>
-        <label id="history-tracking-switch">
-            <input type="checkbox" id="history-tracking-toggle" checked>
-            <span class="djb-slider"></span>
-        </label>
-    </div>
-    <p class="settings-subtext">Save your daily japa data for up to 18 months</p>
-</div>
-<div class="settings-section">
-    <div class="settings-option">
-        <button id="view-history-btn">View History 📿</button>
-    </div>
-    <p class="settings-subtext">Browse your past counting activity by month and year</p>
-</div>
-<!-- ───── END HISTORY TRACKING TOGGLE ───── -->
 <div class="settings-section reset-default-section">
     <div class="settings-option">
         <button id="reset-default-settings" class="reset-default-btn">Reset to Default</button>
@@ -760,6 +628,61 @@
         </div>
     </div>
 
+    <!-- ═══════════════════════════════════════════════════
+         HISTORY MODAL (NEW)
+         ═══════════════════════════════════════════════════ -->
+    <div id="history-modal">
+      <div id="history-modal-inner">
+        <h2>📊 Counting History</h2>
+
+        <div id="history-summary-bar">
+          <div class="hist-stat-box">
+            <div class="hist-stat-val" id="hist-total-counts">0</div>
+            <div class="hist-stat-lbl">Total Counts</div>
+          </div>
+          <div class="hist-stat-box">
+            <div class="hist-stat-val" id="hist-total-rounds">0</div>
+            <div class="hist-stat-lbl">Total Rounds</div>
+          </div>
+          <div class="hist-stat-box">
+            <div class="hist-stat-val" id="hist-missed-days">0</div>
+            <div class="hist-stat-lbl">Missed Days</div>
+          </div>
+          <div class="hist-stat-box">
+            <div class="hist-stat-val" id="hist-active-days">0</div>
+            <div class="hist-stat-lbl">Active Days</div>
+          </div>
+        </div>
+
+        <div id="history-filter-row">
+          <button class="hist-filter active" data-days="7">7 Days</button>
+          <button class="hist-filter" data-days="30">30 Days</button>
+          <button class="hist-filter" data-days="90">3 Months</button>
+          <button class="hist-filter" data-days="180">6 Months</button>
+          <button class="hist-filter" data-days="547">18 Months</button>
+        </div>
+
+        <div id="history-table-wrap">
+          <table id="history-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Counts</th>
+                <th>Rounds</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="history-tbody"></tbody>
+          </table>
+        </div>
+
+        <button id="close-history-modal">Close</button>
+      </div>
+    </div>
+    <!-- ═══════════════════════════════════════════════════
+         END HISTORY MODAL
+         ═══════════════════════════════════════════════════ -->
+
     <div class="footer">
         <div class="containerk">
             <hr>
@@ -773,91 +696,7 @@
         <p id="streak-message"></p>
         <button id="close-streak-popup">Awesome!</button>
     </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════
-     HISTORY POPUP MODAL (new)
-     ═══════════════════════════════════════════════════ -->
-<div id="history-popup">
-  <div id="history-popup-inner">
-    <h2>📿 Japa History</h2>
-    <p class="hist-subtitle">Up to 18 months of counting activity</p>
-
-    <!-- Month/Year navigation with dropdowns -->
-    <div class="hist-month-nav">
-      <button id="hist-prev-month">&#8249;</button>
-      <div class="hist-nav-dropdowns">
-        <select id="hist-month-select" class="hist-nav-select"></select>
-        <select id="hist-year-select" class="hist-nav-select"></select>
-      </div>
-      <button id="hist-next-month">&#8250;</button>
-    </div>
-
-    <!-- Monthly summary cards -->
-    <div class="hist-month-summary">
-      <div class="hist-summary-card">
-        <div class="hsc-val" id="hist-month-active-days">0</div>
-        <div class="hsc-lbl">Active Days</div>
-      </div>
-      <div class="hist-summary-card">
-        <div class="hsc-val" id="hist-month-rounds">0</div>
-        <div class="hsc-lbl">Rounds</div>
-      </div>
-      <div class="hist-summary-card">
-        <div class="hsc-val" id="hist-month-counts">0</div>
-        <div class="hsc-lbl">Leftover Counts</div>
-      </div>
-    </div>
-
-    <!-- Calendar day-of-week headers -->
-    <div class="hist-cal-header">
-      <span>Su</span><span>Mo</span><span>Tu</span>
-      <span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
-    </div>
-
-    <!-- Calendar grid (filled by JS) -->
-    <div class="hist-cal-grid" id="hist-cal-grid"></div>
-
-    <!-- Clicked-day detail panel -->
-    <div id="hist-day-detail">
-      <h4 id="hist-detail-date"></h4>
-      <div class="hist-detail-row">
-        <span>Rounds completed</span>
-        <span id="hist-detail-rounds">—</span>
-      </div>
-      <div class="hist-detail-row">
-        <span>Leftover counts</span>
-        <span id="hist-detail-counts">—</span>
-      </div>
-    </div>
-
-    <!-- All-time totals -->
-    <div class="hist-alltime">
-      <h4>🌿 All-Time Totals</h4>
-      <div class="hist-alltime-grid">
-        <div class="hat-card">
-          <div class="hat-val" id="hat-total-days">0</div>
-          <div class="hat-lbl">Active Days</div>
-        </div>
-        <div class="hat-card">
-          <div class="hat-val" id="hat-total-rounds">0</div>
-          <div class="hat-lbl">Total Rounds</div>
-        </div>
-        <div class="hat-card">
-          <div class="hat-val" id="hat-total-counts">0</div>
-          <div class="hat-lbl">Leftover Counts</div>
-        </div>
-      </div>
-    </div>
-
-    <button id="close-history-popup">Close</button>
-  </div>
-</div>
-<!-- ═══════════════════════════════════════════════════
-     END HISTORY POPUP MODAL
-     ═══════════════════════════════════════════════════ -->
-
-<br>
+</div><br>
             <div class="install-container">
               <button id="install-btn">
                 <img src="rkhkmc-app .png" alt="Install PWA">
@@ -910,12 +749,9 @@
 </script>
 
 <!-- ═══════════════════════════════════════════════════
-     DAILY RESET FEATURE — reads/writes localStorage key
-     'dailyResetEnabled' (default: true).
-     On page load, if enabled and the saved date differs
-     from today, count and round are reset automatically.
-     The toggle in Settings saves the preference and
-     triggers an immediate daily-reset check when turned on.
+     DAILY RESET FEATURE — FIXED so page refresh does NOT
+     reset counts unless a new day has actually occurred.
+     Reads/writes localStorage key 'dailyResetEnabled'.
      ═══════════════════════════════════════════════════ -->
 <script>
 (function () {
@@ -925,12 +761,9 @@
   const STORAGE_KEY_LAST_DATE    = 'lastResetDate';
 
   /* ── Helpers ── */
-  /* Returns today as YYYY-MM-DD (zero-padded) so string comparison is reliable */
   function getTodayStr() {
     const d = new Date();
-    return d.getFullYear() + '-'
-      + String(d.getMonth() + 1).padStart(2, '0') + '-'
-      + String(d.getDate()).padStart(2, '0');
+    return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
   }
 
   function isDailyResetEnabled() {
@@ -940,11 +773,18 @@
 
   /* ── Perform the daily reset of count + round ── */
   function performDailyReset() {
+    // Save today's data to history BEFORE resetting
+    window.djbHistory && window.djbHistory.saveTodayBeforeReset();
+
+    // Reset count
     localStorage.setItem('count', '0');
+    // Reset round — key name may vary; covering common variants
     localStorage.setItem('round', '0');
     localStorage.setItem('rounds', '0');
+    // Update last reset date
     localStorage.setItem(STORAGE_KEY_LAST_DATE, getTodayStr());
 
+    // Update the visible DOM elements if they already exist
     const countDisplay = document.getElementById('count-display');
     const roundDisplay = document.getElementById('round-display');
     if (countDisplay) countDisplay.textContent = '0';
@@ -952,22 +792,18 @@
   }
 
   /* ── Check on page load whether a daily reset is due ──
-     ONLY resets if the stored date is a DIFFERENT calendar day.
-     A plain page refresh on the same day does NOT trigger a reset. */
+     KEY FIX: only reset if the STORED DATE differs from today.
+     Merely refreshing the page will NOT reset because the date
+     hasn't changed — only a new calendar day triggers the reset. */
   function checkDailyReset() {
     if (!isDailyResetEnabled()) return;
     const lastDate = localStorage.getItem(STORAGE_KEY_LAST_DATE);
     const today    = getTodayStr();
-    /* If lastResetDate has never been set, record today WITHOUT resetting
-       (first-ever load — don't wipe a count the user may have just started) */
-    if (!lastDate) {
-      localStorage.setItem(STORAGE_KEY_LAST_DATE, today);
-      return;
-    }
-    /* Only reset when the stored date is genuinely a past day */
+    // Only reset when LAST DATE is different from today
     if (lastDate !== today) {
       performDailyReset();
     }
+    // If lastDate === today → same day, just a page refresh → do nothing
   }
 
   /* ── Sync the toggle UI state from localStorage ── */
@@ -1000,6 +836,257 @@
 </script>
 <!-- ═══════════════════════════════════════════════════
      END DAILY RESET FEATURE
+     ═══════════════════════════════════════════════════ -->
+
+<!-- ═══════════════════════════════════════════════════
+     HISTORY & DATA SAVING FEATURE (NEW)
+     ─────────────────────────────────────────────────
+     • Stores daily records in localStorage key 'djbHistory'
+       as a JSON object: { "YYYY-M-D": { counts, rounds } }
+     • Prunes entries older than 18 months automatically
+     • Tracks all days since first use; days with no entry
+       that fall between first-use date and yesterday are
+       counted as "missed days"
+     • History toggle persists in 'historyEnabled' key
+     • View History button opens the modal with filters
+     ═══════════════════════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  const HIST_KEY         = 'djbHistory';        // { "YYYY-M-D": {counts, rounds} }
+  const HIST_ENABLED_KEY = 'historyEnabled';
+  const FIRST_USE_KEY    = 'djbFirstUseDate';
+  const MAX_MONTHS       = 18;
+
+  /* ── Helpers ── */
+  function getTodayStr() {
+    const d = new Date();
+    return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+  }
+
+  function dateStrToObj(str) {
+    const parts = str.split('-');
+    return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+  }
+
+  function formatDisplayDate(str) {
+    const d = dateStrToObj(str);
+    return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  function isHistoryEnabled() {
+    const val = localStorage.getItem(HIST_ENABLED_KEY);
+    return val === null ? true : val === 'true';
+  }
+
+  /* ── Load / Save history store ── */
+  function loadHistory() {
+    try {
+      return JSON.parse(localStorage.getItem(HIST_KEY) || '{}');
+    } catch (e) { return {}; }
+  }
+
+  function saveHistory(hist) {
+    try {
+      localStorage.setItem(HIST_KEY, JSON.stringify(hist));
+    } catch (e) {}
+  }
+
+  /* ── Prune entries older than 18 months ── */
+  function pruneOldHistory(hist) {
+    const cutoff = new Date();
+    cutoff.setMonth(cutoff.getMonth() - MAX_MONTHS);
+    let changed = false;
+    Object.keys(hist).forEach(function (key) {
+      if (dateStrToObj(key) < cutoff) {
+        delete hist[key];
+        changed = true;
+      }
+    });
+    if (changed) saveHistory(hist);
+    return hist;
+  }
+
+  /* ── Record first use date ── */
+  function ensureFirstUse() {
+    if (!localStorage.getItem(FIRST_USE_KEY)) {
+      localStorage.setItem(FIRST_USE_KEY, getTodayStr());
+    }
+  }
+
+  /* ── Save today's data from localStorage to history ── */
+  function saveTodayToHistory() {
+    if (!isHistoryEnabled()) return;
+    const today   = getTodayStr();
+    const counts  = parseInt(localStorage.getItem('count')  || '0', 10);
+    const rounds  = parseInt(localStorage.getItem('round')  || localStorage.getItem('rounds') || '0', 10);
+    let hist = loadHistory();
+    hist = pruneOldHistory(hist);
+    // Only write if there's something to record
+    if (counts > 0 || rounds > 0) {
+      hist[today] = { counts: counts, rounds: rounds };
+      saveHistory(hist);
+    }
+  }
+
+  /* ── Called by daily reset feature BEFORE wiping counts ── */
+  function saveTodayBeforeReset() {
+    saveTodayToHistory();
+  }
+
+  /* ── Build the list of all days from firstUse to yesterday ── */
+  function getAllDaysSinceFirstUse() {
+    const firstStr = localStorage.getItem(FIRST_USE_KEY);
+    if (!firstStr) return [];
+    const start = dateStrToObj(firstStr);
+    const end   = new Date();
+    end.setDate(end.getDate() - 1); // up to yesterday
+    const days = [];
+    const cur  = new Date(start);
+    while (cur <= end) {
+      const key = cur.getFullYear() + '-' + (cur.getMonth() + 1) + '-' + cur.getDate();
+      days.push(key);
+      cur.setDate(cur.getDate() + 1);
+    }
+    return days;
+  }
+
+  /* ── Filter history to last N days from today ── */
+  function getFilteredHistory(hist, days) {
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - days);
+    const result = [];
+    // Collect all days in range (recorded + missed)
+    const cur = new Date(cutoff);
+    const end = new Date();
+    end.setDate(end.getDate() - 1); // up to yesterday
+    while (cur <= end) {
+      const key = cur.getFullYear() + '-' + (cur.getMonth() + 1) + '-' + cur.getDate();
+      if (hist[key]) {
+        result.push({ date: key, counts: hist[key].counts, rounds: hist[key].rounds, missed: false });
+      } else {
+        // Only count as missed if after first-use date
+        const firstStr = localStorage.getItem(FIRST_USE_KEY);
+        if (firstStr && dateStrToObj(key) >= dateStrToObj(firstStr)) {
+          result.push({ date: key, counts: 0, rounds: 0, missed: true });
+        }
+      }
+      cur.setDate(cur.getDate() + 1);
+    }
+    return result.reverse(); // most recent first
+  }
+
+  /* ── Compute summary stats ── */
+  function computeSummary(hist, filterDays) {
+    const rows = getFilteredHistory(hist, filterDays);
+    let totalCounts = 0, totalRounds = 0, missed = 0, active = 0;
+    rows.forEach(function (r) {
+      if (r.missed) {
+        missed++;
+      } else {
+        totalCounts += r.counts;
+        totalRounds += r.rounds;
+        active++;
+      }
+    });
+    return { totalCounts: totalCounts, totalRounds: totalRounds, missed: missed, active: active, rows: rows };
+  }
+
+  /* ── Render history modal ── */
+  function renderHistory(filterDays) {
+    let hist = loadHistory();
+    hist = pruneOldHistory(hist);
+    const summary = computeSummary(hist, filterDays);
+
+    document.getElementById('hist-total-counts').textContent = summary.totalCounts.toLocaleString();
+    document.getElementById('hist-total-rounds').textContent = summary.totalRounds.toLocaleString();
+    document.getElementById('hist-missed-days').textContent  = summary.missed.toLocaleString();
+    document.getElementById('hist-active-days').textContent  = summary.active.toLocaleString();
+
+    const tbody = document.getElementById('history-tbody');
+    tbody.innerHTML = '';
+    if (summary.rows.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#777;padding:20px;">No history yet. Start chanting! 🙏</td></tr>';
+      return;
+    }
+    summary.rows.forEach(function (r) {
+      const tr = document.createElement('tr');
+      tr.className = r.missed ? 'missed' : 'counted';
+      tr.innerHTML =
+        '<td>' + formatDisplayDate(r.date) + '</td>' +
+        '<td>' + (r.missed ? '—' : r.counts.toLocaleString()) + '</td>' +
+        '<td>' + (r.missed ? '—' : r.rounds.toLocaleString()) + '</td>' +
+        '<td>' + (r.missed ? '😔 Missed' : '✅ Counted') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  /* ── Wire up everything after DOM ready ── */
+  document.addEventListener('DOMContentLoaded', function () {
+    ensureFirstUse();
+
+    // Sync history toggle
+    const histToggle = document.getElementById('history-toggle');
+    if (histToggle) {
+      histToggle.checked = isHistoryEnabled();
+      histToggle.addEventListener('change', function () {
+        localStorage.setItem(HIST_ENABLED_KEY, histToggle.checked ? 'true' : 'false');
+      });
+    }
+
+    // View History button
+    const viewBtn = document.getElementById('view-history-btn');
+    const modal   = document.getElementById('history-modal');
+    if (viewBtn && modal) {
+      viewBtn.addEventListener('click', function () {
+        // Save current session data before opening
+        saveTodayToHistory();
+        modal.classList.add('open');
+        renderHistory(7); // default 7 days
+        // Reset active filter button
+        document.querySelectorAll('.hist-filter').forEach(function (b) {
+          b.classList.toggle('active', parseInt(b.dataset.days) === 7);
+        });
+      });
+    }
+
+    // Filter buttons
+    document.querySelectorAll('.hist-filter').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.hist-filter').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        renderHistory(parseInt(btn.dataset.days));
+      });
+    });
+
+    // Close history modal
+    const closeHistBtn = document.getElementById('close-history-modal');
+    if (closeHistBtn && modal) {
+      closeHistBtn.addEventListener('click', function () { modal.classList.remove('open'); });
+    }
+
+    // Auto-save today's data periodically (every 60 seconds)
+    setInterval(saveTodayToHistory, 60000);
+
+    // Save on page unload / visibility change
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') saveTodayToHistory();
+    });
+    window.addEventListener('beforeunload', saveTodayToHistory);
+  });
+
+  /* Expose globally so daily-reset script can call saveTodayBeforeReset */
+  window.djbHistory = {
+    saveTodayBeforeReset: saveTodayBeforeReset,
+    saveTodayToHistory:   saveTodayToHistory,
+    isEnabled:            isHistoryEnabled
+  };
+
+})();
+</script>
+<!-- ═══════════════════════════════════════════════════
+     END HISTORY & DATA SAVING FEATURE
      ═══════════════════════════════════════════════════ -->
 
 <script>
@@ -1092,8 +1179,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <!-- ═══════════════════════════════════════════════════
      IMAGE CROP FEATURE — Self-contained, no dependencies
-     Intercepts the existing image-upload input and shows
-     a fixed-size crop UI before the image is committed.
      ═══════════════════════════════════════════════════ -->
 <script>
 (function () {
@@ -1112,13 +1197,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const resetBtn         = document.getElementById('crop-reset-btn');
 
   /* ── Crop state ── */
-  let FRAME_SIZE = 240;  // dynamic — set per image based on min(w,h), max 240
+  let FRAME_SIZE = 240;
   let scale      = 1;
-  let imgW       = 0;    // base image width at scale=1 inside frame
-  let imgH       = 0;    // base image height at scale=1 inside frame
+  let imgW       = 0;
+  let imgH       = 0;
   let offsetX    = 0;
   let offsetY    = 0;
-  let initOffsetX = 0;   // initial centered offsets for reset
+  let initOffsetX = 0;
   let initOffsetY = 0;
   let isDragging  = false;
   let dragStartX  = 0;
@@ -1127,11 +1212,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let baseOffsetY = 0;
   let naturalSrc  = '';
 
-  /* ── Clamp so image always covers the entire frame square ── */
   function clampX(x) {
     const scaledW = imgW * scale;
-    const minX = Math.min(0, FRAME_SIZE - scaledW);
-    const maxX = Math.max(0, FRAME_SIZE - scaledW);
     if (scaledW >= FRAME_SIZE) return Math.min(0, Math.max(FRAME_SIZE - scaledW, x));
     return Math.min(FRAME_SIZE - scaledW, Math.max(0, x));
   }
@@ -1142,7 +1224,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return Math.min(FRAME_SIZE - scaledH, Math.max(0, y));
   }
 
-  /* ── Apply transform to DOM image ── */
   function applyTransform() {
     cropImg.style.width  = (imgW * scale) + 'px';
     cropImg.style.height = (imgH * scale) + 'px';
@@ -1150,7 +1231,6 @@ document.addEventListener('DOMContentLoaded', () => {
     cropImg.style.top    = offsetY + 'px';
   }
 
-  /* ── Reset position & zoom to initial state ── */
   function resetToInitial() {
     scale    = 1;
     offsetX  = initOffsetX;
@@ -1160,7 +1240,6 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTransform();
   }
 
-  /* ── Open cropper when file is chosen ── */
   imageUpload.addEventListener('change', function (e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -1173,32 +1252,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const nw = tempImg.naturalWidth;
         const nh = tempImg.naturalHeight;
 
-        /* Frame size = min dimension of image, capped at 240px.
-           This prevents the frame from ever exceeding the image's
-           shorter side, so no dead space on either axis. */
         FRAME_SIZE = Math.min(240, nw, nh);
-
-        /* Apply frame size to DOM */
         cropFrame.style.width  = FRAME_SIZE + 'px';
         cropFrame.style.height = FRAME_SIZE + 'px';
-
-        /* Update zoom row width to match */
         document.getElementById('crop-zoom-row').style.width = FRAME_SIZE + 'px';
 
-        /* Update radial gradient overlay to match new frame (it's always square so this is automatic) */
-
-        /* Scale image so it fills the frame (cover: larger side fills, smaller side overflows) */
         const ratio = Math.max(FRAME_SIZE / nw, FRAME_SIZE / nh);
         imgW = nw * ratio;
         imgH = nh * ratio;
 
-        /* Center image inside frame */
         initOffsetX = (FRAME_SIZE - imgW) / 2;
         initOffsetY = (FRAME_SIZE - imgH) / 2;
         offsetX = initOffsetX;
         offsetY = initOffsetY;
 
-        /* Reset zoom */
         scale = 1;
         zoomSlider.value      = 1;
         zoomValue.textContent = '1.0×';
@@ -1206,7 +1273,6 @@ document.addEventListener('DOMContentLoaded', () => {
         cropImg.src = naturalSrc;
         applyTransform();
 
-        /* Show cropper, hide old preview, hide Save Image until crop applied */
         previewContainer.classList.add('hidden-by-crop');
         cropWrapper.style.display = 'flex';
         document.getElementById('save-image-btn').style.display = 'none';
@@ -1216,10 +1282,8 @@ document.addEventListener('DOMContentLoaded', () => {
     reader.readAsDataURL(file);
   });
 
-  /* ── Zoom slider ── */
   zoomSlider.addEventListener('input', function () {
     const newScale = parseFloat(this.value);
-    /* Zoom toward center of frame */
     const cx   = FRAME_SIZE / 2;
     const cy   = FRAME_SIZE / 2;
     const imgCX = (cx - offsetX) / scale;
@@ -1231,12 +1295,8 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTransform();
   });
 
-  /* ── Reset Changes ── */
   resetBtn.addEventListener('click', resetToInitial);
 
-  /* ════════════
-     DRAG — Mouse
-  ════════════ */
   cropFrame.addEventListener('mousedown', function (e) {
     isDragging  = true;
     dragStartX  = e.clientX;
@@ -1255,9 +1315,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('mouseup', function () { isDragging = false; });
 
-  /* ════════════
-     DRAG — Touch (1 finger) + Pinch Zoom (2 fingers)
-  ════════════ */
   let pinchStartDist  = 0;
   let pinchStartScale = 1;
 
@@ -1269,14 +1326,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   cropFrame.addEventListener('touchstart', function (e) {
     if (e.touches.length === 1) {
-      /* Single finger — drag */
       isDragging  = true;
       dragStartX  = e.touches[0].clientX;
       dragStartY  = e.touches[0].clientY;
       baseOffsetX = offsetX;
       baseOffsetY = offsetY;
     } else if (e.touches.length === 2) {
-      /* Two fingers — pinch zoom */
       isDragging      = false;
       pinchStartDist  = getTouchDist(e.touches);
       pinchStartScale = scale;
@@ -1286,17 +1341,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('touchmove', function (e) {
     if (e.touches.length === 1 && isDragging) {
-      /* Single finger drag */
       offsetX = clampX(baseOffsetX + (e.touches[0].clientX - dragStartX));
       offsetY = clampY(baseOffsetY + (e.touches[0].clientY - dragStartY));
       applyTransform();
     } else if (e.touches.length === 2) {
-      /* Pinch zoom */
       const dist     = getTouchDist(e.touches);
       let newScale   = pinchStartScale * (dist / pinchStartDist);
-      newScale       = Math.min(3, Math.max(1, newScale)); // clamp 1–3×
+      newScale       = Math.min(3, Math.max(1, newScale));
 
-      /* Zoom toward midpoint of the two fingers */
       const midX  = (e.touches[0].clientX + e.touches[1].clientX) / 2;
       const midY  = (e.touches[0].clientY + e.touches[1].clientY) / 2;
       const rect  = cropFrame.getBoundingClientRect();
@@ -1308,7 +1360,6 @@ document.addEventListener('DOMContentLoaded', () => {
       offsetX     = clampX(cx - imgCX * scale);
       offsetY     = clampY(cy - imgCY * scale);
 
-      /* Sync slider */
       zoomSlider.value      = scale;
       zoomValue.textContent = scale.toFixed(1) + '×';
 
@@ -1320,7 +1371,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('touchend', function (e) {
     if (e.touches.length === 0) isDragging = false;
     if (e.touches.length === 1) {
-      /* One finger lifted during pinch — switch back to drag mode */
       isDragging  = true;
       dragStartX  = e.touches[0].clientX;
       dragStartY  = e.touches[0].clientY;
@@ -1329,9 +1379,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  /* ════════════════════════════════
-     APPLY — render circular crop to canvas → data-URL
-  ════════════════════════════════ */
   applyBtn.addEventListener('click', function () {
     const canvas  = document.createElement('canvas');
     const OUTPUT  = FRAME_SIZE;
@@ -1339,7 +1386,6 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.height = OUTPUT;
     const ctx     = canvas.getContext('2d');
 
-    /* Clip to perfect circle */
     ctx.beginPath();
     ctx.arc(OUTPUT / 2, OUTPUT / 2, OUTPUT / 2, 0, Math.PI * 2);
     ctx.closePath();
@@ -1350,18 +1396,14 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.drawImage(sourceImg, offsetX, offsetY, imgW * scale, imgH * scale);
       const croppedDataURL = canvas.toDataURL('image/png');
 
-      /* Feed into existing preview so "Save Image" works unchanged */
       previewImg.src = croppedDataURL;
       previewContainer.classList.remove('hidden-by-crop');
       previewContainer.style.display = 'block';
 
-      /* Hide cropper */
       cropWrapper.style.display = 'none';
 
-      /* Show Save Image button now that crop is applied */
       document.getElementById('save-image-btn').style.display = '';
 
-      /* Update the main round-image immediately */
       const roundImage = document.getElementById('round-image');
       if (roundImage) roundImage.src = croppedDataURL;
     };
@@ -1372,464 +1414,6 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 <!-- ═══════════════════════════════════════════════════
      END IMAGE CROP FEATURE
-     ═══════════════════════════════════════════════════ -->
-
-<!-- ═══════════════════════════════════════════════════
-     HISTORY FEATURE  (v2)
-     ─────────────────────────────────────────────────
-     Storage key : 'djb_history'
-     Format      : { "YYYY-MM-DD": { rounds: N, counts: N }, ... }
-                   counts = leftover/partial counts (NOT rounds×108)
-     Retention   : 18 months rolling (≈548 days), pruned on save.
-
-     Fixes in v2:
-       • History tracking can be toggled on/off via Settings.
-       • Navigation uses Month + Year dropdowns (+ arrow buttons).
-       • counts stored = raw partial count only (not rounds×108+count).
-       • Page refresh no longer resets count/round — daily-reset only
-         fires when the calendar date has genuinely changed.
-     ═══════════════════════════════════════════════════ -->
-<script>
-(function () {
-  'use strict';
-
-  /* ════════════════════════
-     CONSTANTS
-  ════════════════════════ */
-  const HIST_KEY        = 'djb_history';
-  const HIST_ENABLED_KEY = 'djbHistoryEnabled';
-  const MAX_DAYS        = 548;   // 18 months ≈ 548 days
-  const MONTH_NAMES     = ['January','February','March','April','May','June',
-                           'July','August','September','October','November','December'];
-  const MONTH_SHORT     = ['Jan','Feb','Mar','Apr','May','Jun',
-                           'Jul','Aug','Sep','Oct','Nov','Dec'];
-
-  /* ════════════════════════
-     TOGGLE HELPERS
-  ════════════════════════ */
-  function isHistoryEnabled() {
-    const v = localStorage.getItem(HIST_ENABLED_KEY);
-    return v === null ? true : v === 'true'; // default ON
-  }
-
-  function setHistoryEnabled(val) {
-    localStorage.setItem(HIST_ENABLED_KEY, val ? 'true' : 'false');
-  }
-
-  /* ════════════════════════
-     DATE HELPERS
-  ════════════════════════ */
-  function todayKey() {
-    const d = new Date();
-    return d.getFullYear() + '-'
-      + String(d.getMonth() + 1).padStart(2, '0') + '-'
-      + String(d.getDate()).padStart(2, '0');
-  }
-
-  function dateKey(year, month1, day) {
-    return year + '-'
-      + String(month1).padStart(2, '0') + '-'
-      + String(day).padStart(2, '0');
-  }
-
-  /* Earliest month allowed (18 months back, inclusive) */
-  function getEarliestYM() {
-    const d = new Date();
-    d.setDate(1);
-    d.setMonth(d.getMonth() - 17);
-    return { year: d.getFullYear(), month: d.getMonth() }; // month 0-based
-  }
-
-  /* ════════════════════════
-     STORAGE HELPERS
-  ════════════════════════ */
-  function loadHistory() {
-    try {
-      const raw = localStorage.getItem(HIST_KEY);
-      return raw ? JSON.parse(raw) : {};
-    } catch (e) { return {}; }
-  }
-
-  function saveHistory(hist) {
-    // Prune entries older than MAX_DAYS
-    const cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - MAX_DAYS);
-    const cutoffStr = cutoff.getFullYear() + '-'
-      + String(cutoff.getMonth() + 1).padStart(2, '0') + '-'
-      + String(cutoff.getDate()).padStart(2, '0');
-    Object.keys(hist).forEach(k => { if (k < cutoffStr) delete hist[k]; });
-    try { localStorage.setItem(HIST_KEY, JSON.stringify(hist)); } catch (e) {}
-  }
-
-  /* ════════════════════════
-     READ LIVE VALUES
-     counts = the current partial count shown in the counter
-              (does NOT include completed rounds — those are separate)
-  ════════════════════════ */
-  function getLiveValues() {
-    const countEl = document.getElementById('count-display');
-    const roundEl = document.getElementById('round-display');
-
-    let count = 0;
-    if (countEl && countEl.textContent.trim() !== '') {
-      count = parseInt(countEl.textContent, 10) || 0;
-    } else {
-      count = parseInt(localStorage.getItem('count') || '0', 10) || 0;
-    }
-
-    let rounds = 0;
-    if (roundEl) {
-      const m = roundEl.textContent.match(/\d+/);
-      rounds = m ? parseInt(m[0], 10) : 0;
-    }
-    if (!rounds) {
-      rounds = parseInt(localStorage.getItem('round') || localStorage.getItem('rounds') || '0', 10) || 0;
-    }
-
-    return { count, rounds };
-  }
-
-  /* ════════════════════════
-     UPSERT TODAY
-     Stores: rounds = completed rounds today
-             counts = leftover partial count (NOT converted to 108s)
-     Uses Math.max so daily-reset zeroing doesn't erase today's peak.
-  ════════════════════════ */
-  function upsertToday() {
-    if (!isHistoryEnabled()) return;
-
-    const hist = loadHistory();
-    const key  = todayKey();
-    const { count, rounds } = getLiveValues();
-
-    const existing  = hist[key] || { rounds: 0, counts: 0 };
-    const newRounds = Math.max(existing.rounds, rounds);
-    const newCounts = Math.max(existing.counts, count);  // ← leftover only
-
-    if (newRounds !== existing.rounds || newCounts !== existing.counts) {
-      hist[key] = { rounds: newRounds, counts: newCounts };
-      saveHistory(hist);
-    }
-  }
-
-  /* ════════════════════════
-     MUTATION OBSERVER
-     Watches the live counter DOM; debounces upsert by 400ms.
-  ════════════════════════ */
-  let upsertTimer = null;
-  function scheduleUpsert() {
-    clearTimeout(upsertTimer);
-    upsertTimer = setTimeout(upsertToday, 400);
-  }
-
-  document.addEventListener('DOMContentLoaded', function () {
-    upsertToday(); // initial snapshot
-
-    const observer = new MutationObserver(scheduleUpsert);
-    const cfg      = { childList: true, characterData: true, subtree: true };
-    const countEl  = document.getElementById('count-display');
-    const roundEl  = document.getElementById('round-display');
-    if (countEl) observer.observe(countEl, cfg);
-    if (roundEl) observer.observe(roundEl, cfg);
-
-    window.addEventListener('pagehide',         upsertToday);
-    window.addEventListener('blur',             upsertToday);
-    window.addEventListener('visibilitychange', function () {
-      if (document.visibilityState === 'hidden') upsertToday();
-    });
-  });
-
-  /* ════════════════════════
-     CALENDAR NAVIGATION STATE
-  ════════════════════════ */
-  let currentYear  = new Date().getFullYear();
-  let currentMonth = new Date().getMonth(); // 0-based
-
-  /* ────────────────────────
-     Populate dropdown options
-  ──────────────────────── */
-  function buildDropdowns() {
-    const monthSel = document.getElementById('hist-month-select');
-    const yearSel  = document.getElementById('hist-year-select');
-    if (!monthSel || !yearSel) return;
-
-    const today    = new Date();
-    const earliest = getEarliestYM();
-
-    // Month dropdown (always all 12, we disable invalid in sync)
-    monthSel.innerHTML = '';
-    MONTH_SHORT.forEach(function (name, idx) {
-      const opt = document.createElement('option');
-      opt.value = idx;
-      opt.textContent = name;
-      monthSel.appendChild(opt);
-    });
-
-    // Year dropdown — from earliest year up to current year
-    yearSel.innerHTML = '';
-    for (let y = earliest.year; y <= today.getFullYear(); y++) {
-      const opt = document.createElement('option');
-      opt.value = y;
-      opt.textContent = y;
-      yearSel.appendChild(opt);
-    }
-  }
-
-  /* Sync dropdown selected values + disable out-of-range months */
-  function syncDropdowns() {
-    const monthSel = document.getElementById('hist-month-select');
-    const yearSel  = document.getElementById('hist-year-select');
-    if (!monthSel || !yearSel) return;
-
-    monthSel.value = currentMonth;
-    yearSel.value  = currentYear;
-
-    const today    = new Date();
-    const earliest = getEarliestYM();
-
-    // Disable months out of allowed range for the selected year
-    Array.from(monthSel.options).forEach(function (opt) {
-      const m = parseInt(opt.value, 10);
-      let disabled = false;
-      if (currentYear === earliest.year && m < earliest.month) disabled = true;
-      if (currentYear === today.getFullYear() && m > today.getMonth()) disabled = true;
-      opt.disabled = disabled;
-    });
-  }
-
-  /* ════════════════════════
-     RENDER CALENDAR
-  ════════════════════════ */
-  function renderCalendar() {
-    const hist    = loadHistory();
-    const grid    = document.getElementById('hist-cal-grid');
-    const prevBtn = document.getElementById('hist-prev-month');
-    const nextBtn = document.getElementById('hist-next-month');
-    const today   = new Date();
-    const todayY  = today.getFullYear();
-    const todayM  = today.getMonth();
-    const todayD  = today.getDate();
-    const earliest = getEarliestYM();
-
-    if (!grid) return;
-
-    syncDropdowns();
-
-    // Arrow button limits
-    const atEarliest = (currentYear < earliest.year) ||
-                       (currentYear === earliest.year && currentMonth <= earliest.month);
-    const atLatest   = (currentYear > todayY) ||
-                       (currentYear === todayY && currentMonth >= todayM);
-    if (prevBtn) prevBtn.disabled = atEarliest;
-    if (nextBtn) nextBtn.disabled = atLatest;
-
-    // Monthly totals
-    let monthActiveDays = 0, monthRounds = 0, monthCounts = 0;
-
-    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    const firstDow    = new Date(currentYear, currentMonth, 1).getDay(); // 0=Sun
-
-    grid.innerHTML = '';
-
-    // Empty leading cells
-    for (let i = 0; i < firstDow; i++) {
-      const empty = document.createElement('div');
-      empty.className = 'hist-day empty';
-      grid.appendChild(empty);
-    }
-
-    for (let d = 1; d <= daysInMonth; d++) {
-      const key  = dateKey(currentYear, currentMonth + 1, d);
-      const data = hist[key];
-      const cell = document.createElement('div');
-      cell.className = 'hist-day';
-
-      const numSpan = document.createElement('div');
-      numSpan.className = 'hd-num';
-      numSpan.textContent = d;
-      cell.appendChild(numSpan);
-
-      if (currentYear === todayY && currentMonth === todayM && d === todayD) {
-        cell.classList.add('today');
-      }
-
-      if (data && (data.rounds > 0 || data.counts > 0)) {
-        cell.classList.add('has-data');
-        monthActiveDays++;
-        monthRounds += data.rounds;
-        monthCounts += data.counts;
-
-        const rSpan = document.createElement('div');
-        rSpan.className = 'hd-rounds';
-        rSpan.textContent = data.rounds + 'R';
-        cell.appendChild(rSpan);
-
-        if (data.counts > 0) {
-          const cSpan = document.createElement('div');
-          cSpan.className = 'hd-counts';
-          cSpan.textContent = '+' + data.counts;
-          cell.appendChild(cSpan);
-        }
-
-        // Click for detail panel
-        (function (k, entry) {
-          cell.addEventListener('click', function () { showDayDetail(k, entry); });
-        })(key, data);
-      }
-
-      grid.appendChild(cell);
-    }
-
-    // Monthly summary
-    document.getElementById('hist-month-active-days').textContent = monthActiveDays;
-    document.getElementById('hist-month-rounds').textContent      = monthRounds;
-    document.getElementById('hist-month-counts').textContent      = monthCounts;
-
-    // All-time totals
-    let totalDays = 0, totalRounds = 0, totalCounts = 0;
-    Object.values(hist).forEach(function (entry) {
-      if (entry.rounds > 0 || entry.counts > 0) {
-        totalDays++;
-        totalRounds += entry.rounds;
-        totalCounts += entry.counts;
-      }
-    });
-    document.getElementById('hat-total-days').textContent   = totalDays;
-    document.getElementById('hat-total-rounds').textContent = totalRounds;
-    document.getElementById('hat-total-counts').textContent = totalCounts;
-
-    hideDayDetail();
-  }
-
-  /* ════════════════════════
-     DAY DETAIL PANEL
-  ════════════════════════ */
-  function showDayDetail(key, data) {
-    const panel = document.getElementById('hist-day-detail');
-    if (!panel) return;
-    const parts = key.split('-');
-    const label = MONTH_NAMES[parseInt(parts[1], 10) - 1] + ' '
-                + parseInt(parts[2], 10) + ', ' + parts[0];
-    document.getElementById('hist-detail-date').textContent   = label;
-    document.getElementById('hist-detail-rounds').textContent = data.rounds;
-    document.getElementById('hist-detail-counts').textContent = data.counts;
-    panel.classList.add('visible');
-    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-
-  function hideDayDetail() {
-    const panel = document.getElementById('hist-day-detail');
-    if (panel) panel.classList.remove('visible');
-  }
-
-  /* ════════════════════════
-     OPEN / CLOSE + NAVIGATION
-  ════════════════════════ */
-  document.addEventListener('DOMContentLoaded', function () {
-    const histPopup  = document.getElementById('history-popup');
-    const closeBtn   = document.getElementById('close-history-popup');
-    const prevBtn    = document.getElementById('hist-prev-month');
-    const nextBtn    = document.getElementById('hist-next-month');
-    const monthSel   = document.getElementById('hist-month-select');
-    const yearSel    = document.getElementById('hist-year-select');
-    const viewBtn    = document.getElementById('view-history-btn');
-    const trackToggle= document.getElementById('history-tracking-toggle');
-
-    /* ── Sync tracking toggle from storage ── */
-    if (trackToggle) {
-      trackToggle.checked = isHistoryEnabled();
-      trackToggle.addEventListener('change', function () {
-        setHistoryEnabled(trackToggle.checked);
-      });
-    }
-
-    /* ── Open via "View History" button in Settings ── */
-    if (viewBtn && histPopup) {
-      viewBtn.addEventListener('click', function () {
-        // Close settings popup first
-        const settingsPopup = document.getElementById('settings-popup');
-        if (settingsPopup) settingsPopup.style.display = 'none';
-
-        upsertToday();
-        currentYear  = new Date().getFullYear();
-        currentMonth = new Date().getMonth();
-        buildDropdowns();
-        renderCalendar();
-        histPopup.classList.add('open');
-      });
-    }
-
-    /* ── Close ── */
-    if (closeBtn) {
-      closeBtn.addEventListener('click', function () {
-        histPopup.classList.remove('open');
-      });
-    }
-
-    // Close on backdrop click
-    if (histPopup) {
-      histPopup.addEventListener('click', function (e) {
-        if (e.target === histPopup) histPopup.classList.remove('open');
-      });
-    }
-
-    /* ── Arrow navigation ── */
-    if (prevBtn) {
-      prevBtn.addEventListener('click', function () {
-        currentMonth--;
-        if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-        renderCalendar();
-      });
-    }
-
-    if (nextBtn) {
-      nextBtn.addEventListener('click', function () {
-        currentMonth++;
-        if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-        renderCalendar();
-      });
-    }
-
-    /* ── Dropdown navigation ── */
-    if (monthSel) {
-      monthSel.addEventListener('change', function () {
-        currentMonth = parseInt(this.value, 10);
-        renderCalendar();
-      });
-    }
-
-    if (yearSel) {
-      yearSel.addEventListener('change', function () {
-        currentYear = parseInt(this.value, 10);
-        // If the selected month is now out of range, clamp it
-        const today    = new Date();
-        const earliest = getEarliestYM();
-        if (currentYear === today.getFullYear() && currentMonth > today.getMonth()) {
-          currentMonth = today.getMonth();
-        }
-        if (currentYear === earliest.year && currentMonth < earliest.month) {
-          currentMonth = earliest.month;
-        }
-        renderCalendar();
-      });
-    }
-  });
-
-  /* ════════════════════════
-     GLOBAL EXPOSURE
-  ════════════════════════ */
-  window.djbHistory = {
-    upsertToday : upsertToday,
-    loadHistory : loadHistory,
-    isEnabled   : isHistoryEnabled,
-    setEnabled  : setHistoryEnabled,
-    clear: function () { localStorage.removeItem(HIST_KEY); }
-  };
-
-})();
-</script>
-<!-- ═══════════════════════════════════════════════════
-     END HISTORY FEATURE
      ═══════════════════════════════════════════════════ -->
 
 </body>
