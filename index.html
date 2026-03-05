@@ -17,29 +17,19 @@
     <meta property="og:description" content="Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere.">
     <meta property="og:url" content="https://digitaljapabeads.netlify.app">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="https://digitaljapabeads.netlify.app/rkhkmclogosm.png"> <!-- Replace with actual image URL -->
+    <meta property="og:image" content="https://digitaljapabeads.netlify.app/rkhkmclogosm.png">
 
     <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Digital Japa Beads | Chant Your Mantra Anytime, Anywhere">
-<meta name="twitter:description" content="Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere.">
-<meta name="twitter:image" content="https://digitaljapabeads.netlify.app/rkhkmclogosm.png">
-<meta name="twitter:url" content="https://digitaljapabeads.netlify.app">
+    <meta name="twitter:title" content="Digital Japa Beads | Chant Your Mantra Anytime, Anywhere">
+    <meta name="twitter:description" content="Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere.">
+    <meta name="twitter:image" content="https://digitaljapabeads.netlify.app/rkhkmclogosm.png">
+    <meta name="twitter:url" content="https://digitaljapabeads.netlify.app">
 
     <!-- Favicon -->
     <link rel="icon" href="rkhkmclogo.jpg" type="image/x-icon">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://digitaljapabeads.netlify.app">
-    <!-- Structured Data (Optional for better visibility) -->
-   <!-- <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "url": "https://digitaljapabeads.netlify.app",
-        "name": "Digital Japa Beads",
-        "description": "Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere."
-    }
-    </script> -->
 
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
@@ -90,8 +80,6 @@
     }
 
     /* ───── IMAGE CROP FEATURE STYLES ───── */
-
-    /* Crop wrapper shown after image is selected */
     #crop-wrapper {
       display: none;
       flex-direction: column;
@@ -100,17 +88,16 @@
       margin-top: 10px;
     }
 
-    /* Fixed-size crop frame — size set dynamically by JS (min of img dimensions, max 240px) */
     #crop-frame {
       position: relative;
-      width: 240px;   /* default, overridden by JS */
-      height: 240px;  /* default, overridden by JS */
+      width: 240px;
+      height: 240px;
       max-width: 240px;
       max-height: 240px;
       overflow: hidden;
       background: #111;
       border: 2px solid #555;
-      border-radius: 50%; /* circular frame = no confusing second ring needed */
+      border-radius: 50%;
       cursor: grab;
       user-select: none;
       touch-action: none;
@@ -121,7 +108,6 @@
       cursor: grabbing;
     }
 
-    /* The actual image inside the crop frame — draggable */
     #crop-img {
       position: absolute;
       top: 0;
@@ -131,12 +117,10 @@
       will-change: transform;
     }
 
-    /* Circle overlay — hidden, frame itself is now circular */
     #crop-circle-overlay {
       display: none;
     }
 
-    /* Zoom slider row */
     #crop-zoom-row {
       display: flex;
       align-items: center;
@@ -163,17 +147,57 @@
       text-align: right;
     }
 
-    /* Crop action buttons */
     #crop-action-row {
       display: flex;
       gap: 8px;
     }
 
-    /* Keep existing image-preview-container hidden when cropper is active */
     #image-preview-container.hidden-by-crop {
       display: none !important;
     }
     /* ───── END CROP STYLES ───── */
+
+    /* ───── BUTTON SIZE / EDIT MODE STYLES ───── */
+
+    /* Edit Mode toggle button — sits just above the count button */
+    #edit-mode-btn {
+      display: block;
+      margin: 0 auto 8px auto;
+      padding: 6px 18px;
+      background: transparent;
+      color: #aaa;
+      border: 1px solid #444;
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+      touch-action: manipulation;
+    }
+
+    #edit-mode-btn.active {
+      color: #fff;
+      border-color: #fff;
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* Pulsing ring shown around count-btn while in edit mode */
+    #count-btn.edit-mode-active {
+      outline: 2px dashed rgba(255,255,255,0.55);
+      outline-offset: 6px;
+      animation: editPulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes editPulse {
+      0%,100% { outline-color: rgba(255,255,255,0.55); }
+      50%      { outline-color: rgba(255,255,255,0.15); }
+    }
+
+    /* Smooth size transition when using +/- buttons */
+    #count-btn {
+      transition: width 0.18s ease, height 0.18s ease;
+    }
+    /* ───── END BUTTON SIZE STYLES ───── */
     </style>
 </head>
 <body>
@@ -220,7 +244,7 @@
                 <img id="image-preview" src="" alt="Image Preview" />
             </div>
 
-            <!-- ───── CROP UI (injected here, same visual flow) ───── -->
+            <!-- ───── CROP UI ───── -->
             <div id="crop-wrapper">
               <div id="crop-frame">
                 <img id="crop-img" src="" alt="Crop Preview">
@@ -274,7 +298,6 @@
         <h3>Vibration on Count</h3>
         <div class="button-cover">
             <div class="button r">
-                <!-- CHANGED: added "checked" to enable vibration on count by default -->
                 <input type="checkbox" id="count-vibration-toggle" class="checkbox" checked>
                 <div class="knobs"></div>
                 <div class="layer"></div>
@@ -308,7 +331,7 @@
     </div>
 </div>
 
-<!-- ───── DAILY RESET TOGGLE (NEW) ───── -->
+<!-- ───── DAILY RESET TOGGLE ───── -->
 <style>
   #daily-reset-switch {
     position: relative;
@@ -361,6 +384,7 @@
 </div>
 <!-- ───── END DAILY RESET TOGGLE ───── -->
 
+<!-- ───── BUTTON SIZE SETTING ───── -->
 <div class="settings-section">
     <div class="settings-option">
         <h3>Button Size</h3>
@@ -370,7 +394,10 @@
             <button id="increase-btn-size" class="size-btn">+</button>
         </div>
     </div>
+    <p class="settings-subtext">You can also pinch the button directly — tap <strong>Edit Mode</strong> below the button to resize with two fingers</p>
 </div>
+<!-- ───── END BUTTON SIZE SETTING ───── -->
+
 <div class="settings-section">
     <div class="settings-option">
         <h3>Streak Popup Notifications</h3>
@@ -386,14 +413,12 @@
 </div>
     <div class="settings-section">
     <div class="settings-option">
-
         <button id="edit-circle-text-btn">Change Mantra</button>
     </div>
     <p class="settings-subtext">Customize the mantra displayed around the center image</p>
 </div>
 <div class="settings-section">
                 <div class="settings-option change-image-btn">
-              <!-- Image Change Button -->
             <button id="change-image-btn">Change Image</button>
                 </div>
 </div>
@@ -418,11 +443,14 @@
                 </button>
             </div>
         </div>
+        <!-- ───── EDIT MODE TOGGLE + COUNT BUTTON ───── -->
         <div class="buttons">
+            <button id="edit-mode-btn" title="Enter Edit Mode to resize button with pinch gesture">✏️ Edit Mode</button>
             <button id="count-btn">
                 <img src="rkhkmc.jpg" alt="Plus Icon" class="rkhkmc">
             </button>
         </div>
+        <!-- ───── END ───── -->
     </div>
     <div id="popup-108" class="popup">
         <div class="popup-content">
@@ -512,12 +540,7 @@
 </script>
 
 <!-- ═══════════════════════════════════════════════════
-     DAILY RESET FEATURE — reads/writes localStorage key
-     'dailyResetEnabled' (default: true).
-     On page load, if enabled and the saved date differs
-     from today, count and round are reset automatically.
-     The toggle in Settings saves the preference and
-     triggers an immediate daily-reset check when turned on.
+     DAILY RESET FEATURE
      ═══════════════════════════════════════════════════ -->
 <script>
 (function () {
@@ -526,7 +549,6 @@
   const STORAGE_KEY_DAILY_RESET  = 'dailyResetEnabled';
   const STORAGE_KEY_LAST_DATE    = 'lastResetDate';
 
-  /* ── Helpers ── */
   function getTodayStr() {
     const d = new Date();
     return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
@@ -534,28 +556,21 @@
 
   function isDailyResetEnabled() {
     const val = localStorage.getItem(STORAGE_KEY_DAILY_RESET);
-    // Default is true (enabled) if key not yet stored
     return val === null ? true : val === 'true';
   }
 
-  /* ── Perform the daily reset of count + round ── */
   function performDailyReset() {
-    // Reset count
     localStorage.setItem('count', '0');
-    // Reset round — key name may vary; covering common variants
     localStorage.setItem('round', '0');
     localStorage.setItem('rounds', '0');
-    // Update last reset date
     localStorage.setItem(STORAGE_KEY_LAST_DATE, getTodayStr());
 
-    // Update the visible DOM elements if they already exist
     const countDisplay = document.getElementById('count-display');
     const roundDisplay = document.getElementById('round-display');
     if (countDisplay) countDisplay.textContent = '0';
     if (roundDisplay) roundDisplay.textContent = 'Round: 0';
   }
 
-  /* ── Check on page load whether a daily reset is due ── */
   function checkDailyReset() {
     if (!isDailyResetEnabled()) return;
     const lastDate = localStorage.getItem(STORAGE_KEY_LAST_DATE);
@@ -565,13 +580,11 @@
     }
   }
 
-  /* ── Sync the toggle UI state from localStorage ── */
   function syncToggleUI() {
     const toggle = document.getElementById('daily-reset-toggle');
     if (toggle) toggle.checked = isDailyResetEnabled();
   }
 
-  /* ── Wire up the toggle after DOM is ready ── */
   document.addEventListener('DOMContentLoaded', function () {
     syncToggleUI();
     checkDailyReset();
@@ -581,14 +594,12 @@
 
     toggle.addEventListener('change', function () {
       localStorage.setItem(STORAGE_KEY_DAILY_RESET, toggle.checked ? 'true' : 'false');
-      // If user just turned it ON, run a reset check immediately
       if (toggle.checked) {
         checkDailyReset();
       }
     });
   });
 
-  /* Also expose globally so script.js "Save Settings" can persist if needed */
   window.djbDailyReset = {
     check: checkDailyReset,
     isEnabled: isDailyResetEnabled
@@ -597,6 +608,207 @@
 </script>
 <!-- ═══════════════════════════════════════════════════
      END DAILY RESET FEATURE
+     ═══════════════════════════════════════════════════ -->
+
+<!-- ═══════════════════════════════════════════════════
+     BUTTON SIZE FEATURE
+     - +/- controls in Settings
+     - Pinch-to-resize in Edit Mode
+     - Size persisted in localStorage ('countBtnSize')
+     - Step: 10% per tap, range: 60%–200%
+     ═══════════════════════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  /* ── Constants ── */
+  const STORAGE_KEY   = 'countBtnSize';
+  const SIZE_MIN      = 60;    // percent
+  const SIZE_MAX      = 200;   // percent
+  const SIZE_STEP     = 10;    // percent per +/- tap
+  const SIZE_DEFAULT  = 100;   // percent
+
+  /* ── State ── */
+  let currentSize   = SIZE_DEFAULT;
+  let editModeOn    = false;
+
+  /* Pinch state */
+  let pinchActive       = false;
+  let pinchStartDist    = 0;
+  let pinchStartSize    = SIZE_DEFAULT;
+
+  /* ── Helpers ── */
+  function clamp(v, lo, hi) { return Math.min(hi, Math.max(lo, v)); }
+
+  function getPinchDist(touches) {
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  /* ── Apply size to DOM ── */
+  function applySize(pct) {
+    const btn = document.getElementById('count-btn');
+    if (!btn) return;
+    const factor = pct / 100;
+    btn.style.width  = '';   // let CSS/script.js set base; we use transform
+    btn.style.height = '';
+    btn.style.transform = 'scale(' + factor + ')';
+    btn.style.transformOrigin = 'center bottom';
+
+    /* Sync settings display */
+    const display = document.getElementById('button-size-value');
+    if (display) display.textContent = pct + '%';
+  }
+
+  /* ── Load from localStorage ── */
+  function loadSize() {
+    const saved = parseInt(localStorage.getItem(STORAGE_KEY), 10);
+    currentSize = isNaN(saved) ? SIZE_DEFAULT : clamp(saved, SIZE_MIN, SIZE_MAX);
+  }
+
+  /* ── Save to localStorage ── */
+  function saveSize() {
+    localStorage.setItem(STORAGE_KEY, String(currentSize));
+    /* Also keep the global used by adjustCircleContainer in the existing script */
+    if (typeof window.currentButtonSize !== 'undefined') {
+      window.currentButtonSize = currentSize;
+    }
+  }
+
+  /* ── Set size and persist ── */
+  function setSize(pct) {
+    currentSize = clamp(Math.round(pct), SIZE_MIN, SIZE_MAX);
+    applySize(currentSize);
+    saveSize();
+  }
+
+  /* ── Edit Mode toggle ── */
+  function setEditMode(on) {
+    editModeOn = on;
+    const editBtn  = document.getElementById('edit-mode-btn');
+    const countBtn = document.getElementById('count-btn');
+    if (!editBtn || !countBtn) return;
+
+    if (on) {
+      editBtn.textContent = '✅ Done';
+      editBtn.classList.add('active');
+      countBtn.classList.add('edit-mode-active');
+      /* Disable counting while in edit mode */
+      countBtn.dataset.editMode = '1';
+    } else {
+      editBtn.textContent = '✏️ Edit Mode';
+      editBtn.classList.remove('active');
+      countBtn.classList.remove('edit-mode-active');
+      delete countBtn.dataset.editMode;
+      pinchActive = false;
+    }
+  }
+
+  /* ── Wire up after DOM ready ── */
+  document.addEventListener('DOMContentLoaded', function () {
+    loadSize();
+    applySize(currentSize);
+
+    /* +/- buttons in Settings */
+    const increaseBtn = document.getElementById('increase-btn-size');
+    const decreaseBtn = document.getElementById('decrease-btn-size');
+
+    if (increaseBtn) {
+      increaseBtn.addEventListener('click', function () {
+        setSize(currentSize + SIZE_STEP);
+      });
+    }
+
+    if (decreaseBtn) {
+      decreaseBtn.addEventListener('click', function () {
+        setSize(currentSize - SIZE_STEP);
+      });
+    }
+
+    /* Edit Mode button */
+    const editModeBtn = document.getElementById('edit-mode-btn');
+    if (editModeBtn) {
+      editModeBtn.addEventListener('click', function () {
+        setEditMode(!editModeOn);
+      });
+    }
+
+    /* Block count tap while in edit mode */
+    const countBtn = document.getElementById('count-btn');
+    if (countBtn) {
+      countBtn.addEventListener('click', function (e) {
+        if (countBtn.dataset.editMode === '1') {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
+      }, true /* capture so it runs before script.js handler */);
+    }
+
+    /* ── Pinch-to-resize on count-btn (touch) ── */
+    if (countBtn) {
+
+      countBtn.addEventListener('touchstart', function (e) {
+        if (!editModeOn) return;
+        if (e.touches.length === 2) {
+          pinchActive    = true;
+          pinchStartDist = getPinchDist(e.touches);
+          pinchStartSize = currentSize;
+          e.preventDefault();
+        }
+      }, { passive: false });
+
+      /* Use document so the gesture keeps working if fingers drift off button */
+      document.addEventListener('touchmove', function (e) {
+        if (!pinchActive || !editModeOn) return;
+        if (e.touches.length === 2) {
+          const dist    = getPinchDist(e.touches);
+          const ratio   = dist / pinchStartDist;
+          const newSize = clamp(Math.round(pinchStartSize * ratio), SIZE_MIN, SIZE_MAX);
+          currentSize   = newSize;
+          applySize(currentSize);
+
+          /* Keep settings label in sync while pinching */
+          const display = document.getElementById('button-size-value');
+          if (display) display.textContent = currentSize + '%';
+
+          e.preventDefault();
+        }
+      }, { passive: false });
+
+      document.addEventListener('touchend', function (e) {
+        if (!pinchActive) return;
+        if (e.touches.length < 2) {
+          pinchActive = false;
+          saveSize();   /* persist once fingers lift */
+        }
+      });
+    }
+
+    /* ── Reset to Default should also reset size ── */
+    const resetDefaultBtn = document.getElementById('reset-default-settings');
+    if (resetDefaultBtn) {
+      resetDefaultBtn.addEventListener('click', function () {
+        setSize(SIZE_DEFAULT);
+      });
+    }
+
+    /* ── Factory Reset should also reset size ── */
+    const factoryResetBtn = document.getElementById('factory-reset');
+    if (factoryResetBtn) {
+      factoryResetBtn.addEventListener('click', function () {
+        setSize(SIZE_DEFAULT);
+      });
+    }
+
+    /* Expose for external use (adjustCircleContainer etc.) */
+    window.currentButtonSize = currentSize;
+  });
+
+})();
+</script>
+<!-- ═══════════════════════════════════════════════════
+     END BUTTON SIZE FEATURE
      ═══════════════════════════════════════════════════ -->
 
 <script>
@@ -688,15 +900,12 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <!-- ═══════════════════════════════════════════════════
-     IMAGE CROP FEATURE — Self-contained, no dependencies
-     Intercepts the existing image-upload input and shows
-     a fixed-size crop UI before the image is committed.
+     IMAGE CROP FEATURE
      ═══════════════════════════════════════════════════ -->
 <script>
 (function () {
   'use strict';
 
-  /* ── References ── */
   const imageUpload      = document.getElementById('image-upload');
   const previewContainer = document.getElementById('image-preview-container');
   const previewImg       = document.getElementById('image-preview');
@@ -708,14 +917,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const applyBtn         = document.getElementById('crop-apply-btn');
   const resetBtn         = document.getElementById('crop-reset-btn');
 
-  /* ── Crop state ── */
-  let FRAME_SIZE = 240;  // dynamic — set per image based on min(w,h), max 240
+  let FRAME_SIZE = 240;
   let scale      = 1;
-  let imgW       = 0;    // base image width at scale=1 inside frame
-  let imgH       = 0;    // base image height at scale=1 inside frame
+  let imgW       = 0;
+  let imgH       = 0;
   let offsetX    = 0;
   let offsetY    = 0;
-  let initOffsetX = 0;   // initial centered offsets for reset
+  let initOffsetX = 0;
   let initOffsetY = 0;
   let isDragging  = false;
   let dragStartX  = 0;
@@ -724,11 +932,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let baseOffsetY = 0;
   let naturalSrc  = '';
 
-  /* ── Clamp so image always covers the entire frame square ── */
   function clampX(x) {
     const scaledW = imgW * scale;
-    const minX = Math.min(0, FRAME_SIZE - scaledW);
-    const maxX = Math.max(0, FRAME_SIZE - scaledW);
     if (scaledW >= FRAME_SIZE) return Math.min(0, Math.max(FRAME_SIZE - scaledW, x));
     return Math.min(FRAME_SIZE - scaledW, Math.max(0, x));
   }
@@ -739,7 +944,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return Math.min(FRAME_SIZE - scaledH, Math.max(0, y));
   }
 
-  /* ── Apply transform to DOM image ── */
   function applyTransform() {
     cropImg.style.width  = (imgW * scale) + 'px';
     cropImg.style.height = (imgH * scale) + 'px';
@@ -747,7 +951,6 @@ document.addEventListener('DOMContentLoaded', () => {
     cropImg.style.top    = offsetY + 'px';
   }
 
-  /* ── Reset position & zoom to initial state ── */
   function resetToInitial() {
     scale    = 1;
     offsetX  = initOffsetX;
@@ -757,7 +960,6 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTransform();
   }
 
-  /* ── Open cropper when file is chosen ── */
   imageUpload.addEventListener('change', function (e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -770,32 +972,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const nw = tempImg.naturalWidth;
         const nh = tempImg.naturalHeight;
 
-        /* Frame size = min dimension of image, capped at 240px.
-           This prevents the frame from ever exceeding the image's
-           shorter side, so no dead space on either axis. */
         FRAME_SIZE = Math.min(240, nw, nh);
-
-        /* Apply frame size to DOM */
         cropFrame.style.width  = FRAME_SIZE + 'px';
         cropFrame.style.height = FRAME_SIZE + 'px';
-
-        /* Update zoom row width to match */
         document.getElementById('crop-zoom-row').style.width = FRAME_SIZE + 'px';
 
-        /* Update radial gradient overlay to match new frame (it's always square so this is automatic) */
-
-        /* Scale image so it fills the frame (cover: larger side fills, smaller side overflows) */
         const ratio = Math.max(FRAME_SIZE / nw, FRAME_SIZE / nh);
         imgW = nw * ratio;
         imgH = nh * ratio;
 
-        /* Center image inside frame */
         initOffsetX = (FRAME_SIZE - imgW) / 2;
         initOffsetY = (FRAME_SIZE - imgH) / 2;
         offsetX = initOffsetX;
         offsetY = initOffsetY;
 
-        /* Reset zoom */
         scale = 1;
         zoomSlider.value      = 1;
         zoomValue.textContent = '1.0×';
@@ -803,7 +993,6 @@ document.addEventListener('DOMContentLoaded', () => {
         cropImg.src = naturalSrc;
         applyTransform();
 
-        /* Show cropper, hide old preview, hide Save Image until crop applied */
         previewContainer.classList.add('hidden-by-crop');
         cropWrapper.style.display = 'flex';
         document.getElementById('save-image-btn').style.display = 'none';
@@ -813,10 +1002,8 @@ document.addEventListener('DOMContentLoaded', () => {
     reader.readAsDataURL(file);
   });
 
-  /* ── Zoom slider ── */
   zoomSlider.addEventListener('input', function () {
     const newScale = parseFloat(this.value);
-    /* Zoom toward center of frame */
     const cx   = FRAME_SIZE / 2;
     const cy   = FRAME_SIZE / 2;
     const imgCX = (cx - offsetX) / scale;
@@ -828,12 +1015,8 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTransform();
   });
 
-  /* ── Reset Changes ── */
   resetBtn.addEventListener('click', resetToInitial);
 
-  /* ════════════
-     DRAG — Mouse
-  ════════════ */
   cropFrame.addEventListener('mousedown', function (e) {
     isDragging  = true;
     dragStartX  = e.clientX;
@@ -852,9 +1035,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('mouseup', function () { isDragging = false; });
 
-  /* ════════════
-     DRAG — Touch (1 finger) + Pinch Zoom (2 fingers)
-  ════════════ */
   let pinchStartDist  = 0;
   let pinchStartScale = 1;
 
@@ -866,14 +1046,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   cropFrame.addEventListener('touchstart', function (e) {
     if (e.touches.length === 1) {
-      /* Single finger — drag */
       isDragging  = true;
       dragStartX  = e.touches[0].clientX;
       dragStartY  = e.touches[0].clientY;
       baseOffsetX = offsetX;
       baseOffsetY = offsetY;
     } else if (e.touches.length === 2) {
-      /* Two fingers — pinch zoom */
       isDragging      = false;
       pinchStartDist  = getTouchDist(e.touches);
       pinchStartScale = scale;
@@ -883,17 +1061,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('touchmove', function (e) {
     if (e.touches.length === 1 && isDragging) {
-      /* Single finger drag */
       offsetX = clampX(baseOffsetX + (e.touches[0].clientX - dragStartX));
       offsetY = clampY(baseOffsetY + (e.touches[0].clientY - dragStartY));
       applyTransform();
     } else if (e.touches.length === 2) {
-      /* Pinch zoom */
       const dist     = getTouchDist(e.touches);
       let newScale   = pinchStartScale * (dist / pinchStartDist);
-      newScale       = Math.min(3, Math.max(1, newScale)); // clamp 1–3×
+      newScale       = Math.min(3, Math.max(1, newScale));
 
-      /* Zoom toward midpoint of the two fingers */
       const midX  = (e.touches[0].clientX + e.touches[1].clientX) / 2;
       const midY  = (e.touches[0].clientY + e.touches[1].clientY) / 2;
       const rect  = cropFrame.getBoundingClientRect();
@@ -905,7 +1080,6 @@ document.addEventListener('DOMContentLoaded', () => {
       offsetX     = clampX(cx - imgCX * scale);
       offsetY     = clampY(cy - imgCY * scale);
 
-      /* Sync slider */
       zoomSlider.value      = scale;
       zoomValue.textContent = scale.toFixed(1) + '×';
 
@@ -917,7 +1091,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('touchend', function (e) {
     if (e.touches.length === 0) isDragging = false;
     if (e.touches.length === 1) {
-      /* One finger lifted during pinch — switch back to drag mode */
       isDragging  = true;
       dragStartX  = e.touches[0].clientX;
       dragStartY  = e.touches[0].clientY;
@@ -926,9 +1099,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  /* ════════════════════════════════
-     APPLY — render circular crop to canvas → data-URL
-  ════════════════════════════════ */
   applyBtn.addEventListener('click', function () {
     const canvas  = document.createElement('canvas');
     const OUTPUT  = FRAME_SIZE;
@@ -936,7 +1106,6 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.height = OUTPUT;
     const ctx     = canvas.getContext('2d');
 
-    /* Clip to perfect circle */
     ctx.beginPath();
     ctx.arc(OUTPUT / 2, OUTPUT / 2, OUTPUT / 2, 0, Math.PI * 2);
     ctx.closePath();
@@ -947,18 +1116,14 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.drawImage(sourceImg, offsetX, offsetY, imgW * scale, imgH * scale);
       const croppedDataURL = canvas.toDataURL('image/png');
 
-      /* Feed into existing preview so "Save Image" works unchanged */
       previewImg.src = croppedDataURL;
       previewContainer.classList.remove('hidden-by-crop');
       previewContainer.style.display = 'block';
 
-      /* Hide cropper */
       cropWrapper.style.display = 'none';
 
-      /* Show Save Image button now that crop is applied */
       document.getElementById('save-image-btn').style.display = '';
 
-      /* Update the main round-image immediately */
       const roundImage = document.getElementById('round-image');
       if (roundImage) roundImage.src = croppedDataURL;
     };
@@ -970,62 +1135,6 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- ═══════════════════════════════════════════════════
      END IMAGE CROP FEATURE
      ═══════════════════════════════════════════════════ -->
-<!-- ═══════════════════════════════════════════════════
-     VOLUME BUTTON COUNTER CONTROL
-     Volume Up  → increment count (same as tapping count-btn)
-     Volume Down → decrement count by 1
-     Works on Android browsers / PWA mode.
-     ═══════════════════════════════════════════════════ -->
-<script>
-(function () {
-  'use strict';
 
-  document.addEventListener('keydown', function (e) {
-    // AudioVolumeUp = key "AudioVolumeUp", keyCode 175
-    // AudioVolumeDown = key "AudioVolumeDown", keyCode 174
-    const isVolumeUp   = e.key === 'AudioVolumeUp'   || e.keyCode === 175;
-    const isVolumeDown = e.key === 'AudioVolumeDown'  || e.keyCode === 174;
-
-    if (!isVolumeUp && !isVolumeDown) return;
-
-    // Prevent default so the system volume HUD doesn't show
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (isVolumeUp) {
-      // Simulate a tap on the main count button (triggers all existing logic:
-      // count update, vibration, sound, streak, popup, etc.)
-      const countBtn = document.getElementById('count-btn');
-      if (countBtn) countBtn.click();
-    }
-
-    if (isVolumeDown) {
-      // Decrement count by 1 (mirrors what script.js does, works with its state)
-      // We read/write the same localStorage key and DOM element script.js uses.
-      let count = parseInt(localStorage.getItem('count') || '0', 10);
-      if (count <= 0) return; // don't go below 0
-
-      count -= 1;
-      localStorage.setItem('count', count);
-
-      const countDisplay = document.getElementById('count-display');
-      if (countDisplay) countDisplay.textContent = count;
-
-      // Trigger vibration if count-vibration is enabled (mirrors script.js pattern)
-      const vibToggle = document.getElementById('count-vibration-toggle');
-      const vibSlider = document.getElementById('count-vibration-slider');
-      if (vibToggle && vibToggle.checked && navigator.vibrate) {
-        const ms = vibSlider ? parseInt(vibSlider.value, 10) : 60;
-        navigator.vibrate(ms);
-      }
-    }
-  }, true); // capture phase so we intercept before anything else
-
-})();
-</script>
-<!-- ═══════════════════════════════════════════════════
-     END VOLUME BUTTON COUNTER CONTROL
-     ═══════════════════════════════════════════════════ -->
 </body>
 </html>
-
