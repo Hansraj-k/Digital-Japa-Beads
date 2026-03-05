@@ -970,6 +970,62 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- ═══════════════════════════════════════════════════
      END IMAGE CROP FEATURE
      ═══════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════
+     VOLUME BUTTON COUNTER CONTROL
+     Volume Up  → increment count (same as tapping count-btn)
+     Volume Down → decrement count by 1
+     Works on Android browsers / PWA mode.
+     ═══════════════════════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
 
+  document.addEventListener('keydown', function (e) {
+    // AudioVolumeUp = key "AudioVolumeUp", keyCode 175
+    // AudioVolumeDown = key "AudioVolumeDown", keyCode 174
+    const isVolumeUp   = e.key === 'AudioVolumeUp'   || e.keyCode === 175;
+    const isVolumeDown = e.key === 'AudioVolumeDown'  || e.keyCode === 174;
+
+    if (!isVolumeUp && !isVolumeDown) return;
+
+    // Prevent default so the system volume HUD doesn't show
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (isVolumeUp) {
+      // Simulate a tap on the main count button (triggers all existing logic:
+      // count update, vibration, sound, streak, popup, etc.)
+      const countBtn = document.getElementById('count-btn');
+      if (countBtn) countBtn.click();
+    }
+
+    if (isVolumeDown) {
+      // Decrement count by 1 (mirrors what script.js does, works with its state)
+      // We read/write the same localStorage key and DOM element script.js uses.
+      let count = parseInt(localStorage.getItem('count') || '0', 10);
+      if (count <= 0) return; // don't go below 0
+
+      count -= 1;
+      localStorage.setItem('count', count);
+
+      const countDisplay = document.getElementById('count-display');
+      if (countDisplay) countDisplay.textContent = count;
+
+      // Trigger vibration if count-vibration is enabled (mirrors script.js pattern)
+      const vibToggle = document.getElementById('count-vibration-toggle');
+      const vibSlider = document.getElementById('count-vibration-slider');
+      if (vibToggle && vibToggle.checked && navigator.vibrate) {
+        const ms = vibSlider ? parseInt(vibSlider.value, 10) : 60;
+        navigator.vibrate(ms);
+      }
+    }
+  }, true); // capture phase so we intercept before anything else
+
+})();
+</script>
+<!-- ═══════════════════════════════════════════════════
+     END VOLUME BUTTON COUNTER CONTROL
+     ═══════════════════════════════════════════════════ -->
 </body>
 </html>
+
