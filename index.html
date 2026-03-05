@@ -274,6 +274,7 @@
         <h3>Vibration on Count</h3>
         <div class="button-cover">
             <div class="button r">
+                <!-- CHANGED: added "checked" to enable vibration on count by default -->
                 <input type="checkbox" id="count-vibration-toggle" class="checkbox" checked>
                 <div class="knobs"></div>
                 <div class="layer"></div>
@@ -307,6 +308,22 @@
     </div>
 </div>
 
+<!-- ───── DAILY RESET TOGGLE (NEW) ───── -->
+<div class="settings-section">
+    <div class="settings-option">
+        <h3>Daily Reset</h3>
+        <div class="button-cover">
+            <div class="button r">
+                <input type="checkbox" id="daily-reset-toggle" class="checkbox" checked>
+                <div class="knobs"></div>
+                <div class="layer"></div>
+            </div>
+        </div>
+    </div>
+    <p class="settings-subtext">When enabled, count and rounds reset automatically each day. Turn off to keep your count and rounds running continuously across days.</p>
+</div>
+<!-- ───── END DAILY RESET TOGGLE ───── -->
+
 <div class="settings-section">
     <div class="settings-option">
         <h3>Button Size</h3>
@@ -330,23 +347,6 @@
     </div>
     <p class="settings-subtext">Show motivational popups when your streak updates</p>
 </div>
-
-<!-- ───── DAILY RESET TOGGLE (NEW) ───── -->
-<div class="settings-section">
-    <div class="settings-option">
-        <h3>Daily Reset</h3>
-        <div class="button-cover">
-            <div class="button r">
-                <input type="checkbox" id="daily-reset-toggle" class="checkbox" checked>
-                <div class="knobs"></div>
-                <div class="layer"></div>
-            </div>
-        </div>
-    </div>
-    <p class="settings-subtext">When enabled, count and rounds reset automatically each day. Turn off to keep your progress across days.</p>
-</div>
-<!-- ───── END DAILY RESET TOGGLE ───── -->
-
     <div class="settings-section">
     <div class="settings-option">
 
@@ -475,101 +475,87 @@
 </script>
 
 <!-- ═══════════════════════════════════════════════════
-     DAILY RESET FEATURE
-     Reads/writes localStorage key "dailyResetEnabled" (default: true).
-     On page load checks if the stored date differs from today;
-     if so (and daily reset is enabled) resets count + rounds.
-     Also wires the toggle so it persists across sessions and is
-     loaded correctly when Settings opens.
+     DAILY RESET FEATURE — reads/writes localStorage key
+     'dailyResetEnabled' (default: true).
+     On page load, if enabled and the saved date differs
+     from today, count and round are reset automatically.
+     The toggle in Settings saves the preference and
+     triggers an immediate daily-reset check when turned on.
      ═══════════════════════════════════════════════════ -->
 <script>
 (function () {
   'use strict';
 
-  const STORAGE_KEY_ENABLED = 'dailyResetEnabled';
-  const STORAGE_KEY_DATE    = 'lastResetDate';
-  const STORAGE_KEY_COUNT   = 'count';   // adjust if your script.js uses a different key
-  const STORAGE_KEY_ROUND   = 'round';   // adjust if your script.js uses a different key
+  const STORAGE_KEY_DAILY_RESET  = 'dailyResetEnabled';
+  const STORAGE_KEY_LAST_DATE    = 'lastResetDate';
 
-  /* ── Helper: today as YYYY-MM-DD ── */
-  function todayStr() {
-    return new Date().toISOString().slice(0, 10);
+  /* ── Helpers ── */
+  function getTodayStr() {
+    const d = new Date();
+    return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
   }
 
-  /* ── Load persisted preference (default ON) ── */
   function isDailyResetEnabled() {
-    const val = localStorage.getItem(STORAGE_KEY_ENABLED);
+    const val = localStorage.getItem(STORAGE_KEY_DAILY_RESET);
+    // Default is true (enabled) if key not yet stored
     return val === null ? true : val === 'true';
   }
 
-  /* ── Perform the actual reset by zeroing localStorage keys
-        then dispatching a custom event so script.js can react ── */
+  /* ── Perform the daily reset of count + round ── */
   function performDailyReset() {
-    localStorage.setItem(STORAGE_KEY_COUNT, '0');
-    localStorage.setItem(STORAGE_KEY_ROUND, '0');
-    localStorage.setItem(STORAGE_KEY_DATE, todayStr());
-    /* Fire custom event so script.js UI updates if already initialised */
-    window.dispatchEvent(new CustomEvent('dailyCounterReset'));
+    // Reset count
+    localStorage.setItem('count', '0');
+    // Reset round — key name may vary; covering common variants
+    localStorage.setItem('round', '0');
+    localStorage.setItem('rounds', '0');
+    // Update last reset date
+    localStorage.setItem(STORAGE_KEY_LAST_DATE, getTodayStr());
+
+    // Update the visible DOM elements if they already exist
+    const countDisplay = document.getElementById('count-display');
+    const roundDisplay = document.getElementById('round-display');
+    if (countDisplay) countDisplay.textContent = '0';
+    if (roundDisplay) roundDisplay.textContent = 'Round: 0';
   }
 
-  /* ── On page load: check whether a reset is due ── */
+  /* ── Check on page load whether a daily reset is due ── */
   function checkDailyReset() {
     if (!isDailyResetEnabled()) return;
-    const lastDate = localStorage.getItem(STORAGE_KEY_DATE);
-    const today    = todayStr();
+    const lastDate = localStorage.getItem(STORAGE_KEY_LAST_DATE);
+    const today    = getTodayStr();
     if (lastDate !== today) {
       performDailyReset();
     }
   }
 
-  /* ── Wire the toggle in Settings ── */
-  function initToggle() {
+  /* ── Sync the toggle UI state from localStorage ── */
+  function syncToggleUI() {
+    const toggle = document.getElementById('daily-reset-toggle');
+    if (toggle) toggle.checked = isDailyResetEnabled();
+  }
+
+  /* ── Wire up the toggle after DOM is ready ── */
+  document.addEventListener('DOMContentLoaded', function () {
+    syncToggleUI();
+    checkDailyReset();
+
     const toggle = document.getElementById('daily-reset-toggle');
     if (!toggle) return;
 
-    /* Reflect persisted state */
-    toggle.checked = isDailyResetEnabled();
-
     toggle.addEventListener('change', function () {
-      localStorage.setItem(STORAGE_KEY_ENABLED, this.checked ? 'true' : 'false');
-      /* If user just turned it ON, record today so it doesn't immediately reset */
-      if (this.checked) {
-        const lastDate = localStorage.getItem(STORAGE_KEY_DATE);
-        if (!lastDate) {
-          localStorage.setItem(STORAGE_KEY_DATE, todayStr());
-        }
+      localStorage.setItem(STORAGE_KEY_DAILY_RESET, toggle.checked ? 'true' : 'false');
+      // If user just turned it ON, run a reset check immediately
+      if (toggle.checked) {
+        checkDailyReset();
       }
     });
-  }
-
-  /* ── Save Settings button: also persist toggle state ── */
-  function hookSaveSettings() {
-    const saveBtn = document.getElementById('save-settings');
-    if (!saveBtn) return;
-    saveBtn.addEventListener('click', function () {
-      const toggle = document.getElementById('daily-reset-toggle');
-      if (toggle) {
-        localStorage.setItem(STORAGE_KEY_ENABLED, toggle.checked ? 'true' : 'false');
-      }
-    });
-  }
-
-  /* ── Run after DOM is ready ── */
-  document.addEventListener('DOMContentLoaded', function () {
-    checkDailyReset();
-    initToggle();
-    hookSaveSettings();
-
-    /* Re-sync toggle whenever the settings popup is opened */
-    const settingsBtn = document.getElementById('settings-btn');
-    if (settingsBtn) {
-      settingsBtn.addEventListener('click', function () {
-        const toggle = document.getElementById('daily-reset-toggle');
-        if (toggle) toggle.checked = isDailyResetEnabled();
-      });
-    }
   });
 
+  /* Also expose globally so script.js "Save Settings" can persist if needed */
+  window.djbDailyReset = {
+    check: checkDailyReset,
+    isEnabled: isDailyResetEnabled
+  };
 })();
 </script>
 <!-- ═══════════════════════════════════════════════════
