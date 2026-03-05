@@ -41,7 +41,6 @@
     }
     </script> -->
 
-    <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="rkhkmclogo.jpg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
@@ -50,6 +49,12 @@
         document.addEventListener('contextmenu', (event) => event.preventDefault());
     </script>
     <style type="text/css">
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
     a{
       color: black;
     }
@@ -89,92 +94,1064 @@
       background: white; 
     }
 
-    /* ───── IMAGE CROP FEATURE STYLES ───── */
-
-    /* Crop wrapper shown after image is selected */
-    #crop-wrapper {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      margin-top: 10px;
+    /* ===== MAIN STYLES ===== */
+    body {
+        background: black;
+        color: white;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        overflow-x: hidden;
     }
 
-    /* Fixed-size crop frame — size set dynamically by JS (min of img dimensions, max 240px) */
-    #crop-frame {
-      position: relative;
-      width: 240px;   /* default, overridden by JS */
-      height: 240px;  /* default, overridden by JS */
-      max-width: 240px;
-      max-height: 240px;
-      overflow: hidden;
-      background: #111;
-      border: 2px solid #555;
-      border-radius: 50%; /* circular frame = no confusing second ring needed */
-      cursor: grab;
-      user-select: none;
-      touch-action: none;
-      flex-shrink: 0;
+    .container {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background: black;
     }
 
-    #crop-frame:active {
-      cursor: grabbing;
+    /* TOOLBAR STYLES */
+    .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        background: #1a1a1a;
+        border-bottom: 1px solid #333;
     }
 
-    /* The actual image inside the crop frame — draggable */
-    #crop-img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      transform-origin: 0 0;
-      pointer-events: none;
-      will-change: transform;
+    .toolbar-logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
     }
 
-    /* Circle overlay — hidden, frame itself is now circular */
-    #crop-circle-overlay {
-      display: none;
+    .round-display-container {
+        flex: 1;
+        text-align: center;
     }
 
-    /* Zoom slider row */
-    #crop-zoom-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      width: 240px;
+    .round-display {
+        font-size: 18px;
+        font-weight: 600;
+        color: #4CAF50;
     }
 
-    #crop-zoom-row label {
-      color: #ccc;
-      font-size: 12px;
-      white-space: nowrap;
+    .toolbar-right {
+        display: flex;
+        gap: 8px;
     }
 
-    #crop-zoom-slider {
-      flex: 1;
-      accent-color: #fff;
-      cursor: pointer;
+    .toolbar-right button {
+        background: #333;
+        border: none;
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        position: relative;
     }
 
-    #crop-zoom-value {
-      color: #ccc;
-      font-size: 12px;
-      min-width: 34px;
-      text-align: right;
+    .toolbar-right button:hover {
+        background: #444;
+        transform: scale(1.05);
     }
 
-    /* Crop action buttons */
-    #crop-action-row {
-      display: flex;
-      gap: 8px;
+    .toolbar-right button[data-tooltip]:hover::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: -30px;
+        background: #333;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        white-space: nowrap;
+        font-size: 12px;
+        z-index: 10;
     }
 
-    /* Keep existing image-preview-container hidden when cropper is active */
-    #image-preview-container.hidden-by-crop {
-      display: none !important;
+    /* CIRCLE CONTAINER & IMAGE */
+    .circle-container {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        padding-top: 423px;
     }
-    /* ───── END CROP STYLES ───── */
-    </style>
+
+    .round-image {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #4CAF50;
+        box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+    }
+
+    .circle-text {
+        position: absolute;
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
+
+    .circle-text svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    .circle-text text {
+        font-size: 18px;
+        font-weight: 700;
+        fill: #4CAF50;
+        letter-spacing: 8px;
+    }
+
+    /* COUNTER DISPLAY */
+    .counter-container {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .count-display-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .count-display {
+        font-size: 48px;
+        font-weight: 700;
+        color: #4CAF50;
+        min-width: 120px;
+        text-align: center;
+    }
+
+    #reset-count-btn {
+        background: #333;
+        border: none;
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    #reset-count-btn:hover {
+        background: #444;
+    }
+
+    /* BUTTONS */
+    .buttons {
+        text-align: center;
+        padding: 20px;
+    }
+
+    #count-btn {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        background: #2a2a2a;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    #count-btn:active {
+        transform: scale(0.95);
+        box-shadow: inset 0 4px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    #count-btn:hover {
+        transform: scale(1.05);
+        background: #333;
+    }
+
+    #count-btn img {
+        width: 80%;
+        height: 80%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    /* FOOTER */
+    .footer {
+        background: #1a1a1a;
+        border-top: 1px solid #333;
+        padding: 20px;
+    }
+
+    .containerk {
+        text-align: center;
+    }
+
+    .footer hr {
+        border: none;
+        border-top: 1px solid #333;
+        margin: 0 0 15px 0;
+    }
+
+    .streak-container {
+        margin-bottom: 20px;
+    }
+
+    .streak-display {
+        font-size: 18px;
+        font-weight: 600;
+        color: #FF9800;
+        margin-bottom: 10px;
+    }
+
+    .streak-calendar {
+        display: flex;
+        justify-content: center;
+        gap: 4px;
+        flex-wrap: wrap;
+    }
+
+    .streak-day {
+        width: 20px;
+        height: 20px;
+        border-radius: 3px;
+        background: #333;
+    }
+
+    .streak-day.active {
+        background: #FF9800;
+    }
+
+    .install-container {
+        margin: 15px 0;
+    }
+
+    #install-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+
+    #install-btn:hover {
+        transform: scale(1.1);
+    }
+
+    #install-btn img {
+        width: 80px;
+        height: auto;
+    }
+
+    .end {
+        margin: 15px 0;
+    }
+
+    .end img {
+        width: 100px;
+        height: auto;
+        opacity: 0.8;
+        transition: opacity 0.3s ease;
+    }
+
+    .end img:hover {
+        opacity: 1;
+    }
+
+    .copyright {
+        font-size: 12px;
+        color: #888;
+        margin-top: 10px;
+    }
+
+    /* IMAGE CHANGE MENU */
+    #image-change-menu {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 1000;
+        overflow-y: auto;
+        padding: 20px;
+    }
+
+    #image-change-menu.active {
+        display: block;
+    }
+
+    #image-change-menu > p {
+        color: white;
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: 600;
+        font-size: 16px;
+    }
+
+    #image-upload {
+        display: block;
+        margin: 0 auto 20px;
+        color: white;
+    }
+
+    /* Image Crop Container */
+    .crop-container {
+        display: none;
+        width: 100%;
+        margin: 20px 0;
+        padding: 0 10px;
+    }
+
+    .crop-container.active {
+        display: block;
+    }
+
+    .crop-frame {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        max-width: 400px;
+        max-height: 400px;
+        margin: 0 auto;
+        background: #1a1a1a;
+        border: 2px solid #444;
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: grab;
+        user-select: none;
+    }
+
+    .crop-frame.dragging {
+        cursor: grabbing;
+    }
+
+    .crop-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        user-select: none;
+        pointer-events: none;
+    }
+
+    .crop-overlay-circle {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 100%;
+        max-width: 400px;
+        max-height: 400px;
+        border: 2px dashed rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.3);
+    }
+
+    .crop-controls {
+        display: none;
+        width: 100%;
+        padding: 15px 10px;
+        background: #2a2a2a;
+        border-radius: 8px;
+        margin-top: 10px;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .crop-controls.active {
+        display: flex;
+    }
+
+    .crop-controls label {
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .zoom-slider {
+        width: 150px;
+        max-width: 100%;
+        cursor: pointer;
+    }
+
+    #zoom-value {
+        color: white;
+        font-weight: 600;
+        min-width: 45px;
+        text-align: right;
+    }
+
+    .crop-button-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+        width: 100%;
+        padding: 0 10px;
+    }
+
+    .crop-button-group button {
+        flex: 1;
+        padding: 10px 15px;
+        background: #444;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .crop-button-group button:hover {
+        background: #555;
+    }
+
+    .crop-button-group #save-image-btn {
+        background: #4CAF50;
+    }
+
+    .crop-button-group #save-image-btn:hover {
+        background: #45a049;
+    }
+
+    .crop-button-group #reset-image-btn {
+        background: #f44336;
+    }
+
+    .crop-button-group #reset-image-btn:hover {
+        background: #da190b;
+    }
+
+    #image-preview-container {
+        text-align: center;
+        margin-top: 20px;
+        display: none;
+    }
+
+    #image-preview-container img {
+        max-width: 100%;
+        max-height: 300px;
+        border-radius: 8px;
+    }
+
+    #image-change-menu button {
+        display: block;
+        margin: 10px auto;
+        padding: 12px 24px;
+        background: #444;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    #image-change-menu button:hover {
+        background: #555;
+    }
+
+    #save-image-btn {
+        background: #4CAF50 !important;
+    }
+
+    #save-image-btn:hover {
+        background: #45a049 !important;
+    }
+
+    #reset-image-btn {
+        background: #f44336 !important;
+    }
+
+    #reset-image-btn:hover {
+        background: #da190b !important;
+    }
+
+    #close-image-menu {
+        background: #666 !important;
+    }
+
+    #close-image-menu:hover {
+        background: #777 !important;
+    }
+
+    #made-with-container {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    #made-with-img {
+        max-width: 200px;
+        opacity: 0.8;
+    }
+
+    /* POPUP STYLES */
+    .popup {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 999;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .popup.active {
+        display: flex;
+    }
+
+    .popup-content {
+        background: #2a2a2a;
+        padding: 30px;
+        border-radius: 12px;
+        text-align: center;
+        max-width: 90%;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .popup-content p {
+        color: white;
+        margin-bottom: 20px;
+        font-size: 16px;
+    }
+
+    .popup-content button {
+        padding: 10px 20px;
+        margin: 5px;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .popup-content button:hover {
+        background: #45a049;
+    }
+
+    .popup-content button:nth-child(n+3) {
+        background: #f44336;
+    }
+
+    .popup-content button:nth-child(n+3):hover {
+        background: #da190b;
+    }
+
+    /* SETTINGS POPUP */
+    #settings-popup {
+        z-index: 998;
+    }
+
+    .popup-scroll-container {
+        max-height: 80vh;
+        overflow-y: auto;
+        background: #2a2a2a;
+        padding: 20px;
+        border-radius: 12px;
+        color: white;
+    }
+
+    .popup-scroll-container h2 {
+        text-align: center;
+        margin-bottom: 10px;
+        font-size: 20px;
+    }
+
+    .settings-subtext {
+        font-size: 13px;
+        color: #aaa;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .settings-section {
+        background: #1a1a1a;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        border-left: 3px solid #4CAF50;
+    }
+
+    .settings-option {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .settings-option h3 {
+        font-size: 16px;
+        margin: 0;
+    }
+
+    .button-cover {
+        display: flex;
+        justify-content: center;
+    }
+
+    .button {
+        position: relative;
+        width: 50px;
+        height: 28px;
+        background: #4CAF50;
+        border-radius: 34px;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+    .button.r {
+        background: #ddd;
+    }
+
+    .checkbox {
+        display: none;
+    }
+
+    .knobs {
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        background: white;
+        border-radius: 50%;
+        top: 2px;
+        left: 2px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .checkbox:checked + .knobs {
+        left: 24px;
+    }
+
+    .checkbox:checked + .knobs + .layer {
+        background: #4CAF50;
+    }
+
+    .layer {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #ddd;
+        border-radius: 34px;
+        transition: all 0.3s ease;
+    }
+
+    .slider-container {
+        margin-top: 10px;
+    }
+
+    .slider-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: space-between;
+    }
+
+    .slider-controls h3 {
+        font-size: 14px;
+        margin: 0;
+        min-width: 60px;
+    }
+
+    .slider {
+        flex: 1;
+        cursor: pointer;
+    }
+
+    .slider-value {
+        min-width: 50px;
+        text-align: right;
+        font-size: 14px;
+    }
+
+    .size-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .size-btn {
+        width: 30px;
+        height: 30px;
+        background: #444;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .size-btn:hover {
+        background: #555;
+    }
+
+    #button-size-value {
+        min-width: 50px;
+        text-align: center;
+    }
+
+    #edit-circle-text-btn,
+    #change-image-btn,
+    #reset-default-settings,
+    #factory-reset {
+        width: 100%;
+        padding: 12px;
+        background: #444;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    #edit-circle-text-btn:hover,
+    #change-image-btn:hover,
+    #reset-default-settings:hover {
+        background: #555;
+    }
+
+    .reset-btn {
+        background: #f44336 !important;
+    }
+
+    .reset-btn:hover {
+        background: #da190b !important;
+    }
+
+    .reset-default-section #reset-default-settings {
+        background: #FF9800;
+    }
+
+    .reset-default-section #reset-default-settings:hover {
+        background: #e68900;
+    }
+
+    #settings-popup button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 10px;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    #settings-popup button:hover {
+        background: #45a049;
+    }
+
+    #close-settings {
+        background: #666 !important;
+    }
+
+    #close-settings:hover {
+        background: #777 !important;
+    }
+
+    /* CIRCLE TEXT EDIT MODAL */
+    #circle-text-edit-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 999;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #circle-text-edit-modal.active {
+        display: flex;
+    }
+
+    .circle-text-edit-container {
+        background: #2a2a2a;
+        padding: 30px;
+        border-radius: 12px;
+        text-align: center;
+        max-width: 90%;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .circle-text-edit-container h3 {
+        color: white;
+        margin-bottom: 15px;
+        font-size: 20px;
+    }
+
+    .circle-text-edit-container p {
+        color: #aaa;
+        margin-bottom: 15px;
+        font-size: 14px;
+    }
+
+    #circle-text-input {
+        width: 100%;
+        padding: 10px;
+        background: #1a1a1a;
+        color: white;
+        border: 2px solid #4CAF50;
+        border-radius: 6px;
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+
+    .space-warning {
+        color: #FF9800;
+        font-size: 12px;
+        margin-bottom: 15px;
+    }
+
+    .circle-text-edit-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .circle-text-edit-buttons button {
+        flex: 1;
+        padding: 10px;
+        background: #444;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .circle-text-edit-buttons button:hover {
+        background: #555;
+    }
+
+    #save-circle-text {
+        background: #4CAF50;
+    }
+
+    #save-circle-text:hover {
+        background: #45a049;
+    }
+
+    #clear-circle-text {
+        background: #f44336;
+    }
+
+    #clear-circle-text:hover {
+        background: #da190b;
+    }
+
+    /* POPUP NOTIFY */
+    .popupnotify {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 1001;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .popupnotify.active {
+        display: flex;
+    }
+
+    .popupnotify-content {
+        background: #2a2a2a;
+        padding: 30px;
+        border-radius: 12px;
+        max-width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .popupnotify-title {
+        color: #4CAF50;
+        font-size: 20px;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .popupnotify-content p {
+        color: white;
+        margin-bottom: 10px;
+        line-height: 1.6;
+    }
+
+    .popupnotify-content ul {
+        color: white;
+        margin: 15px 20px;
+        text-align: left;
+    }
+
+    .popupnotify-content li {
+        margin-bottom: 8px;
+    }
+
+    .popupclear-highlight {
+        background: rgba(76, 175, 80, 0.1) !important;
+        padding: 10px;
+        border-left: 3px solid #4CAF50;
+        border-radius: 4px;
+        margin: 15px 0 !important;
+    }
+
+    .popupnotify-highlight {
+        background: rgba(255, 152, 0, 0.1) !important;
+        padding: 10px;
+        border-left: 3px solid #FF9800;
+        border-radius: 4px;
+        margin: 15px 0 !important;
+    }
+
+    #close-popupnotify {
+        display: block;
+        margin: 20px auto 0;
+        padding: 12px 24px;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    #close-popupnotify:hover {
+        background: #45a049;
+    }
+
+    /* STREAK POPUP */
+    #streak-popup .popup-content h2 {
+        color: #FF9800;
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .crop-frame {
+            max-width: 100%;
+            max-height: 300px;
+        }
+
+        .crop-overlay-circle {
+            max-width: 300px;
+            max-height: 300px;
+        }
+
+        .zoom-slider {
+            width: 120px;
+        }
+
+        .crop-button-group {
+            flex-direction: column;
+        }
+
+        .crop-button-group button {
+            width: 100%;
+        }
+
+        .count-display {
+            font-size: 36px;
+        }
+
+        .circle-container {
+            padding-top: 381px;
+        }
+
+        .round-image {
+            width: 150px;
+            height: 150px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .toolbar {
+            padding: 10px 12px;
+        }
+
+        .toolbar-logo {
+            width: 36px;
+            height: 36px;
+        }
+
+        .round-display {
+            font-size: 14px;
+        }
+
+        .count-display {
+            font-size: 32px;
+        }
+
+        #count-btn {
+            width: 80px;
+            height: 80px;
+        }
+
+        .circle-container {
+            padding-top: 300px;
+        }
+
+        .round-image {
+            width: 120px;
+            height: 120px;
+        }
+
+        .crop-frame {
+            max-height: 250px;
+        }
+
+        .crop-overlay-circle {
+            max-width: 250px;
+            max-height: 250px;
+        }
+    }
+  </style>
 </head>
 <body>
     <div style="display: none;"> Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere. </div>
@@ -216,30 +1193,27 @@
             <p>Select an image</p>
             <input type="file" id="image-upload" accept="image/*">
 
-            <div id="image-preview-container">
+            <div id="crop-container" class="crop-container">
+                <div class="crop-frame">
+                    <img id="crop-image" src="" alt="Crop Image" class="crop-image" />
+                    <div class="crop-overlay-circle"></div>
+                </div>
+            </div>
+
+            <div id="crop-controls" class="crop-controls">
+                <label for="zoom-slider">Zoom:</label>
+                <input type="range" id="zoom-slider" min="1" max="3" step="0.1" value="1" class="zoom-slider">
+                <span id="zoom-value">100%</span>
+            </div>
+
+            <div id="image-preview-container" style="display: none;">
                 <img id="image-preview" src="" alt="Image Preview" />
             </div>
 
-            <!-- ───── CROP UI (injected here, same visual flow) ───── -->
-            <div id="crop-wrapper">
-              <div id="crop-frame">
-                <img id="crop-img" src="" alt="Crop Preview">
-                <div id="crop-circle-overlay"></div>
-              </div>
-              <div id="crop-zoom-row">
-                <label for="crop-zoom-slider">Zoom</label>
-                <input type="range" id="crop-zoom-slider" min="0.1" max="3" step="0.01" value="1">
-                <span id="crop-zoom-value">1.0×</span>
-              </div>
-              <div id="crop-action-row">
-                <button id="crop-reset-btn">Reset Changes</button>
-                <button id="crop-apply-btn">Apply Crop ✓</button>
-              </div>
+            <div class="crop-button-group">
+                <button id="save-image-btn">Save Image</button>
+                <button id="reset-image-btn">Reset Image</button>
             </div>
-            <!-- ───── END CROP UI ───── -->
-
-            <button id="save-image-btn">Save Image</button>
-            <button id="reset-image-btn">Reset Image</button>
             <button id="close-image-menu">Close</button>
             <div id="made-with-container">
                 <img id="made-with-img" src="rkhkmc_mwfet.png" alt="Made With">
@@ -435,344 +1409,698 @@
 </div>
 
     <audio id="audio" src="rkhkmc.mp3" preload="auto"></audio>
-    <script src="script.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-  const changeImageBtn = document.getElementById('change-image-btn');
-  const imageUpload = document.getElementById('image-upload');
+        // ===== IMAGE CROPPING FUNCTIONALITY =====
+        let cropState = {
+            isDragging: false,
+            startX: 0,
+            startY: 0,
+            offsetX: 0,
+            offsetY: 0,
+            zoom: 1,
+            imageWidth: 0,
+            imageHeight: 0
+        };
 
-  if (changeImageBtn) {
-    changeImageBtn.addEventListener('click', () => {
-      document.getElementById('image-change-menu').style.display = 'block';
-    });
-  }
+        const imageUpload = document.getElementById('image-upload');
+        const cropContainer = document.getElementById('crop-container');
+        const cropControls = document.getElementById('crop-controls');
+        const cropFrame = document.querySelector('.crop-frame');
+        const cropImage = document.getElementById('crop-image');
+        const zoomSlider = document.getElementById('zoom-slider');
+        const zoomValue = document.getElementById('zoom-value');
+        const saveImageBtn = document.getElementById('save-image-btn');
+        const resetImageBtn = document.getElementById('reset-image-btn');
+        const closeImageMenu = document.getElementById('close-image-menu');
+        const imageChangeMenu = document.getElementById('image-change-menu');
 
-  if (imageUpload) {
-    imageUpload.addEventListener('change', (event) => {});
-  }
+        // Handle image upload
+        imageUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    cropImage.src = event.target.result;
+                    cropContainer.classList.add('active');
+                    cropControls.classList.add('active');
+                    
+                    // Reset crop state
+                    cropState.offsetX = 0;
+                    cropState.offsetY = 0;
+                    cropState.zoom = 1;
+                    zoomSlider.value = 1;
+                    updateZoomValue();
+                    updateCropImagePosition();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
 
-  // Initialize audio with sound on
-  document.getElementById('audio').volume = 1;
-  document.getElementById('audio').muted = false;
-});
-</script>
-<script>
-        if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-  }).catch(function(error) {
-    console.log('ServiceWorker registration failed: ', error);
-  });
-}
-    </script>
-    <script>
-document.addEventListener('DOMContentLoaded', () => {
-    let deferredPrompt;
-    const installBtn = document.getElementById('install-btn');
+        // Zoom slider
+        zoomSlider.addEventListener('input', (e) => {
+            cropState.zoom = parseFloat(e.target.value);
+            updateZoomValue();
+            updateCropImagePosition();
+        });
 
-    if (!installBtn) return;
-
-    function isMobileDevice() {
-        return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    }
-
-    function isPWAInstalled() {
-        return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-    }
-
-    if (isPWAInstalled() || !isMobileDevice()) {
-        installBtn.style.display = 'none';
-        return;
-    }
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-
-        if (!isPWAInstalled()) {
-            installBtn.style.display = 'block';
+        function updateZoomValue() {
+            const percentage = Math.round(cropState.zoom * 100);
+            zoomValue.textContent = percentage + '%';
         }
 
-        installBtn.addEventListener('click', async () => {
-            installBtn.style.display = 'none';
-            deferredPrompt.prompt();
-            const choiceResult = await deferredPrompt.userChoice;
-            console.log(choiceResult.outcome === 'accepted' ? 'User installed PWA' : 'User dismissed PWA install');
-            deferredPrompt = null;
+        // Mouse/Touch drag functionality
+        cropFrame.addEventListener('mousedown', startDrag);
+        cropFrame.addEventListener('touchstart', startDrag);
+
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('touchmove', drag, { passive: false });
+
+        document.addEventListener('mouseup', stopDrag);
+        document.addEventListener('touchend', stopDrag);
+
+        function startDrag(e) {
+            cropState.isDragging = true;
+            cropFrame.classList.add('dragging');
+            
+            const pos = getEventPosition(e);
+            cropState.startX = pos.x;
+            cropState.startY = pos.y;
+        }
+
+        function drag(e) {
+            if (!cropState.isDragging) return;
+            
+            e.preventDefault();
+            
+            const pos = getEventPosition(e);
+            const dx = pos.x - cropState.startX;
+            const dy = pos.y - cropState.startY;
+            
+            const maxOffsetX = (cropState.imageWidth * cropState.zoom - cropFrame.offsetWidth) / 2;
+            const maxOffsetY = (cropState.imageHeight * cropState.zoom - cropFrame.offsetHeight) / 2;
+            
+            cropState.offsetX = Math.max(-maxOffsetX, Math.min(maxOffsetX, cropState.offsetX + dx));
+            cropState.offsetY = Math.max(-maxOffsetY, Math.min(maxOffsetY, cropState.offsetY + dy));
+            
+            cropState.startX = pos.x;
+            cropState.startY = pos.y;
+            
+            updateCropImagePosition();
+        }
+
+        function stopDrag() {
+            cropState.isDragging = false;
+            cropFrame.classList.remove('dragging');
+        }
+
+        function getEventPosition(e) {
+            if (e.touches) {
+                return {
+                    x: e.touches[0].clientX,
+                    y: e.touches[0].clientY
+                };
+            }
+            return {
+                x: e.clientX,
+                y: e.clientY
+            };
+        }
+
+        function updateCropImagePosition() {
+            const scale = cropState.zoom;
+            const translateX = cropState.offsetX;
+            const translateY = cropState.offsetY;
+            
+            cropImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+        }
+
+        // Set initial image dimensions when image loads
+        cropImage.addEventListener('load', () => {
+            cropState.imageWidth = cropImage.naturalWidth;
+            cropState.imageHeight = cropImage.naturalHeight;
         });
-    });
 
-    window.addEventListener('appinstalled', () => {
-        console.log('PWA Installed - Hiding Install Button');
-        installBtn.style.display = 'none';
-    });
-});
-</script>
-<script>
-   document.addEventListener('DOMContentLoaded', () => {
-   function adjustCircleContainer() {
-    const circleContainer = document.querySelector('.circle-container');
-    if (!circleContainer) return;
+        // Save image with crop
+        saveImageBtn.addEventListener('click', saveCroppedImage);
 
-    const isMobile = /Android|iPhone|iPad|iPod/.test(navigator.userAgent);
-    const isPWAInstalled = isMobile && (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true);
+        function saveCroppedImage() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            const frameSize = cropFrame.offsetWidth;
+            canvas.width = frameSize;
+            canvas.height = frameSize;
+            
+            const img = new Image();
+            img.onload = () => {
+                const scale = cropState.zoom;
+                const offsetX = cropState.offsetX;
+                const offsetY = cropState.offsetY;
+                
+                ctx.drawImage(
+                    img,
+                    -offsetX / scale,
+                    -offsetY / scale,
+                    img.width / scale,
+                    img.height / scale
+                );
+                
+                const croppedImageUrl = canvas.toDataURL('image/png');
+                
+                // Save to localStorage
+                localStorage.setItem('customCenterImage', croppedImageUrl);
+                
+                // Update the main image
+                const roundImage = document.getElementById('round-image');
+                roundImage.src = croppedImageUrl;
+                
+                // Close the menu
+                closeImageMenu.click();
+                
+                // Show success message
+                alert('Image saved successfully!');
+            };
+            img.src = cropImage.src;
+        }
 
-    // Base padding values
-    let basePadding;
-    if (isMobile) {
-        basePadding = isPWAInstalled ? 321 : 450;
-    } else {
-        basePadding = window.innerWidth <= 768 ? 381 : 423;
-    }
-       
-    // Adjust padding based on button size (3px per 10% size change)
-    const sizeAdjustment = (currentButtonSize - 100) * 3; // 3px per 10%
-    const newPadding = basePadding + sizeAdjustment;
+        // Reset image
+        resetImageBtn.addEventListener('click', () => {
+            imageUpload.value = '';
+            cropContainer.classList.remove('active');
+            cropControls.classList.remove('active');
+            cropImage.src = '';
+            cropState.offsetX = 0;
+            cropState.offsetY = 0;
+            cropState.zoom = 1;
+            zoomSlider.value = 1;
+        });
 
-    circleContainer.style.setProperty("padding-top", `${newPadding}px`, "important");
-}
+        // Close image menu
+        closeImageMenu.addEventListener('click', () => {
+            imageChangeMenu.style.display = 'none';
+            resetImageBtn.click();
+        });
 
-    setTimeout(() => {
-        adjustCircleContainer();
-        window.addEventListener('resize', adjustCircleContainer);
-    }, 200);
+        // ===== MAIN APP FUNCTIONALITY =====
+        let count = 0;
+        let round = 0;
+        let streak = 0;
+        let lastDate = null;
+        let currentButtonSize = 100;
 
-    window.addEventListener('appinstalled', () => {
-        setTimeout(adjustCircleContainer, 500);
-    });
-});
-    
-</script>
+        const countDisplay = document.getElementById('count-display');
+        const roundDisplay = document.getElementById('round-display');
+        const countBtn = document.getElementById('count-btn');
+        const resetCountBtn = document.getElementById('reset-count-btn');
+        const resetRoundBtn = document.getElementById('reset-round-btn');
+        const settingsBtn = document.getElementById('settings-btn');
+        const changeImageBtn = document.getElementById('change-image-btn');
+        const audio = document.getElementById('audio');
 
-<!-- ═══════════════════════════════════════════════════
-     IMAGE CROP FEATURE — Self-contained, no dependencies
-     Intercepts the existing image-upload input and shows
-     a fixed-size crop UI before the image is committed.
-     ═══════════════════════════════════════════════════ -->
-<script>
-(function () {
-  'use strict';
+        // Load data from localStorage
+        function loadData() {
+            const savedCount = localStorage.getItem('count');
+            const savedRound = localStorage.getItem('round');
+            const savedStreak = localStorage.getItem('streak');
+            const savedDate = localStorage.getItem('lastDate');
+            const savedButtonSize = localStorage.getItem('buttonSize');
+            const savedSettings = localStorage.getItem('settings');
 
-  /* ── References ── */
-  const imageUpload      = document.getElementById('image-upload');
-  const previewContainer = document.getElementById('image-preview-container');
-  const previewImg       = document.getElementById('image-preview');
-  const cropWrapper      = document.getElementById('crop-wrapper');
-  const cropFrame        = document.getElementById('crop-frame');
-  const cropImg          = document.getElementById('crop-img');
-  const zoomSlider       = document.getElementById('crop-zoom-slider');
-  const zoomValue        = document.getElementById('crop-zoom-value');
-  const applyBtn         = document.getElementById('crop-apply-btn');
-  const resetBtn         = document.getElementById('crop-reset-btn');
+            count = savedCount ? parseInt(savedCount) : 0;
+            round = savedRound ? parseInt(savedRound) : 0;
+            streak = savedStreak ? parseInt(savedStreak) : 0;
+            lastDate = savedDate ? new Date(savedDate) : new Date();
+            currentButtonSize = savedButtonSize ? parseInt(savedButtonSize) : 100;
 
-  /* ── Crop state ── */
-  let FRAME_SIZE = 240;  // dynamic — set per image based on min(w,h), max 240
-  let scale      = 1;
-  let imgW       = 0;    // base image width at scale=1 inside frame
-  let imgH       = 0;    // base image height at scale=1 inside frame
-  let offsetX    = 0;
-  let offsetY    = 0;
-  let initOffsetX = 0;   // initial centered offsets for reset
-  let initOffsetY = 0;
-  let isDragging  = false;
-  let dragStartX  = 0;
-  let dragStartY  = 0;
-  let baseOffsetX = 0;
-  let baseOffsetY = 0;
-  let naturalSrc  = '';
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                document.getElementById('sound-toggle').checked = settings.sound;
+                document.getElementById('volume-slider').value = settings.volume;
+                document.getElementById('count-vibration-toggle').checked = settings.countVibration;
+                document.getElementById('count-vibration-slider').value = settings.countVibrationStrength;
+                document.getElementById('complete-vibration-toggle').checked = settings.completeVibration;
+                document.getElementById('complete-vibration-slider').value = settings.completeVibrationStrength;
+                document.getElementById('streak-popup-toggle').checked = settings.streakPopup;
 
-  /* ── Clamp so image always covers the entire frame square ── */
-  function clampX(x) {
-    const scaledW = imgW * scale;
-    const minX = Math.min(0, FRAME_SIZE - scaledW);
-    const maxX = Math.max(0, FRAME_SIZE - scaledW);
-    if (scaledW >= FRAME_SIZE) return Math.min(0, Math.max(FRAME_SIZE - scaledW, x));
-    return Math.min(FRAME_SIZE - scaledW, Math.max(0, x));
-  }
+                updateVolumeDisplay();
+                updateVibrationDisplay();
+            }
 
-  function clampY(y) {
-    const scaledH = imgH * scale;
-    if (scaledH >= FRAME_SIZE) return Math.min(0, Math.max(FRAME_SIZE - scaledH, y));
-    return Math.min(FRAME_SIZE - scaledH, Math.max(0, y));
-  }
+            const savedImage = localStorage.getItem('customCenterImage');
+            if (savedImage) {
+                document.getElementById('round-image').src = savedImage;
+            }
 
-  /* ── Apply transform to DOM image ── */
-  function applyTransform() {
-    cropImg.style.width  = (imgW * scale) + 'px';
-    cropImg.style.height = (imgH * scale) + 'px';
-    cropImg.style.left   = offsetX + 'px';
-    cropImg.style.top    = offsetY + 'px';
-  }
+            const savedText = localStorage.getItem('circleText');
+            if (savedText) {
+                document.getElementById('circle-text-input').value = savedText;
+                renderCircleText(savedText);
+            }
 
-  /* ── Reset position & zoom to initial state ── */
-  function resetToInitial() {
-    scale    = 1;
-    offsetX  = initOffsetX;
-    offsetY  = initOffsetY;
-    zoomSlider.value      = 1;
-    zoomValue.textContent = '1.0×';
-    applyTransform();
-  }
+            updateDisplay();
+            updateButtonSize();
+            updateStreakDisplay();
+            checkStreakReset();
+        }
 
-  /* ── Open cropper when file is chosen ── */
-  imageUpload.addEventListener('change', function (e) {
-    const file = e.target.files[0];
-    if (!file) return;
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('count', count);
+            localStorage.setItem('round', round);
+            localStorage.setItem('streak', streak);
+            localStorage.setItem('lastDate', lastDate.toISOString());
+            localStorage.setItem('buttonSize', currentButtonSize);
+        }
 
-    const reader = new FileReader();
-    reader.onload = function (ev) {
-      naturalSrc = ev.target.result;
-      const tempImg = new Image();
-      tempImg.onload = function () {
-        const nw = tempImg.naturalWidth;
-        const nh = tempImg.naturalHeight;
+        // Update displays
+        function updateDisplay() {
+            countDisplay.textContent = count;
+            roundDisplay.textContent = `Round: ${round}`;
+        }
 
-        /* Frame size = min dimension of image, capped at 240px.
-           This prevents the frame from ever exceeding the image's
-           shorter side, so no dead space on either axis. */
-        FRAME_SIZE = Math.min(240, nw, nh);
+        // Update button size
+        function updateButtonSize() {
+            const size = (currentButtonSize / 100) * 100;
+            countBtn.style.width = `${size}px`;
+            countBtn.style.height = `${size}px`;
+            adjustCircleContainer();
+        }
 
-        /* Apply frame size to DOM */
-        cropFrame.style.width  = FRAME_SIZE + 'px';
-        cropFrame.style.height = FRAME_SIZE + 'px';
+        // Adjust circle container padding
+        function adjustCircleContainer() {
+            const circleContainer = document.querySelector('.circle-container');
+            if (!circleContainer) return;
 
-        /* Update zoom row width to match */
-        document.getElementById('crop-zoom-row').style.width = FRAME_SIZE + 'px';
+            const isMobile = /Android|iPhone|iPad|iPod/.test(navigator.userAgent);
+            const isPWAInstalled = isMobile && (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true);
 
-        /* Update radial gradient overlay to match new frame (it's always square so this is automatic) */
+            let basePadding;
+            if (isMobile) {
+                basePadding = isPWAInstalled ? 321 : 450;
+            } else {
+                basePadding = window.innerWidth <= 768 ? 381 : 423;
+            }
+            
+            const sizeAdjustment = (currentButtonSize - 100) * 3;
+            const newPadding = basePadding + sizeAdjustment;
 
-        /* Scale image so it fills the frame (cover: larger side fills, smaller side overflows) */
-        const ratio = Math.max(FRAME_SIZE / nw, FRAME_SIZE / nh);
-        imgW = nw * ratio;
-        imgH = nh * ratio;
+            circleContainer.style.setProperty("padding-top", `${newPadding}px`, "important");
+        }
 
-        /* Center image inside frame */
-        initOffsetX = (FRAME_SIZE - imgW) / 2;
-        initOffsetY = (FRAME_SIZE - imgH) / 2;
-        offsetX = initOffsetX;
-        offsetY = initOffsetY;
+        // Count button click
+        countBtn.addEventListener('click', () => {
+            count++;
+            updateDisplay();
+            saveData();
 
-        /* Reset zoom */
-        scale = 1;
-        zoomSlider.value      = 1;
-        zoomValue.textContent = '1.0×';
+            if (document.getElementById('count-vibration-toggle').checked && navigator.vibrate) {
+                const vibrationStrength = parseInt(document.getElementById('count-vibration-slider').value);
+                navigator.vibrate(vibrationStrength);
+            }
 
-        cropImg.src = naturalSrc;
-        applyTransform();
+            if (count === 108) {
+                showPopup('popup-108');
+            }
+        });
 
-        /* Show cropper, hide old preview */
-        previewContainer.classList.add('hidden-by-crop');
-        cropWrapper.style.display = 'flex';
-      };
-      tempImg.src = naturalSrc;
-    };
-    reader.readAsDataURL(file);
-  });
+        // Reset count
+        resetCountBtn.addEventListener('click', () => {
+            if (count > 0) {
+                showPopup('popup-count-reset');
+            }
+        });
 
-  /* ── Zoom slider ── */
-  zoomSlider.addEventListener('input', function () {
-    const newScale = parseFloat(this.value);
-    /* Zoom toward center of frame */
-    const cx   = FRAME_SIZE / 2;
-    const cy   = FRAME_SIZE / 2;
-    const imgCX = (cx - offsetX) / scale;
-    const imgCY = (cy - offsetY) / scale;
-    scale   = newScale;
-    offsetX = clampX(cx - imgCX * scale);
-    offsetY = clampY(cy - imgCY * scale);
-    zoomValue.textContent = newScale.toFixed(1) + '×';
-    applyTransform();
-  });
+        // Reset round
+        resetRoundBtn.addEventListener('click', () => {
+            if (round > 0) {
+                showPopup('popup-round-reset');
+            }
+        });
 
-  /* ── Reset Changes ── */
-  resetBtn.addEventListener('click', resetToInitial);
+        // Confirm reset count
+        document.getElementById('confirm-reset-count').addEventListener('click', () => {
+            count = 0;
+            updateDisplay();
+            saveData();
+            closePopup('popup-count-reset');
+        });
 
-  /* ════════════
-     DRAG — Mouse
-  ════════════ */
-  cropFrame.addEventListener('mousedown', function (e) {
-    isDragging  = true;
-    dragStartX  = e.clientX;
-    dragStartY  = e.clientY;
-    baseOffsetX = offsetX;
-    baseOffsetY = offsetY;
-    e.preventDefault();
-  });
+        // Cancel reset count
+        document.getElementById('cancel-reset-count').addEventListener('click', () => {
+            closePopup('popup-count-reset');
+        });
 
-  document.addEventListener('mousemove', function (e) {
-    if (!isDragging) return;
-    offsetX = clampX(baseOffsetX + (e.clientX - dragStartX));
-    offsetY = clampY(baseOffsetY + (e.clientY - dragStartY));
-    applyTransform();
-  });
+        // Confirm reset round
+        document.getElementById('confirm-reset-round').addEventListener('click', () => {
+            round = 0;
+            updateDisplay();
+            saveData();
+            closePopup('popup-round-reset');
+        });
 
-  document.addEventListener('mouseup', function () { isDragging = false; });
+        // Cancel reset round
+        document.getElementById('cancel-reset-round').addEventListener('click', () => {
+            closePopup('popup-round-reset');
+        });
 
-  /* ════════════
-     DRAG — Touch
-  ════════════ */
-  cropFrame.addEventListener('touchstart', function (e) {
-    if (e.touches.length !== 1) return;
-    isDragging  = true;
-    dragStartX  = e.touches[0].clientX;
-    dragStartY  = e.touches[0].clientY;
-    baseOffsetX = offsetX;
-    baseOffsetY = offsetY;
-    e.preventDefault();
-  }, { passive: false });
+        // Confirm reset 108
+        document.getElementById('confirm-reset-108').addEventListener('click', () => {
+            count = 0;
+            round++;
+            updateDisplay();
+            saveData();
+            updateStreakDisplay();
+            closePopup('popup-108');
 
-  document.addEventListener('touchmove', function (e) {
-    if (!isDragging || e.touches.length !== 1) return;
-    offsetX = clampX(baseOffsetX + (e.touches[0].clientX - dragStartX));
-    offsetY = clampY(baseOffsetY + (e.touches[0].clientY - dragStartY));
-    applyTransform();
-    e.preventDefault();
-  }, { passive: false });
+            if (document.getElementById('sound-toggle').checked) {
+                playSound();
+            }
 
-  document.addEventListener('touchend', function () { isDragging = false; });
+            if (document.getElementById('complete-vibration-toggle').checked && navigator.vibrate) {
+                const vibrationStrength = parseInt(document.getElementById('complete-vibration-slider').value);
+                navigator.vibrate(vibrationStrength);
+            }
 
-  /* ════════════════════════════════
-     APPLY — render circular crop to canvas → data-URL
-  ════════════════════════════════ */
-  applyBtn.addEventListener('click', function () {
-    const canvas  = document.createElement('canvas');
-    const OUTPUT  = FRAME_SIZE; // output matches the frame size
-    canvas.width  = OUTPUT;
-    canvas.height = OUTPUT;
-    const ctx     = canvas.getContext('2d');
+            if (document.getElementById('streak-popup-toggle').checked) {
+                showStreakPopup();
+            }
+        });
 
-    /* Clip to perfect circle */
-    ctx.beginPath();
-    ctx.arc(OUTPUT / 2, OUTPUT / 2, OUTPUT / 2, 0, Math.PI * 2);
-    ctx.closePath();
-    ctx.clip();
+        // Cancel reset 108
+        document.getElementById('cancel-reset-108').addEventListener('click', () => {
+            closePopup('popup-108');
+        });
 
-    /* Map frame coords → output coords (1:1 since OUTPUT === FRAME_SIZE) */
-    const sourceImg = new Image();
-    sourceImg.onload = function () {
-      ctx.drawImage(sourceImg, offsetX, offsetY, imgW * scale, imgH * scale);
-      const croppedDataURL = canvas.toDataURL('image/png');
+        // Play sound
+        function playSound() {
+            audio.volume = parseInt(document.getElementById('volume-slider').value) / 210;
+            audio.currentTime = 0;
+            audio.play().catch(err => console.log('Audio play failed:', err));
+        }
 
-      /* Feed into existing preview so "Save Image" works unchanged */
-      previewImg.src = croppedDataURL;
-      previewContainer.classList.remove('hidden-by-crop');
-      previewContainer.style.display = 'block';
+        // Update volume display
+        function updateVolumeDisplay() {
+            const volume = document.getElementById('volume-slider').value;
+            document.getElementById('volume-value').textContent = volume;
+        }
 
-      /* Hide cropper */
-      cropWrapper.style.display = 'none';
+        // Update vibration displays
+        function updateVibrationDisplay() {
+            const countVib = document.getElementById('count-vibration-slider').value;
+            document.getElementById('count-vibration-value').textContent = countVib + 'ms';
 
-      /* Update the main round-image immediately */
-      const roundImage = document.getElementById('round-image');
-      if (roundImage) roundImage.src = croppedDataURL;
-    };
-    sourceImg.src = naturalSrc;
-  });
+            const completeVib = document.getElementById('complete-vibration-slider').value;
+            document.getElementById('complete-vibration-value').textContent = completeVib + 'ms';
+        }
 
-})();
-</script>
-<!-- ═══════════════════════════════════════════════════
-     END IMAGE CROP FEATURE
-     ═══════════════════════════════════════════════════ -->
+        // Volume slider
+        document.getElementById('volume-slider').addEventListener('input', updateVolumeDisplay);
 
+        // Vibration sliders
+        document.getElementById('count-vibration-slider').addEventListener('input', updateVibrationDisplay);
+        document.getElementById('complete-vibration-slider').addEventListener('input', updateVibrationDisplay);
+
+        // Button size controls
+        document.getElementById('decrease-btn-size').addEventListener('click', () => {
+            if (currentButtonSize > 50) {
+                currentButtonSize -= 10;
+                document.getElementById('button-size-value').textContent = currentButtonSize + '%';
+                updateButtonSize();
+                saveData();
+            }
+        });
+
+        document.getElementById('increase-btn-size').addEventListener('click', () => {
+            if (currentButtonSize < 150) {
+                currentButtonSize += 10;
+                document.getElementById('button-size-value').textContent = currentButtonSize + '%';
+                updateButtonSize();
+                saveData();
+            }
+        });
+
+        // Settings button
+        settingsBtn.addEventListener('click', () => {
+            document.getElementById('settings-popup').classList.add('active');
+        });
+
+        // Close settings
+        document.getElementById('close-settings').addEventListener('click', () => {
+            document.getElementById('settings-popup').classList.remove('active');
+        });
+
+        // Save settings
+        document.getElementById('save-settings').addEventListener('click', () => {
+            const settings = {
+                sound: document.getElementById('sound-toggle').checked,
+                volume: parseInt(document.getElementById('volume-slider').value),
+                countVibration: document.getElementById('count-vibration-toggle').checked,
+                countVibrationStrength: parseInt(document.getElementById('count-vibration-slider').value),
+                completeVibration: document.getElementById('complete-vibration-toggle').checked,
+                completeVibrationStrength: parseInt(document.getElementById('complete-vibration-slider').value),
+                streakPopup: document.getElementById('streak-popup-toggle').checked
+            };
+            localStorage.setItem('settings', JSON.stringify(settings));
+            alert('Settings saved!');
+            document.getElementById('settings-popup').classList.remove('active');
+        });
+
+        // Change image button
+        changeImageBtn.addEventListener('click', () => {
+            document.getElementById('image-change-menu').style.display = 'block';
+        });
+
+        // Edit circle text
+        document.getElementById('edit-circle-text-btn').addEventListener('click', () => {
+            document.getElementById('circle-text-edit-modal').classList.add('active');
+        });
+
+        // Save circle text
+        document.getElementById('save-circle-text').addEventListener('click', () => {
+            const text = document.getElementById('circle-text-input').value;
+            localStorage.setItem('circleText', text);
+            renderCircleText(text);
+            document.getElementById('circle-text-edit-modal').classList.remove('active');
+        });
+
+        // Clear circle text
+        document.getElementById('clear-circle-text').addEventListener('click', () => {
+            document.getElementById('circle-text-input').value = '';
+        });
+
+        // Cancel circle text edit
+        document.getElementById('cancel-circle-text').addEventListener('click', () => {
+            document.getElementById('circle-text-edit-modal').classList.remove('active');
+        });
+
+        // Render circle text
+        function renderCircleText(text) {
+            const circleText = document.querySelector('.circle-text');
+            const cleanText = text.replace(/\s/g, '');
+            
+            if (!cleanText) {
+                circleText.innerHTML = '';
+                return;
+            }
+
+            const radius = 140;
+            const angleSlice = (2 * Math.PI) / cleanText.length;
+            
+            let svg = `<svg viewBox="0 0 300 300" width="280" height="280">`;
+            
+            for (let i = 0; i < cleanText.length; i++) {
+                const char = cleanText[i];
+                const angle = i * angleSlice - Math.PI / 2;
+                const x = 150 + radius * Math.cos(angle);
+                const y = 150 + radius * Math.sin(angle);
+                
+                const rotationAngle = (angle * 180) / Math.PI + 90;
+                
+                svg += `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" 
+                        transform="rotate(${rotationAngle} ${x} ${y})" 
+                        style="font-size: 18px; font-weight: 700; fill: #4CAF50; letter-spacing: 8px;">
+                        ${char}
+                        </text>`;
+            }
+            
+            svg += `</svg>`;
+            circleText.innerHTML = svg;
+        }
+
+        // Show popup
+        function showPopup(popupId) {
+            document.getElementById(popupId).classList.add('active');
+        }
+
+        // Close popup
+        function closePopup(popupId) {
+            document.getElementById(popupId).classList.remove('active');
+        }
+
+        // Update streak display
+        function updateStreakDisplay() {
+            const streakDisplay = document.getElementById('streak-display');
+            streakDisplay.textContent = `🔥 Streak: ${streak} days`;
+            
+            const calendar = document.getElementById('streak-calendar');
+            calendar.innerHTML = '';
+            for (let i = 0; i < Math.min(streak, 30); i++) {
+                const day = document.createElement('div');
+                day.className = 'streak-day active';
+                calendar.appendChild(day);
+            }
+        }
+
+        // Check streak reset
+        function checkStreakReset() {
+            const today = new Date();
+            const lastDateObj = new Date(lastDate);
+            
+            const timeDiff = today - lastDateObj;
+            const dayDiff = timeDiff / (1000 * 60 * 60 * 24);
+            
+            if (dayDiff > 1) {
+                streak = 0;
+                updateStreakDisplay();
+            }
+        }
+
+        // Show streak popup
+        function showStreakPopup() {
+            streak++;
+            updateStreakDisplay();
+            saveData();
+
+            const messages = [
+                `Amazing! You've completed ${streak} consecutive rounds! 🎉`,
+                `Fantastic! ${streak} rounds in a row! Keep it up! 🚀`,
+                `Incredible! Your streak is now ${streak} days! 🔥`,
+                `You're on fire! ${streak} consecutive rounds! 💪`
+            ];
+
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            document.getElementById('streak-message').textContent = randomMessage;
+            document.getElementById('streak-popup').classList.add('active');
+        }
+
+        // Close streak popup
+        document.getElementById('close-streak-popup').addEventListener('click', () => {
+            document.getElementById('streak-popup').classList.remove('active');
+        });
+
+        // Reset to default settings
+        document.getElementById('reset-default-settings').addEventListener('click', () => {
+            document.getElementById('sound-toggle').checked = true;
+            document.getElementById('volume-slider').value = 210;
+            document.getElementById('count-vibration-toggle').checked = false;
+            document.getElementById('count-vibration-slider').value = 60;
+            document.getElementById('complete-vibration-toggle').checked = true;
+            document.getElementById('complete-vibration-slider').value = 1000;
+            document.getElementById('streak-popup-toggle').checked = true;
+
+            updateVolumeDisplay();
+            updateVibrationDisplay();
+            alert('Settings reset to default!');
+        });
+
+        // Factory reset
+        document.getElementById('factory-reset').addEventListener('click', () => {
+            if (confirm('Are you sure? This will delete ALL data including count, rounds, streak, and custom settings!')) {
+                localStorage.clear();
+                alert('All data has been cleared!');
+                location.reload();
+            }
+        });
+
+        // Close popup notify
+        document.getElementById('close-popupnotify').addEventListener('click', () => {
+            document.getElementById('popupnotify').classList.remove('active');
+        });
+
+        // Set current year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            
+            const hasVisited = localStorage.getItem('hasVisited');
+            if (!hasVisited) {
+                document.getElementById('popupnotify').classList.add('active');
+                localStorage.setItem('hasVisited', 'true');
+            }
+
+            const changeImageBtn = document.getElementById('change-image-btn');
+            if (changeImageBtn) {
+                changeImageBtn.addEventListener('click', () => {
+                    document.getElementById('image-change-menu').style.display = 'block';
+                });
+            }
+
+            document.getElementById('audio').volume = 1;
+            document.getElementById('audio').muted = false;
+
+            setTimeout(() => {
+                adjustCircleContainer();
+                window.addEventListener('resize', adjustCircleContainer);
+            }, 200);
+
+            window.addEventListener('appinstalled', () => {
+                setTimeout(adjustCircleContainer, 500);
+            });
+        });
+
+        // Service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+                console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            }).catch(function(error) {
+                console.log('ServiceWorker registration failed: ', error);
+            });
+        }
+
+        // PWA Install button
+        document.addEventListener('DOMContentLoaded', () => {
+            let deferredPrompt;
+            const installBtn = document.getElementById('install-btn');
+
+            if (!installBtn) return;
+
+            function isMobileDevice() {
+                return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            }
+
+            function isPWAInstalled() {
+                return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            }
+
+            if (isPWAInstalled() || !isMobileDevice()) {
+                installBtn.style.display = 'none';
+                return;
+            }
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+
+                if (!isPWAInstalled()) {
+                    installBtn.style.display = 'block';
+                }
+
+                installBtn.addEventListener('click', async () => {
+                    installBtn.style.display = 'none';
+                    deferredPrompt.prompt();
+                    const choiceResult = await deferredPrompt.userChoice;
+                    console.log(choiceResult.outcome === 'accepted' ? 'User installed PWA' : 'User dismissed PWA install');
+                    deferredPrompt = null;
+                });
+            });
+
+            window.addEventListener('appinstalled', () => {
+                console.log('PWA Installed - Hiding Install Button');
+                installBtn.style.display = 'none';
+            });
+        });
+    </script>
 </body>
 </html>
