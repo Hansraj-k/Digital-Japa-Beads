@@ -126,7 +126,7 @@
         <div class="circle-container">
             <img src="rkhkmc.png" alt="Round Image" class="round-image" id="round-image">
             <div class="circle-text"></div></div>
-        <!-- IMAGE CROP MENU with fixed frame + precise preview matching -->
+        <!-- IMAGE CROP MENU with natural fit and exact preview matching -->
         <div id="image-change-menu" class="image-change-menu crop-menu-fixed">
             <p>Select an image</p>
             <input type="file" id="image-upload" accept="image/*">
@@ -458,7 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
     
 </script>
-<!-- Fixed cropping script with exact preview matching and 1x initial scale -->
+<!-- Fixed cropping script with natural fit and exact preview matching -->
 <script>
 (function() {
     // DOM elements
@@ -577,7 +577,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateTransform();
     });
 
-    // File selection
+    // File selection with natural fit based on dimensions
     imageUpload.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -593,13 +593,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 naturalHeight = cropImg.naturalHeight;
                 imageLoaded = true;
                 
-                // Set scale to 1 (no zoom)
-                scale = 1.0;
+                // Calculate natural fit: whichever dimension fits the crop container
+                // If width > height, fit width; if height > width, fit height
+                const widthRatio = cropSize / naturalWidth;
+                const heightRatio = cropSize / naturalHeight;
+                
+                // Use the smaller ratio to ensure the image fits within the crop area
+                // This gives a natural view without cropping
+                scale = Math.min(widthRatio, heightRatio);
+                
+                // Center the image
                 translateX = 0;
                 translateY = 0;
                 
                 // Save initial state
-                initialScale = 1.0;
+                initialScale = scale;
                 initialTranslateX = 0;
                 initialTranslateY = 0;
                 
@@ -617,7 +625,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resetToInitial();
     });
 
-    // Save image - EXACT preview match
+    // Save image - EXACT preview match using same transform values
     function saveCroppedImage() {
         if (!imageLoaded) return;
 
@@ -627,10 +635,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const ctx = canvas.getContext('2d');
 
         // Calculate the source rectangle that exactly matches what's inside the circular preview
+        // Using the SAME transform values that are applied to the preview image
         const centerX = cropSize / 2;
         const centerY = cropSize / 2;
         
-        // Map preview center to original image coordinates
+        // Map preview center to original image coordinates using current translate and scale
         const origCenterX = (centerX - translateX) / scale;
         const origCenterY = (centerY - translateY) / scale;
         
@@ -640,13 +649,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const srcX = origCenterX - srcSize / 2;
         const srcY = origCenterY - srcSize / 2;
 
-        // Draw circular crop
+        // Draw circular crop exactly as seen in preview
         ctx.beginPath();
         ctx.arc(centerX, centerY, centerX, 0, 2 * Math.PI);
         ctx.closePath();
         ctx.clip();
 
-        // Draw the exact visible portion
+        // Draw the exact visible portion using calculated source rectangle
         ctx.drawImage(cropImg, srcX, srcY, srcSize, srcSize, 0, 0, cropSize, cropSize);
 
         // Save to round image
