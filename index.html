@@ -6,503 +6,740 @@
     <meta name="theme-color" content="#000000">
     <title>Digital Japa Beads | Chant Your Mantra Anytime, Anywhere</title>
     <meta name="msvalidate.01" content="602813D68275679853EC01C7C59F7C9C" />
-    <!-- Basic SEO Meta Tags (unchanged) -->
+
+<!-- Basic SEO Meta Tags -->
     <meta name="description" content="Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere.">
     <meta name="keywords" content="Digital Japa Beads, Online Japa Counter, Chanting Counter, Japa Counter, Hare Krishna Counter, Hare Krishna Maha Mantra Counter, Mantra Counter, Count My Mantra, Chanting App, Tally Counter, Mala Beads Online, Digital Japa Counter, Tally Japa Counter, Spiritual Chant Counter, Meditation Counter, Digital Mala">
     <meta name="author" content="Websites by Hansraj Kondeda">
+
+    <!-- Open Graph / Social Sharing Meta Tags -->
     <meta property="og:title" content="Digital Japa Beads | Chant Your Mantra Anytime, Anywhere">
     <meta property="og:description" content="Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere.">
     <meta property="og:url" content="https://digitaljapabeads.netlify.app">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="https://digitaljapabeads.netlify.app/rkhkmclogosm.png">
+    <meta property="og:image" content="https://digitaljapabeads.netlify.app/rkhkmclogosm.png"> <!-- Replace with actual image URL -->
+
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Digital Japa Beads | Chant Your Mantra Anytime, Anywhere">
-    <meta name="twitter:description" content="Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere.">
-    <meta name="twitter:image" content="https://digitaljapabeads.netlify.app/rkhkmclogosm.png">
-    <meta name="twitter:url" content="https://digitaljapabeads.netlify.app">
+<meta name="twitter:title" content="Digital Japa Beads | Chant Your Mantra Anytime, Anywhere">
+<meta name="twitter:description" content="Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere.">
+<meta name="twitter:image" content="https://digitaljapabeads.netlify.app/rkhkmclogosm.png">
+<meta name="twitter:url" content="https://digitaljapabeads.netlify.app">
+
+    <!-- Favicon -->
     <link rel="icon" href="rkhkmclogo.jpg" type="image/x-icon">
+
+    <!-- Canonical URL -->
     <link rel="canonical" href="https://digitaljapabeads.netlify.app">
+    <!-- Structured Data (Optional for better visibility) -->
+   <!-- <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "url": "https://digitaljapabeads.netlify.app",
+        "name": "Digital Japa Beads",
+        "description": "Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere."
+    }
+    </script> -->
+
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="rkhkmclogo.jpg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        /* all your existing styles remain, plus new crop modal styles */
-        a{ color: black; }
-        a:hover { color: black; text-decoration: none; }
-        .sold{ filter: grayscale(100%); height: 100px; }
-        .sold:hover{ filter: grayscale(0%); }
-        ::-webkit-scrollbar { width: 5.1px; }
-        ::-webkit-scrollbar-track { box-shadow: transparent; }
-        ::-webkit-scrollbar-thumb { background: white; border-radius: 19px; }
-        ::-webkit-scrollbar { background: black; }
-        ::-webkit-scrollbar-thumb:hover { background: white; }
+    <script>
+        document.addEventListener('contextmenu', (event) => event.preventDefault());
+    </script>
+    <style type="text/css">
+    a{
+      color: black;
+    }
+    a:hover {
+      color: black;
+      text-decoration: none;
+    }
+    .sold{
+      filter: grayscale(100%);
+      height: 100px;
+    }
+    .sold:hover{
+      filter: grayscale(0%);
+    }
 
-        /* Crop modal specific */
-        #crop-modal {
-            display: none;
-            position: fixed;
-            z-index: 10000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.85);
-            backdrop-filter: blur(4px);
-        }
-        .crop-modal-content {
-            position: relative;
-            background: #111;
-            margin: 5% auto;
-            padding: 20px;
-            width: min(600px, 96%);
-            border-radius: 32px;
-            border: 1px solid #333;
-            color: white;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-        }
-        .crop-area-wrapper {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 1/1;
-            background: #1a1a1a;
-            border-radius: 24px;
-            overflow: hidden;
-            touch-action: none;
-            user-select: none;
-            border: 2px solid #444;
-            margin: 20px 0;
-        }
-        #crop-image {
-            display: block;
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            cursor: grab;
-            transition: transform 0.05s ease;
-        }
-        #crop-image.dragging {
-            cursor: grabbing;
-        }
-        .crop-guide-circle {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 92%;  /* slightly smaller than square to show circle guide */
-            height: 92%;
-            border: 3px dashed rgba(255,215,0,0.9);
-            border-radius: 50%;
-            pointer-events: none;
-            box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);
-            z-index: 10;
-        }
-        .crop-controls {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            align-items: center;
-            margin: 20px 0;
-        }
-        .crop-controls button {
-            background: #2a2a2a;
-            border: none;
-            color: white;
-            font-size: 24px;
-            width: 50px;
-            height: 50px;
-            border-radius: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border: 1px solid #444;
-        }
-        .crop-controls button:hover {
-            background: #3a3a3a;
-        }
-        .crop-controls span {
-            font-size: 18px;
-            min-width: 70px;
-            text-align: center;
-        }
-        .crop-action-btns {
-            display: flex;
-            gap: 15px;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
-        .crop-action-btns button {
-            padding: 12px 28px;
-            border-radius: 40px;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-        }
-        #crop-save-btn {
-            background: #f5b342;
-            color: black;
-        }
-        #crop-cancel-btn {
-            background: #333;
-            color: white;
-        }
-        .zoom-slider {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .zoom-slider input {
-            width: 100%;
-        }
-        /* existing image change menu adjustments */
-        .image-change-menu {
-            display: none; /* hidden by default */
-        }
-    </style>
+    /* width */
+    ::-webkit-scrollbar {
+      width: 5.1px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+      box-shadow: transparent; 
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: white; 
+      border-radius: 19px;
+    }
+    /* Handle */
+    ::-webkit-scrollbar {
+      background: black; 
+    }
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: white; 
+    }
+  </style>
 </head>
 <body>
     <div style="display: none;"> Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere. </div>
-    <div style="display: none;"> Digital Japa Beads is your go-to online japa counter, mantra counter, and Hare Krishna chanting tool. </div>
-    
-    <!-- Crop Modal (new) -->
-    <div id="crop-modal">
-        <div class="crop-modal-content">
-            <h2 style="margin-top:0;">Crop Image <span style="font-size:14px; color:#aaa;">(square crop, circular preview)</span></h2>
-            <div class="crop-area-wrapper" id="crop-wrapper">
-                <img id="crop-image" src="" alt="Crop preview" draggable="false">
-                <div class="crop-guide-circle"></div>
-            </div>
-            <div class="crop-controls">
-                <button id="zoom-out-btn"><i class="fas fa-search-minus"></i></button>
-                <div class="zoom-slider">
-                    <input type="range" id="zoom-slider" min="0.3" max="3" step="0.01" value="1">
-                </div>
-                <button id="zoom-in-btn"><i class="fas fa-search-plus"></i></button>
-            </div>
-            <div class="crop-controls" style="justify-content: space-between;">
-                <span><i class="fas fa-arrows-alt"></i> drag to reposition</span>
-                <span id="zoom-percent">100%</span>
-            </div>
-            <div class="crop-action-btns">
-                <button id="crop-cancel-btn">Cancel</button>
-                <button id="crop-save-btn">Apply Crop</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- existing popupnotify etc -->
-    <div id="popupnotify" class="popupnotify"> ... </div> <!-- abbreviated for brevity, full content from original would be here -->
-    <div class="container">
-        <!-- exactly your existing toolbar etc -->
-    </div>
-
-    <!-- include all original html sections (footer, modals, etc) but for space we keep them referenced.
-         Since this is a full replacement, we must ensure all original elements are present.
-         To keep answer focused, I'll embed minimal but all scripts and styles will be merged.
-    -->
-    <!-- ORIGINAL CONTENT (simplified here but must be intact) -->
+    <div style="display: none;"> Digital Japa Beads is your go-to online japa counter, mantra counter, and Hare Krishna chanting tool. Whether you're looking for a digital mala, a tally japa counter, or just want to count your mantra anywhere, this is your spiritual solution. Great for daily japa practice and mantra meditation. </div>
     <div id="popupnotify" class="popupnotify">
-        <div class="popupnotify-content settings-scroll">
-            <p class="popupnotify-title">Customize Your Vibe ✨</p>
-            <p>Wanna tweak your settings? Tap the settings button to:</p>
-            <ul><li>Change notification & vibration settings 🔔</li><li>Switch up the center image 🎨</li><li>Change the text around the center image 📝</li><li>Resize the count button 🔢</li><li>Enable or disable streak popup 🔄🔥</li></ul>
-            <p class="popupclear-highlight">Note: Your counter data saves automatically in your browser...</p>
-            <p class="popupnotify-highlight"><strong>Pro Tip:</strong><br> 108 chants = 1 round of progress! 🚀</p>
-            <button id="close-popupnotify">Got it! ✅</button>
-        </div>
+    <div class="popupnotify-content settings-scroll">
+        <p class="popupnotify-title">Customize Your Vibe ✨</p>
+        <p>Wanna tweak your settings? Tap the settings button to:</p>
+        <ul>
+            <li>Change notification & vibration settings 🔔</li>
+            <li>Switch up the center image 🎨</li>
+            <li>Change the text around the center image 📝</li>
+            <li>Resize the count button 🔢</li>
+            <li>Enable or disable streak popup 🔄🔥</li>
+        </ul>
+        <p class="popupclear-highlight">Note: Your counter data saves automatically in your browser, letting you pick up where you left off. Clearing your browser's cache or data will reset it.</p>
+        <p class="popupnotify-highlight"><strong>Pro Tip:</strong><br> 108 chants = 1 round of progress! 🚀</p>
+        <button id="close-popupnotify">Got it! ✅</button>
     </div>
+</div>
     <div class="container">
         <div class="toolbar">
             <img src="rkhkmclogo.jpg" alt="Logo" class="toolbar-logo">
-            <div class="round-display-container"><div class="round-display" id="round-display">Round: 0</div></div>
-            <div class="toolbar-right">
-                <button id="reset-round-btn" data-tooltip="Reset Round"><i class="fa-solid fa-arrows-rotate"></i></button>
-                <button id="settings-btn" data-tooltip="Settings"><i class="fa-solid fa-gear"></i></button>
+            <div class="round-display-container">
+                <div class="round-display" id="round-display">Round: 0</div>
             </div>
-        </div>
+            <div class="toolbar-right">
+                <button id="reset-round-btn" data-tooltip="Reset Round">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                </button>
+                <button id="settings-btn" data-tooltip="Settings">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+            </div></div>
         <div class="circle-container">
             <img src="rkhkmc.png" alt="Round Image" class="round-image" id="round-image">
-            <div class="circle-text"></div>
-        </div>
-        <div id="image-change-menu" class="image-change-menu">
+            <div class="circle-text"></div></div>
+        <!-- IMAGE CROP MENU (modified with fixed crop area & zoom/drag) -->
+        <div id="image-change-menu" class="image-change-menu crop-menu-fixed">
             <p>Select an image</p>
             <input type="file" id="image-upload" accept="image/*">
-            <div id="image-preview-container"><img id="image-preview" src="" alt="Image Preview" /></div>
+
+            <!-- Fixed-size crop container with circular overlay guide -->
+            <div id="crop-container" class="crop-container-fixed">
+                <div class="crop-area-square">
+                    <img id="crop-preview-img" src="" alt="Crop Preview" style="display: none;">
+                    <!-- Circular overlay inside square -->
+                    <div class="crop-circle-overlay"></div>
+                </div>
+            </div>
+            
+            <!-- Zoom slider and drag hint -->
+            <div class="crop-controls">
+                <label for="zoom-slider">Zoom: <span id="zoom-value">1x</span></label>
+                <input type="range" id="zoom-slider" min="0.5" max="3" step="0.01" value="1">
+                <p class="drag-hint"><i class="fa fa-hand-pointer"></i> Drag image to reposition</p>
+            </div>
+
+            <div id="image-preview-container" style="display: none;"> <!-- hidden original preview -->
+                <img id="image-preview" src="" alt="Image Preview" />
+            </div>
             <button id="save-image-btn">Save Image</button>
             <button id="reset-image-btn">Reset Image</button>
             <button id="close-image-menu">Close</button>
-            <div id="made-with-container"><img id="made-with-img" src="rkhkmc_mwfet.png" alt="Made With"></div>
+            <div id="made-with-container">
+                <img id="made-with-img" src="rkhkmc_mwfet.png" alt="Made With">
+            </div>
         </div>
-        <!-- settings popup etc omitted for space but must be present -->
-        <div id="settings-popup" class="popup">[full settings html from original]</div>
-        <div class="counter-container"><div class="count-display-container"><div class="count-display" id="count-display">0</div><button id="reset-count-btn" data-tooltip="Reset Count"><i class="fa-solid fa-arrows-rotate"></i></button></div></div>
-        <div class="buttons"><button id="count-btn"><img src="rkhkmc.jpg" alt="Plus Icon" class="rkhkmc"></button></div>
+        <div id="settings-popup" class="popup">
+<div class="popup-scroll-container">
+            <h2>Settings</h2>
+    <p class="settings-subtext" style="color:WHITE; font-size:12.9px">Note: Your counter data saves automatically in your browser, letting you pick up where you left off. Clearing your browser's cache or data will reset it.</p>
+            <div class="settings-section">
+                <div class="settings-option">
+                    <h3>Notification</h3>
+
+                    <div class="button-cover">
+                        <div class="button r">
+                            <input type="checkbox" id="sound-toggle" class="checkbox" checked>
+                            <div class="knobs"></div>
+                            <div class="layer"></div>
+                        </div>
+                    </div>
+                </div><p class="settings-subtext">Plays a musical notification after completing each round</p>
+                <div class="slider-container" id="volume-control-container">
+                    <div class="slider-controls"><h3>Volume</h3>
+                        <input type="range" min="0" max="210" value="210" class="slider" id="volume-slider">
+                        <span class="slider-value" id="volume-value">210</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section vibration-setting">
+    <div class="settings-option">
+        <h3>Vibration on Count</h3>
+        <div class="button-cover">
+            <div class="button r">
+                <input type="checkbox" id="count-vibration-toggle" class="checkbox">
+                <div class="knobs"></div>
+                <div class="layer"></div>
+            </div>
+        </div>
     </div>
-    <!-- footer etc -->
-    <div class="footer">...</div>
-    <div id="circle-text-edit-modal">...</div>
+    <div class="slider-container">
+        <div class="slider-controls"><h3>Haptics</h3>
+            <input type="range" min="30" max="90" value="60" class="slider" id="count-vibration-slider">
+            <span class="slider-value" id="count-vibration-value">60ms</span>
+        </div>
+    </div>
+</div>
+
+<div class="settings-section vibration-setting">
+    <div class="settings-option">
+        <h3>Vibration on 108 Counts</h3>
+        <div class="button-cover">
+            <div class="button r">
+                <input type="checkbox" id="complete-vibration-toggle" class="checkbox" checked>
+                <div class="knobs"></div>
+                <div class="layer"></div>
+            </div>
+        </div>
+    </div>
+    <div class="slider-container">
+        <div class="slider-controls"><h3>Haptics</h3>
+            <input type="range" min="600" max="1500" value="1000" class="slider" id="complete-vibration-slider">
+            <span class="slider-value" id="complete-vibration-value">1000ms</span>
+        </div>
+    </div>
+</div>
+
+<div class="settings-section">
+    <div class="settings-option">
+        <h3>Button Size</h3>
+        <div class="size-controls">
+            <button id="decrease-btn-size" class="size-btn">-</button>
+            <span id="button-size-value">100%</span>
+            <button id="increase-btn-size" class="size-btn">+</button>
+        </div>
+    </div>
+</div>
+<div class="settings-section">
+    <div class="settings-option">
+        <h3>Streak Popup Notifications</h3>
+        <div class="button-cover">
+            <div class="button r">
+                <input type="checkbox" id="streak-popup-toggle" class="checkbox" checked>
+                <div class="knobs"></div>
+                <div class="layer"></div>
+            </div>
+        </div>
+    </div>
+    <p class="settings-subtext">Show motivational popups when your streak updates</p>
+</div>
+    <div class="settings-section">
+    <div class="settings-option">
+
+        <button id="edit-circle-text-btn">Change Mantra</button>
+    </div>
+    <p class="settings-subtext">Customize the mantra displayed around the center image</p>
+</div>
+<div class="settings-section">
+                <div class="settings-option change-image-btn">
+              <!-- Image Change Button -->
+            <button id="change-image-btn">Change Image</button>
+                </div>
+</div>
+<div class="settings-section reset-default-section">
+    <div class="settings-option">
+        <button id="reset-default-settings" class="reset-default-btn">Reset to Default</button>
+    </div>
+</div><div class="settings-section">
+  <button id="factory-reset" class="reset-btn danger-btn">
+    <i class="fas fa-eraser"></i> Factory Reset
+  </button>
+  <p class="settings-subtext">Completely wipe ALL data and cached files</p>
+</div></div>
+            <button id="save-settings">Save Settings</button>
+            <button id="close-settings">Close</button>
+        </div>
+        <div class="counter-container">
+            <div class="count-display-container">
+                <div class="count-display" id="count-display">0</div>
+                <button id="reset-count-btn" data-tooltip="Reset Count">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                </button>
+            </div>
+        </div>
+        <div class="buttons">
+            <button id="count-btn">
+                <img src="rkhkmc.jpg" alt="Plus Icon" class="rkhkmc">
+            </button>
+        </div>
+    </div>
+    <div id="popup-108" class="popup">
+        <div class="popup-content">
+            <p>Counter reached 108 counts. Do you want to reset?</p>
+            <button id="confirm-reset-108">Reset Count</button>
+            <button id="cancel-reset-108">Cancel</button>
+        </div>
+    </div>
+    <div id="popup-count-reset" class="popup">
+        <div class="popup-content">
+            <p>Are you sure you want to reset the count only?</p>
+            <button id="confirm-reset-count">Yes</button>
+            <button id="cancel-reset-count">No</button>
+        </div>
+    </div>
+    <div id="popup-round-reset" class="popup">
+        <div class="popup-content">
+            <p>Are you sure you want to reset the round only?</p>
+            <button id="confirm-reset-round">Yes</button>
+            <button id="cancel-reset-round">No</button>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="containerk">
+            <hr>
+            <div class="streak-container">
+    <div class="streak-display" id="streak-display">🔥 Streak: 0 days</div>
+    <div class="streak-calendar" id="streak-calendar"></div>
+</div>
+<div id="streak-popup" class="popup">
+    <div class="popup-content">
+        <h2>🔥 Keep the Momentum Going!</h2>
+        <p id="streak-message"></p>
+        <button id="close-streak-popup">Awesome!</button>
+    </div>
+</div><br>
+            <div class="install-container">
+              <button id="install-btn">
+                <img src="rkhkmc-app .png" alt="Install PWA">
+              </button>
+            </div>
+            <p class="end">
+                <a href="https://hansrajweb.netlify.app">
+                    <img class="img" src="rkspsauswbhkb.png" alt="Footer Logo">
+                </a>
+            </p>
+            <p class="copyright">
+                <i class="fa fa-copyright"></i> <span id="current-year"></span> Digital Japa Beads. All rights reserved.
+            </p>
+        </div></div>
+<div id="circle-text-edit-modal">
+    <div class="circle-text-edit-container">
+        <h3>Edit Mantra</h3>
+        <p>Enter the text to display around the circle (spaces will be removed):</p>
+        <input type="text" id="circle-text-input" value="HAREKRISHNA" maxlength="20">
+        <div class="space-warning">Note: Spaces will be automatically removed</div>
+        <div class="circle-text-edit-buttons">
+            <button id="clear-circle-text">Clear Text</button>
+            <button id="save-circle-text">Save</button>
+            <button id="cancel-circle-text">Cancel</button>
+        </div>
+    </div>
+</div>
+
     <audio id="audio" src="rkhkmc.mp3" preload="auto"></audio>
-
+    <script src="script.js"></script>
     <script>
-        // ---- CROP INTEGRATION ----
-        (function() {
-            // state
-            let cropModal = document.getElementById('crop-modal');
-            let cropImage = document.getElementById('crop-image');
-            let cropWrapper = document.getElementById('crop-wrapper');
-            let zoomSlider = document.getElementById('zoom-slider');
-            let zoomPercent = document.getElementById('zoom-percent');
-            let zoomInBtn = document.getElementById('zoom-in-btn');
-            let zoomOutBtn = document.getElementById('zoom-out-btn');
-            let cropSaveBtn = document.getElementById('crop-save-btn');
-            let cropCancelBtn = document.getElementById('crop-cancel-btn');
-            
-            // transform state
-            let scale = 1;
-            let translateX = 0, translateY = 0;
-            let startX, startY, isDragging = false;
-            let originalImageWidth, originalImageHeight;
-            let currentFile = null;
-            let cropResolve = null;
-
-            // ensure modal exists (if not, create? but it's in html)
-            if (!cropModal) {
-                // fallback: dynamically create if missing (but we added)
-            }
-
-            // when user selects file from #image-upload, intercept and open crop
-            const originalUpload = document.getElementById('image-upload');
-            if (originalUpload) {
-                originalUpload.addEventListener('click', (e) => {
-                    // let change event handle, but we want to override later
-                });
-                originalUpload.addEventListener('change', function(e) {
-                    let file = e.target.files[0];
-                    if (!file) return;
-                    e.preventDefault(); // stop normal preview
-                    // open crop modal with file
-                    openCropModal(file).then(croppedBlob => {
-                        if (!croppedBlob) return; // cancelled
-                        // now feed to existing preview flow (simulate file selection)
-                        const dataTransfer = new DataTransfer();
-                        const croppedFile = new File([croppedBlob], "cropped.jpg", { type: "image/jpeg" });
-                        dataTransfer.items.add(croppedFile);
-                        originalUpload.files = dataTransfer.files;
-                        // trigger original change handlers? we need to manually update preview
-                        // trigger 'change' on #image-upload again? but would loop. Instead call preview update
-                        const previewImg = document.getElementById('image-preview');
-                        if (previewImg) {
-                            const reader = new FileReader();
-                            reader.onload = (e) => previewImg.src = e.target.result;
-                            reader.readAsDataURL(croppedFile);
-                        }
-                        // also simulate that save-image-btn uses current files; we can leave as is
-                    }).catch(() => {});
-                });
-            }
-
-            function openCropModal(file) {
-                // Reset transform
-                scale = 1;
-                translateX = 0;
-                translateY = 0;
-                zoomSlider.value = 1;
-                zoomPercent.innerText = '100%';
-                
-                return new Promise((resolve) => {
-                    cropResolve = resolve;
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        cropImage.src = e.target.result;
-                        cropImage.onload = () => {
-                            originalImageWidth = cropImage.naturalWidth;
-                            originalImageHeight = cropImage.naturalHeight;
-                            // initial fit: contain within wrapper
-                            fitImageToWrapper();
-                            cropModal.style.display = 'block';
-                        };
-                    };
-                    reader.readAsDataURL(file);
-                    currentFile = file;
-                });
-            }
-
-            function fitImageToWrapper() {
-                // center image with no translation, scale = 1 initially, but we can adjust to fit nicely
-                // we want at least fill the wrapper but show full image, so scale so that smaller dimension fills? 
-                // simpler: set scale so that image covers wrapper (min dimension fits). But for crop we start with 1 and let user zoom.
-                // we set scale so that the smaller side fits? but we want full image visible initially.
-                const wrapperRect = cropWrapper.getBoundingClientRect();
-                const wrapperSize = wrapperRect.width;
-                const imgRatio = originalImageWidth / originalImageHeight;
-                let initScale;
-                if (imgRatio > 1) {
-                    // wider than tall: fit height
-                    initScale = wrapperSize / originalImageHeight;
-                } else {
-                    initScale = wrapperSize / originalImageWidth;
-                }
-                // set scale and zero translate
-                scale = initScale * 0.9; // a bit smaller to see edges
-                translateX = 0;
-                translateY = 0;
-                zoomSlider.value = scale;
-                updateZoomPercent();
-                applyTransform();
-            }
-
-            function applyTransform() {
-                cropImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-            }
-
-            function updateZoomPercent() {
-                zoomPercent.innerText = Math.round(scale * 100) + '%';
-            }
-
-            // dragging
-            cropImage.addEventListener('mousedown', (e) => {
-                e.preventDefault();
-                isDragging = true;
-                startX = e.clientX - translateX;
-                startY = e.clientY - translateY;
-                cropImage.classList.add('dragging');
-            });
-            window.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                e.preventDefault();
-                translateX = e.clientX - startX;
-                translateY = e.clientY - startY;
-                applyTransform();
-            });
-            window.addEventListener('mouseup', () => {
-                isDragging = false;
-                cropImage.classList.remove('dragging');
-            });
-
-            // touch support
-            cropImage.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                if (e.touches.length === 1) {
-                    isDragging = true;
-                    startX = e.touches[0].clientX - translateX;
-                    startY = e.touches[0].clientY - translateY;
-                    cropImage.classList.add('dragging');
-                }
-            });
-            window.addEventListener('touchmove', (e) => {
-                if (!isDragging || e.touches.length !== 1) return;
-                e.preventDefault();
-                translateX = e.touches[0].clientX - startX;
-                translateY = e.touches[0].clientY - startY;
-                applyTransform();
-            });
-            window.addEventListener('touchend', () => {
-                isDragging = false;
-                cropImage.classList.remove('dragging');
-            });
-
-            // zoom
-            zoomSlider.addEventListener('input', (e) => {
-                scale = parseFloat(e.target.value);
-                updateZoomPercent();
-                applyTransform();
-            });
-            zoomInBtn.addEventListener('click', () => {
-                scale = Math.min(3, scale + 0.1);
-                zoomSlider.value = scale;
-                updateZoomPercent();
-                applyTransform();
-            });
-            zoomOutBtn.addEventListener('click', () => {
-                scale = Math.max(0.3, scale - 0.1);
-                zoomSlider.value = scale;
-                updateZoomPercent();
-                applyTransform();
-            });
-
-            // crop & save: extract square region using canvas
-            cropSaveBtn.addEventListener('click', () => {
-                // get visible crop area: wrapper size, image transform
-                const wrapperRect = cropWrapper.getBoundingClientRect();
-                const wrapperSize = wrapperRect.width;
-                const imgRect = cropImage.getBoundingClientRect();
-                
-                // create canvas with square size = wrapperSize
-                const canvas = document.createElement('canvas');
-                canvas.width = wrapperSize;
-                canvas.height = wrapperSize;
-                const ctx = canvas.getContext('2d');
-                
-                // draw the image portion that lies within wrapper, using transform
-                // compute source rect from original image
-                // image natural dimensions, scale, translate
-                // The image's display size: (originalWidth*scale) x (originalHeight*scale)
-                // but we want to map wrapper coordinates to image pixels.
-                // We have translateX, translateY which shift image relative to wrapper top-left.
-                // At (0,0) in wrapper, the image pixel shown is at (-translateX/scale, -translateY/scale) in original coordinates.
-                // The wrapper shows a region of size wrapperSize/scale in image pixels.
-                const sourceX = -translateX / scale;
-                const sourceY = -translateY / scale;
-                const sourceWidth = wrapperSize / scale;
-                const sourceHeight = wrapperSize / scale;
-                
-                // clamp to image bounds? optional but we draw only within image
-                ctx.drawImage(
-                    cropImage,
-                    sourceX, sourceY, sourceWidth, sourceHeight,
-                    0, 0, wrapperSize, wrapperSize
-                );
-                
-                canvas.toBlob((blob) => {
-                    if (blob && cropResolve) {
-                        cropResolve(blob);
-                        cropModal.style.display = 'none';
-                    }
-                }, 'image/jpeg', 0.92);
-            });
-
-            cropCancelBtn.addEventListener('click', () => {
-                if (cropResolve) cropResolve(null);
-                cropModal.style.display = 'none';
-            });
-
-            // close on outside click? optional
-            window.addEventListener('click', (e) => {
-                if (e.target === cropModal) {
-                    if (cropResolve) cropResolve(null);
-                    cropModal.style.display = 'none';
-                }
-            });
-        })();
-    </script>
-
-    <!-- All original scripts merged; keep your existing ones but ensure they reference correct elements.
-         We'll re-include the original script inline but careful not to break. For conciseness, I will trust that original script is loaded via script.js or included. 
-         But to keep functionality, we must include the original javascript content (which is large). Since this is a demonstration, I'll assume script.js includes all original logic.
-         The critical part is to make sure the image upload flow now uses crop. We already overrode change event.
-         Additionally we need to ensure "Change Image" button opens file dialog as usual. That is fine.
-         Also need to handle reset-image etc. The preview will show cropped version.
-    -->
-    <script src="script.js"></script> <!-- original script contains all counter logic, etc -->
-    <script>
-        // Additional glue: if original script initializes preview etc, we keep it.
-        // Re-run the crop integration after DOM ready.
         document.addEventListener('DOMContentLoaded', () => {
-            // ensure image-change-menu still works: change image button triggers upload click
-            const changeImageBtn = document.getElementById('change-image-btn');
-            const imageUpload = document.getElementById('image-upload');
-            if (changeImageBtn && imageUpload) {
-                changeImageBtn.addEventListener('click', () => {
-                    imageUpload.click(); // this will open file chooser, then our crop modal opens via 'change'
-                });
-            }
-            // close image menu if open (just in case)
-            document.getElementById('close-image-menu')?.addEventListener('click', () => {
-                document.getElementById('image-change-menu').style.display = 'none';
-            });
-        });
+  const changeImageBtn = document.getElementById('change-image-btn');
+  const imageUpload = document.getElementById('image-upload');
+
+  if (changeImageBtn) {
+    changeImageBtn.addEventListener('click', () => {
+      document.getElementById('image-change-menu').style.display = 'block';
+    });
+  }
+
+  if (imageUpload) {
+    imageUpload.addEventListener('change', (event) => {});
+  }
+
+  // Initialize audio with sound on
+  document.getElementById('audio').volume = 1;
+  document.getElementById('audio').muted = false;
+});
+</script>
+<script>
+        if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+  }).catch(function(error) {
+    console.log('ServiceWorker registration failed: ', error);
+  });
+}
     </script>
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    let deferredPrompt;
+    const installBtn = document.getElementById('install-btn');
+
+    if (!installBtn) return;
+
+    function isMobileDevice() {
+        return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    }
+
+    function isPWAInstalled() {
+        return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    }
+
+    if (isPWAInstalled() || !isMobileDevice()) {
+        installBtn.style.display = 'none';
+        return;
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+
+        if (!isPWAInstalled()) {
+            installBtn.style.display = 'block';
+        }
+
+        installBtn.addEventListener('click', async () => {
+            installBtn.style.display = 'none';
+            deferredPrompt.prompt();
+            const choiceResult = await deferredPrompt.userChoice;
+            console.log(choiceResult.outcome === 'accepted' ? 'User installed PWA' : 'User dismissed PWA install');
+            deferredPrompt = null;
+        });
+    });
+
+    window.addEventListener('appinstalled', () => {
+        console.log('PWA Installed - Hiding Install Button');
+        installBtn.style.display = 'none';
+    });
+});
+</script>
+<script>
+   document.addEventListener('DOMContentLoaded', () => {
+   function adjustCircleContainer() {
+    const circleContainer = document.querySelector('.circle-container');
+    if (!circleContainer) return;
+
+    const isMobile = /Android|iPhone|iPad|iPod/.test(navigator.userAgent);
+    const isPWAInstalled = isMobile && (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true);
+
+    // Base padding values
+    let basePadding;
+    if (isMobile) {
+        basePadding = isPWAInstalled ? 321 : 450;
+    } else {
+        basePadding = window.innerWidth <= 768 ? 381 : 423;
+    }
+       
+    // Adjust padding based on button size (3px per 10% size change)
+    const sizeAdjustment = (currentButtonSize - 100) * 3; // 3px per 10%
+    const newPadding = basePadding + sizeAdjustment;
+
+    circleContainer.style.setProperty("padding-top", `${newPadding}px`, "important");
+}
+
+    setTimeout(() => {
+        adjustCircleContainer();
+        window.addEventListener('resize', adjustCircleContainer);
+    }, 200);
+
+    window.addEventListener('appinstalled', () => {
+        setTimeout(adjustCircleContainer, 500);
+    });
+});
+    
+</script>
+<!-- New cropping script (fixed frame + drag/zoom) -->
+<script>
+(function() {
+    // DOM elements
+    const imageUpload = document.getElementById('image-upload');
+    const cropContainer = document.getElementById('crop-container');
+    const cropImg = document.getElementById('crop-preview-img');
+    const zoomSlider = document.getElementById('zoom-slider');
+    const zoomSpan = document.getElementById('zoom-value');
+    const saveImageBtn = document.getElementById('save-image-btn');
+    const resetImageBtn = document.getElementById('reset-image-btn');
+    const roundImage = document.getElementById('round-image'); // main display
+
+    let currentFile = null;
+    let scale = 1;
+    let translateX = 0, translateY = 0;
+    let isDragging = false;
+    let startDragX, startDragY;
+    let naturalWidth = 0, naturalHeight = 0;
+    let cropSize = 240; // fixed crop square size in px (matches CSS width/height)
+
+    // Initialize drag events on cropImg
+    cropImg.addEventListener('mousedown', (e) => {
+        if (!cropImg.src || cropImg.style.display === 'none') return;
+        e.preventDefault();
+        isDragging = true;
+        startDragX = e.clientX - translateX;
+        startDragY = e.clientY - translateY;
+        cropImg.style.cursor = 'grabbing';
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        translateX = e.clientX - startDragX;
+        translateY = e.clientY - startDragY;
+        clampTranslate();
+        updateCropTransform();
+    });
+
+    window.addEventListener('mouseup', () => {
+        if (isDragging) {
+            isDragging = false;
+            cropImg.style.cursor = 'grab';
+        }
+    });
+
+    // Touch support
+    cropImg.addEventListener('touchstart', (e) => {
+        if (!cropImg.src || cropImg.style.display === 'none') return;
+        e.preventDefault();
+        const touch = e.touches[0];
+        isDragging = true;
+        startDragX = touch.clientX - translateX;
+        startDragY = touch.clientY - translateY;
+    }, { passive: false });
+
+    window.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const touch = e.touches[0];
+        translateX = touch.clientX - startDragX;
+        translateY = touch.clientY - startDragY;
+        clampTranslate();
+        updateCropTransform();
+    }, { passive: false });
+
+    window.addEventListener('touchend', () => {
+        isDragging = false;
+    });
+
+    // Zoom slider
+    zoomSlider.addEventListener('input', (e) => {
+        scale = parseFloat(e.target.value);
+        zoomSpan.textContent = scale.toFixed(2) + 'x';
+        clampTranslate(); // ensure within bounds after scale change
+        updateCropTransform();
+    });
+
+    function clampTranslate() {
+        if (!cropImg.src || naturalWidth === 0) return;
+        // calculate boundaries based on scaled image and crop size
+        const scaledW = naturalWidth * scale;
+        const scaledH = naturalHeight * scale;
+        // max translate so that image edges don't go inside crop circle radius (approx half crop)
+        // we allow any part of image to be under circle, but must cover circle fully? We'll just prevent image from leaving crop area completely.
+        // simpler: keep image center within crop circle? we'll allow full movement but restrict so that image still covers circle.
+        const minX = cropSize/2 - scaledW/2;
+        const maxX = scaledW/2 - cropSize/2;
+        const minY = cropSize/2 - scaledH/2;
+        const maxY = scaledH/2 - cropSize/2;
+        translateX = Math.max(minX, Math.min(maxX, translateX));
+        translateY = Math.max(minY, Math.min(maxY, translateY));
+    }
+
+    function updateCropTransform() {
+        cropImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    }
+
+    // When file selected
+    imageUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        currentFile = file;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            cropImg.src = event.target.result;
+            cropImg.style.display = 'block';
+            cropImg.style.cursor = 'grab';
+            // reset scale/translate
+            scale = 1;
+            translateX = 0;
+            translateY = 0;
+            zoomSlider.value = 1;
+            zoomSpan.textContent = '1x';
+            // get natural dimensions after load
+            cropImg.onload = () => {
+                naturalWidth = cropImg.naturalWidth;
+                naturalHeight = cropImg.naturalHeight;
+                // ensure image covers crop area minimally (scale so that smaller dimension fills crop circle)
+                const scaleX = cropSize / naturalWidth;
+                const scaleY = cropSize / naturalHeight;
+                scale = Math.max(scaleX, scaleY); // fit inside but we need to cover circle, so use max to ensure smallest side covers circle? we want circle covered: ensure both dimensions >= cropSize after scale.
+                // Actually we want to guarantee circle is fully covered: need scale such that after scale, both dims >= cropSize.
+                // But for usability, we start with fit inside and allow zoom out to min 0.5. We'll set initial scale to cover circle:
+                scale = Math.max(cropSize / naturalWidth, cropSize / naturalHeight);
+                zoomSlider.value = scale;
+                zoomSpan.textContent = scale.toFixed(2) + 'x';
+                translateX = 0;
+                translateY = 0;
+                updateCropTransform();
+            };
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // Save cropped image: extract visible circle region from cropImg with current transform
+    function saveCroppedImage() {
+        if (!cropImg.src || naturalWidth === 0) return;
+
+        // Create canvas with cropSize dimensions
+        const canvas = document.createElement('canvas');
+        canvas.width = cropSize;
+        canvas.height = cropSize;
+        const ctx = canvas.getContext('2d');
+
+        // draw the transformed image region onto canvas so that circle area is centered
+        // cropImg transform: translate then scale. The visible part is centered in crop container.
+        // We need to compute source rectangle from original image.
+        // The center of crop container in image's original coordinates: (-translateX + cropSize/2) / scale in original pixels.
+        const centerX_orig = (-translateX + cropSize/2) / scale;
+        const centerY_orig = (-translateY + cropSize/2) / scale;
+        // source size in original pixels that covers cropSize pixels after scaling = cropSize / scale
+        const srcSize = cropSize / scale;
+        const srcX = centerX_orig - srcSize/2;
+        const srcY = centerY_orig - srcSize/2;
+
+        // Draw circular clip
+        ctx.beginPath();
+        ctx.arc(cropSize/2, cropSize/2, cropSize/2, 0, 2 * Math.PI);
+        ctx.closePath();
+        ctx.clip();
+
+        ctx.drawImage(cropImg, srcX, srcY, srcSize, srcSize, 0, 0, cropSize, cropSize);
+
+        // Get data URL and set to round-image
+        const dataURL = canvas.toDataURL('image/png');
+        roundImage.src = dataURL;
+        // Save to localStorage or handle persistence
+        try {
+            localStorage.setItem('customRoundImage', dataURL);
+        } catch (e) {}
+        
+        // Close menu after save
+        document.getElementById('image-change-menu').style.display = 'none';
+    }
+
+    saveImageBtn.addEventListener('click', saveCroppedImage);
+
+    // Reset to default image
+    resetImageBtn.addEventListener('click', () => {
+        roundImage.src = 'rkhkmc.png';
+        localStorage.removeItem('customRoundImage');
+        document.getElementById('image-change-menu').style.display = 'none';
+    });
+
+    // Close menu
+    document.getElementById('close-image-menu').addEventListener('click', () => {
+        document.getElementById('image-change-menu').style.display = 'none';
+    });
+
+    // Load saved image on startup if exists
+    const saved = localStorage.getItem('customRoundImage');
+    if (saved) roundImage.src = saved;
+})();
+</script>
+<!-- Additional CSS for fixed crop container and circular overlay -->
+<style>
+    .image-change-menu.crop-menu-fixed {
+        width: 320px;
+        max-width: 90%;
+    }
+    .crop-container-fixed {
+        width: 240px;
+        height: 240px;
+        margin: 15px auto;
+        position: relative;
+        overflow: hidden;
+        border: 2px solid #ffb347;
+        border-radius: 8px;
+        background: #222;
+        box-shadow: 0 0 0 1px #fff3;
+    }
+    .crop-area-square {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background: #1a1a1a;
+    }
+    #crop-preview-img {
+        max-width: none;
+        position: absolute;
+        width: auto;
+        height: auto;
+        transform-origin: center center;
+        cursor: grab;
+        user-select: none;
+        -webkit-user-drag: none;
+        display: none; /* shown when image loaded */
+        will-change: transform;
+    }
+    .crop-circle-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        box-shadow: 0 0 0 999px rgba(0, 0, 0, 0.6);
+        pointer-events: none;
+        border: 2px solid #ffb347;
+        box-sizing: border-box;
+    }
+    .crop-controls {
+        padding: 10px 0;
+        color: white;
+    }
+    .crop-controls label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 14px;
+    }
+    #zoom-slider {
+        width: 100%;
+        margin: 5px 0;
+    }
+    .drag-hint {
+        font-size: 13px;
+        color: #ccc;
+        margin: 5px 0;
+    }
+    /* keep original style for other menus, ensure crop container fixed size */
+    .image-change-menu {
+        background: #2c2c2c;
+        color: white;
+    }
+    .image-change-menu button {
+        background: #ffb347;
+        border: none;
+        padding: 8px 16px;
+        margin: 5px;
+        border-radius: 20px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .image-change-menu button:hover {
+        background: #ffa01e;
+    }
+    #image-preview-container {
+        display: none; /* hide old preview */
+    }
+</style>
 </body>
 </html>
