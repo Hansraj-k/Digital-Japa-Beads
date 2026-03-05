@@ -674,36 +674,35 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('image-change-menu').style.display = 'none';
     });
 
-    // ── FIX: Restore saved image on page load and ensure it works with crop menu ──
-    const saved = localStorage.getItem('customRoundImage');
-    if (saved) {
+    // ── Restore saved image on page load ────────────────────────
+    // Run AFTER all other scripts (including script.js) have finished,
+    // so nothing can overwrite our saved image.
+    function restoreSavedImage() {
+        const saved = localStorage.getItem('customRoundImage');
+        if (!saved) return;
+
+        // Apply immediately
         roundImage.src = saved;
-        
-        // Also store the saved image data for the crop menu when opened
-        const tempImg = new Image();
-        tempImg.onload = function() {
-            // Store the dimensions for when crop menu is opened
-            const savedNaturalWidth = this.naturalWidth;
-            const savedNaturalHeight = this.naturalHeight;
-            
-            // When the crop menu is opened, if we have a saved image, show it
-            const originalChangeImageBtnClick = document.getElementById('change-image-btn').onclick;
-            document.getElementById('change-image-btn').addEventListener('click', function() {
-                if (saved && cropImg.style.display === 'none') {
-                    cropImg.src = saved;
-                    cropImg.style.display = 'block';
-                    cropImg.style.cursor = 'grab';
-                    
-                    cropImg.onload = () => {
-                        naturalWidth = cropImg.naturalWidth;
-                        naturalHeight = cropImg.naturalHeight;
-                        loadedSrc = saved;
-                        resetToFit();
-                    };
-                }
-            });
-        };
-        tempImg.src = saved;
+
+        // Guard: if anything else changes the src back (e.g. script.js),
+        // restore it once more via a MutationObserver.
+        const observer = new MutationObserver(() => {
+            const current = localStorage.getItem('customRoundImage');
+            if (current && roundImage.src !== current) {
+                roundImage.src = current;
+            }
+        });
+        observer.observe(roundImage, { attributes: true, attributeFilter: ['src'] });
+
+        // Disconnect the observer after 3 s — by then all init scripts are done.
+        setTimeout(() => observer.disconnect(), 3000);
+    }
+
+    // Use 'load' (not DOMContentLoaded) so script.js has already run.
+    if (document.readyState === 'complete') {
+        restoreSavedImage();
+    } else {
+        window.addEventListener('load', restoreSavedImage);
     }
 })();
 </script>
