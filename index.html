@@ -30,6 +30,16 @@
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://digitaljapabeads.netlify.app">
+    <!-- Structured Data (Optional for better visibility) -->
+   <!-- <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "url": "https://digitaljapabeads.netlify.app",
+        "name": "Digital Japa Beads",
+        "description": "Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere."
+    }
+    </script> -->
 
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
@@ -81,6 +91,7 @@
 
     /* ───── IMAGE CROP FEATURE STYLES ───── */
 
+    /* Crop wrapper shown after image is selected */
     #crop-wrapper {
       display: none;
       flex-direction: column;
@@ -89,16 +100,17 @@
       margin-top: 10px;
     }
 
+    /* Fixed-size crop frame — size set dynamically by JS (min of img dimensions, max 240px) */
     #crop-frame {
       position: relative;
-      width: 240px;
-      height: 240px;
+      width: 240px;   /* default, overridden by JS */
+      height: 240px;  /* default, overridden by JS */
       max-width: 240px;
       max-height: 240px;
       overflow: hidden;
       background: #111;
       border: 2px solid #555;
-      border-radius: 50%;
+      border-radius: 50%; /* circular frame = no confusing second ring needed */
       cursor: grab;
       user-select: none;
       touch-action: none;
@@ -109,6 +121,7 @@
       cursor: grabbing;
     }
 
+    /* The actual image inside the crop frame — draggable */
     #crop-img {
       position: absolute;
       top: 0;
@@ -118,10 +131,12 @@
       will-change: transform;
     }
 
+    /* Circle overlay — hidden, frame itself is now circular */
     #crop-circle-overlay {
       display: none;
     }
 
+    /* Zoom slider row */
     #crop-zoom-row {
       display: flex;
       align-items: center;
@@ -148,197 +163,17 @@
       text-align: right;
     }
 
+    /* Crop action buttons */
     #crop-action-row {
       display: flex;
       gap: 8px;
     }
 
+    /* Keep existing image-preview-container hidden when cropper is active */
     #image-preview-container.hidden-by-crop {
       display: none !important;
     }
     /* ───── END CROP STYLES ───── */
-
-    /* ───── HISTORY FEATURE STYLES ───── */
-    #history-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      z-index: 9999;
-      overflow-y: auto;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    #history-modal.open { display: block; }
-
-    #history-modal-inner {
-      background: #111;
-      border: 1px solid #333;
-      border-radius: 16px;
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 20px;
-      color: white;
-    }
-
-    #history-modal-inner h2 {
-      margin: 0 0 6px;
-      font-size: 18px;
-      text-align: center;
-    }
-
-    #history-summary-bar {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin: 12px 0;
-    }
-
-    .hist-stat-box {
-      flex: 1;
-      min-width: 90px;
-      background: #1e1e1e;
-      border: 1px solid #333;
-      border-radius: 10px;
-      padding: 10px 8px;
-      text-align: center;
-    }
-
-    .hist-stat-box .hist-stat-val {
-      font-size: 22px;
-      font-weight: bold;
-      color: #fff;
-    }
-
-    .hist-stat-box .hist-stat-lbl {
-      font-size: 10px;
-      color: #aaa;
-      margin-top: 2px;
-    }
-
-    #history-filter-row {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
-
-    #history-filter-row button {
-      flex: 1;
-      padding: 6px 4px;
-      background: #222;
-      border: 1px solid #444;
-      border-radius: 8px;
-      color: #ccc;
-      font-size: 12px;
-      cursor: pointer;
-    }
-
-    #history-filter-row button.active {
-      background: #fff;
-      color: #000;
-      border-color: #fff;
-    }
-
-    #history-table-wrap {
-      max-height: 340px;
-      overflow-y: auto;
-    }
-
-    #history-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-
-    #history-table th {
-      position: sticky;
-      top: 0;
-      background: #1a1a1a;
-      color: #aaa;
-      padding: 8px 6px;
-      text-align: left;
-      border-bottom: 1px solid #333;
-    }
-
-    #history-table td {
-      padding: 7px 6px;
-      border-bottom: 1px solid #222;
-      color: #eee;
-    }
-
-    #history-table tr.missed td {
-      color: #e05555;
-      font-style: italic;
-    }
-
-    #history-table tr.counted td {
-      color: #cfffcf;
-    }
-
-    #close-history-modal {
-      display: block;
-      width: 100%;
-      margin-top: 14px;
-      padding: 10px;
-      background: #fff;
-      color: #000;
-      border: none;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    /* History toggle switch — reuse daily-reset style */
-    #history-switch {
-      position: relative;
-      display: inline-block;
-      width: 56px;
-      height: 28px;
-      flex-shrink: 0;
-    }
-    #history-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-      position: absolute;
-    }
-    #history-switch .djb-slider {
-      position: absolute;
-      cursor: pointer;
-      inset: 0;
-      background-color: #555;
-      border-radius: 28px;
-      transition: background-color 0.3s;
-    }
-    #history-switch .djb-slider:before {
-      content: "";
-      position: absolute;
-      height: 20px;
-      width: 20px;
-      left: 4px;
-      bottom: 4px;
-      background-color: white;
-      border-radius: 50%;
-      transition: transform 0.3s;
-    }
-    #history-switch input:checked + .djb-slider { background-color: #4caf50; }
-    #history-switch input:checked + .djb-slider:before { transform: translateX(28px); }
-
-    #view-history-btn {
-      margin-top: 6px;
-      padding: 8px 14px;
-      background: #222;
-      border: 1px solid #555;
-      border-radius: 8px;
-      color: #fff;
-      font-size: 13px;
-      cursor: pointer;
-      width: 100%;
-    }
-    #view-history-btn:hover { background: #333; }
-    /* ───── END HISTORY STYLES ───── */
     </style>
 </head>
 <body>
@@ -385,7 +220,7 @@
                 <img id="image-preview" src="" alt="Image Preview" />
             </div>
 
-            <!-- ───── CROP UI ───── -->
+            <!-- ───── CROP UI (injected here, same visual flow) ───── -->
             <div id="crop-wrapper">
               <div id="crop-frame">
                 <img id="crop-img" src="" alt="Crop Preview">
@@ -439,7 +274,7 @@
         <h3>Vibration on Count</h3>
         <div class="button-cover">
             <div class="button r">
-                <input type="checkbox" id="count-vibration-toggle" class="checkbox" checked>
+                <input type="checkbox" id="count-vibration-toggle" class="checkbox">
                 <div class="knobs"></div>
                 <div class="layer"></div>
             </div>
@@ -471,77 +306,6 @@
         </div>
     </div>
 </div>
-
-<!-- ───── DAILY RESET TOGGLE ───── -->
-<style>
-  #daily-reset-switch {
-    position: relative;
-    display: inline-block;
-    width: 56px;
-    height: 28px;
-    flex-shrink: 0;
-  }
-  #daily-reset-switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-    position: absolute;
-  }
-  #daily-reset-switch .djb-slider {
-    position: absolute;
-    cursor: pointer;
-    inset: 0;
-    background-color: #555;
-    border-radius: 28px;
-    transition: background-color 0.3s;
-  }
-  #daily-reset-switch .djb-slider:before {
-    content: "";
-    position: absolute;
-    height: 20px;
-    width: 20px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    border-radius: 50%;
-    transition: transform 0.3s;
-  }
-  #daily-reset-switch input:checked + .djb-slider {
-    background-color: #4caf50;
-  }
-  #daily-reset-switch input:checked + .djb-slider:before {
-    transform: translateX(28px);
-  }
-</style>
-<div class="settings-section">
-    <div class="settings-option">
-        <h3>Daily Reset</h3>
-        <label id="daily-reset-switch">
-            <input type="checkbox" id="daily-reset-toggle" checked>
-            <span class="djb-slider"></span>
-        </label>
-    </div>
-    <p class="settings-subtext">When enabled, count and rounds reset automatically each day. Turn off to keep your count and rounds running continuously across days.</p>
-</div>
-<!-- ───── END DAILY RESET TOGGLE ───── -->
-
-<!-- ═══════════════════════════════════════════════════
-     HISTORY SETTINGS SECTION (NEW)
-     ═══════════════════════════════════════════════════ -->
-<div class="settings-section">
-    <div class="settings-option">
-        <h3>Counting History</h3>
-        <label id="history-switch">
-            <input type="checkbox" id="history-toggle" checked>
-            <span class="djb-slider"></span>
-        </label>
-    </div>
-    <p class="settings-subtext">Store up to 18 months of counting history including total counts, rounds, and missed days</p>
-    <button id="view-history-btn"><i class="fas fa-history"></i> View History</button>
-</div>
-<!-- ═══════════════════════════════════════════════════
-     END HISTORY SETTINGS SECTION
-     ═══════════════════════════════════════════════════ -->
 
 <div class="settings-section">
     <div class="settings-option">
@@ -628,61 +392,6 @@
         </div>
     </div>
 
-    <!-- ═══════════════════════════════════════════════════
-         HISTORY MODAL (NEW)
-         ═══════════════════════════════════════════════════ -->
-    <div id="history-modal">
-      <div id="history-modal-inner">
-        <h2>📊 Counting History</h2>
-
-        <div id="history-summary-bar">
-          <div class="hist-stat-box">
-            <div class="hist-stat-val" id="hist-total-counts">0</div>
-            <div class="hist-stat-lbl">Total Counts</div>
-          </div>
-          <div class="hist-stat-box">
-            <div class="hist-stat-val" id="hist-total-rounds">0</div>
-            <div class="hist-stat-lbl">Total Rounds</div>
-          </div>
-          <div class="hist-stat-box">
-            <div class="hist-stat-val" id="hist-missed-days">0</div>
-            <div class="hist-stat-lbl">Missed Days</div>
-          </div>
-          <div class="hist-stat-box">
-            <div class="hist-stat-val" id="hist-active-days">0</div>
-            <div class="hist-stat-lbl">Active Days</div>
-          </div>
-        </div>
-
-        <div id="history-filter-row">
-          <button class="hist-filter active" data-days="7">7 Days</button>
-          <button class="hist-filter" data-days="30">30 Days</button>
-          <button class="hist-filter" data-days="90">3 Months</button>
-          <button class="hist-filter" data-days="180">6 Months</button>
-          <button class="hist-filter" data-days="547">18 Months</button>
-        </div>
-
-        <div id="history-table-wrap">
-          <table id="history-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Counts</th>
-                <th>Rounds</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="history-tbody"></tbody>
-          </table>
-        </div>
-
-        <button id="close-history-modal">Close</button>
-      </div>
-    </div>
-    <!-- ═══════════════════════════════════════════════════
-         END HISTORY MODAL
-         ═══════════════════════════════════════════════════ -->
-
     <div class="footer">
         <div class="containerk">
             <hr>
@@ -747,348 +456,6 @@
   document.getElementById('audio').muted = false;
 });
 </script>
-
-<!-- ═══════════════════════════════════════════════════
-     DAILY RESET FEATURE — FIXED so page refresh does NOT
-     reset counts unless a new day has actually occurred.
-     Reads/writes localStorage key 'dailyResetEnabled'.
-     ═══════════════════════════════════════════════════ -->
-<script>
-(function () {
-  'use strict';
-
-  const STORAGE_KEY_DAILY_RESET  = 'dailyResetEnabled';
-  const STORAGE_KEY_LAST_DATE    = 'lastResetDate';
-
-  /* ── Helpers ── */
-  function getTodayStr() {
-    const d = new Date();
-    return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
-  }
-
-  function isDailyResetEnabled() {
-    const val = localStorage.getItem(STORAGE_KEY_DAILY_RESET);
-    return val === null ? true : val === 'true';
-  }
-
-  /* ── Perform the daily reset of count + round ── */
-  function performDailyReset() {
-    // Save today's data to history BEFORE resetting
-    window.djbHistory && window.djbHistory.saveTodayBeforeReset();
-
-    // Reset count
-    localStorage.setItem('count', '0');
-    // Reset round — key name may vary; covering common variants
-    localStorage.setItem('round', '0');
-    localStorage.setItem('rounds', '0');
-    // Update last reset date
-    localStorage.setItem(STORAGE_KEY_LAST_DATE, getTodayStr());
-
-    // Update the visible DOM elements if they already exist
-    const countDisplay = document.getElementById('count-display');
-    const roundDisplay = document.getElementById('round-display');
-    if (countDisplay) countDisplay.textContent = '0';
-    if (roundDisplay) roundDisplay.textContent = 'Round: 0';
-  }
-
-  /* ── Check on page load whether a daily reset is due ──
-     KEY FIX: only reset if the STORED DATE differs from today.
-     Merely refreshing the page will NOT reset because the date
-     hasn't changed — only a new calendar day triggers the reset. */
-  function checkDailyReset() {
-    if (!isDailyResetEnabled()) return;
-    const lastDate = localStorage.getItem(STORAGE_KEY_LAST_DATE);
-    const today    = getTodayStr();
-    // Only reset when LAST DATE is different from today
-    if (lastDate !== today) {
-      performDailyReset();
-    }
-    // If lastDate === today → same day, just a page refresh → do nothing
-  }
-
-  /* ── Sync the toggle UI state from localStorage ── */
-  function syncToggleUI() {
-    const toggle = document.getElementById('daily-reset-toggle');
-    if (toggle) toggle.checked = isDailyResetEnabled();
-  }
-
-  /* ── Wire up the toggle after DOM is ready ── */
-  document.addEventListener('DOMContentLoaded', function () {
-    syncToggleUI();
-    checkDailyReset();
-
-    const toggle = document.getElementById('daily-reset-toggle');
-    if (!toggle) return;
-
-    toggle.addEventListener('change', function () {
-      localStorage.setItem(STORAGE_KEY_DAILY_RESET, toggle.checked ? 'true' : 'false');
-      if (toggle.checked) {
-        checkDailyReset();
-      }
-    });
-  });
-
-  window.djbDailyReset = {
-    check: checkDailyReset,
-    isEnabled: isDailyResetEnabled
-  };
-})();
-</script>
-<!-- ═══════════════════════════════════════════════════
-     END DAILY RESET FEATURE
-     ═══════════════════════════════════════════════════ -->
-
-<!-- ═══════════════════════════════════════════════════
-     HISTORY & DATA SAVING FEATURE (NEW)
-     ─────────────────────────────────────────────────
-     • Stores daily records in localStorage key 'djbHistory'
-       as a JSON object: { "YYYY-M-D": { counts, rounds } }
-     • Prunes entries older than 18 months automatically
-     • Tracks all days since first use; days with no entry
-       that fall between first-use date and yesterday are
-       counted as "missed days"
-     • History toggle persists in 'historyEnabled' key
-     • View History button opens the modal with filters
-     ═══════════════════════════════════════════════════ -->
-<script>
-(function () {
-  'use strict';
-
-  const HIST_KEY         = 'djbHistory';        // { "YYYY-M-D": {counts, rounds} }
-  const HIST_ENABLED_KEY = 'historyEnabled';
-  const FIRST_USE_KEY    = 'djbFirstUseDate';
-  const MAX_MONTHS       = 18;
-
-  /* ── Helpers ── */
-  function getTodayStr() {
-    const d = new Date();
-    return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
-  }
-
-  function dateStrToObj(str) {
-    const parts = str.split('-');
-    return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-  }
-
-  function formatDisplayDate(str) {
-    const d = dateStrToObj(str);
-    return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
-  }
-
-  function isHistoryEnabled() {
-    const val = localStorage.getItem(HIST_ENABLED_KEY);
-    return val === null ? true : val === 'true';
-  }
-
-  /* ── Load / Save history store ── */
-  function loadHistory() {
-    try {
-      return JSON.parse(localStorage.getItem(HIST_KEY) || '{}');
-    } catch (e) { return {}; }
-  }
-
-  function saveHistory(hist) {
-    try {
-      localStorage.setItem(HIST_KEY, JSON.stringify(hist));
-    } catch (e) {}
-  }
-
-  /* ── Prune entries older than 18 months ── */
-  function pruneOldHistory(hist) {
-    const cutoff = new Date();
-    cutoff.setMonth(cutoff.getMonth() - MAX_MONTHS);
-    let changed = false;
-    Object.keys(hist).forEach(function (key) {
-      if (dateStrToObj(key) < cutoff) {
-        delete hist[key];
-        changed = true;
-      }
-    });
-    if (changed) saveHistory(hist);
-    return hist;
-  }
-
-  /* ── Record first use date ── */
-  function ensureFirstUse() {
-    if (!localStorage.getItem(FIRST_USE_KEY)) {
-      localStorage.setItem(FIRST_USE_KEY, getTodayStr());
-    }
-  }
-
-  /* ── Save today's data from localStorage to history ── */
-  function saveTodayToHistory() {
-    if (!isHistoryEnabled()) return;
-    const today   = getTodayStr();
-    const counts  = parseInt(localStorage.getItem('count')  || '0', 10);
-    const rounds  = parseInt(localStorage.getItem('round')  || localStorage.getItem('rounds') || '0', 10);
-    let hist = loadHistory();
-    hist = pruneOldHistory(hist);
-    // Only write if there's something to record
-    if (counts > 0 || rounds > 0) {
-      hist[today] = { counts: counts, rounds: rounds };
-      saveHistory(hist);
-    }
-  }
-
-  /* ── Called by daily reset feature BEFORE wiping counts ── */
-  function saveTodayBeforeReset() {
-    saveTodayToHistory();
-  }
-
-  /* ── Build the list of all days from firstUse to yesterday ── */
-  function getAllDaysSinceFirstUse() {
-    const firstStr = localStorage.getItem(FIRST_USE_KEY);
-    if (!firstStr) return [];
-    const start = dateStrToObj(firstStr);
-    const end   = new Date();
-    end.setDate(end.getDate() - 1); // up to yesterday
-    const days = [];
-    const cur  = new Date(start);
-    while (cur <= end) {
-      const key = cur.getFullYear() + '-' + (cur.getMonth() + 1) + '-' + cur.getDate();
-      days.push(key);
-      cur.setDate(cur.getDate() + 1);
-    }
-    return days;
-  }
-
-  /* ── Filter history to last N days from today ── */
-  function getFilteredHistory(hist, days) {
-    const cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - days);
-    const result = [];
-    // Collect all days in range (recorded + missed)
-    const cur = new Date(cutoff);
-    const end = new Date();
-    end.setDate(end.getDate() - 1); // up to yesterday
-    while (cur <= end) {
-      const key = cur.getFullYear() + '-' + (cur.getMonth() + 1) + '-' + cur.getDate();
-      if (hist[key]) {
-        result.push({ date: key, counts: hist[key].counts, rounds: hist[key].rounds, missed: false });
-      } else {
-        // Only count as missed if after first-use date
-        const firstStr = localStorage.getItem(FIRST_USE_KEY);
-        if (firstStr && dateStrToObj(key) >= dateStrToObj(firstStr)) {
-          result.push({ date: key, counts: 0, rounds: 0, missed: true });
-        }
-      }
-      cur.setDate(cur.getDate() + 1);
-    }
-    return result.reverse(); // most recent first
-  }
-
-  /* ── Compute summary stats ── */
-  function computeSummary(hist, filterDays) {
-    const rows = getFilteredHistory(hist, filterDays);
-    let totalCounts = 0, totalRounds = 0, missed = 0, active = 0;
-    rows.forEach(function (r) {
-      if (r.missed) {
-        missed++;
-      } else {
-        totalCounts += r.counts;
-        totalRounds += r.rounds;
-        active++;
-      }
-    });
-    return { totalCounts: totalCounts, totalRounds: totalRounds, missed: missed, active: active, rows: rows };
-  }
-
-  /* ── Render history modal ── */
-  function renderHistory(filterDays) {
-    let hist = loadHistory();
-    hist = pruneOldHistory(hist);
-    const summary = computeSummary(hist, filterDays);
-
-    document.getElementById('hist-total-counts').textContent = summary.totalCounts.toLocaleString();
-    document.getElementById('hist-total-rounds').textContent = summary.totalRounds.toLocaleString();
-    document.getElementById('hist-missed-days').textContent  = summary.missed.toLocaleString();
-    document.getElementById('hist-active-days').textContent  = summary.active.toLocaleString();
-
-    const tbody = document.getElementById('history-tbody');
-    tbody.innerHTML = '';
-    if (summary.rows.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#777;padding:20px;">No history yet. Start chanting! 🙏</td></tr>';
-      return;
-    }
-    summary.rows.forEach(function (r) {
-      const tr = document.createElement('tr');
-      tr.className = r.missed ? 'missed' : 'counted';
-      tr.innerHTML =
-        '<td>' + formatDisplayDate(r.date) + '</td>' +
-        '<td>' + (r.missed ? '—' : r.counts.toLocaleString()) + '</td>' +
-        '<td>' + (r.missed ? '—' : r.rounds.toLocaleString()) + '</td>' +
-        '<td>' + (r.missed ? '😔 Missed' : '✅ Counted') + '</td>';
-      tbody.appendChild(tr);
-    });
-  }
-
-  /* ── Wire up everything after DOM ready ── */
-  document.addEventListener('DOMContentLoaded', function () {
-    ensureFirstUse();
-
-    // Sync history toggle
-    const histToggle = document.getElementById('history-toggle');
-    if (histToggle) {
-      histToggle.checked = isHistoryEnabled();
-      histToggle.addEventListener('change', function () {
-        localStorage.setItem(HIST_ENABLED_KEY, histToggle.checked ? 'true' : 'false');
-      });
-    }
-
-    // View History button
-    const viewBtn = document.getElementById('view-history-btn');
-    const modal   = document.getElementById('history-modal');
-    if (viewBtn && modal) {
-      viewBtn.addEventListener('click', function () {
-        // Save current session data before opening
-        saveTodayToHistory();
-        modal.classList.add('open');
-        renderHistory(7); // default 7 days
-        // Reset active filter button
-        document.querySelectorAll('.hist-filter').forEach(function (b) {
-          b.classList.toggle('active', parseInt(b.dataset.days) === 7);
-        });
-      });
-    }
-
-    // Filter buttons
-    document.querySelectorAll('.hist-filter').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        document.querySelectorAll('.hist-filter').forEach(function (b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        renderHistory(parseInt(btn.dataset.days));
-      });
-    });
-
-    // Close history modal
-    const closeHistBtn = document.getElementById('close-history-modal');
-    if (closeHistBtn && modal) {
-      closeHistBtn.addEventListener('click', function () { modal.classList.remove('open'); });
-    }
-
-    // Auto-save today's data periodically (every 60 seconds)
-    setInterval(saveTodayToHistory, 60000);
-
-    // Save on page unload / visibility change
-    document.addEventListener('visibilitychange', function () {
-      if (document.visibilityState === 'hidden') saveTodayToHistory();
-    });
-    window.addEventListener('beforeunload', saveTodayToHistory);
-  });
-
-  /* Expose globally so daily-reset script can call saveTodayBeforeReset */
-  window.djbHistory = {
-    saveTodayBeforeReset: saveTodayBeforeReset,
-    saveTodayToHistory:   saveTodayToHistory,
-    isEnabled:            isHistoryEnabled
-  };
-
-})();
-</script>
-<!-- ═══════════════════════════════════════════════════
-     END HISTORY & DATA SAVING FEATURE
-     ═══════════════════════════════════════════════════ -->
-
 <script>
         if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
@@ -1179,6 +546,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <!-- ═══════════════════════════════════════════════════
      IMAGE CROP FEATURE — Self-contained, no dependencies
+     Intercepts the existing image-upload input and shows
+     a fixed-size crop UI before the image is committed.
      ═══════════════════════════════════════════════════ -->
 <script>
 (function () {
@@ -1197,13 +566,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const resetBtn         = document.getElementById('crop-reset-btn');
 
   /* ── Crop state ── */
-  let FRAME_SIZE = 240;
+  let FRAME_SIZE = 240;  // dynamic — set per image based on min(w,h), max 240
   let scale      = 1;
-  let imgW       = 0;
-  let imgH       = 0;
+  let imgW       = 0;    // base image width at scale=1 inside frame
+  let imgH       = 0;    // base image height at scale=1 inside frame
   let offsetX    = 0;
   let offsetY    = 0;
-  let initOffsetX = 0;
+  let initOffsetX = 0;   // initial centered offsets for reset
   let initOffsetY = 0;
   let isDragging  = false;
   let dragStartX  = 0;
@@ -1212,8 +581,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let baseOffsetY = 0;
   let naturalSrc  = '';
 
+  /* ── Clamp so image always covers the entire frame square ── */
   function clampX(x) {
     const scaledW = imgW * scale;
+    const minX = Math.min(0, FRAME_SIZE - scaledW);
+    const maxX = Math.max(0, FRAME_SIZE - scaledW);
     if (scaledW >= FRAME_SIZE) return Math.min(0, Math.max(FRAME_SIZE - scaledW, x));
     return Math.min(FRAME_SIZE - scaledW, Math.max(0, x));
   }
@@ -1224,6 +596,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return Math.min(FRAME_SIZE - scaledH, Math.max(0, y));
   }
 
+  /* ── Apply transform to DOM image ── */
   function applyTransform() {
     cropImg.style.width  = (imgW * scale) + 'px';
     cropImg.style.height = (imgH * scale) + 'px';
@@ -1231,6 +604,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cropImg.style.top    = offsetY + 'px';
   }
 
+  /* ── Reset position & zoom to initial state ── */
   function resetToInitial() {
     scale    = 1;
     offsetX  = initOffsetX;
@@ -1240,6 +614,7 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTransform();
   }
 
+  /* ── Open cropper when file is chosen ── */
   imageUpload.addEventListener('change', function (e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -1252,20 +627,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const nw = tempImg.naturalWidth;
         const nh = tempImg.naturalHeight;
 
+        /* Frame size = min dimension of image, capped at 240px.
+           This prevents the frame from ever exceeding the image's
+           shorter side, so no dead space on either axis. */
         FRAME_SIZE = Math.min(240, nw, nh);
+
+        /* Apply frame size to DOM */
         cropFrame.style.width  = FRAME_SIZE + 'px';
         cropFrame.style.height = FRAME_SIZE + 'px';
+
+        /* Update zoom row width to match */
         document.getElementById('crop-zoom-row').style.width = FRAME_SIZE + 'px';
 
+        /* Update radial gradient overlay to match new frame (it's always square so this is automatic) */
+
+        /* Scale image so it fills the frame (cover: larger side fills, smaller side overflows) */
         const ratio = Math.max(FRAME_SIZE / nw, FRAME_SIZE / nh);
         imgW = nw * ratio;
         imgH = nh * ratio;
 
+        /* Center image inside frame */
         initOffsetX = (FRAME_SIZE - imgW) / 2;
         initOffsetY = (FRAME_SIZE - imgH) / 2;
         offsetX = initOffsetX;
         offsetY = initOffsetY;
 
+        /* Reset zoom */
         scale = 1;
         zoomSlider.value      = 1;
         zoomValue.textContent = '1.0×';
@@ -1273,6 +660,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cropImg.src = naturalSrc;
         applyTransform();
 
+        /* Show cropper, hide old preview, hide Save Image until crop applied */
         previewContainer.classList.add('hidden-by-crop');
         cropWrapper.style.display = 'flex';
         document.getElementById('save-image-btn').style.display = 'none';
@@ -1282,8 +670,10 @@ document.addEventListener('DOMContentLoaded', () => {
     reader.readAsDataURL(file);
   });
 
+  /* ── Zoom slider ── */
   zoomSlider.addEventListener('input', function () {
     const newScale = parseFloat(this.value);
+    /* Zoom toward center of frame */
     const cx   = FRAME_SIZE / 2;
     const cy   = FRAME_SIZE / 2;
     const imgCX = (cx - offsetX) / scale;
@@ -1295,8 +685,12 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTransform();
   });
 
+  /* ── Reset Changes ── */
   resetBtn.addEventListener('click', resetToInitial);
 
+  /* ════════════
+     DRAG — Mouse
+  ════════════ */
   cropFrame.addEventListener('mousedown', function (e) {
     isDragging  = true;
     dragStartX  = e.clientX;
@@ -1315,6 +709,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('mouseup', function () { isDragging = false; });
 
+  /* ════════════
+     DRAG — Touch (1 finger) + Pinch Zoom (2 fingers)
+  ════════════ */
   let pinchStartDist  = 0;
   let pinchStartScale = 1;
 
@@ -1326,12 +723,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   cropFrame.addEventListener('touchstart', function (e) {
     if (e.touches.length === 1) {
+      /* Single finger — drag */
       isDragging  = true;
       dragStartX  = e.touches[0].clientX;
       dragStartY  = e.touches[0].clientY;
       baseOffsetX = offsetX;
       baseOffsetY = offsetY;
     } else if (e.touches.length === 2) {
+      /* Two fingers — pinch zoom */
       isDragging      = false;
       pinchStartDist  = getTouchDist(e.touches);
       pinchStartScale = scale;
@@ -1341,14 +740,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('touchmove', function (e) {
     if (e.touches.length === 1 && isDragging) {
+      /* Single finger drag */
       offsetX = clampX(baseOffsetX + (e.touches[0].clientX - dragStartX));
       offsetY = clampY(baseOffsetY + (e.touches[0].clientY - dragStartY));
       applyTransform();
     } else if (e.touches.length === 2) {
+      /* Pinch zoom */
       const dist     = getTouchDist(e.touches);
       let newScale   = pinchStartScale * (dist / pinchStartDist);
-      newScale       = Math.min(3, Math.max(1, newScale));
+      newScale       = Math.min(3, Math.max(1, newScale)); // clamp 1–3×
 
+      /* Zoom toward midpoint of the two fingers */
       const midX  = (e.touches[0].clientX + e.touches[1].clientX) / 2;
       const midY  = (e.touches[0].clientY + e.touches[1].clientY) / 2;
       const rect  = cropFrame.getBoundingClientRect();
@@ -1360,6 +762,7 @@ document.addEventListener('DOMContentLoaded', () => {
       offsetX     = clampX(cx - imgCX * scale);
       offsetY     = clampY(cy - imgCY * scale);
 
+      /* Sync slider */
       zoomSlider.value      = scale;
       zoomValue.textContent = scale.toFixed(1) + '×';
 
@@ -1371,6 +774,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('touchend', function (e) {
     if (e.touches.length === 0) isDragging = false;
     if (e.touches.length === 1) {
+      /* One finger lifted during pinch — switch back to drag mode */
       isDragging  = true;
       dragStartX  = e.touches[0].clientX;
       dragStartY  = e.touches[0].clientY;
@@ -1379,6 +783,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  /* ════════════════════════════════
+     APPLY — render circular crop to canvas → data-URL
+  ════════════════════════════════ */
   applyBtn.addEventListener('click', function () {
     const canvas  = document.createElement('canvas');
     const OUTPUT  = FRAME_SIZE;
@@ -1386,6 +793,7 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.height = OUTPUT;
     const ctx     = canvas.getContext('2d');
 
+    /* Clip to perfect circle */
     ctx.beginPath();
     ctx.arc(OUTPUT / 2, OUTPUT / 2, OUTPUT / 2, 0, Math.PI * 2);
     ctx.closePath();
@@ -1396,14 +804,18 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.drawImage(sourceImg, offsetX, offsetY, imgW * scale, imgH * scale);
       const croppedDataURL = canvas.toDataURL('image/png');
 
+      /* Feed into existing preview so "Save Image" works unchanged */
       previewImg.src = croppedDataURL;
       previewContainer.classList.remove('hidden-by-crop');
       previewContainer.style.display = 'block';
 
+      /* Hide cropper */
       cropWrapper.style.display = 'none';
 
+      /* Show Save Image button now that crop is applied */
       document.getElementById('save-image-btn').style.display = '';
 
+      /* Update the main round-image immediately */
       const roundImage = document.getElementById('round-image');
       if (roundImage) roundImage.src = croppedDataURL;
     };
