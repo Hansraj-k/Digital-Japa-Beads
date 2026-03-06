@@ -226,16 +226,46 @@
       font-size: 16px;
       cursor: pointer;
       transition: background 0.15s;
+      flex-shrink: 0;
     }
 
-    .history-month-nav button:hover {
+    .history-month-nav button:hover:not(:disabled) {
       background: #333;
     }
 
-    #history-month-label {
-      font-size: 16px;
-      font-weight: 600;
+    .hist-dropdowns {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .hist-select {
+      background: #1e1e1e;
+      border: 1px solid #444;
       color: #fff;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      text-align: center;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .hist-select:focus {
+      border-color: #888;
+      background: #2a2a2a;
+    }
+
+    #hist-month-select {
+      min-width: 110px;
+    }
+
+    #hist-year-select {
+      min-width: 68px;
     }
 
     /* Calendar grid */
@@ -401,7 +431,7 @@
     /* Monthly summary */
     .history-monthly-summary {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 8px;
       margin-top: 16px;
     }
@@ -1291,7 +1321,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const cards = document.querySelectorAll('.history-stat-card__val');
     if (cards[0]) cards[0].textContent = monthActive;
     if (cards[1]) cards[1].textContent = monthRounds;
-    if (cards[2]) cards[2].textContent = monthMissed;
+    if (cards[2]) cards[2].textContent = monthCounts;
+    if (cards[3]) cards[3].textContent = monthMissed;
   }
 
   // Start watching after DOM is ready
@@ -1475,10 +1506,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const weekDayHeaders = weekDays.map(w =>
       `<div class="history-cal-weekday">${w}</div>`).join('');
 
+    // Build month dropdown options
+    const monthOpts = monthNames.map((m, i) => {
+      // Disable months outside the valid range for the selected year
+      const optDate = new Date(calYear, i, 1);
+      const disabled = optDate < minDate || optDate > maxDate;
+      return `<option value="${i}" ${i === calMonth ? 'selected' : ''} ${disabled ? 'disabled' : ''}>${m}</option>`;
+    }).join('');
+
+    // Build year dropdown options (from minDate year to maxDate year)
+    let yearOpts = '';
+    for (let y = minDate.getFullYear(); y <= maxDate.getFullYear(); y++) {
+      yearOpts += `<option value="${y}" ${y === calYear ? 'selected' : ''}>${y}</option>`;
+    }
+
     container.innerHTML = `
       <div class="history-month-nav">
         <button id="hist-prev-btn" ${canPrev ? '' : 'disabled style="opacity:0.3;cursor:default;"'}>‹</button>
-        <span id="history-month-label">${monthNames[calMonth]} ${calYear}</span>
+        <div class="hist-dropdowns">
+          <select id="hist-month-select" class="hist-select">${monthOpts}</select>
+          <select id="hist-year-select" class="hist-select">${yearOpts}</select>
+        </div>
         <button id="hist-next-btn" ${canNext ? '' : 'disabled style="opacity:0.3;cursor:default;"'}>›</button>
       </div>
 
@@ -1495,6 +1543,10 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="history-stat-card">
           <div class="history-stat-card__val">${monthRounds}</div>
           <div class="history-stat-card__lbl">Total Rounds</div>
+        </div>
+        <div class="history-stat-card">
+          <div class="history-stat-card__val">${monthCounts}</div>
+          <div class="history-stat-card__lbl">Total Counts</div>
         </div>
         <div class="history-stat-card">
           <div class="history-stat-card__val">${monthMissed}</div>
@@ -1526,6 +1578,22 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!canNext) return;
       calMonth++;
       if (calMonth > 11) { calMonth = 0; calYear++; }
+      renderHistoryContent();
+    });
+
+    // Dropdown events
+    document.getElementById('hist-month-select').addEventListener('change', (e) => {
+      calMonth = parseInt(e.target.value, 10);
+      renderHistoryContent();
+    });
+
+    document.getElementById('hist-year-select').addEventListener('change', (e) => {
+      calYear = parseInt(e.target.value, 10);
+      // Clamp month if new year makes current month out of range
+      const newMinMonth = (calYear === minDate.getFullYear()) ? minDate.getMonth() : 0;
+      const newMaxMonth = (calYear === maxDate.getFullYear()) ? maxDate.getMonth() : 11;
+      if (calMonth < newMinMonth) calMonth = newMinMonth;
+      if (calMonth > newMaxMonth) calMonth = newMaxMonth;
       renderHistoryContent();
     });
 
@@ -1568,7 +1636,6 @@ document.addEventListener('DOMContentLoaded', () => {
         <h4>${dateLabel}${isToday ? ' (Today)' : ''}</h4>
         <p>📿 Rounds Completed: <span>${entry.rounds}</span></p>
         <p>🕉 ${countLabel}: <span>${displayCount}</span></p>
-        ${isToday && entry.rounds > 0 ? `<p style="color:#aaa;font-size:11px;">Accumulated: <span style="color:#fff">${entry.counts}</span> total taps</p>` : ''}
         <p>✅ Active day</p>`;
     } else if (isMissed) {
       detail.innerHTML = `
