@@ -30,16 +30,6 @@
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://digitaljapabeads.netlify.app">
-    <!-- Structured Data (Optional for better visibility) -->
-   <!-- <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "url": "https://digitaljapabeads.netlify.app",
-        "name": "Digital Japa Beads",
-        "description": "Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere."
-    }
-    </script> -->
 
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
@@ -91,7 +81,6 @@
 
     /* ───── IMAGE CROP FEATURE STYLES ───── */
 
-    /* Crop wrapper shown after image is selected */
     #crop-wrapper {
       display: none;
       flex-direction: column;
@@ -100,17 +89,16 @@
       margin-top: 10px;
     }
 
-    /* Fixed-size crop frame — size set dynamically by JS (min of img dimensions, max 240px) */
     #crop-frame {
       position: relative;
-      width: 240px;   /* default, overridden by JS */
-      height: 240px;  /* default, overridden by JS */
+      width: 240px;
+      height: 240px;
       max-width: 240px;
       max-height: 240px;
       overflow: hidden;
       background: #111;
       border: 2px solid #555;
-      border-radius: 50%; /* circular frame = no confusing second ring needed */
+      border-radius: 50%;
       cursor: grab;
       user-select: none;
       touch-action: none;
@@ -121,7 +109,6 @@
       cursor: grabbing;
     }
 
-    /* The actual image inside the crop frame — draggable */
     #crop-img {
       position: absolute;
       top: 0;
@@ -131,12 +118,10 @@
       will-change: transform;
     }
 
-    /* Circle overlay — hidden, frame itself is now circular */
     #crop-circle-overlay {
       display: none;
     }
 
-    /* Zoom slider row */
     #crop-zoom-row {
       display: flex;
       align-items: center;
@@ -163,17 +148,139 @@
       text-align: right;
     }
 
-    /* Crop action buttons */
     #crop-action-row {
       display: flex;
       gap: 8px;
     }
 
-    /* Keep existing image-preview-container hidden when cropper is active */
     #image-preview-container.hidden-by-crop {
       display: none !important;
     }
     /* ───── END CROP STYLES ───── */
+
+    /* ───── HISTORY FEATURE STYLES ───── */
+    #history-popup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 9999;
+      overflow-y: auto;
+    }
+    .history-popup-inner {
+      background: #111;
+      color: #fff;
+      margin: 20px auto;
+      max-width: 480px;
+      border-radius: 14px;
+      padding: 20px;
+      border: 1px solid #333;
+    }
+    .history-popup-inner h2 {
+      text-align: center;
+      margin-bottom: 6px;
+      font-size: 20px;
+    }
+    .history-summary-cards {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 14px 0;
+    }
+    .history-card {
+      flex: 1;
+      min-width: 100px;
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+    }
+    .history-card .hc-val {
+      font-size: 22px;
+      font-weight: bold;
+      color: #f5c842;
+    }
+    .history-card .hc-lbl {
+      font-size: 11px;
+      color: #aaa;
+      margin-top: 4px;
+    }
+    .history-section-title {
+      font-size: 13px;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 16px 0 8px;
+      border-bottom: 1px solid #2a2a2a;
+      padding-bottom: 4px;
+    }
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .history-table th {
+      background: #1a1a1a;
+      color: #f5c842;
+      padding: 7px 6px;
+      text-align: left;
+      font-weight: 600;
+    }
+    .history-table td {
+      padding: 7px 6px;
+      border-bottom: 1px solid #222;
+      color: #ddd;
+    }
+    .history-table tr:hover td {
+      background: #1a1a1a;
+    }
+    .history-missed-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #e05555;
+      margin-right: 5px;
+    }
+    .history-active-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #4caf50;
+      margin-right: 5px;
+    }
+    .history-btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .history-btn-row button {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    #history-close-btn { background: #333; color: #fff; }
+    #history-clear-btn { background: #6b1a1a; color: #fff; }
+    #history-export-btn { background: #1a3a1a; color: #fff; }
+    .history-empty-msg {
+      text-align: center;
+      color: #666;
+      padding: 20px;
+      font-size: 13px;
+    }
+    /* Settings history section */
+    .settings-history-note {
+      font-size: 11.5px;
+      color: #aaa;
+      margin-top: 4px;
+    }
+    /* ───── END HISTORY STYLES ───── */
     </style>
 </head>
 <body>
@@ -220,7 +327,7 @@
                 <img id="image-preview" src="" alt="Image Preview" />
             </div>
 
-            <!-- ───── CROP UI (injected here, same visual flow) ───── -->
+            <!-- ───── CROP UI ───── -->
             <div id="crop-wrapper">
               <div id="crop-frame">
                 <img id="crop-img" src="" alt="Crop Preview">
@@ -330,6 +437,29 @@
     </div>
     <p class="settings-subtext">Show motivational popups when your streak updates</p>
 </div>
+
+<!-- ───── DATA HISTORY SETTINGS SECTION ───── -->
+<div class="settings-section">
+    <div class="settings-option">
+        <h3>Save Data / History</h3>
+        <div class="button-cover">
+            <div class="button r">
+                <input type="checkbox" id="history-save-toggle" class="checkbox" checked>
+                <div class="knobs"></div>
+                <div class="layer"></div>
+            </div>
+        </div>
+    </div>
+    <p class="settings-subtext">Store counting records for up to 18 months (rounds, counts, missed days)</p>
+</div>
+<div class="settings-section">
+    <div class="settings-option">
+        <button id="view-history-btn">View History 📊</button>
+    </div>
+    <p class="settings-subtext">See your counting activity, streaks, and missed sessions</p>
+</div>
+<!-- ───── END DATA HISTORY SETTINGS SECTION ───── -->
+
     <div class="settings-section">
     <div class="settings-option">
 
@@ -433,6 +563,45 @@
         </div>
     </div>
 </div>
+
+<!-- ───── HISTORY POPUP ───── -->
+<div id="history-popup">
+  <div class="history-popup-inner">
+    <h2>📊 Counting History</h2>
+    <p id="history-tracking-status" style="text-align:center; font-size:12px; color:#aaa; margin-bottom:8px;"></p>
+
+    <div class="history-summary-cards">
+      <div class="history-card">
+        <div class="hc-val" id="hist-total-rounds">0</div>
+        <div class="hc-lbl">Total Rounds</div>
+      </div>
+      <div class="history-card">
+        <div class="hc-val" id="hist-total-counts">0</div>
+        <div class="hc-lbl">Total Counts</div>
+      </div>
+      <div class="history-card">
+        <div class="hc-val" id="hist-total-days">0</div>
+        <div class="hc-lbl">Active Days</div>
+      </div>
+      <div class="history-card">
+        <div class="hc-val" id="hist-missed-days">0</div>
+        <div class="hc-lbl">Missed Days</div>
+      </div>
+    </div>
+
+    <div class="history-section-title">Daily Records</div>
+    <div id="history-table-container">
+      <div class="history-empty-msg">No history data yet. Start chanting! 🙏</div>
+    </div>
+
+    <div class="history-btn-row">
+      <button id="history-export-btn">⬇ Export CSV</button>
+      <button id="history-clear-btn">🗑 Clear History</button>
+      <button id="history-close-btn">Close</button>
+    </div>
+  </div>
+</div>
+<!-- ───── END HISTORY POPUP ───── -->
 
     <audio id="audio" src="rkhkmc.mp3" preload="auto"></audio>
     <script src="script.js"></script>
@@ -546,8 +715,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <!-- ═══════════════════════════════════════════════════
      IMAGE CROP FEATURE — Self-contained, no dependencies
-     Intercepts the existing image-upload input and shows
-     a fixed-size crop UI before the image is committed.
      ═══════════════════════════════════════════════════ -->
 <script>
 (function () {
@@ -566,13 +733,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const resetBtn         = document.getElementById('crop-reset-btn');
 
   /* ── Crop state ── */
-  let FRAME_SIZE = 240;  // dynamic — set per image based on min(w,h), max 240
+  let FRAME_SIZE = 240;
   let scale      = 1;
-  let imgW       = 0;    // base image width at scale=1 inside frame
-  let imgH       = 0;    // base image height at scale=1 inside frame
+  let imgW       = 0;
+  let imgH       = 0;
   let offsetX    = 0;
   let offsetY    = 0;
-  let initOffsetX = 0;   // initial centered offsets for reset
+  let initOffsetX = 0;
   let initOffsetY = 0;
   let isDragging  = false;
   let dragStartX  = 0;
@@ -581,7 +748,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let baseOffsetY = 0;
   let naturalSrc  = '';
 
-  /* ── Clamp so image always covers the entire frame square ── */
   function clampX(x) {
     const scaledW = imgW * scale;
     const minX = Math.min(0, FRAME_SIZE - scaledW);
@@ -596,7 +762,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return Math.min(FRAME_SIZE - scaledH, Math.max(0, y));
   }
 
-  /* ── Apply transform to DOM image ── */
   function applyTransform() {
     cropImg.style.width  = (imgW * scale) + 'px';
     cropImg.style.height = (imgH * scale) + 'px';
@@ -604,7 +769,6 @@ document.addEventListener('DOMContentLoaded', () => {
     cropImg.style.top    = offsetY + 'px';
   }
 
-  /* ── Reset position & zoom to initial state ── */
   function resetToInitial() {
     scale    = 1;
     offsetX  = initOffsetX;
@@ -614,7 +778,6 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTransform();
   }
 
-  /* ── Open cropper when file is chosen ── */
   imageUpload.addEventListener('change', function (e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -627,32 +790,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const nw = tempImg.naturalWidth;
         const nh = tempImg.naturalHeight;
 
-        /* Frame size = min dimension of image, capped at 240px.
-           This prevents the frame from ever exceeding the image's
-           shorter side, so no dead space on either axis. */
         FRAME_SIZE = Math.min(240, nw, nh);
-
-        /* Apply frame size to DOM */
         cropFrame.style.width  = FRAME_SIZE + 'px';
         cropFrame.style.height = FRAME_SIZE + 'px';
-
-        /* Update zoom row width to match */
         document.getElementById('crop-zoom-row').style.width = FRAME_SIZE + 'px';
 
-        /* Update radial gradient overlay to match new frame (it's always square so this is automatic) */
-
-        /* Scale image so it fills the frame (cover: larger side fills, smaller side overflows) */
         const ratio = Math.max(FRAME_SIZE / nw, FRAME_SIZE / nh);
         imgW = nw * ratio;
         imgH = nh * ratio;
 
-        /* Center image inside frame */
         initOffsetX = (FRAME_SIZE - imgW) / 2;
         initOffsetY = (FRAME_SIZE - imgH) / 2;
         offsetX = initOffsetX;
         offsetY = initOffsetY;
 
-        /* Reset zoom */
         scale = 1;
         zoomSlider.value      = 1;
         zoomValue.textContent = '1.0×';
@@ -660,7 +811,6 @@ document.addEventListener('DOMContentLoaded', () => {
         cropImg.src = naturalSrc;
         applyTransform();
 
-        /* Show cropper, hide old preview, hide Save Image until crop applied */
         previewContainer.classList.add('hidden-by-crop');
         cropWrapper.style.display = 'flex';
         document.getElementById('save-image-btn').style.display = 'none';
@@ -670,10 +820,8 @@ document.addEventListener('DOMContentLoaded', () => {
     reader.readAsDataURL(file);
   });
 
-  /* ── Zoom slider ── */
   zoomSlider.addEventListener('input', function () {
     const newScale = parseFloat(this.value);
-    /* Zoom toward center of frame */
     const cx   = FRAME_SIZE / 2;
     const cy   = FRAME_SIZE / 2;
     const imgCX = (cx - offsetX) / scale;
@@ -685,12 +833,8 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTransform();
   });
 
-  /* ── Reset Changes ── */
   resetBtn.addEventListener('click', resetToInitial);
 
-  /* ════════════
-     DRAG — Mouse
-  ════════════ */
   cropFrame.addEventListener('mousedown', function (e) {
     isDragging  = true;
     dragStartX  = e.clientX;
@@ -709,9 +853,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('mouseup', function () { isDragging = false; });
 
-  /* ════════════
-     DRAG — Touch (1 finger) + Pinch Zoom (2 fingers)
-  ════════════ */
   let pinchStartDist  = 0;
   let pinchStartScale = 1;
 
@@ -723,14 +864,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   cropFrame.addEventListener('touchstart', function (e) {
     if (e.touches.length === 1) {
-      /* Single finger — drag */
       isDragging  = true;
       dragStartX  = e.touches[0].clientX;
       dragStartY  = e.touches[0].clientY;
       baseOffsetX = offsetX;
       baseOffsetY = offsetY;
     } else if (e.touches.length === 2) {
-      /* Two fingers — pinch zoom */
       isDragging      = false;
       pinchStartDist  = getTouchDist(e.touches);
       pinchStartScale = scale;
@@ -740,17 +879,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('touchmove', function (e) {
     if (e.touches.length === 1 && isDragging) {
-      /* Single finger drag */
       offsetX = clampX(baseOffsetX + (e.touches[0].clientX - dragStartX));
       offsetY = clampY(baseOffsetY + (e.touches[0].clientY - dragStartY));
       applyTransform();
     } else if (e.touches.length === 2) {
-      /* Pinch zoom */
       const dist     = getTouchDist(e.touches);
       let newScale   = pinchStartScale * (dist / pinchStartDist);
-      newScale       = Math.min(3, Math.max(1, newScale)); // clamp 1–3×
+      newScale       = Math.min(3, Math.max(1, newScale));
 
-      /* Zoom toward midpoint of the two fingers */
       const midX  = (e.touches[0].clientX + e.touches[1].clientX) / 2;
       const midY  = (e.touches[0].clientY + e.touches[1].clientY) / 2;
       const rect  = cropFrame.getBoundingClientRect();
@@ -762,7 +898,6 @@ document.addEventListener('DOMContentLoaded', () => {
       offsetX     = clampX(cx - imgCX * scale);
       offsetY     = clampY(cy - imgCY * scale);
 
-      /* Sync slider */
       zoomSlider.value      = scale;
       zoomValue.textContent = scale.toFixed(1) + '×';
 
@@ -774,7 +909,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('touchend', function (e) {
     if (e.touches.length === 0) isDragging = false;
     if (e.touches.length === 1) {
-      /* One finger lifted during pinch — switch back to drag mode */
       isDragging  = true;
       dragStartX  = e.touches[0].clientX;
       dragStartY  = e.touches[0].clientY;
@@ -783,9 +917,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  /* ════════════════════════════════
-     APPLY — render circular crop to canvas → data-URL
-  ════════════════════════════════ */
   applyBtn.addEventListener('click', function () {
     const canvas  = document.createElement('canvas');
     const OUTPUT  = FRAME_SIZE;
@@ -793,7 +924,6 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.height = OUTPUT;
     const ctx     = canvas.getContext('2d');
 
-    /* Clip to perfect circle */
     ctx.beginPath();
     ctx.arc(OUTPUT / 2, OUTPUT / 2, OUTPUT / 2, 0, Math.PI * 2);
     ctx.closePath();
@@ -804,18 +934,14 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.drawImage(sourceImg, offsetX, offsetY, imgW * scale, imgH * scale);
       const croppedDataURL = canvas.toDataURL('image/png');
 
-      /* Feed into existing preview so "Save Image" works unchanged */
       previewImg.src = croppedDataURL;
       previewContainer.classList.remove('hidden-by-crop');
       previewContainer.style.display = 'block';
 
-      /* Hide cropper */
       cropWrapper.style.display = 'none';
 
-      /* Show Save Image button now that crop is applied */
       document.getElementById('save-image-btn').style.display = '';
 
-      /* Update the main round-image immediately */
       const roundImage = document.getElementById('round-image');
       if (roundImage) roundImage.src = croppedDataURL;
     };
@@ -826,6 +952,326 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 <!-- ═══════════════════════════════════════════════════
      END IMAGE CROP FEATURE
+     ═══════════════════════════════════════════════════ -->
+
+<!-- ═══════════════════════════════════════════════════
+     DATA SAVING & HISTORY FEATURE
+     ═══════════════════════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  /* ─────────────────────────────────────────
+     CONSTANTS & STORAGE KEYS
+  ───────────────────────────────────────── */
+  const HISTORY_KEY        = 'djb_history_v1';          // daily records array
+  const HISTORY_TOGGLE_KEY = 'djb_history_enabled';     // "true" / "false"
+  const MAX_MONTHS         = 18;                        // retention window
+
+  /* ─────────────────────────────────────────
+     HELPERS
+  ───────────────────────────────────────── */
+
+  /** Returns today's date string YYYY-MM-DD in local time */
+  function todayStr() {
+    const d = new Date();
+    return d.getFullYear() + '-'
+      + String(d.getMonth() + 1).padStart(2, '0') + '-'
+      + String(d.getDate()).padStart(2, '0');
+  }
+
+  /** Cutoff date string 18 months ago */
+  function cutoffStr() {
+    const d = new Date();
+    d.setMonth(d.getMonth() - MAX_MONTHS);
+    return d.getFullYear() + '-'
+      + String(d.getMonth() + 1).padStart(2, '0') + '-'
+      + String(d.getDate()).padStart(2, '0');
+  }
+
+  /** Load full history array (sorted asc by date). Prunes old entries. */
+  function loadHistory() {
+    try {
+      const raw = localStorage.getItem(HISTORY_KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      const cutoff = cutoffStr();
+      return arr.filter(r => r.date >= cutoff);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /** Persist history array */
+  function saveHistory(arr) {
+    try {
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(arr));
+    } catch (e) { /* quota exceeded — silent */ }
+  }
+
+  /** Is history tracking currently enabled? */
+  function isHistoryEnabled() {
+    const v = localStorage.getItem(HISTORY_TOGGLE_KEY);
+    return v === null ? true : v === 'true';  // default ON
+  }
+
+  /** Set history tracking preference */
+  function setHistoryEnabled(bool) {
+    localStorage.setItem(HISTORY_TOGGLE_KEY, bool ? 'true' : 'false');
+  }
+
+  /* ─────────────────────────────────────────
+     RECORD A COUNTING EVENT (called when count-btn pressed)
+     We create/update today's record each time a count is made.
+     Data shape: { date, rounds, counts, sessionStart }
+  ───────────────────────────────────────── */
+  function recordCountEvent(roundsNow, countsNow) {
+    if (!isHistoryEnabled()) return;
+
+    const today = todayStr();
+    const history = loadHistory();
+    const idx = history.findIndex(r => r.date === today);
+
+    if (idx === -1) {
+      history.push({
+        date: today,
+        rounds: roundsNow,
+        counts: countsNow,
+        missed: false
+      });
+    } else {
+      history[idx].rounds = roundsNow;
+      history[idx].counts = countsNow;
+      history[idx].missed = false;
+    }
+
+    saveHistory(history);
+  }
+
+  /* ─────────────────────────────────────────
+     DETECT MISSED DAYS on page load
+     Any date between the last recorded day and today (exclusive)
+     that has no record is marked as missed.
+  ───────────────────────────────────────── */
+  function detectMissedDays() {
+    if (!isHistoryEnabled()) return;
+
+    const history = loadHistory();
+    if (history.length === 0) return;
+
+    // Find last active (non-missed) date
+    const activeDates = history.filter(r => !r.missed).map(r => r.date);
+    if (activeDates.length === 0) return;
+
+    activeDates.sort();
+    const lastActive = activeDates[activeDates.length - 1];
+    const today = todayStr();
+    if (lastActive >= today) return;
+
+    // Iterate from day after lastActive to yesterday
+    const cursor = new Date(lastActive);
+    cursor.setDate(cursor.getDate() + 1);
+    const todayDate = new Date(today);
+
+    while (cursor < todayDate) {
+      const ds = cursor.getFullYear() + '-'
+        + String(cursor.getMonth() + 1).padStart(2, '0') + '-'
+        + String(cursor.getDate()).padStart(2, '0');
+
+      if (!history.find(r => r.date === ds)) {
+        history.push({ date: ds, rounds: 0, counts: 0, missed: true });
+      }
+      cursor.setDate(cursor.getDate() + 1);
+    }
+
+    history.sort((a, b) => a.date.localeCompare(b.date));
+    saveHistory(history);
+  }
+
+  /* ─────────────────────────────────────────
+     INIT — sync toggle state & detect missed days
+  ───────────────────────────────────────── */
+  document.addEventListener('DOMContentLoaded', () => {
+    detectMissedDays();
+
+    /* Sync the settings toggle to stored preference */
+    const toggle = document.getElementById('history-save-toggle');
+    if (toggle) {
+      toggle.checked = isHistoryEnabled();
+      toggle.addEventListener('change', () => {
+        setHistoryEnabled(toggle.checked);
+      });
+    }
+
+    /* Intercept count-btn to record events */
+    const countBtn = document.getElementById('count-btn');
+    if (countBtn) {
+      countBtn.addEventListener('click', () => {
+        /* We read current values from DOM after a tiny delay so script.js updates them first */
+        setTimeout(() => {
+          const roundEl = document.getElementById('round-display');
+          const countEl = document.getElementById('count-display');
+          const rounds = parseInt((roundEl ? roundEl.textContent.replace('Round:', '').trim() : '0')) || 0;
+          const counts = parseInt((countEl ? countEl.textContent.trim() : '0')) || 0;
+          recordCountEvent(rounds, counts);
+        }, 50);
+      });
+    }
+
+    /* Also record when a round completes (108 reset confirmed) */
+    const confirmReset108 = document.getElementById('confirm-reset-108');
+    if (confirmReset108) {
+      confirmReset108.addEventListener('click', () => {
+        setTimeout(() => {
+          const roundEl = document.getElementById('round-display');
+          const rounds = parseInt((roundEl ? roundEl.textContent.replace('Round:', '').trim() : '0')) || 0;
+          recordCountEvent(rounds, 0);
+        }, 80);
+      });
+    }
+
+    /* ── View History button ── */
+    const viewHistoryBtn = document.getElementById('view-history-btn');
+    if (viewHistoryBtn) {
+      viewHistoryBtn.addEventListener('click', () => {
+        openHistoryPopup();
+      });
+    }
+
+    /* ── History popup close ── */
+    const closeHistBtn = document.getElementById('history-close-btn');
+    if (closeHistBtn) {
+      closeHistBtn.addEventListener('click', closeHistoryPopup);
+    }
+
+    /* ── Clear history ── */
+    const clearHistBtn = document.getElementById('history-clear-btn');
+    if (clearHistBtn) {
+      clearHistBtn.addEventListener('click', () => {
+        if (confirm('Are you sure you want to clear ALL counting history? This cannot be undone.')) {
+          localStorage.removeItem(HISTORY_KEY);
+          openHistoryPopup(); // refresh
+        }
+      });
+    }
+
+    /* ── Export CSV ── */
+    const exportBtn = document.getElementById('history-export-btn');
+    if (exportBtn) {
+      exportBtn.addEventListener('click', exportHistoryCSV);
+    }
+
+    /* Close popup by clicking backdrop */
+    const histPopup = document.getElementById('history-popup');
+    if (histPopup) {
+      histPopup.addEventListener('click', (e) => {
+        if (e.target === histPopup) closeHistoryPopup();
+      });
+    }
+  });
+
+  /* ─────────────────────────────────────────
+     OPEN HISTORY POPUP — populate data
+  ───────────────────────────────────────── */
+  function openHistoryPopup() {
+    const popup = document.getElementById('history-popup');
+    if (!popup) return;
+
+    const history = loadHistory();
+    const enabled = isHistoryEnabled();
+
+    /* Status line */
+    const statusEl = document.getElementById('history-tracking-status');
+    if (statusEl) {
+      statusEl.textContent = enabled
+        ? '✅ History tracking is ON — data saved for up to 18 months'
+        : '⏸ History tracking is OFF — new data is not being saved';
+      statusEl.style.color = enabled ? '#4caf50' : '#e05555';
+    }
+
+    /* Summary cards */
+    const activeDays = history.filter(r => !r.missed);
+    const missedDays = history.filter(r => r.missed);
+    const totalRounds = activeDays.reduce((s, r) => s + (r.rounds || 0), 0);
+    const totalCounts = activeDays.reduce((s, r) => s + (r.counts || 0), 0);
+
+    document.getElementById('hist-total-rounds').textContent = totalRounds;
+    document.getElementById('hist-total-counts').textContent = totalCounts;
+    document.getElementById('hist-total-days').textContent   = activeDays.length;
+    document.getElementById('hist-missed-days').textContent  = missedDays.length;
+
+    /* Table */
+    const container = document.getElementById('history-table-container');
+    if (!container) return;
+
+    if (history.length === 0) {
+      container.innerHTML = '<div class="history-empty-msg">No history data yet. Start chanting! 🙏</div>';
+    } else {
+      const sorted = [...history].sort((a, b) => b.date.localeCompare(a.date)); // newest first
+      let rows = '';
+      sorted.forEach(r => {
+        const missedDot  = r.missed ? '<span class="history-missed-dot"></span>' : '<span class="history-active-dot"></span>';
+        const status     = r.missed ? 'Missed' : 'Active';
+        const roundsDisp = r.missed ? '—' : r.rounds;
+        const countsDisp = r.missed ? '—' : r.counts;
+        rows += `<tr>
+          <td>${r.date}</td>
+          <td>${missedDot}${status}</td>
+          <td>${roundsDisp}</td>
+          <td>${countsDisp}</td>
+        </tr>`;
+      });
+
+      container.innerHTML = `
+        <div style="max-height:280px; overflow-y:auto;">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Rounds</th>
+                <th>Counts</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
+    }
+
+    popup.style.display = 'block';
+  }
+
+  function closeHistoryPopup() {
+    const popup = document.getElementById('history-popup');
+    if (popup) popup.style.display = 'none';
+  }
+
+  /* ─────────────────────────────────────────
+     EXPORT CSV
+  ───────────────────────────────────────── */
+  function exportHistoryCSV() {
+    const history = loadHistory();
+    if (history.length === 0) { alert('No history data to export.'); return; }
+
+    const sorted = [...history].sort((a, b) => a.date.localeCompare(b.date));
+    let csv = 'Date,Status,Rounds Completed,Counts\n';
+    sorted.forEach(r => {
+      const status = r.missed ? 'Missed' : 'Active';
+      csv += `${r.date},${status},${r.missed ? 0 : r.rounds},${r.missed ? 0 : r.counts}\n`;
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = 'japa_history.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+})();
+</script>
+<!-- ═══════════════════════════════════════════════════
+     END DATA SAVING & HISTORY FEATURE
      ═══════════════════════════════════════════════════ -->
 
 </body>
