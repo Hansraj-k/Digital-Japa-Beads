@@ -30,6 +30,16 @@
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://digitaljapabeads.netlify.app">
+    <!-- Structured Data (Optional for better visibility) -->
+   <!-- <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "url": "https://digitaljapabeads.netlify.app",
+        "name": "Digital Japa Beads",
+        "description": "Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere."
+    }
+    </script> -->
 
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
@@ -81,6 +91,7 @@
 
     /* ───── IMAGE CROP FEATURE STYLES ───── */
 
+    /* Crop wrapper shown after image is selected */
     #crop-wrapper {
       display: none;
       flex-direction: column;
@@ -89,16 +100,17 @@
       margin-top: 10px;
     }
 
+    /* Fixed-size crop frame — size set dynamically by JS (min of img dimensions, max 240px) */
     #crop-frame {
       position: relative;
-      width: 240px;
-      height: 240px;
+      width: 240px;   /* default, overridden by JS */
+      height: 240px;  /* default, overridden by JS */
       max-width: 240px;
       max-height: 240px;
       overflow: hidden;
       background: #111;
       border: 2px solid #555;
-      border-radius: 50%;
+      border-radius: 50%; /* circular frame = no confusing second ring needed */
       cursor: grab;
       user-select: none;
       touch-action: none;
@@ -109,6 +121,7 @@
       cursor: grabbing;
     }
 
+    /* The actual image inside the crop frame — draggable */
     #crop-img {
       position: absolute;
       top: 0;
@@ -118,10 +131,12 @@
       will-change: transform;
     }
 
+    /* Circle overlay — hidden, frame itself is now circular */
     #crop-circle-overlay {
       display: none;
     }
 
+    /* Zoom slider row */
     #crop-zoom-row {
       display: flex;
       align-items: center;
@@ -148,137 +163,276 @@
       text-align: right;
     }
 
+    /* Crop action buttons */
     #crop-action-row {
       display: flex;
       gap: 8px;
     }
 
+    /* Keep existing image-preview-container hidden when cropper is active */
     #image-preview-container.hidden-by-crop {
       display: none !important;
     }
     /* ───── END CROP STYLES ───── */
-
+    
     /* ───── HISTORY FEATURE STYLES ───── */
-    #history-popup {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85);
-      z-index: 9999;
-      overflow-y: auto;
+    .history-section {
+        margin-top: 15px;
+        border-top: 1px solid #333;
+        padding-top: 15px;
     }
-    .history-popup-inner {
-      background: #111;
-      color: #fff;
-      margin: 20px auto;
-      max-width: 480px;
-      border-radius: 14px;
-      padding: 20px;
-      border: 1px solid #333;
+    
+    .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
     }
-    .history-popup-inner h2 {
-      text-align: center;
-      margin-bottom: 6px;
-      font-size: 20px;
+    
+    .history-header h3 {
+        margin: 0;
+        color: #fff;
+        font-size: 16px;
     }
+    
+    .view-history-btn {
+        background: #333;
+        color: #fff;
+        border: 1px solid #555;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: all 0.3s;
+    }
+    
+    .view-history-btn:hover {
+        background: #444;
+    }
+    
+    .history-stats {
+        display: flex;
+        justify-content: space-between;
+        background: #222;
+        padding: 10px;
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+    
+    .history-stat-item {
+        text-align: center;
+        flex: 1;
+    }
+    
+    .history-stat-value {
+        font-size: 18px;
+        font-weight: bold;
+        color: #ffd700;
+    }
+    
+    .history-stat-label {
+        font-size: 11px;
+        color: #aaa;
+        margin-top: 3px;
+    }
+    
+    /* History Modal */
+    #history-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 2000;
+        overflow-y: auto;
+        padding: 20px 0;
+    }
+    
+    .history-modal-content {
+        max-width: 500px;
+        margin: 0 auto;
+        background: #1a1a1a;
+        border-radius: 15px;
+        padding: 20px;
+        position: relative;
+        border: 1px solid #333;
+    }
+    
+    .history-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #333;
+    }
+    
+    .history-modal-header h2 {
+        margin: 0;
+        color: #fff;
+        font-size: 20px;
+    }
+    
+    .close-history-modal {
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 0 10px;
+    }
+    
     .history-summary-cards {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin: 14px 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 20px;
     }
-    .history-card {
-      flex: 1;
-      min-width: 100px;
-      background: #1e1e1e;
-      border: 1px solid #333;
-      border-radius: 10px;
-      padding: 10px;
-      text-align: center;
+    
+    .history-summary-card {
+        background: #222;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
     }
-    .history-card .hc-val {
-      font-size: 22px;
-      font-weight: bold;
-      color: #f5c842;
+    
+    .history-summary-card .label {
+        color: #aaa;
+        font-size: 12px;
+        margin-bottom: 5px;
     }
-    .history-card .hc-lbl {
-      font-size: 11px;
-      color: #aaa;
-      margin-top: 4px;
+    
+    .history-summary-card .value {
+        color: #ffd700;
+        font-size: 24px;
+        font-weight: bold;
     }
-    .history-section-title {
-      font-size: 13px;
-      color: #aaa;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin: 16px 0 8px;
-      border-bottom: 1px solid #2a2a2a;
-      padding-bottom: 4px;
+    
+    .history-summary-card .sub-value {
+        color: #888;
+        font-size: 11px;
+        margin-top: 5px;
     }
-    .history-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
+    
+    .history-tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #333;
+        padding-bottom: 10px;
     }
-    .history-table th {
-      background: #1a1a1a;
-      color: #f5c842;
-      padding: 7px 6px;
-      text-align: left;
-      font-weight: 600;
+    
+    .history-tab {
+        background: none;
+        border: none;
+        color: #888;
+        padding: 8px 15px;
+        cursor: pointer;
+        font-size: 14px;
+        border-radius: 5px;
+        transition: all 0.3s;
     }
-    .history-table td {
-      padding: 7px 6px;
-      border-bottom: 1px solid #222;
-      color: #ddd;
+    
+    .history-tab.active {
+        background: #333;
+        color: #fff;
     }
-    .history-table tr:hover td {
-      background: #1a1a1a;
+    
+    .history-list {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-bottom: 20px;
     }
-    .history-missed-dot {
-      display: inline-block;
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: #e05555;
-      margin-right: 5px;
+    
+    .history-item {
+        background: #222;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
-    .history-active-dot {
-      display: inline-block;
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: #4caf50;
-      margin-right: 5px;
+    
+    .history-item-date {
+        color: #ffd700;
+        font-size: 13px;
+        font-weight: bold;
     }
-    .history-btn-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 16px;
-      flex-wrap: wrap;
+    
+    .history-item-stats {
+        display: flex;
+        gap: 15px;
     }
-    .history-btn-row button {
-      flex: 1;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 600;
+    
+    .history-item-stat {
+        text-align: center;
     }
-    #history-close-btn { background: #333; color: #fff; }
-    #history-clear-btn { background: #6b1a1a; color: #fff; }
-    #history-export-btn { background: #1a3a1a; color: #fff; }
-    .history-empty-msg {
-      text-align: center;
-      color: #666;
-      padding: 20px;
-      font-size: 13px;
+    
+    .history-item-stat .number {
+        color: #fff;
+        font-size: 14px;
+        font-weight: bold;
     }
-    /* Settings history section */
-    .settings-history-note {
-      font-size: 11.5px;
-      color: #aaa;
-      margin-top: 4px;
+    
+    .history-item-stat .label {
+        color: #888;
+        font-size: 10px;
+    }
+    
+    .history-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #333;
+    }
+    
+    .clear-history-btn {
+        background: #d32f2f;
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        flex: 1;
+        transition: background 0.3s;
+    }
+    
+    .clear-history-btn:hover {
+        background: #b71c1c;
+    }
+    
+    .export-history-btn {
+        background: #2e7d32;
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        flex: 1;
+        transition: background 0.3s;
+    }
+    
+    .export-history-btn:hover {
+        background: #1b5e20;
+    }
+    
+    .no-history-message {
+        text-align: center;
+        color: #888;
+        padding: 30px;
+        font-style: italic;
+    }
+    
+    .history-toggle-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
     /* ───── END HISTORY STYLES ───── */
     </style>
@@ -296,6 +450,7 @@
             <li>Change the text around the center image 📝</li>
             <li>Resize the count button 🔢</li>
             <li>Enable or disable streak popup 🔄🔥</li>
+            <li>Track your history with Data Saving feature 📊</li>
         </ul>
         <p class="popupclear-highlight">Note: Your counter data saves automatically in your browser, letting you pick up where you left off. Clearing your browser's cache or data will reset it.</p>
         <p class="popupnotify-highlight"><strong>Pro Tip:</strong><br> 108 chants = 1 round of progress! 🚀</p>
@@ -327,7 +482,7 @@
                 <img id="image-preview" src="" alt="Image Preview" />
             </div>
 
-            <!-- ───── CROP UI ───── -->
+            <!-- ───── CROP UI (injected here, same visual flow) ───── -->
             <div id="crop-wrapper">
               <div id="crop-frame">
                 <img id="crop-img" src="" alt="Crop Preview">
@@ -438,27 +593,41 @@
     <p class="settings-subtext">Show motivational popups when your streak updates</p>
 </div>
 
-<!-- ───── DATA HISTORY SETTINGS SECTION ───── -->
-<div class="settings-section">
+<!-- ───── NEW: DATA SAVING / HISTORY SECTION ───── -->
+<div class="settings-section history-section">
+    <div class="history-header">
+        <h3><i class="fas fa-history"></i> Data Saving & History</h3>
+        <button id="view-history-btn" class="view-history-btn"><i class="fas fa-chart-bar"></i> View History</button>
+    </div>
     <div class="settings-option">
-        <h3>Save Data / History</h3>
-        <div class="button-cover">
-            <div class="button r">
-                <input type="checkbox" id="history-save-toggle" class="checkbox" checked>
-                <div class="knobs"></div>
-                <div class="layer"></div>
+        <h3>Track History</h3>
+        <div class="history-toggle-wrapper">
+            <div class="button-cover">
+                <div class="button r">
+                    <input type="checkbox" id="history-toggle" class="checkbox" checked>
+                    <div class="knobs"></div>
+                    <div class="layer"></div>
+                </div>
             </div>
+            <span class="settings-subtext" style="margin-left: 10px;">Store counting data for up to 18 months</span>
         </div>
     </div>
-    <p class="settings-subtext">Store counting records for up to 18 months (rounds, counts, missed days)</p>
-</div>
-<div class="settings-section">
-    <div class="settings-option">
-        <button id="view-history-btn">View History 📊</button>
+    <div id="history-quick-stats" class="history-stats" style="display: none;">
+        <div class="history-stat-item">
+            <div class="history-stat-value" id="quick-total-rounds">0</div>
+            <div class="history-stat-label">Total Rounds</div>
+        </div>
+        <div class="history-stat-item">
+            <div class="history-stat-value" id="quick-total-counts">0</div>
+            <div class="history-stat-label">Total Counts</div>
+        </div>
+        <div class="history-stat-item">
+            <div class="history-stat-value" id="quick-sessions">0</div>
+            <div class="history-stat-label">Sessions</div>
+        </div>
     </div>
-    <p class="settings-subtext">See your counting activity, streaks, and missed sessions</p>
 </div>
-<!-- ───── END DATA HISTORY SETTINGS SECTION ───── -->
+<!-- ───── END HISTORY SECTION ───── -->
 
     <div class="settings-section">
     <div class="settings-option">
@@ -486,6 +655,57 @@
             <button id="save-settings">Save Settings</button>
             <button id="close-settings">Close</button>
         </div>
+        
+        <!-- ───── NEW: HISTORY MODAL ───── -->
+        <div id="history-modal">
+            <div class="history-modal-content">
+                <div class="history-modal-header">
+                    <h2><i class="fas fa-history"></i> Chanting History</h2>
+                    <button class="close-history-modal">&times;</button>
+                </div>
+                
+                <div class="history-summary-cards">
+                    <div class="history-summary-card">
+                        <div class="label">Total Rounds</div>
+                        <div class="value" id="history-total-rounds">0</div>
+                        <div class="sub-value" id="history-rounds-period">all time</div>
+                    </div>
+                    <div class="history-summary-card">
+                        <div class="label">Total Counts</div>
+                        <div class="value" id="history-total-counts">0</div>
+                        <div class="sub-value" id="history-counts-period">all time</div>
+                    </div>
+                    <div class="history-summary-card">
+                        <div class="label">Active Days</div>
+                        <div class="value" id="history-active-days">0</div>
+                        <div class="sub-value">days chanted</div>
+                    </div>
+                    <div class="history-summary-card">
+                        <div class="label">Missed Sessions</div>
+                        <div class="value" id="history-missed">0</div>
+                        <div class="sub-value">estimated</div>
+                    </div>
+                </div>
+                
+                <div class="history-tabs">
+                    <button class="history-tab active" data-period="daily">Daily</button>
+                    <button class="history-tab" data-period="weekly">Weekly</button>
+                    <button class="history-tab" data-period="monthly">Monthly</button>
+                </div>
+                
+                <div id="history-list-container" class="history-list">
+                    <!-- History items will be inserted here -->
+                    <div class="no-history-message">No history data available. Start chanting to track your progress!</div>
+                </div>
+                
+                <div class="history-actions">
+                    <button class="clear-history-btn" id="clear-history-btn"><i class="fas fa-trash"></i> Clear History</button>
+                    <button class="export-history-btn" id="export-history-btn"><i class="fas fa-download"></i> Export Data</button>
+                </div>
+            </div>
+        </div>
+        <!-- ───── END HISTORY MODAL ───── -->
+        
         <div class="counter-container">
             <div class="count-display-container">
                 <div class="count-display" id="count-display">0</div>
@@ -564,45 +784,6 @@
     </div>
 </div>
 
-<!-- ───── HISTORY POPUP ───── -->
-<div id="history-popup">
-  <div class="history-popup-inner">
-    <h2>📊 Counting History</h2>
-    <p id="history-tracking-status" style="text-align:center; font-size:12px; color:#aaa; margin-bottom:8px;"></p>
-
-    <div class="history-summary-cards">
-      <div class="history-card">
-        <div class="hc-val" id="hist-total-rounds">0</div>
-        <div class="hc-lbl">Total Rounds</div>
-      </div>
-      <div class="history-card">
-        <div class="hc-val" id="hist-total-counts">0</div>
-        <div class="hc-lbl">Total Counts</div>
-      </div>
-      <div class="history-card">
-        <div class="hc-val" id="hist-total-days">0</div>
-        <div class="hc-lbl">Active Days</div>
-      </div>
-      <div class="history-card">
-        <div class="hc-val" id="hist-missed-days">0</div>
-        <div class="hc-lbl">Missed Days</div>
-      </div>
-    </div>
-
-    <div class="history-section-title">Daily Records</div>
-    <div id="history-table-container">
-      <div class="history-empty-msg">No history data yet. Start chanting! 🙏</div>
-    </div>
-
-    <div class="history-btn-row">
-      <button id="history-export-btn">⬇ Export CSV</button>
-      <button id="history-clear-btn">🗑 Clear History</button>
-      <button id="history-close-btn">Close</button>
-    </div>
-  </div>
-</div>
-<!-- ───── END HISTORY POPUP ───── -->
-
     <audio id="audio" src="rkhkmc.mp3" preload="auto"></audio>
     <script src="script.js"></script>
     <script>
@@ -634,7 +815,7 @@
   });
 }
     </script>
-    <script>
+<script>
 document.addEventListener('DOMContentLoaded', () => {
     let deferredPrompt;
     const installBtn = document.getElementById('install-btn');
@@ -715,6 +896,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <!-- ═══════════════════════════════════════════════════
      IMAGE CROP FEATURE — Self-contained, no dependencies
+     Intercepts the existing image-upload input and shows
+     a fixed-size crop UI before the image is committed.
      ═══════════════════════════════════════════════════ -->
 <script>
 (function () {
@@ -733,13 +916,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const resetBtn         = document.getElementById('crop-reset-btn');
 
   /* ── Crop state ── */
-  let FRAME_SIZE = 240;
+  let FRAME_SIZE = 240;  // dynamic — set per image based on min(w,h), max 240
   let scale      = 1;
-  let imgW       = 0;
-  let imgH       = 0;
+  let imgW       = 0;    // base image width at scale=1 inside frame
+  let imgH       = 0;    // base image height at scale=1 inside frame
   let offsetX    = 0;
   let offsetY    = 0;
-  let initOffsetX = 0;
+  let initOffsetX = 0;   // initial centered offsets for reset
   let initOffsetY = 0;
   let isDragging  = false;
   let dragStartX  = 0;
@@ -748,6 +931,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let baseOffsetY = 0;
   let naturalSrc  = '';
 
+  /* ── Clamp so image always covers the entire frame square ── */
   function clampX(x) {
     const scaledW = imgW * scale;
     const minX = Math.min(0, FRAME_SIZE - scaledW);
@@ -762,6 +946,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return Math.min(FRAME_SIZE - scaledH, Math.max(0, y));
   }
 
+  /* ── Apply transform to DOM image ── */
   function applyTransform() {
     cropImg.style.width  = (imgW * scale) + 'px';
     cropImg.style.height = (imgH * scale) + 'px';
@@ -769,6 +954,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cropImg.style.top    = offsetY + 'px';
   }
 
+  /* ── Reset position & zoom to initial state ── */
   function resetToInitial() {
     scale    = 1;
     offsetX  = initOffsetX;
@@ -778,6 +964,7 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTransform();
   }
 
+  /* ── Open cropper when file is chosen ── */
   imageUpload.addEventListener('change', function (e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -790,20 +977,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const nw = tempImg.naturalWidth;
         const nh = tempImg.naturalHeight;
 
+        /* Frame size = min dimension of image, capped at 240px.
+           This prevents the frame from ever exceeding the image's
+           shorter side, so no dead space on either axis. */
         FRAME_SIZE = Math.min(240, nw, nh);
+
+        /* Apply frame size to DOM */
         cropFrame.style.width  = FRAME_SIZE + 'px';
         cropFrame.style.height = FRAME_SIZE + 'px';
+
+        /* Update zoom row width to match */
         document.getElementById('crop-zoom-row').style.width = FRAME_SIZE + 'px';
 
+        /* Update radial gradient overlay to match new frame (it's always square so this is automatic) */
+
+        /* Scale image so it fills the frame (cover: larger side fills, smaller side overflows) */
         const ratio = Math.max(FRAME_SIZE / nw, FRAME_SIZE / nh);
         imgW = nw * ratio;
         imgH = nh * ratio;
 
+        /* Center image inside frame */
         initOffsetX = (FRAME_SIZE - imgW) / 2;
         initOffsetY = (FRAME_SIZE - imgH) / 2;
         offsetX = initOffsetX;
         offsetY = initOffsetY;
 
+        /* Reset zoom */
         scale = 1;
         zoomSlider.value      = 1;
         zoomValue.textContent = '1.0×';
@@ -811,6 +1010,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cropImg.src = naturalSrc;
         applyTransform();
 
+        /* Show cropper, hide old preview, hide Save Image until crop applied */
         previewContainer.classList.add('hidden-by-crop');
         cropWrapper.style.display = 'flex';
         document.getElementById('save-image-btn').style.display = 'none';
@@ -820,8 +1020,10 @@ document.addEventListener('DOMContentLoaded', () => {
     reader.readAsDataURL(file);
   });
 
+  /* ── Zoom slider ── */
   zoomSlider.addEventListener('input', function () {
     const newScale = parseFloat(this.value);
+    /* Zoom toward center of frame */
     const cx   = FRAME_SIZE / 2;
     const cy   = FRAME_SIZE / 2;
     const imgCX = (cx - offsetX) / scale;
@@ -833,8 +1035,12 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTransform();
   });
 
+  /* ── Reset Changes ── */
   resetBtn.addEventListener('click', resetToInitial);
 
+  /* ════════════
+     DRAG — Mouse
+  ════════════ */
   cropFrame.addEventListener('mousedown', function (e) {
     isDragging  = true;
     dragStartX  = e.clientX;
@@ -853,6 +1059,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('mouseup', function () { isDragging = false; });
 
+  /* ════════════
+     DRAG — Touch (1 finger) + Pinch Zoom (2 fingers)
+  ════════════ */
   let pinchStartDist  = 0;
   let pinchStartScale = 1;
 
@@ -864,12 +1073,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   cropFrame.addEventListener('touchstart', function (e) {
     if (e.touches.length === 1) {
+      /* Single finger — drag */
       isDragging  = true;
       dragStartX  = e.touches[0].clientX;
       dragStartY  = e.touches[0].clientY;
       baseOffsetX = offsetX;
       baseOffsetY = offsetY;
     } else if (e.touches.length === 2) {
+      /* Two fingers — pinch zoom */
       isDragging      = false;
       pinchStartDist  = getTouchDist(e.touches);
       pinchStartScale = scale;
@@ -879,14 +1090,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('touchmove', function (e) {
     if (e.touches.length === 1 && isDragging) {
+      /* Single finger drag */
       offsetX = clampX(baseOffsetX + (e.touches[0].clientX - dragStartX));
       offsetY = clampY(baseOffsetY + (e.touches[0].clientY - dragStartY));
       applyTransform();
     } else if (e.touches.length === 2) {
+      /* Pinch zoom */
       const dist     = getTouchDist(e.touches);
       let newScale   = pinchStartScale * (dist / pinchStartDist);
-      newScale       = Math.min(3, Math.max(1, newScale));
+      newScale       = Math.min(3, Math.max(1, newScale)); // clamp 1–3×
 
+      /* Zoom toward midpoint of the two fingers */
       const midX  = (e.touches[0].clientX + e.touches[1].clientX) / 2;
       const midY  = (e.touches[0].clientY + e.touches[1].clientY) / 2;
       const rect  = cropFrame.getBoundingClientRect();
@@ -898,6 +1112,7 @@ document.addEventListener('DOMContentLoaded', () => {
       offsetX     = clampX(cx - imgCX * scale);
       offsetY     = clampY(cy - imgCY * scale);
 
+      /* Sync slider */
       zoomSlider.value      = scale;
       zoomValue.textContent = scale.toFixed(1) + '×';
 
@@ -909,6 +1124,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('touchend', function (e) {
     if (e.touches.length === 0) isDragging = false;
     if (e.touches.length === 1) {
+      /* One finger lifted during pinch — switch back to drag mode */
       isDragging  = true;
       dragStartX  = e.touches[0].clientX;
       dragStartY  = e.touches[0].clientY;
@@ -917,6 +1133,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  /* ════════════════════════════════
+     APPLY — render circular crop to canvas → data-URL
+  ════════════════════════════════ */
   applyBtn.addEventListener('click', function () {
     const canvas  = document.createElement('canvas');
     const OUTPUT  = FRAME_SIZE;
@@ -924,6 +1143,7 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.height = OUTPUT;
     const ctx     = canvas.getContext('2d');
 
+    /* Clip to perfect circle */
     ctx.beginPath();
     ctx.arc(OUTPUT / 2, OUTPUT / 2, OUTPUT / 2, 0, Math.PI * 2);
     ctx.closePath();
@@ -934,14 +1154,18 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.drawImage(sourceImg, offsetX, offsetY, imgW * scale, imgH * scale);
       const croppedDataURL = canvas.toDataURL('image/png');
 
+      /* Feed into existing preview so "Save Image" works unchanged */
       previewImg.src = croppedDataURL;
       previewContainer.classList.remove('hidden-by-crop');
       previewContainer.style.display = 'block';
 
+      /* Hide cropper */
       cropWrapper.style.display = 'none';
 
+      /* Show Save Image button now that crop is applied */
       document.getElementById('save-image-btn').style.display = '';
 
+      /* Update the main round-image immediately */
       const roundImage = document.getElementById('round-image');
       if (roundImage) roundImage.src = croppedDataURL;
     };
@@ -955,324 +1179,451 @@ document.addEventListener('DOMContentLoaded', () => {
      ═══════════════════════════════════════════════════ -->
 
 <!-- ═══════════════════════════════════════════════════
-     DATA SAVING & HISTORY FEATURE
+     NEW: HISTORY TRACKING FEATURE
      ═══════════════════════════════════════════════════ -->
 <script>
-(function () {
-  'use strict';
-
-  /* ─────────────────────────────────────────
-     CONSTANTS & STORAGE KEYS
-  ───────────────────────────────────────── */
-  const HISTORY_KEY        = 'djb_history_v1';          // daily records array
-  const HISTORY_TOGGLE_KEY = 'djb_history_enabled';     // "true" / "false"
-  const MAX_MONTHS         = 18;                        // retention window
-
-  /* ─────────────────────────────────────────
-     HELPERS
-  ───────────────────────────────────────── */
-
-  /** Returns today's date string YYYY-MM-DD in local time */
-  function todayStr() {
-    const d = new Date();
-    return d.getFullYear() + '-'
-      + String(d.getMonth() + 1).padStart(2, '0') + '-'
-      + String(d.getDate()).padStart(2, '0');
-  }
-
-  /** Cutoff date string 18 months ago */
-  function cutoffStr() {
-    const d = new Date();
-    d.setMonth(d.getMonth() - MAX_MONTHS);
-    return d.getFullYear() + '-'
-      + String(d.getMonth() + 1).padStart(2, '0') + '-'
-      + String(d.getDate()).padStart(2, '0');
-  }
-
-  /** Load full history array (sorted asc by date). Prunes old entries. */
-  function loadHistory() {
-    try {
-      const raw = localStorage.getItem(HISTORY_KEY);
-      const arr = raw ? JSON.parse(raw) : [];
-      const cutoff = cutoffStr();
-      return arr.filter(r => r.date >= cutoff);
-    } catch (e) {
-      return [];
-    }
-  }
-
-  /** Persist history array */
-  function saveHistory(arr) {
-    try {
-      localStorage.setItem(HISTORY_KEY, JSON.stringify(arr));
-    } catch (e) { /* quota exceeded — silent */ }
-  }
-
-  /** Is history tracking currently enabled? */
-  function isHistoryEnabled() {
-    const v = localStorage.getItem(HISTORY_TOGGLE_KEY);
-    return v === null ? true : v === 'true';  // default ON
-  }
-
-  /** Set history tracking preference */
-  function setHistoryEnabled(bool) {
-    localStorage.setItem(HISTORY_TOGGLE_KEY, bool ? 'true' : 'false');
-  }
-
-  /* ─────────────────────────────────────────
-     RECORD A COUNTING EVENT (called when count-btn pressed)
-     We create/update today's record each time a count is made.
-     Data shape: { date, rounds, counts, sessionStart }
-  ───────────────────────────────────────── */
-  function recordCountEvent(roundsNow, countsNow) {
-    if (!isHistoryEnabled()) return;
-
-    const today = todayStr();
-    const history = loadHistory();
-    const idx = history.findIndex(r => r.date === today);
-
-    if (idx === -1) {
-      history.push({
-        date: today,
-        rounds: roundsNow,
-        counts: countsNow,
-        missed: false
-      });
-    } else {
-      history[idx].rounds = roundsNow;
-      history[idx].counts = countsNow;
-      history[idx].missed = false;
-    }
-
-    saveHistory(history);
-  }
-
-  /* ─────────────────────────────────────────
-     DETECT MISSED DAYS on page load
-     Any date between the last recorded day and today (exclusive)
-     that has no record is marked as missed.
-  ───────────────────────────────────────── */
-  function detectMissedDays() {
-    if (!isHistoryEnabled()) return;
-
-    const history = loadHistory();
-    if (history.length === 0) return;
-
-    // Find last active (non-missed) date
-    const activeDates = history.filter(r => !r.missed).map(r => r.date);
-    if (activeDates.length === 0) return;
-
-    activeDates.sort();
-    const lastActive = activeDates[activeDates.length - 1];
-    const today = todayStr();
-    if (lastActive >= today) return;
-
-    // Iterate from day after lastActive to yesterday
-    const cursor = new Date(lastActive);
-    cursor.setDate(cursor.getDate() + 1);
-    const todayDate = new Date(today);
-
-    while (cursor < todayDate) {
-      const ds = cursor.getFullYear() + '-'
-        + String(cursor.getMonth() + 1).padStart(2, '0') + '-'
-        + String(cursor.getDate()).padStart(2, '0');
-
-      if (!history.find(r => r.date === ds)) {
-        history.push({ date: ds, rounds: 0, counts: 0, missed: true });
-      }
-      cursor.setDate(cursor.getDate() + 1);
-    }
-
-    history.sort((a, b) => a.date.localeCompare(b.date));
-    saveHistory(history);
-  }
-
-  /* ─────────────────────────────────────────
-     INIT — sync toggle state & detect missed days
-  ───────────────────────────────────────── */
-  document.addEventListener('DOMContentLoaded', () => {
-    detectMissedDays();
-
-    /* Sync the settings toggle to stored preference */
-    const toggle = document.getElementById('history-save-toggle');
-    if (toggle) {
-      toggle.checked = isHistoryEnabled();
-      toggle.addEventListener('change', () => {
-        setHistoryEnabled(toggle.checked);
-      });
-    }
-
-    /* Intercept count-btn to record events */
-    const countBtn = document.getElementById('count-btn');
-    if (countBtn) {
-      countBtn.addEventListener('click', () => {
-        /* We read current values from DOM after a tiny delay so script.js updates them first */
-        setTimeout(() => {
-          const roundEl = document.getElementById('round-display');
-          const countEl = document.getElementById('count-display');
-          const rounds = parseInt((roundEl ? roundEl.textContent.replace('Round:', '').trim() : '0')) || 0;
-          const counts = parseInt((countEl ? countEl.textContent.trim() : '0')) || 0;
-          recordCountEvent(rounds, counts);
-        }, 50);
-      });
-    }
-
-    /* Also record when a round completes (108 reset confirmed) */
-    const confirmReset108 = document.getElementById('confirm-reset-108');
-    if (confirmReset108) {
-      confirmReset108.addEventListener('click', () => {
-        setTimeout(() => {
-          const roundEl = document.getElementById('round-display');
-          const rounds = parseInt((roundEl ? roundEl.textContent.replace('Round:', '').trim() : '0')) || 0;
-          recordCountEvent(rounds, 0);
-        }, 80);
-      });
-    }
-
-    /* ── View History button ── */
+(function() {
+    'use strict';
+    
+    // History configuration
+    const MAX_HISTORY_DAYS = 548; // 18 months (approx)
+    const STORAGE_KEY = 'japa_history';
+    const SETTINGS_KEY = 'japa_settings';
+    
+    // DOM Elements
+    const historyToggle = document.getElementById('history-toggle');
     const viewHistoryBtn = document.getElementById('view-history-btn');
-    if (viewHistoryBtn) {
-      viewHistoryBtn.addEventListener('click', () => {
-        openHistoryPopup();
-      });
-    }
-
-    /* ── History popup close ── */
-    const closeHistBtn = document.getElementById('history-close-btn');
-    if (closeHistBtn) {
-      closeHistBtn.addEventListener('click', closeHistoryPopup);
-    }
-
-    /* ── Clear history ── */
-    const clearHistBtn = document.getElementById('history-clear-btn');
-    if (clearHistBtn) {
-      clearHistBtn.addEventListener('click', () => {
-        if (confirm('Are you sure you want to clear ALL counting history? This cannot be undone.')) {
-          localStorage.removeItem(HISTORY_KEY);
-          openHistoryPopup(); // refresh
+    const historyModal = document.getElementById('history-modal');
+    const closeHistoryModal = document.querySelector('.close-history-modal');
+    const historyQuickStats = document.getElementById('history-quick-stats');
+    const quickTotalRounds = document.getElementById('quick-total-rounds');
+    const quickTotalCounts = document.getElementById('quick-total-counts');
+    const quickSessions = document.getElementById('quick-sessions');
+    const historyTabs = document.querySelectorAll('.history-tab');
+    const historyListContainer = document.getElementById('history-list-container');
+    const clearHistoryBtn = document.getElementById('clear-history-btn');
+    const exportHistoryBtn = document.getElementById('export-history-btn');
+    
+    // History data structure
+    let historyData = {
+        enabled: true,
+        sessions: {}, // key: YYYY-MM-DD, value: { rounds: 0, counts: 0, lastUpdated: timestamp }
+        lastSessionDate: null,
+        totalRounds: 0,
+        totalCounts: 0,
+        missedSessions: 0,
+        activeDays: 0
+    };
+    
+    // Current period view
+    let currentPeriod = 'daily';
+    
+    // Load history from localStorage
+    function loadHistory() {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                historyData = JSON.parse(saved);
+            } else {
+                // Initialize with empty data
+                saveHistory();
+            }
+            
+            // Load settings
+            const settings = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
+            if (historyToggle) {
+                historyToggle.checked = historyData.enabled !== false;
+            }
+            
+            updateQuickStats();
+        } catch (e) {
+            console.error('Error loading history:', e);
         }
-      });
     }
-
-    /* ── Export CSV ── */
-    const exportBtn = document.getElementById('history-export-btn');
-    if (exportBtn) {
-      exportBtn.addEventListener('click', exportHistoryCSV);
+    
+    // Save history to localStorage
+    function saveHistory() {
+        try {
+            // Prune old data (keep only last 18 months)
+            const cutoffDate = new Date();
+            cutoffDate.setDate(cutoffDate.getDate() - MAX_HISTORY_DAYS);
+            
+            const sessions = {};
+            let totalRounds = 0;
+            let totalCounts = 0;
+            let activeDays = 0;
+            
+            Object.keys(historyData.sessions || {}).forEach(dateStr => {
+                const sessionDate = new Date(dateStr);
+                if (sessionDate >= cutoffDate) {
+                    sessions[dateStr] = historyData.sessions[dateStr];
+                    totalRounds += historyData.sessions[dateStr].rounds || 0;
+                    totalCounts += historyData.sessions[dateStr].counts || 0;
+                    activeDays++;
+                }
+            });
+            
+            historyData.sessions = sessions;
+            historyData.totalRounds = totalRounds;
+            historyData.totalCounts = totalCounts;
+            historyData.activeDays = activeDays;
+            
+            // Calculate missed sessions
+            calculateMissedSessions();
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(historyData));
+        } catch (e) {
+            console.error('Error saving history:', e);
+        }
     }
-
-    /* Close popup by clicking backdrop */
-    const histPopup = document.getElementById('history-popup');
-    if (histPopup) {
-      histPopup.addEventListener('click', (e) => {
-        if (e.target === histPopup) closeHistoryPopup();
-      });
+    
+    // Calculate missed sessions (estimated)
+    function calculateMissedSessions() {
+        if (!historyData.sessions) return;
+        
+        const dates = Object.keys(historyData.sessions).sort();
+        if (dates.length < 2) {
+            historyData.missedSessions = 0;
+            return;
+        }
+        
+        let missed = 0;
+        const firstDate = new Date(dates[0]);
+        const lastDate = new Date(dates[dates.length - 1]);
+        const totalDays = Math.ceil((lastDate - firstDate) / (1000 * 60 * 60 * 24)) + 1;
+        
+        missed = totalDays - dates.length;
+        historyData.missedSessions = Math.max(0, missed);
     }
-  });
-
-  /* ─────────────────────────────────────────
-     OPEN HISTORY POPUP — populate data
-  ───────────────────────────────────────── */
-  function openHistoryPopup() {
-    const popup = document.getElementById('history-popup');
-    if (!popup) return;
-
-    const history = loadHistory();
-    const enabled = isHistoryEnabled();
-
-    /* Status line */
-    const statusEl = document.getElementById('history-tracking-status');
-    if (statusEl) {
-      statusEl.textContent = enabled
-        ? '✅ History tracking is ON — data saved for up to 18 months'
-        : '⏸ History tracking is OFF — new data is not being saved';
-      statusEl.style.color = enabled ? '#4caf50' : '#e05555';
+    
+    // Update quick stats in settings
+    function updateQuickStats() {
+        if (!historyQuickStats || !quickTotalRounds || !quickTotalCounts || !quickSessions) return;
+        
+        if (historyData.enabled && Object.keys(historyData.sessions || {}).length > 0) {
+            historyQuickStats.style.display = 'flex';
+            quickTotalRounds.textContent = historyData.totalRounds || 0;
+            quickTotalCounts.textContent = historyData.totalCounts || 0;
+            quickSessions.textContent = Object.keys(historyData.sessions || {}).length;
+        } else {
+            historyQuickStats.style.display = 'none';
+        }
     }
-
-    /* Summary cards */
-    const activeDays = history.filter(r => !r.missed);
-    const missedDays = history.filter(r => r.missed);
-    const totalRounds = activeDays.reduce((s, r) => s + (r.rounds || 0), 0);
-    const totalCounts = activeDays.reduce((s, r) => s + (r.counts || 0), 0);
-
-    document.getElementById('hist-total-rounds').textContent = totalRounds;
-    document.getElementById('hist-total-counts').textContent = totalCounts;
-    document.getElementById('hist-total-days').textContent   = activeDays.length;
-    document.getElementById('hist-missed-days').textContent  = missedDays.length;
-
-    /* Table */
-    const container = document.getElementById('history-table-container');
-    if (!container) return;
-
-    if (history.length === 0) {
-      container.innerHTML = '<div class="history-empty-msg">No history data yet. Start chanting! 🙏</div>';
+    
+    // Record a counting session
+    function recordCount(increment = 1) {
+        if (!historyData.enabled) return;
+        
+        const today = new Date().toISOString().split('T')[0];
+        
+        if (!historyData.sessions[today]) {
+            historyData.sessions[today] = {
+                rounds: 0,
+                counts: 0,
+                lastUpdated: Date.now()
+            };
+        }
+        
+        historyData.sessions[today].counts = (historyData.sessions[today].counts || 0) + increment;
+        historyData.totalCounts = (historyData.totalCounts || 0) + increment;
+        
+        saveHistory();
+        updateQuickStats();
+    }
+    
+    // Record a round completion
+    function recordRound() {
+        if (!historyData.enabled) return;
+        
+        const today = new Date().toISOString().split('T')[0];
+        
+        if (!historyData.sessions[today]) {
+            historyData.sessions[today] = {
+                rounds: 0,
+                counts: 0,
+                lastUpdated: Date.now()
+            };
+        }
+        
+        historyData.sessions[today].rounds = (historyData.sessions[today].rounds || 0) + 1;
+        historyData.totalRounds = (historyData.totalRounds || 0) + 1;
+        
+        saveHistory();
+        updateQuickStats();
+    }
+    
+    // Update history modal content
+    function updateHistoryModal() {
+        if (!historyModal) return;
+        
+        // Update summary cards
+        document.getElementById('history-total-rounds').textContent = historyData.totalRounds || 0;
+        document.getElementById('history-total-counts').textContent = historyData.totalCounts || 0;
+        document.getElementById('history-active-days').textContent = historyData.activeDays || 0;
+        document.getElementById('history-missed').textContent = historyData.missedSessions || 0;
+        
+        // Update period text
+        const today = new Date();
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        document.getElementById('history-rounds-period').textContent = 'all time';
+        document.getElementById('history-counts-period').textContent = 'all time';
+        
+        // Render history list based on current period
+        renderHistoryList(currentPeriod);
+    }
+    
+    // Render history list
+    function renderHistoryList(period) {
+        if (!historyListContainer) return;
+        
+        const sessions = historyData.sessions || {};
+        const sortedDates = Object.keys(sessions).sort().reverse();
+        
+        if (sortedDates.length === 0) {
+            historyListContainer.innerHTML = '<div class="no-history-message">No history data available. Start chanting to track your progress!</div>';
+            return;
+        }
+        
+        let html = '';
+        
+        if (period === 'daily') {
+            // Show last 30 days
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            
+            sortedDates.forEach(dateStr => {
+                const sessionDate = new Date(dateStr);
+                if (sessionDate >= thirtyDaysAgo) {
+                    const session = sessions[dateStr];
+                    const displayDate = new Date(dateStr).toLocaleDateString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric',
+                        year: 'numeric'
+                    });
+                    
+                    html += `
+                        <div class="history-item">
+                            <div class="history-item-date">${displayDate}</div>
+                            <div class="history-item-stats">
+                                <div class="history-item-stat">
+                                    <div class="number">${session.rounds || 0}</div>
+                                    <div class="label">Rounds</div>
+                                </div>
+                                <div class="history-item-stat">
+                                    <div class="number">${session.counts || 0}</div>
+                                    <div class="label">Counts</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        } else if (period === 'weekly') {
+            // Group by week
+            const weeklyData = {};
+            
+            sortedDates.forEach(dateStr => {
+                const date = new Date(dateStr);
+                const weekStart = new Date(date);
+                weekStart.setDate(date.getDate() - date.getDay()); // Start of week (Sunday)
+                const weekKey = weekStart.toISOString().split('T')[0];
+                
+                if (!weeklyData[weekKey]) {
+                    weeklyData[weekKey] = {
+                        rounds: 0,
+                        counts: 0,
+                        startDate: weekStart
+                    };
+                }
+                
+                weeklyData[weekKey].rounds += sessions[dateStr].rounds || 0;
+                weeklyData[weekKey].counts += sessions[dateStr].counts || 0;
+            });
+            
+            // Sort weeks descending
+            Object.keys(weeklyData).sort().reverse().forEach(weekKey => {
+                const week = weeklyData[weekKey];
+                const weekEnd = new Date(week.startDate);
+                weekEnd.setDate(week.startDate.getDate() + 6);
+                
+                const displayRange = `${week.startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+                
+                html += `
+                    <div class="history-item">
+                        <div class="history-item-date">${displayRange}</div>
+                        <div class="history-item-stats">
+                            <div class="history-item-stat">
+                                <div class="number">${week.rounds}</div>
+                                <div class="label">Rounds</div>
+                            </div>
+                            <div class="history-item-stat">
+                                <div class="number">${week.counts}</div>
+                                <div class="label">Counts</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        } else if (period === 'monthly') {
+            // Group by month
+            const monthlyData = {};
+            
+            sortedDates.forEach(dateStr => {
+                const date = new Date(dateStr);
+                const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                
+                if (!monthlyData[monthKey]) {
+                    monthlyData[monthKey] = {
+                        rounds: 0,
+                        counts: 0,
+                        month: date.getMonth(),
+                        year: date.getFullYear()
+                    };
+                }
+                
+                monthlyData[monthKey].rounds += sessions[dateStr].rounds || 0;
+                monthlyData[monthKey].counts += sessions[dateStr].counts || 0;
+            });
+            
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            // Sort months descending
+            Object.keys(monthlyData).sort().reverse().forEach(monthKey => {
+                const month = monthlyData[monthKey];
+                const displayMonth = `${monthNames[month.month]} ${month.year}`;
+                
+                html += `
+                    <div class="history-item">
+                        <div class="history-item-date">${displayMonth}</div>
+                        <div class="history-item-stats">
+                            <div class="history-item-stat">
+                                <div class="number">${month.rounds}</div>
+                                <div class="label">Rounds</div>
+                            </div>
+                            <div class="history-item-stat">
+                                <div class="number">${month.counts}</div>
+                                <div class="label">Counts</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        if (html === '') {
+            html = '<div class="no-history-message">No data for this period</div>';
+        }
+        
+        historyListContainer.innerHTML = html;
+    }
+    
+    // Clear all history
+    function clearHistory() {
+        if (confirm('Are you sure you want to clear all history data? This cannot be undone.')) {
+            historyData.sessions = {};
+            historyData.totalRounds = 0;
+            historyData.totalCounts = 0;
+            historyData.activeDays = 0;
+            historyData.missedSessions = 0;
+            historyData.lastSessionDate = null;
+            
+            saveHistory();
+            updateHistoryModal();
+            updateQuickStats();
+        }
+    }
+    
+    // Export history as JSON
+    function exportHistory() {
+        const dataStr = JSON.stringify(historyData, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+        
+        const exportFileDefaultName = `japa_history_${new Date().toISOString().split('T')[0]}.json`;
+        
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', exportFileDefaultName);
+        linkElement.click();
+    }
+    
+    // Initialize event listeners
+    function initHistoryFeature() {
+        loadHistory();
+        
+        // History toggle
+        if (historyToggle) {
+            historyToggle.addEventListener('change', function() {
+                historyData.enabled = this.checked;
+                saveHistory();
+                updateQuickStats();
+            });
+        }
+        
+        // View history button
+        if (viewHistoryBtn) {
+            viewHistoryBtn.addEventListener('click', function() {
+                if (historyModal) {
+                    updateHistoryModal();
+                    historyModal.style.display = 'block';
+                }
+            });
+        }
+        
+        // Close modal
+        if (closeHistoryModal) {
+            closeHistoryModal.addEventListener('click', function() {
+                historyModal.style.display = 'none';
+            });
+        }
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(e) {
+            if (e.target === historyModal) {
+                historyModal.style.display = 'none';
+            }
+        });
+        
+        // History tabs
+        historyTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                historyTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                currentPeriod = this.dataset.period;
+                renderHistoryList(currentPeriod);
+            });
+        });
+        
+        // Clear history
+        if (clearHistoryBtn) {
+            clearHistoryBtn.addEventListener('click', clearHistory);
+        }
+        
+        // Export history
+        if (exportHistoryBtn) {
+            exportHistoryBtn.addEventListener('click', exportHistory);
+        }
+        
+        // Hook into existing counter functionality
+        // This will be integrated with the main counter in script.js
+        // We'll expose methods for the main script to call
+        window.historyTracker = {
+            recordCount: recordCount,
+            recordRound: recordRound
+        };
+    }
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initHistoryFeature);
     } else {
-      const sorted = [...history].sort((a, b) => b.date.localeCompare(a.date)); // newest first
-      let rows = '';
-      sorted.forEach(r => {
-        const missedDot  = r.missed ? '<span class="history-missed-dot"></span>' : '<span class="history-active-dot"></span>';
-        const status     = r.missed ? 'Missed' : 'Active';
-        const roundsDisp = r.missed ? '—' : r.rounds;
-        const countsDisp = r.missed ? '—' : r.counts;
-        rows += `<tr>
-          <td>${r.date}</td>
-          <td>${missedDot}${status}</td>
-          <td>${roundsDisp}</td>
-          <td>${countsDisp}</td>
-        </tr>`;
-      });
-
-      container.innerHTML = `
-        <div style="max-height:280px; overflow-y:auto;">
-          <table class="history-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Rounds</th>
-                <th>Counts</th>
-              </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </div>`;
+        initHistoryFeature();
     }
-
-    popup.style.display = 'block';
-  }
-
-  function closeHistoryPopup() {
-    const popup = document.getElementById('history-popup');
-    if (popup) popup.style.display = 'none';
-  }
-
-  /* ─────────────────────────────────────────
-     EXPORT CSV
-  ───────────────────────────────────────── */
-  function exportHistoryCSV() {
-    const history = loadHistory();
-    if (history.length === 0) { alert('No history data to export.'); return; }
-
-    const sorted = [...history].sort((a, b) => a.date.localeCompare(b.date));
-    let csv = 'Date,Status,Rounds Completed,Counts\n';
-    sorted.forEach(r => {
-      const status = r.missed ? 'Missed' : 'Active';
-      csv += `${r.date},${status},${r.missed ? 0 : r.rounds},${r.missed ? 0 : r.counts}\n`;
-    });
-
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href     = url;
-    a.download = 'japa_history.csv';
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
 })();
 </script>
 <!-- ═══════════════════════════════════════════════════
-     END DATA SAVING & HISTORY FEATURE
+     END HISTORY FEATURE
      ═══════════════════════════════════════════════════ -->
 
 </body>
 </html>
+
