@@ -17,7 +17,7 @@
     <meta property="og:description" content="Chant your mantra with ease using Digital Japa Beads — your spiritual companion, anytime, anywhere.">
     <meta property="og:url" content="https://digitaljapabeads.netlify.app">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="https://digitaljapabeads.netlify.app/rkhkmclogosm.png"> <!-- Replace with actual image URL -->
+    <meta property="og:image" content="https://digitaljapabeads.netlify.app/rkhkmclogosm.png">
 
     <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Digital Japa Beads | Chant Your Mantra Anytime, Anywhere">
@@ -158,187 +158,350 @@
     }
     /* ───── END CROP STYLES ───── */
 
-    /* ───── HISTORY FEATURE STYLES ───── */
+    /* ═══════════════════════════════════════
+       DATA HISTORY FEATURE STYLES
+    ═══════════════════════════════════════ */
+
+    /* History Modal Overlay */
     #history-modal {
       display: none;
       position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.92);
       z-index: 9999;
       overflow-y: auto;
-      padding: 20px;
-      box-sizing: border-box;
+      -webkit-overflow-scrolling: touch;
     }
-    #history-modal.open { display: block; }
 
-    #history-modal-inner {
-      background: #111;
-      border: 1px solid #333;
-      border-radius: 16px;
-      max-width: 480px;
+    #history-modal.active {
+      display: block;
+    }
+
+    .history-modal-inner {
+      max-width: 420px;
       margin: 0 auto;
-      padding: 20px;
-      color: white;
-    }
-
-    #history-modal-inner h2 {
-      margin: 0 0 6px;
-      font-size: 18px;
-      text-align: center;
-    }
-
-    #history-summary-bar {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin: 12px 0;
-    }
-
-    .hist-stat-box {
-      flex: 1;
-      min-width: 90px;
-      background: #1e1e1e;
-      border: 1px solid #333;
-      border-radius: 10px;
-      padding: 10px 8px;
-      text-align: center;
-    }
-
-    .hist-stat-box .hist-stat-val {
-      font-size: 22px;
-      font-weight: bold;
+      padding: 20px 16px 40px;
       color: #fff;
+      font-family: inherit;
     }
 
-    .hist-stat-box .hist-stat-lbl {
-      font-size: 10px;
-      color: #aaa;
-      margin-top: 2px;
-    }
-
-    #history-filter-row {
+    .history-modal-header {
       display: flex;
-      gap: 6px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
     }
 
-    #history-filter-row button {
-      flex: 1;
-      padding: 6px 4px;
-      background: #222;
-      border: 1px solid #444;
-      border-radius: 8px;
-      color: #ccc;
-      font-size: 12px;
-      cursor: pointer;
-    }
-
-    #history-filter-row button.active {
-      background: #fff;
-      color: #000;
-      border-color: #fff;
-    }
-
-    #history-table-wrap {
-      max-height: 340px;
-      overflow-y: auto;
-    }
-
-    #history-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-
-    #history-table th {
-      position: sticky;
-      top: 0;
-      background: #1a1a1a;
-      color: #aaa;
-      padding: 8px 6px;
-      text-align: left;
-      border-bottom: 1px solid #333;
-    }
-
-    #history-table td {
-      padding: 7px 6px;
-      border-bottom: 1px solid #222;
-      color: #eee;
-    }
-
-    #history-table tr.missed td {
-      color: #e05555;
-      font-style: italic;
-    }
-
-    #history-table tr.counted td {
-      color: #cfffcf;
+    .history-modal-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
     }
 
     #close-history-modal {
-      display: block;
-      width: 100%;
-      margin-top: 14px;
-      padding: 10px;
-      background: #fff;
-      color: #000;
-      border: none;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    /* History toggle switch — reuse daily-reset style */
-    #history-switch {
-      position: relative;
-      display: inline-block;
-      width: 56px;
-      height: 28px;
-      flex-shrink: 0;
-    }
-    #history-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-      position: absolute;
-    }
-    #history-switch .djb-slider {
-      position: absolute;
-      cursor: pointer;
-      inset: 0;
-      background-color: #555;
-      border-radius: 28px;
-      transition: background-color 0.3s;
-    }
-    #history-switch .djb-slider:before {
-      content: "";
-      position: absolute;
-      height: 20px;
-      width: 20px;
-      left: 4px;
-      bottom: 4px;
-      background-color: white;
-      border-radius: 50%;
-      transition: transform 0.3s;
-    }
-    #history-switch input:checked + .djb-slider { background-color: #4caf50; }
-    #history-switch input:checked + .djb-slider:before { transform: translateX(28px); }
-
-    #view-history-btn {
-      margin-top: 6px;
-      padding: 8px 14px;
       background: #222;
-      border: 1px solid #555;
-      border-radius: 8px;
+      border: 1px solid #444;
       color: #fff;
+      border-radius: 8px;
+      padding: 6px 14px;
       font-size: 13px;
       cursor: pointer;
+    }
+
+    /* Month navigation */
+    .history-month-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .history-month-nav button {
+      background: #222;
+      border: 1px solid #444;
+      color: #fff;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+
+    .history-month-nav button:hover:not(:disabled) {
+      background: #333;
+    }
+
+    .hist-dropdowns {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .hist-select {
+      background: #1e1e1e;
+      border: 1px solid #444;
+      color: #fff;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      text-align: center;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .hist-select:focus {
+      border-color: #888;
+      background: #2a2a2a;
+    }
+
+    #hist-month-select {
+      min-width: 110px;
+    }
+
+    #hist-year-select {
+      min-width: 68px;
+    }
+
+    /* Calendar grid */
+    .history-calendar {
       width: 100%;
     }
-    #view-history-btn:hover { background: #333; }
-    /* ───── END HISTORY STYLES ───── */
+
+    .history-cal-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+      margin-bottom: 4px;
+    }
+
+    .history-cal-weekday {
+      text-align: center;
+      font-size: 11px;
+      color: #888;
+      padding: 4px 0;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .history-cal-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+    }
+
+    .history-cal-day {
+      aspect-ratio: 1;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      background: #181818;
+      border: 1px solid #2a2a2a;
+      transition: background 0.12s, transform 0.1s;
+      min-height: 38px;
+      overflow: hidden;
+    }
+
+    .history-cal-day:hover:not(.history-cal-day--empty) {
+      background: #262626;
+      transform: scale(1.04);
+    }
+
+    .history-cal-day--empty {
+      background: transparent;
+      border-color: transparent;
+      cursor: default;
+    }
+
+    .history-cal-day--today {
+      border-color: #fff !important;
+    }
+
+    /* Color states */
+    .history-cal-day--active {
+      background: #1a3a1a;
+      border-color: #2d6a2d;
+    }
+
+    .history-cal-day--missed {
+      background: #2a1a1a;
+      border-color: #5a2a2a;
+    }
+
+    .history-cal-day--future {
+      background: #111;
+      border-color: #1e1e1e;
+      cursor: default;
+      opacity: 0.4;
+    }
+
+    .history-cal-day__num {
+      font-size: 12px;
+      color: #ccc;
+      font-weight: 600;
+      line-height: 1;
+    }
+
+    .history-cal-day--active .history-cal-day__num {
+      color: #6fcf6f;
+    }
+
+    .history-cal-day--missed .history-cal-day__num {
+      color: #cf6f6f;
+    }
+
+    .history-cal-day__rounds {
+      font-size: 9px;
+      color: #6fcf6f;
+      line-height: 1;
+      margin-top: 2px;
+    }
+
+    .history-cal-day__counts-live {
+      font-size: 8px;
+      color: #7ecfef;
+      line-height: 1;
+      margin-top: 1px;
+    }
+
+    .history-cal-day--missed .history-cal-day__rounds {
+      color: #cf6f6f;
+    }
+
+    /* Dot indicator */
+    .history-cal-day__dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      margin-top: 2px;
+      background: #6fcf6f;
+    }
+
+    .history-cal-day--missed .history-cal-day__dot {
+      background: #cf6f6f;
+    }
+
+    /* Day detail tooltip/popup */
+    #history-day-detail {
+      display: none;
+      position: fixed;
+      background: #1a1a1a;
+      border: 1px solid #444;
+      border-radius: 12px;
+      padding: 14px 16px;
+      color: #fff;
+      font-size: 13px;
+      min-width: 200px;
+      z-index: 10000;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+      pointer-events: none;
+    }
+
+    #history-day-detail h4 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: #fff;
+    }
+
+    #history-day-detail p {
+      margin: 3px 0;
+      color: #bbb;
+    }
+
+    #history-day-detail p span {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    #history-day-detail .detail-missed {
+      color: #cf6f6f;
+      font-weight: 600;
+    }
+
+    /* Monthly summary */
+    .history-monthly-summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .history-stat-card {
+      background: #181818;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 12px 8px;
+      text-align: center;
+    }
+
+    .history-stat-card__val {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .history-stat-card__lbl {
+      font-size: 10px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    /* Legend */
+    .history-legend {
+      display: flex;
+      gap: 14px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .history-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: #888;
+    }
+
+    .history-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+    }
+
+    .history-legend-dot--active { background: #1a3a1a; border: 1px solid #2d6a2d; }
+    .history-legend-dot--missed { background: #2a1a1a; border: 1px solid #5a2a2a; }
+    .history-legend-dot--none   { background: #181818; border: 1px solid #2a2a2a; }
+
+    /* History disabled notice */
+    .history-disabled-notice {
+      text-align: center;
+      padding: 40px 20px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .history-disabled-notice i {
+      font-size: 36px;
+      display: block;
+      margin-bottom: 12px;
+      color: #444;
+    }
+
+    /* ═══════════════════════════════════════
+       END DATA HISTORY STYLES
+    ═══════════════════════════════════════ */
     </style>
 </head>
 <body>
@@ -439,7 +602,7 @@
         <h3>Vibration on Count</h3>
         <div class="button-cover">
             <div class="button r">
-                <input type="checkbox" id="count-vibration-toggle" class="checkbox" checked>
+                <input type="checkbox" id="count-vibration-toggle" class="checkbox">
                 <div class="knobs"></div>
                 <div class="layer"></div>
             </div>
@@ -472,77 +635,6 @@
     </div>
 </div>
 
-<!-- ───── DAILY RESET TOGGLE ───── -->
-<style>
-  #daily-reset-switch {
-    position: relative;
-    display: inline-block;
-    width: 56px;
-    height: 28px;
-    flex-shrink: 0;
-  }
-  #daily-reset-switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-    position: absolute;
-  }
-  #daily-reset-switch .djb-slider {
-    position: absolute;
-    cursor: pointer;
-    inset: 0;
-    background-color: #555;
-    border-radius: 28px;
-    transition: background-color 0.3s;
-  }
-  #daily-reset-switch .djb-slider:before {
-    content: "";
-    position: absolute;
-    height: 20px;
-    width: 20px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    border-radius: 50%;
-    transition: transform 0.3s;
-  }
-  #daily-reset-switch input:checked + .djb-slider {
-    background-color: #4caf50;
-  }
-  #daily-reset-switch input:checked + .djb-slider:before {
-    transform: translateX(28px);
-  }
-</style>
-<div class="settings-section">
-    <div class="settings-option">
-        <h3>Daily Reset</h3>
-        <label id="daily-reset-switch">
-            <input type="checkbox" id="daily-reset-toggle" checked>
-            <span class="djb-slider"></span>
-        </label>
-    </div>
-    <p class="settings-subtext">When enabled, count and rounds reset automatically each day. Turn off to keep your count and rounds running continuously across days.</p>
-</div>
-<!-- ───── END DAILY RESET TOGGLE ───── -->
-
-<!-- ═══════════════════════════════════════════════════
-     HISTORY SETTINGS SECTION (NEW)
-     ═══════════════════════════════════════════════════ -->
-<div class="settings-section">
-    <div class="settings-option">
-        <h3>Counting History</h3>
-        <label id="history-switch">
-            <input type="checkbox" id="history-toggle" checked>
-            <span class="djb-slider"></span>
-        </label>
-    </div>
-    <p class="settings-subtext">Store up to 18 months of counting history including total counts, rounds, and missed days</p>
-    <button id="view-history-btn"><i class="fas fa-history"></i> View History</button>
-</div>
-<!-- ═══════════════════════════════════════════════════
-     END HISTORY SETTINGS SECTION
-     ═══════════════════════════════════════════════════ -->
-
 <div class="settings-section">
     <div class="settings-option">
         <h3>Button Size</h3>
@@ -566,6 +658,26 @@
     </div>
     <p class="settings-subtext">Show motivational popups when your streak updates</p>
 </div>
+
+<!-- ═══════ DATA HISTORY SETTING ═══════ -->
+<div class="settings-section">
+    <div class="settings-option">
+        <h3>Save Data / History</h3>
+        <div class="button-cover">
+            <div class="button r">
+                <input type="checkbox" id="history-toggle" class="checkbox" checked>
+                <div class="knobs"></div>
+                <div class="layer"></div>
+            </div>
+        </div>
+    </div>
+    <p class="settings-subtext">Record counting activity for up to 18 months. Turn off to stop logging new history.</p>
+    <div class="settings-option" style="margin-top:10px;">
+        <button id="view-history-btn" style="width:100%;">📅 View History Calendar</button>
+    </div>
+</div>
+<!-- ═══════ END DATA HISTORY SETTING ═══════ -->
+
     <div class="settings-section">
     <div class="settings-option">
 
@@ -628,61 +740,6 @@
         </div>
     </div>
 
-    <!-- ═══════════════════════════════════════════════════
-         HISTORY MODAL (NEW)
-         ═══════════════════════════════════════════════════ -->
-    <div id="history-modal">
-      <div id="history-modal-inner">
-        <h2>📊 Counting History</h2>
-
-        <div id="history-summary-bar">
-          <div class="hist-stat-box">
-            <div class="hist-stat-val" id="hist-total-counts">0</div>
-            <div class="hist-stat-lbl">Total Counts</div>
-          </div>
-          <div class="hist-stat-box">
-            <div class="hist-stat-val" id="hist-total-rounds">0</div>
-            <div class="hist-stat-lbl">Total Rounds</div>
-          </div>
-          <div class="hist-stat-box">
-            <div class="hist-stat-val" id="hist-missed-days">0</div>
-            <div class="hist-stat-lbl">Missed Days</div>
-          </div>
-          <div class="hist-stat-box">
-            <div class="hist-stat-val" id="hist-active-days">0</div>
-            <div class="hist-stat-lbl">Active Days</div>
-          </div>
-        </div>
-
-        <div id="history-filter-row">
-          <button class="hist-filter active" data-days="7">7 Days</button>
-          <button class="hist-filter" data-days="30">30 Days</button>
-          <button class="hist-filter" data-days="90">3 Months</button>
-          <button class="hist-filter" data-days="180">6 Months</button>
-          <button class="hist-filter" data-days="547">18 Months</button>
-        </div>
-
-        <div id="history-table-wrap">
-          <table id="history-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Counts</th>
-                <th>Rounds</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="history-tbody"></tbody>
-          </table>
-        </div>
-
-        <button id="close-history-modal">Close</button>
-      </div>
-    </div>
-    <!-- ═══════════════════════════════════════════════════
-         END HISTORY MODAL
-         ═══════════════════════════════════════════════════ -->
-
     <div class="footer">
         <div class="containerk">
             <hr>
@@ -725,6 +782,28 @@
     </div>
 </div>
 
+<!-- ═══════════════════════════════════════
+     DATA HISTORY MODAL
+═══════════════════════════════════════ -->
+<div id="history-modal">
+  <div class="history-modal-inner">
+    <div class="history-modal-header">
+      <h2>📅 Counting History</h2>
+      <button id="close-history-modal">✕ Close</button>
+    </div>
+
+    <div id="history-content">
+      <!-- Rendered by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- Day detail floating tooltip -->
+<div id="history-day-detail"></div>
+<!-- ═══════════════════════════════════════
+     END DATA HISTORY MODAL
+═══════════════════════════════════════ -->
+
     <audio id="audio" src="rkhkmc.mp3" preload="auto"></audio>
     <script src="script.js"></script>
     <script>
@@ -747,348 +826,6 @@
   document.getElementById('audio').muted = false;
 });
 </script>
-
-<!-- ═══════════════════════════════════════════════════
-     DAILY RESET FEATURE — FIXED so page refresh does NOT
-     reset counts unless a new day has actually occurred.
-     Reads/writes localStorage key 'dailyResetEnabled'.
-     ═══════════════════════════════════════════════════ -->
-<script>
-(function () {
-  'use strict';
-
-  const STORAGE_KEY_DAILY_RESET  = 'dailyResetEnabled';
-  const STORAGE_KEY_LAST_DATE    = 'lastResetDate';
-
-  /* ── Helpers ── */
-  function getTodayStr() {
-    const d = new Date();
-    return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
-  }
-
-  function isDailyResetEnabled() {
-    const val = localStorage.getItem(STORAGE_KEY_DAILY_RESET);
-    return val === null ? true : val === 'true';
-  }
-
-  /* ── Perform the daily reset of count + round ── */
-  function performDailyReset() {
-    // Save today's data to history BEFORE resetting
-    window.djbHistory && window.djbHistory.saveTodayBeforeReset();
-
-    // Reset count
-    localStorage.setItem('count', '0');
-    // Reset round — key name may vary; covering common variants
-    localStorage.setItem('round', '0');
-    localStorage.setItem('rounds', '0');
-    // Update last reset date
-    localStorage.setItem(STORAGE_KEY_LAST_DATE, getTodayStr());
-
-    // Update the visible DOM elements if they already exist
-    const countDisplay = document.getElementById('count-display');
-    const roundDisplay = document.getElementById('round-display');
-    if (countDisplay) countDisplay.textContent = '0';
-    if (roundDisplay) roundDisplay.textContent = 'Round: 0';
-  }
-
-  /* ── Check on page load whether a daily reset is due ──
-     KEY FIX: only reset if the STORED DATE differs from today.
-     Merely refreshing the page will NOT reset because the date
-     hasn't changed — only a new calendar day triggers the reset. */
-  function checkDailyReset() {
-    if (!isDailyResetEnabled()) return;
-    const lastDate = localStorage.getItem(STORAGE_KEY_LAST_DATE);
-    const today    = getTodayStr();
-    // Only reset when LAST DATE is different from today
-    if (lastDate !== today) {
-      performDailyReset();
-    }
-    // If lastDate === today → same day, just a page refresh → do nothing
-  }
-
-  /* ── Sync the toggle UI state from localStorage ── */
-  function syncToggleUI() {
-    const toggle = document.getElementById('daily-reset-toggle');
-    if (toggle) toggle.checked = isDailyResetEnabled();
-  }
-
-  /* ── Wire up the toggle after DOM is ready ── */
-  document.addEventListener('DOMContentLoaded', function () {
-    syncToggleUI();
-    checkDailyReset();
-
-    const toggle = document.getElementById('daily-reset-toggle');
-    if (!toggle) return;
-
-    toggle.addEventListener('change', function () {
-      localStorage.setItem(STORAGE_KEY_DAILY_RESET, toggle.checked ? 'true' : 'false');
-      if (toggle.checked) {
-        checkDailyReset();
-      }
-    });
-  });
-
-  window.djbDailyReset = {
-    check: checkDailyReset,
-    isEnabled: isDailyResetEnabled
-  };
-})();
-</script>
-<!-- ═══════════════════════════════════════════════════
-     END DAILY RESET FEATURE
-     ═══════════════════════════════════════════════════ -->
-
-<!-- ═══════════════════════════════════════════════════
-     HISTORY & DATA SAVING FEATURE (NEW)
-     ─────────────────────────────────────────────────
-     • Stores daily records in localStorage key 'djbHistory'
-       as a JSON object: { "YYYY-M-D": { counts, rounds } }
-     • Prunes entries older than 18 months automatically
-     • Tracks all days since first use; days with no entry
-       that fall between first-use date and yesterday are
-       counted as "missed days"
-     • History toggle persists in 'historyEnabled' key
-     • View History button opens the modal with filters
-     ═══════════════════════════════════════════════════ -->
-<script>
-(function () {
-  'use strict';
-
-  const HIST_KEY         = 'djbHistory';        // { "YYYY-M-D": {counts, rounds} }
-  const HIST_ENABLED_KEY = 'historyEnabled';
-  const FIRST_USE_KEY    = 'djbFirstUseDate';
-  const MAX_MONTHS       = 18;
-
-  /* ── Helpers ── */
-  function getTodayStr() {
-    const d = new Date();
-    return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
-  }
-
-  function dateStrToObj(str) {
-    const parts = str.split('-');
-    return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-  }
-
-  function formatDisplayDate(str) {
-    const d = dateStrToObj(str);
-    return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
-  }
-
-  function isHistoryEnabled() {
-    const val = localStorage.getItem(HIST_ENABLED_KEY);
-    return val === null ? true : val === 'true';
-  }
-
-  /* ── Load / Save history store ── */
-  function loadHistory() {
-    try {
-      return JSON.parse(localStorage.getItem(HIST_KEY) || '{}');
-    } catch (e) { return {}; }
-  }
-
-  function saveHistory(hist) {
-    try {
-      localStorage.setItem(HIST_KEY, JSON.stringify(hist));
-    } catch (e) {}
-  }
-
-  /* ── Prune entries older than 18 months ── */
-  function pruneOldHistory(hist) {
-    const cutoff = new Date();
-    cutoff.setMonth(cutoff.getMonth() - MAX_MONTHS);
-    let changed = false;
-    Object.keys(hist).forEach(function (key) {
-      if (dateStrToObj(key) < cutoff) {
-        delete hist[key];
-        changed = true;
-      }
-    });
-    if (changed) saveHistory(hist);
-    return hist;
-  }
-
-  /* ── Record first use date ── */
-  function ensureFirstUse() {
-    if (!localStorage.getItem(FIRST_USE_KEY)) {
-      localStorage.setItem(FIRST_USE_KEY, getTodayStr());
-    }
-  }
-
-  /* ── Save today's data from localStorage to history ── */
-  function saveTodayToHistory() {
-    if (!isHistoryEnabled()) return;
-    const today   = getTodayStr();
-    const counts  = parseInt(localStorage.getItem('count')  || '0', 10);
-    const rounds  = parseInt(localStorage.getItem('round')  || localStorage.getItem('rounds') || '0', 10);
-    let hist = loadHistory();
-    hist = pruneOldHistory(hist);
-    // Only write if there's something to record
-    if (counts > 0 || rounds > 0) {
-      hist[today] = { counts: counts, rounds: rounds };
-      saveHistory(hist);
-    }
-  }
-
-  /* ── Called by daily reset feature BEFORE wiping counts ── */
-  function saveTodayBeforeReset() {
-    saveTodayToHistory();
-  }
-
-  /* ── Build the list of all days from firstUse to yesterday ── */
-  function getAllDaysSinceFirstUse() {
-    const firstStr = localStorage.getItem(FIRST_USE_KEY);
-    if (!firstStr) return [];
-    const start = dateStrToObj(firstStr);
-    const end   = new Date();
-    end.setDate(end.getDate() - 1); // up to yesterday
-    const days = [];
-    const cur  = new Date(start);
-    while (cur <= end) {
-      const key = cur.getFullYear() + '-' + (cur.getMonth() + 1) + '-' + cur.getDate();
-      days.push(key);
-      cur.setDate(cur.getDate() + 1);
-    }
-    return days;
-  }
-
-  /* ── Filter history to last N days from today ── */
-  function getFilteredHistory(hist, days) {
-    const cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - days);
-    const result = [];
-    // Collect all days in range (recorded + missed)
-    const cur = new Date(cutoff);
-    const end = new Date();
-    end.setDate(end.getDate() - 1); // up to yesterday
-    while (cur <= end) {
-      const key = cur.getFullYear() + '-' + (cur.getMonth() + 1) + '-' + cur.getDate();
-      if (hist[key]) {
-        result.push({ date: key, counts: hist[key].counts, rounds: hist[key].rounds, missed: false });
-      } else {
-        // Only count as missed if after first-use date
-        const firstStr = localStorage.getItem(FIRST_USE_KEY);
-        if (firstStr && dateStrToObj(key) >= dateStrToObj(firstStr)) {
-          result.push({ date: key, counts: 0, rounds: 0, missed: true });
-        }
-      }
-      cur.setDate(cur.getDate() + 1);
-    }
-    return result.reverse(); // most recent first
-  }
-
-  /* ── Compute summary stats ── */
-  function computeSummary(hist, filterDays) {
-    const rows = getFilteredHistory(hist, filterDays);
-    let totalCounts = 0, totalRounds = 0, missed = 0, active = 0;
-    rows.forEach(function (r) {
-      if (r.missed) {
-        missed++;
-      } else {
-        totalCounts += r.counts;
-        totalRounds += r.rounds;
-        active++;
-      }
-    });
-    return { totalCounts: totalCounts, totalRounds: totalRounds, missed: missed, active: active, rows: rows };
-  }
-
-  /* ── Render history modal ── */
-  function renderHistory(filterDays) {
-    let hist = loadHistory();
-    hist = pruneOldHistory(hist);
-    const summary = computeSummary(hist, filterDays);
-
-    document.getElementById('hist-total-counts').textContent = summary.totalCounts.toLocaleString();
-    document.getElementById('hist-total-rounds').textContent = summary.totalRounds.toLocaleString();
-    document.getElementById('hist-missed-days').textContent  = summary.missed.toLocaleString();
-    document.getElementById('hist-active-days').textContent  = summary.active.toLocaleString();
-
-    const tbody = document.getElementById('history-tbody');
-    tbody.innerHTML = '';
-    if (summary.rows.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#777;padding:20px;">No history yet. Start chanting! 🙏</td></tr>';
-      return;
-    }
-    summary.rows.forEach(function (r) {
-      const tr = document.createElement('tr');
-      tr.className = r.missed ? 'missed' : 'counted';
-      tr.innerHTML =
-        '<td>' + formatDisplayDate(r.date) + '</td>' +
-        '<td>' + (r.missed ? '—' : r.counts.toLocaleString()) + '</td>' +
-        '<td>' + (r.missed ? '—' : r.rounds.toLocaleString()) + '</td>' +
-        '<td>' + (r.missed ? '😔 Missed' : '✅ Counted') + '</td>';
-      tbody.appendChild(tr);
-    });
-  }
-
-  /* ── Wire up everything after DOM ready ── */
-  document.addEventListener('DOMContentLoaded', function () {
-    ensureFirstUse();
-
-    // Sync history toggle
-    const histToggle = document.getElementById('history-toggle');
-    if (histToggle) {
-      histToggle.checked = isHistoryEnabled();
-      histToggle.addEventListener('change', function () {
-        localStorage.setItem(HIST_ENABLED_KEY, histToggle.checked ? 'true' : 'false');
-      });
-    }
-
-    // View History button
-    const viewBtn = document.getElementById('view-history-btn');
-    const modal   = document.getElementById('history-modal');
-    if (viewBtn && modal) {
-      viewBtn.addEventListener('click', function () {
-        // Save current session data before opening
-        saveTodayToHistory();
-        modal.classList.add('open');
-        renderHistory(7); // default 7 days
-        // Reset active filter button
-        document.querySelectorAll('.hist-filter').forEach(function (b) {
-          b.classList.toggle('active', parseInt(b.dataset.days) === 7);
-        });
-      });
-    }
-
-    // Filter buttons
-    document.querySelectorAll('.hist-filter').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        document.querySelectorAll('.hist-filter').forEach(function (b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        renderHistory(parseInt(btn.dataset.days));
-      });
-    });
-
-    // Close history modal
-    const closeHistBtn = document.getElementById('close-history-modal');
-    if (closeHistBtn && modal) {
-      closeHistBtn.addEventListener('click', function () { modal.classList.remove('open'); });
-    }
-
-    // Auto-save today's data periodically (every 60 seconds)
-    setInterval(saveTodayToHistory, 60000);
-
-    // Save on page unload / visibility change
-    document.addEventListener('visibilitychange', function () {
-      if (document.visibilityState === 'hidden') saveTodayToHistory();
-    });
-    window.addEventListener('beforeunload', saveTodayToHistory);
-  });
-
-  /* Expose globally so daily-reset script can call saveTodayBeforeReset */
-  window.djbHistory = {
-    saveTodayBeforeReset: saveTodayBeforeReset,
-    saveTodayToHistory:   saveTodayToHistory,
-    isEnabled:            isHistoryEnabled
-  };
-
-})();
-</script>
-<!-- ═══════════════════════════════════════════════════
-     END HISTORY & DATA SAVING FEATURE
-     ═══════════════════════════════════════════════════ -->
-
 <script>
         if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
@@ -1253,8 +990,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const nh = tempImg.naturalHeight;
 
         FRAME_SIZE = Math.min(240, nw, nh);
+
         cropFrame.style.width  = FRAME_SIZE + 'px';
         cropFrame.style.height = FRAME_SIZE + 'px';
+
         document.getElementById('crop-zoom-row').style.width = FRAME_SIZE + 'px';
 
         const ratio = Math.max(FRAME_SIZE / nw, FRAME_SIZE / nh);
@@ -1414,6 +1153,551 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 <!-- ═══════════════════════════════════════════════════
      END IMAGE CROP FEATURE
+     ═══════════════════════════════════════════════════ -->
+
+<!-- ═══════════════════════════════════════════════════
+     DATA HISTORY FEATURE
+     Self-contained. Hooks into existing count/round increments
+     by watching localStorage keys written by script.js.
+     ═══════════════════════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  /* ─────────────────────────────────────
+     STORAGE HELPERS
+  ───────────────────────────────────── */
+  const HISTORY_STORE_KEY   = 'djb_history_v1';      // { "YYYY-MM-DD": { counts, rounds } }
+  const HISTORY_ENABLED_KEY = 'djb_history_enabled';  // "true" | "false"
+  const MAX_MONTHS          = 18;
+
+  function getTodayKey() {
+    const d = new Date();
+    return d.getFullYear() + '-'
+      + String(d.getMonth() + 1).padStart(2, '0') + '-'
+      + String(d.getDate()).padStart(2, '0');
+  }
+
+  function isHistoryEnabled() {
+    const v = localStorage.getItem(HISTORY_ENABLED_KEY);
+    return v === null ? true : v === 'true'; // default ON
+  }
+
+  function loadHistory() {
+    try {
+      return JSON.parse(localStorage.getItem(HISTORY_STORE_KEY) || '{}');
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveHistory(data) {
+    // Prune entries older than MAX_MONTHS
+    const cutoff = new Date();
+    cutoff.setMonth(cutoff.getMonth() - MAX_MONTHS);
+    const cutoffStr = cutoff.getFullYear() + '-'
+      + String(cutoff.getMonth() + 1).padStart(2, '0') + '-'
+      + String(cutoff.getDate()).padStart(2, '0');
+
+    const pruned = {};
+    Object.keys(data).forEach(k => {
+      if (k >= cutoffStr) pruned[k] = data[k];
+    });
+    localStorage.setItem(HISTORY_STORE_KEY, JSON.stringify(pruned));
+  }
+
+  function getTodayEntry() {
+    const hist = loadHistory();
+    const key  = getTodayKey();
+    return hist[key] || { counts: 0, rounds: 0 };
+  }
+
+  function setTodayEntry(entry) {
+    if (!isHistoryEnabled()) return;
+    const hist = loadHistory();
+    hist[getTodayKey()] = entry;
+    saveHistory(hist);
+  }
+
+  /* ─────────────────────────────────────
+     INTERCEPT COUNT & ROUND EVENTS
+     We patch in after script.js runs by
+     watching for DOM mutations and using
+     a MutationObserver on count-display
+     and round-display.
+  ───────────────────────────────────── */
+  let _lastCount  = 0;
+  let _lastRound  = 0;
+
+  function syncFromDOM() {
+    const countEl = document.getElementById('count-display');
+    const roundEl = document.getElementById('round-display');
+    if (!countEl || !roundEl) return;
+
+    const rawCount = parseInt(countEl.textContent, 10) || 0;
+    const rawRound = parseInt((roundEl.textContent || '').replace(/[^0-9]/g, ''), 10) || 0;
+
+    let changed = false;
+
+    if (rawCount !== _lastCount || rawRound !== _lastRound) {
+      _lastCount = rawCount;
+      _lastRound = rawRound;
+      changed = true;
+    }
+
+    if (changed && isHistoryEnabled()) {
+      // Read today's stored entry
+      const entry = getTodayEntry();
+
+      // Store current live count (resets each round) and total rounds separately
+      // totalCounts = rounds×108 + currentCount for accumulated total
+      const totalCountsToday = rawRound * 108 + rawCount;
+      if (totalCountsToday > entry.counts) {
+        entry.counts = totalCountsToday;
+      }
+      if (rawRound > entry.rounds) {
+        entry.rounds = rawRound;
+      }
+      // Always save current live count (0–107)
+      entry.currentCount = rawCount;
+      setTodayEntry(entry);
+
+      // Live-update calendar if it's open and showing current month
+      liveUpdateTodayCell(entry);
+    }
+  }
+
+  /* Live update today's cell in the open calendar without full re-render */
+  function liveUpdateTodayCell(entry) {
+    const modal = document.getElementById('history-modal');
+    if (!modal || !modal.classList.contains('active')) return;
+
+    // Only update if we're viewing the current month
+    const now = new Date();
+    if (calYear !== now.getFullYear() || calMonth !== now.getMonth()) return;
+
+    const todayKey = getTodayKey();
+    const cell = document.querySelector(`.history-cal-day[data-key="${todayKey}"]`);
+    if (!cell) return;
+
+    // Update classes
+    cell.classList.remove('history-cal-day--missed', 'history-cal-day--future');
+    cell.classList.add('history-cal-day--active');
+
+    // Rebuild inner content
+    const d = now.getDate();
+    cell.innerHTML = `
+      <span class="history-cal-day__num">${d}</span>
+      <span class="history-cal-day__rounds" style="font-size:8px;line-height:1;">${entry.rounds}r</span>
+      <span class="history-cal-day__counts-live" style="font-size:8px;color:#aef;line-height:1;">${entry.currentCount}c</span>
+      <div class="history-cal-day__dot"></div>`;
+
+    // Update monthly summary stats live
+    updateMonthlySummaryLive();
+  }
+
+  /* Recompute and refresh the 3 stat cards without re-rendering the whole calendar */
+  function updateMonthlySummaryLive() {
+    const hist = loadHistory();
+    const today = new Date();
+    const todayKey = getTodayKey();
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+
+    let monthCounts = 0, monthRounds = 0, monthMissed = 0, monthActive = 0;
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dayKey = calYear + '-' + String(calMonth + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+      const dayDate = new Date(calYear, calMonth, d);
+      const isPast = dayDate < today && dayKey !== todayKey;
+
+      if (hist[dayKey]) {
+        monthCounts += hist[dayKey].counts;
+        monthRounds += hist[dayKey].rounds;
+        monthActive++;
+      } else if (isPast) {
+        monthMissed++;
+      }
+    }
+
+    const cards = document.querySelectorAll('.history-stat-card__val');
+    if (cards[0]) cards[0].textContent = monthActive;
+    if (cards[1]) cards[1].textContent = monthRounds;
+    if (cards[2]) cards[2].textContent = monthCounts;
+    if (cards[3]) cards[3].textContent = monthMissed;
+  }
+
+  // Start watching after DOM is ready
+  function startObserving() {
+    const countEl = document.getElementById('count-display');
+    const roundEl = document.getElementById('round-display');
+    if (!countEl || !roundEl) {
+      setTimeout(startObserving, 300);
+      return;
+    }
+
+    const observer = new MutationObserver(syncFromDOM);
+    observer.observe(countEl, { childList: true, subtree: true, characterData: true });
+    observer.observe(roundEl, { childList: true, subtree: true, characterData: true });
+
+    // Initial sync
+    syncFromDOM();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(startObserving, 500);
+  });
+
+  /* ─────────────────────────────────────
+     SETTINGS TOGGLE WIRING
+  ───────────────────────────────────── */
+  document.addEventListener('DOMContentLoaded', () => {
+    const toggle = document.getElementById('history-toggle');
+    if (toggle) {
+      // Load persisted state
+      toggle.checked = isHistoryEnabled();
+
+      toggle.addEventListener('change', () => {
+        localStorage.setItem(HISTORY_ENABLED_KEY, toggle.checked ? 'true' : 'false');
+      });
+    }
+
+    // View History button
+    const viewBtn = document.getElementById('view-history-btn');
+    if (viewBtn) {
+      viewBtn.addEventListener('click', () => {
+        openHistoryModal();
+        // Close settings popup if open
+        const settingsPopup = document.getElementById('settings-popup');
+        if (settingsPopup) settingsPopup.style.display = 'none';
+      });
+    }
+
+    // Close history modal
+    const closeHistBtn = document.getElementById('close-history-modal');
+    if (closeHistBtn) {
+      closeHistBtn.addEventListener('click', closeHistoryModal);
+    }
+
+    // Close on outside click
+    const histModal = document.getElementById('history-modal');
+    if (histModal) {
+      histModal.addEventListener('click', (e) => {
+        if (e.target === histModal) closeHistoryModal();
+      });
+    }
+  });
+
+  /* ─────────────────────────────────────
+     CALENDAR VIEW
+  ───────────────────────────────────── */
+  let calYear  = new Date().getFullYear();
+  let calMonth = new Date().getMonth(); // 0-indexed
+
+  function openHistoryModal() {
+    calYear  = new Date().getFullYear();
+    calMonth = new Date().getMonth();
+    // Sync latest DOM state into history before rendering
+    syncFromDOM();
+    renderHistoryContent();
+    document.getElementById('history-modal').classList.add('active');
+  }
+
+  function closeHistoryModal() {
+    document.getElementById('history-modal').classList.remove('active');
+    hideDetailTooltip();
+  }
+
+  function renderHistoryContent() {
+    const container = document.getElementById('history-content');
+    if (!container) return;
+
+    if (!isHistoryEnabled()) {
+      container.innerHTML = `
+        <div class="history-disabled-notice">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          <strong>History is turned off</strong><br><br>
+          Enable "Save Data / History" in Settings to start recording your counting activity.
+        </div>`;
+      return;
+    }
+
+    const hist = loadHistory();
+    const today = new Date();
+    const todayKey = getTodayKey();
+
+    const monthNames = ['January','February','March','April','May','June',
+                        'July','August','September','October','November','December'];
+    const weekDays   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+    // Nav bounds: min = 17 months ago, max = current month
+    const minDate = new Date(today.getFullYear(), today.getMonth() - (MAX_MONTHS - 1), 1);
+    const maxDate = new Date(today.getFullYear(), today.getMonth(), 1);
+    const curDate = new Date(calYear, calMonth, 1);
+    const canPrev = curDate > minDate;
+    const canNext = curDate < maxDate;
+
+    // Build calendar days
+    const firstDay = new Date(calYear, calMonth, 1).getDay();
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+
+    // Compute monthly stats
+    let monthCounts = 0, monthRounds = 0, monthMissed = 0, monthActive = 0;
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dayKey = calYear + '-' + String(calMonth + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+      const dayDate = new Date(calYear, calMonth, d);
+      const isPast = dayDate < today && dayKey !== todayKey;
+      const isToday2 = dayKey === todayKey;
+
+      if (hist[dayKey]) {
+        monthCounts += hist[dayKey].counts;
+        monthRounds += hist[dayKey].rounds;
+        monthActive++;
+      } else if (isPast) {
+        monthMissed++;
+      }
+    }
+
+    // Day cells HTML
+    let dayCells = '';
+    // Empty cells for offset
+    for (let i = 0; i < firstDay; i++) {
+      dayCells += `<div class="history-cal-day history-cal-day--empty"></div>`;
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dayKey = calYear + '-' + String(calMonth + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+      const dayDate = new Date(calYear, calMonth, d);
+      const isFuture = dayDate > today;
+      const isToday2 = dayKey === todayKey;
+      const isPast = !isFuture && !isToday2;
+
+      const entry = hist[dayKey];
+      let cls = 'history-cal-day';
+      if (isFuture)      cls += ' history-cal-day--future';
+      else if (entry)    cls += ' history-cal-day--active';
+      else if (isPast)   cls += ' history-cal-day--missed';
+      if (isToday2)      cls += ' history-cal-day--today';
+
+      const dotHtml = (entry || isPast) && !isFuture
+        ? `<div class="history-cal-day__dot"></div>` : '';
+
+      // For today's cell: show live currentCount; for past days: show total counts
+      const isLiveToday = isToday2;
+      let infoHtml = '';
+      if (entry) {
+        const roundsStr = `${entry.rounds}r`;
+        // Show current live count for today, accumulated total for past days
+        const countVal = isLiveToday
+          ? (entry.currentCount !== undefined ? entry.currentCount : entry.counts % 108)
+          : entry.counts;
+        const countsStr = `${countVal}c`;
+        infoHtml = `
+          <span class="history-cal-day__rounds">${roundsStr}</span>
+          <span class="history-cal-day__counts-live">${countsStr}</span>`;
+      }
+
+      dayCells += `
+        <div class="${cls}" data-day="${d}" data-key="${dayKey}" data-future="${isFuture}">
+          <span class="history-cal-day__num">${d}</span>
+          ${infoHtml}
+          ${dotHtml}
+        </div>`;
+    }
+
+    const weekDayHeaders = weekDays.map(w =>
+      `<div class="history-cal-weekday">${w}</div>`).join('');
+
+    // Build month dropdown options
+    const monthOpts = monthNames.map((m, i) => {
+      // Disable months outside the valid range for the selected year
+      const optDate = new Date(calYear, i, 1);
+      const disabled = optDate < minDate || optDate > maxDate;
+      return `<option value="${i}" ${i === calMonth ? 'selected' : ''} ${disabled ? 'disabled' : ''}>${m}</option>`;
+    }).join('');
+
+    // Build year dropdown options (from minDate year to maxDate year)
+    let yearOpts = '';
+    for (let y = minDate.getFullYear(); y <= maxDate.getFullYear(); y++) {
+      yearOpts += `<option value="${y}" ${y === calYear ? 'selected' : ''}>${y}</option>`;
+    }
+
+    container.innerHTML = `
+      <div class="history-month-nav">
+        <button id="hist-prev-btn" ${canPrev ? '' : 'disabled style="opacity:0.3;cursor:default;"'}>‹</button>
+        <div class="hist-dropdowns">
+          <select id="hist-month-select" class="hist-select">${monthOpts}</select>
+          <select id="hist-year-select" class="hist-select">${yearOpts}</select>
+        </div>
+        <button id="hist-next-btn" ${canNext ? '' : 'disabled style="opacity:0.3;cursor:default;"'}>›</button>
+      </div>
+
+      <div class="history-calendar">
+        <div class="history-cal-weekdays">${weekDayHeaders}</div>
+        <div class="history-cal-days" id="hist-cal-days">${dayCells}</div>
+      </div>
+
+      <div class="history-monthly-summary">
+        <div class="history-stat-card">
+          <div class="history-stat-card__val">${monthActive}</div>
+          <div class="history-stat-card__lbl">Days Active</div>
+        </div>
+        <div class="history-stat-card">
+          <div class="history-stat-card__val">${monthRounds}</div>
+          <div class="history-stat-card__lbl">Total Rounds</div>
+        </div>
+        <div class="history-stat-card">
+          <div class="history-stat-card__val">${monthCounts}</div>
+          <div class="history-stat-card__lbl">Total Counts</div>
+        </div>
+        <div class="history-stat-card">
+          <div class="history-stat-card__val">${monthMissed}</div>
+          <div class="history-stat-card__lbl">Missed Days</div>
+        </div>
+      </div>
+
+      <div class="history-legend">
+        <div class="history-legend-item">
+          <div class="history-legend-dot history-legend-dot--active"></div> Active
+        </div>
+        <div class="history-legend-item">
+          <div class="history-legend-dot history-legend-dot--missed"></div> Missed
+        </div>
+        <div class="history-legend-item">
+          <div class="history-legend-dot history-legend-dot--none"></div> No data yet
+        </div>
+      </div>`;
+
+    // Nav button events
+    document.getElementById('hist-prev-btn').addEventListener('click', () => {
+      if (!canPrev) return;
+      calMonth--;
+      if (calMonth < 0) { calMonth = 11; calYear--; }
+      renderHistoryContent();
+    });
+
+    document.getElementById('hist-next-btn').addEventListener('click', () => {
+      if (!canNext) return;
+      calMonth++;
+      if (calMonth > 11) { calMonth = 0; calYear++; }
+      renderHistoryContent();
+    });
+
+    // Dropdown events
+    document.getElementById('hist-month-select').addEventListener('change', (e) => {
+      calMonth = parseInt(e.target.value, 10);
+      renderHistoryContent();
+    });
+
+    document.getElementById('hist-year-select').addEventListener('change', (e) => {
+      calYear = parseInt(e.target.value, 10);
+      // Clamp month if new year makes current month out of range
+      const newMinMonth = (calYear === minDate.getFullYear()) ? minDate.getMonth() : 0;
+      const newMaxMonth = (calYear === maxDate.getFullYear()) ? maxDate.getMonth() : 11;
+      if (calMonth < newMinMonth) calMonth = newMinMonth;
+      if (calMonth > newMaxMonth) calMonth = newMaxMonth;
+      renderHistoryContent();
+    });
+
+    // Day click events for tooltip
+    document.getElementById('hist-cal-days').addEventListener('click', (e) => {
+      const cell = e.target.closest('.history-cal-day');
+      if (!cell || cell.dataset.future === 'true' || cell.classList.contains('history-cal-day--empty')) return;
+      showDayDetail(cell, hist);
+    });
+  }
+
+  /* ─────────────────────────────────────
+     DAY DETAIL TOOLTIP
+  ───────────────────────────────────── */
+  let detailTimeout = null;
+
+  function showDayDetail(cell, hist) {
+    const key   = cell.dataset.key;
+    const day   = cell.dataset.day;
+    const entry = hist[key];
+    const todayKey = getTodayKey();
+    const isMissed = !entry && key < todayKey;
+
+    const detail = document.getElementById('history-day-detail');
+    if (!detail) return;
+
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun',
+                        'Jul','Aug','Sep','Oct','Nov','Dec'];
+    const parts = key.split('-');
+    const dateLabel = `${monthNames[parseInt(parts[1], 10) - 1]} ${parseInt(day, 10)}, ${parts[0]}`;
+    const isToday = key === todayKey;
+
+    if (entry) {
+      const isToday = key === todayKey;
+      // For today show live currentCount + rounds; for past show total accumulated
+      const liveCount = entry.currentCount !== undefined ? entry.currentCount : (entry.counts % 108);
+      const displayCount = isToday ? liveCount : entry.counts;
+      const countLabel   = isToday ? `Current Count` : `Total Counts`;
+      detail.innerHTML = `
+        <h4>${dateLabel}${isToday ? ' (Today)' : ''}</h4>
+        <p>📿 Rounds Completed: <span>${entry.rounds}</span></p>
+        <p>🕉 ${countLabel}: <span>${displayCount}</span></p>
+        <p>✅ Active day</p>`;
+    } else if (isMissed) {
+      detail.innerHTML = `
+        <h4>${dateLabel}</h4>
+        <p class="detail-missed">❌ Missed — no counting recorded</p>`;
+    } else {
+      detail.innerHTML = `
+        <h4>${dateLabel}${isToday ? ' (Today)' : ''}</h4>
+        <p>No data recorded yet</p>`;
+    }
+
+    // Position near cell
+    const rect = cell.getBoundingClientRect();
+    const dw   = detail.offsetWidth || 200;
+    let left   = rect.left + rect.width / 2 - dw / 2;
+    let top    = rect.bottom + 8 + window.scrollY;
+
+    // Keep in viewport
+    if (left < 8) left = 8;
+    if (left + dw > window.innerWidth - 8) left = window.innerWidth - dw - 8;
+
+    detail.style.left    = left + 'px';
+    detail.style.top     = top + 'px';
+    detail.style.display = 'block';
+
+    if (detailTimeout) clearTimeout(detailTimeout);
+    detailTimeout = setTimeout(hideDetailTooltip, 3000);
+  }
+
+  function hideDetailTooltip() {
+    const detail = document.getElementById('history-day-detail');
+    if (detail) detail.style.display = 'none';
+    if (detailTimeout) { clearTimeout(detailTimeout); detailTimeout = null; }
+  }
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.history-cal-day') && !e.target.closest('#history-day-detail')) {
+      hideDetailTooltip();
+    }
+  });
+
+  /* ─────────────────────────────────────
+     FACTORY RESET HOOK
+     Clear history data when factory reset is triggered
+  ───────────────────────────────────── */
+  document.addEventListener('DOMContentLoaded', () => {
+    const factoryBtn = document.getElementById('factory-reset');
+    if (factoryBtn) {
+      factoryBtn.addEventListener('click', () => {
+        // Give script.js time to run its own handler first
+        setTimeout(() => {
+          localStorage.removeItem(HISTORY_STORE_KEY);
+          localStorage.removeItem(HISTORY_ENABLED_KEY);
+        }, 100);
+      }, true); // capture phase so we run alongside existing handler
+    }
+  });
+
+})();
+</script>
+<!-- ═══════════════════════════════════════════════════
+     END DATA HISTORY FEATURE
      ═══════════════════════════════════════════════════ -->
 
 </body>
